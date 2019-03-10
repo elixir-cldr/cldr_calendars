@@ -7,8 +7,6 @@ defmodule Cldr.Calendar.Gregorian do
   alias Cldr.Calendar.Options
 
   @days_in_week 7
-  @months_in_quarter 3
-
   @iso_week_first_day 1
   @iso_week_min_days 4
 
@@ -74,9 +72,9 @@ defmodule Cldr.Calendar.Gregorian do
     end
   end
 
-  def quarter_name(_year, month, _day, options \\ []) do
+  def quarter_name(year, month, day, options \\ []) do
     with options <- extract_options(options) do
-      quarter =  div(month - 1, @months_in_quarter) + 1
+      quarter =  quarter_of_year(year, month, day)
       get_in(options.module.quarter(options.locale), [:format, options.format, quarter])
     end
   end
@@ -177,6 +175,40 @@ defmodule Cldr.Calendar.Gregorian do
     {:ok, territory} =Cldr.validate_territory(territory)
     get_in(Cldr.Calendar.week_data, [:first_day, territory]) ||
     get_in(Cldr.Calendar.week_data, [:first_day, :"001"])
+  end
+
+  def offset_to_string(utc, std, zone, format \\ :extended)
+  def offset_to_string(0, 0, "Etc/UTC", _format), do: "Z"
+
+  def offset_to_string(utc, std, _zone, format) do
+    total = utc + std
+    second = abs(total)
+    minute = second |> rem(3600) |> div(60)
+    hour = div(second, 3600)
+    format_offset(total, hour, minute, format)
+  end
+
+  def format_offset(total, hour, minute, :extended) do
+    sign(total) <> zero_pad(hour, 2) <> ":" <> zero_pad(minute, 2)
+  end
+
+  def format_offset(total, hour, minute, :basic) do
+    sign(total) <> zero_pad(hour, 2) <> zero_pad(minute, 2)
+  end
+
+  def zone_to_string(0, 0, _abbr, "Etc/UTC"), do: ""
+  def zone_to_string(_, _, abbr, zone), do: " " <> abbr <> " " <> zone
+
+  def sign(total) when total < 0, do: "-"
+  def sign(_), do: "+"
+
+  def zero_pad(val, count) when val >= 0 do
+    num = Integer.to_string(val)
+    :binary.copy("0", max(count - byte_size(num), 0)) <> num
+  end
+
+  def zero_pad(val, count) do
+    "-" <> zero_pad(-val, count)
   end
 
   defimpl String.Chars do

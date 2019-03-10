@@ -21,6 +21,3 @@ be found at [https://hexdocs.pm/cldr_calendars](https://hexdocs.pm/cldr_calendar
 
 ### To Do
 
-* [ ] Renormalize the calendar data so that the key for the day_names is the ordinal value not the abbreviated name
-
-* [ ] Renormalize the era data to have the same format name like :wide, :narrow, ....
