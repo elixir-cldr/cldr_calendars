@@ -4,7 +4,9 @@ defmodule Cldr.Calendar do
   @callback month_name(Calendar.year, Calendar.month, Keyword.t) :: String.t()
   @callback quarter_name(Calendar.year, Calendar.month, Keyword.t) :: String.t()
   @callback era_name(Calendar.year, Calendar.month, Keyword.t) :: String.t()
+
   @callback week_of_year(Calendar.year, Calendar.month, Keyword.t) :: {Calendar.year, Calendar.week}
+  @callback iso_week_of_year(Calendar.year, Calendar.month, Keyword.t) :: {Calendar.year, Calendar.week}
 
   @type day_of_the_week :: 1..7
   @type day_names :: :monday | :tuesday | :wednesday | :thursday | :friday | :saturday | :sunday
@@ -40,14 +42,6 @@ defmodule Cldr.Calendar do
   def day_cardinal(:sunday), do: 7
   def day_cardinal(day_number) when day_number in 1..@days_in_a_week, do: day_number
 
-  def day_name(1), do: :monday
-  def day_name(2), do: :tuesday
-  def day_name(3), do: :wednesday
-  def day_name(4), do: :thursday
-  def day_name(5), do: :friday
-  def day_name(6), do: :saturday
-  def day_name(7), do: :sunday
-
   @doc """
   Returns the number of days in `n` weeks
 
@@ -62,9 +56,16 @@ defmodule Cldr.Calendar do
     n * @days_in_a_week
   end
 
-  def week_of_year(date) do
+  def iso_week_of_year(date, backend, options \\ []) do
     %{year: year, month: month, day: day, calendar: calendar} = date
-    calendar.week_of_year(year, month, day)
+    options = Keyword.merge(options, [backend: backend])
+    calendar.iso_week_of_year(year, month, day, options)
+  end
+
+  def week_of_year(date, backend, options \\ []) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    options = Keyword.merge(options, [backend: backend])
+    calendar.week_of_year(year, month, day, options)
   end
 
   def day_name(date, backend, options \\ []) do
@@ -113,6 +114,18 @@ defmodule Cldr.Calendar do
 
   def iso_days_to_day_of_week(iso_days) do
     Integer.mod(iso_days + 5, 7) + 1
+  end
+
+  @doc false
+  @week_info Cldr.Config.week_info
+  def week_data do
+    @week_info
+  end
+
+  @doc false
+  @calendar_info Cldr.Config.calendar_info
+  def calendar_data do
+    @calendar_info
   end
 
 end

@@ -3,12 +3,13 @@ defmodule Cldr.Calendar.Test do
   doctest Cldr.Calendar
   doctest Cldr.Calendar.Kday
 
-  for year <- 1980..2020,
-      month <- 1..12,
-      day <- 1..Calendar.ISO.days_in_month(year, month) do
-    test "that week of year is correct for #{year}, #{month}, #{day}" do
-      assert :calendar.iso_week_number({unquote(year), unquote(month), unquote(day)}) ==
-        Cldr.Calendar.Gregorian.week_of_year(unquote(year), unquote(month), unquote(day))
+  # :calendar module doesn't work with year 0 or negative years
+  test "that iso week of year is same as erlang" do
+    for year <- 0001..2200,
+        month <- 1..12,
+        day <- 1..Calendar.ISO.days_in_month(year, month) do
+      assert :calendar.iso_week_number({year, month, day}) ==
+        Cldr.Calendar.Gregorian.iso_week_of_year(year, month, day, backend: MyApp.Cldr)
     end
   end
 end
