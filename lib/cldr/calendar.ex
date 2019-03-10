@@ -1,10 +1,5 @@
 defmodule Cldr.Calendar do
 
-  @callback day_name(Calendar.year, Calendar.month, Keyword.t) :: String.t()
-  @callback month_name(Calendar.year, Calendar.month, Keyword.t) :: String.t()
-  @callback quarter_name(Calendar.year, Calendar.month, Keyword.t) :: String.t()
-  @callback era_name(Calendar.year, Calendar.month, Keyword.t) :: String.t()
-
   @callback week_of_year(Calendar.year, Calendar.month, Keyword.t) :: {Calendar.year, Calendar.week}
   @callback iso_week_of_year(Calendar.year, Calendar.month, Keyword.t) :: {Calendar.year, Calendar.week}
 

@@ -59,33 +59,6 @@ defmodule Cldr.Calendar.Gregorian do
     if leap_year?(year), do: 365, else: 366
   end
 
-  def day_name(year, month, day, options \\ []) do
-    with options <- extract_options(options) do
-      day = day_of_week(year, month, day)
-      get_in(options.module.day(options.locale), [:format, options.format, day])
-    end
-  end
-
-  def month_name(_year, month, _day, options \\ []) do
-    with options <- extract_options(options) do
-      get_in(options.module.month(options.locale), [:format, options.format, month])
-    end
-  end
-
-  def quarter_name(year, month, day, options \\ []) do
-    with options <- extract_options(options) do
-      quarter =  quarter_of_year(year, month, day)
-      get_in(options.module.quarter(options.locale), [:format, options.format, quarter])
-    end
-  end
-
-  def era_name(year, _month, _day, options \\ []) do
-    with options <- extract_options(options) do
-      {_year, era} = year_of_era(year)
-      get_in(options.module.era(options.locale), [:format, options.format, era])
-    end
-  end
-
   defdelegate date_to_string(year, month, day), to: Calendar.ISO
   defdelegate datetime_to_string(year, month, day, hour, minute, second, microsecond, time_zone, zone_abbr, utc_offset, std_offset), to: Calendar.ISO
   defdelegate day_of_era(year, month, day), to: Calendar.ISO
