@@ -20,13 +20,6 @@ defmodule Cldr.Calendar.Week do
     end
   end
 
-  def quarter_name(year, week, day, options \\ []) do
-    with options <- Gregorian.extract_options(options) do
-      quarter =  quarter_of_year(year, week, day)
-      get_in(options.module.quarter(options.locale), [:format, options.format, quarter])
-    end
-  end
-
   def valid_date?(year, week, day) do
     max_weeks = if leap_year?(year), do: 53, else: 52
     week <= max_weeks and day in 1..7
@@ -82,7 +75,7 @@ defmodule Cldr.Calendar.Week do
 
   def naive_datetime_from_iso_days({days, day_fraction}) do
     {year, month, day} = Calendar.ISO.date_from_iso_days(days)
-    {year, week} = Gregorian.iso_week_of_year(year, month, day, @calendar_options)
+    {year, week} = Gregorian.iso_week_of_year(year, month, day)
     day = days - first_day_of_year(year) - week_to_days(week)
     {hour, minute, second, microsecond} = Calendar.ISO.time_from_day_fraction(day_fraction)
     {year, week, day, hour, minute, second, microsecond}

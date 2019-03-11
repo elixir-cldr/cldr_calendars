@@ -10,21 +10,8 @@ defmodule Cldr.Calendar.Gregorian do
   @iso_week_first_day 1
   @iso_week_min_days 4
 
-  def iso_week_of_year(year, month, day, options \\ [])
-
-  def iso_week_of_year(year, month, day, options) when is_list(options) do
-    with options <- extract_options(options) do
-      iso_week_of_year(year, month, day, options)
-    end
-  end
-
-  def iso_week_of_year(year, month, day, %{} = options) do
-    options =
-      options
-      |> Map.put(:min_days, @iso_week_min_days)
-      |> Map.put(:first_day, @iso_week_first_day)
-
-    week_of_year(year, month, day, options)
+  def iso_week_of_year(year, month, day) do
+    week_of_year(year, month, day, @iso_week_first_day, @iso_week_min_days)
   end
 
   def week_of_year(year, month, day, options \\ [])
@@ -36,13 +23,17 @@ defmodule Cldr.Calendar.Gregorian do
   end
 
   def week_of_year(year, month, day, %{} = options) do
+    week_of_year(year, month, day, options.first_day, options.min_days)
+  end
+
+  def week_of_year(year, month, day, first_day, min_days) do
     iso_days = ISO.date_to_iso_days(year, month, day)
-    first_week_starts = first_week_starts(year, options)
-    last_week_ends = last_week_ends(year, options)
+    first_week_starts = first_week_starts(year, first_day, min_days)
+    last_week_ends = last_week_ends(year, first_day, min_days)
 
     cond do
       iso_days < first_week_starts ->
-        if long_year?(year - 1, options), do: {year - 1, 53}, else: {year - 1, 52}
+        if long_year?(year - 1, first_day, min_days), do: {year - 1, 53}, else: {year - 1, 52}
       iso_days > last_week_ends ->
         {year + 1, 1}
       true ->
@@ -51,8 +42,12 @@ defmodule Cldr.Calendar.Gregorian do
     end
   end
 
-  def long_year?(year, options) do
-    div(last_week_ends(year, options) - first_week_starts(year, options) + 1, @days_in_week) == 53
+  def long_year?(year, %Options{} = options) do
+    long_year?(year, options.first_day, options.min_days)
+  end
+
+  def long_year?(year, first_day, min_days) do
+    div(last_week_ends(year, first_day, min_days) - first_week_starts(year, first_day, min_days) + 1, @days_in_week) == 53
   end
 
   def days_in_year(year) do
@@ -79,26 +74,34 @@ defmodule Cldr.Calendar.Gregorian do
   defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
   defdelegate year_of_era(year), to: Calendar.ISO
 
-  def first_week_starts(year, options) do
-    iso_days = ISO.date_to_iso_days(year, 1, options.min_days)
+  def first_week_starts(year, %{} = options) do
+    first_week_starts(year, options.first_day, options.min_days)
+  end
+
+  def first_week_starts(year, first_day, min_days) do
+    iso_days = ISO.date_to_iso_days(year, 1, min_days)
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)
 
-    if options.first_day < day_of_week do
-      iso_days - (day_of_week - options.first_day)
+    if first_day < day_of_week do
+      iso_days - (day_of_week - first_day)
     else
-      iso_days + (day_of_week - options.first_day)
+      iso_days + (day_of_week - first_day)
     end
   end
 
-  def last_week_ends(year, options) do
-    iso_days = ISO.date_to_iso_days(year, 12, 31 - options.min_days + 1)
+  def last_week_ends(year, %Options{} = options) do
+    last_week_ends(year, options.first_day, options.min_days)
+  end
+
+  def last_week_ends(year, first_day, min_days) do
+    iso_days = ISO.date_to_iso_days(year, 12, 31 - min_days + 1)
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)
 
     last_week_starts =
-      if options.first_day < day_of_week do
-        iso_days - (day_of_week - options.first_day + 1)
+      if first_day < day_of_week do
+        iso_days - (day_of_week - first_day + 1)
       else
-        iso_days + (day_of_week - options.first_day + 1)
+        iso_days + (day_of_week - first_day + 1)
       end
 
     last_week_starts + @days_in_week
@@ -108,20 +111,16 @@ defmodule Cldr.Calendar.Gregorian do
   def extract_options(options) do
     backend = Keyword.get(options, :backend)
     locale = Keyword.get(options, :locale, Cldr.get_locale())
+    format = Keyword.get(options, :format, :wide)
+    {min_days, first_day} = get_min_and_first_days(locale, options)
 
-    with {:ok, locale} <- Cldr.validate_locale(locale, backend) do
-      format = Keyword.get(options, :format, :wide)
-      module = Module.concat(backend, Calendar.Data)
-      {min_days, first_day} = get_min_and_first_days(locale, options)
-      %Options{
-        format: format,
-        locale: locale,
-        module: module,
-        min_days: min_days,
-        first_day: first_day,
-        backend: backend
-      }
-    end
+    %Options{
+      format: format,
+      locale: locale,
+      min_days: min_days,
+      first_day: first_day,
+      backend: backend
+    }
   end
 
   defp get_min_and_first_days(locale, options) do

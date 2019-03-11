@@ -52,6 +52,7 @@ defmodule Cldr.Calendar do
   end
 
   def iso_week_of_year(date, backend, options \\ []) do
+    iso_week_of_year(date, options.first_day, options.min_day)
     %{year: year, month: month, day: day, calendar: calendar} = date
     options = Keyword.merge(options, [backend: backend])
     calendar.iso_week_of_year(year, month, day, options)
@@ -85,11 +86,6 @@ defmodule Cldr.Calendar do
     %{year: year, month: month, day: day, calendar: calendar} = date
     options = Keyword.merge(options, [backend: backend])
     calendar.era_name(year, month, day, options)
-  end
-
-  @doc false
-  def cldr_backend_provider(config) do
-    Cldr.Calendar.Backend.Compiler.define_calendar_modules(config)
   end
 
   @doc false
