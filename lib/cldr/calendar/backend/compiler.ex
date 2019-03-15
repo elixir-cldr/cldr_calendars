@@ -18,6 +18,11 @@ defmodule Cldr.Calendar.Backend.Compiler do
 
     quote location: :keep do
       @behaviour Calendar
+      @behaviour Cldr.Calendar
+
+      def __config__ do
+        @calendar_config
+      end
 
       def valid_date?(year, week, day) do
         Cldr.Calendar.Week.valid_date?(year, week, day, @calendar_config)
@@ -29,6 +34,10 @@ defmodule Cldr.Calendar.Backend.Compiler do
 
       def day_of_year(year, week, day) do
         Cldr.Calendar.Week.day_of_year(year, week, day, @calendar_config)
+      end
+
+      def month_of_year(year, week, day) do
+        Cldr.Calendar.Week.month_of_year(year, week, day, @calendar_config)
       end
 
       def day_of_week(year, week, day) do
@@ -78,7 +87,6 @@ defmodule Cldr.Calendar.Backend.Compiler do
                   to: Cldr.Calendar.Week
 
       defdelegate quarter_of_year(year, week, day), to: Cldr.Calendar.Week
-      defdelegate month_of_year(year, week, day), to: Cldr.Calendar.Week
       defdelegate week_of_year(year, week, day), to: Cldr.Calendar.Week
 
       defdelegate day_rollover_relative_to_midnight_utc, to: Calendar.ISO

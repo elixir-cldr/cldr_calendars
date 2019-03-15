@@ -1,8 +1,32 @@
 defmodule Cldr.Calendar.Config do
-  defstruct format: :wide,
+  defstruct backend: nil,
+
+            # The name of this calendar
+            calendar: nil,
+
+            # Locale can be used to derive
+            # the :first_day and :min_days
             locale: nil,
-            min_days: 4,
+
+            # Each quarter has three
+            # 'months` each of 13 weeks
+            # in either of a 4,4,5; 4,5,4
+            # of 5,4,4 layout
+            weeks_in_month: {4, 4, 5},
+
+            # Calendar begins on the
+            # :first, :last or :nearest
+            begins: :first,
+
+            # Year begins on this day
             first_day: 1,
-            backend: nil,
-            calendar: nil
+
+            # Year begins in this month
+            first_month: 1,
+
+            # First week has at least
+            # this many days in current
+            # year
+            min_days: 4
+
 end

@@ -21,6 +21,7 @@ defmodule Cldr.Calendar.Week do
   end
 
   def days_in_month(_year, _week, _config) do
+
   end
 
   def leap_year?(year, config) do
@@ -38,7 +39,8 @@ defmodule Cldr.Calendar.Week do
     div(week - 1, @weeks_per_quarter) + 1
   end
 
-  def month_of_year(_year, _week, _day) do
+  def month_of_year(_year, _week, _day, _config) do
+
   end
 
   def week_of_year(_year, week, _day) do
@@ -50,7 +52,12 @@ defmodule Cldr.Calendar.Week do
     first_day + (week - 1) * @days_in_week + day
   end
 
+  defp week_to_days(week) do
+    (week - 1) * @days_in_week
+  end
+
   def day_of_era(_year, _week, _day, _config) do
+
   end
 
   def first_day_of_year(year, config) do
@@ -67,10 +74,6 @@ defmodule Cldr.Calendar.Week do
     day = days - first_day_of_year(year, config) - week_to_days(week)
     {hour, minute, second, microsecond} = Calendar.ISO.time_from_day_fraction(day_fraction)
     {year, week, day, hour, minute, second, microsecond}
-  end
-
-  defp week_to_days(week) do
-    (week - 1) * @days_in_week
   end
 
   def naive_datetime_to_iso_days(year, week, day, hour, minute, second, microsecond, config) do

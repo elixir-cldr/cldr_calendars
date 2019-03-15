@@ -1,3 +1,5 @@
+require Cldr.Calendar.Backend.Compiler
+
 defmodule Cldr.Calendar.NRF do
   use Cldr.Calendar.Week,
     first_day: 7,

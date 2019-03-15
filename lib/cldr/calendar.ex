@@ -1,8 +1,17 @@
 defmodule Cldr.Calendar do
   @callback week_of_year(Calendar.year(), Calendar.month(), Calendar.day(), Keyword.t()) ::
               {Calendar.year(), Calendar.week()}
+
   @callback iso_week_of_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
               {Calendar.year(), Calendar.week()}
+
+  @callback first_day_of_year(Calendar.year) :: Date.t()
+  @callback lasy_day_of_year(Calendar.year) :: Date.t()
+
+  @callback year(Calendar.year()) :: Date.Range.t()
+  @callback quarter(Calendar.year(), Calendar.quarter()) :: Date.Range.t()
+  @callback month(Calendar.year(), Calendar.month()) :: Date.Range.t()
+  @callback week(Calendar.year(), Calendar.week()) :: Date.Range.t()
 
   @type day_of_the_week :: 1..7
   @type day_names :: :monday | :tuesday | :wednesday | :thursday | :friday | :saturday | :sunday
@@ -53,13 +62,21 @@ defmodule Cldr.Calendar do
     calendar.date_to_iso_days(year, month, day)
   end
 
-  def date_from_iso_days(days, calendar) do
-    {year, month, day} = calendar.date_from_iso_days(days)
+  def date_from_iso_days({days, _}, calendar) do
+    date_from_iso_days(days, calendar)
+  end
+
+  def date_from_iso_days(iso_days, calendar) when is_integer(iso_days) do
+    {year, month, day} = calendar.date_from_iso_days(iso_days)
     {:ok, date} = Date.new(year, month, day, calendar)
     date
   end
 
-  def iso_days_to_day_of_week(iso_days) do
+  def iso_days_to_day_of_week({days, _}, calendar) do
+    iso_days_to_day_of_week(days, calendar)
+  end
+
+  def iso_days_to_day_of_week(iso_days)  when is_integer(iso_days) do
     Integer.mod(iso_days + 5, 7) + 1
   end
 
@@ -131,37 +148,37 @@ defmodule Cldr.Calendar do
     end
   end
 
-  def weekend_starts(territory) when is_binary(territory) do
+  def weekend_starts(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       weekend_starts(territory)
     end
   end
 
-  def weekend_ends(territory) when is_binary(territory) do
+  def weekend_ends(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       weekend_ends(territory)
     end
   end
 
-  def first_day(territory) when is_binary(territory) do
+  def first_day(territory)  do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       first_day(territory)
     end
   end
 
-  def min_days(territory) when is_binary(territory) do
+  def min_days(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       min_days(territory)
     end
   end
 
-  def weekend(territory) when is_binary(territory) do
+  def weekend(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       weekend(territory)
     end
   end
 
-  def weekdays(territory) when is_binary(territory) do
+  def weekdays(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       weekdays(territory)
     end
