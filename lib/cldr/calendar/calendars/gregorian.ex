@@ -1,10 +1,26 @@
 defmodule Cldr.Calendar.Gregorian do
+  @moduledoc """
+  Implements the `Calendar` behaviour for the
+  Gregorian proleptic calendar.
+
+  In this regard it implements the same
+  calendar as the Elixir `Calendar.ISO`
+  calendar but adds the `Cldr.Calendar`
+  behaviour.
+
+  This behaviour adds the following
+  functions:
+
+  * `week_of_year/4` and `iso_week_of_year/3`
+    functions.
+
+  """
+
   @behaviour Calendar
   @behaviour Cldr.Calendar
 
   alias Calendar.ISO
-  alias Cldr.LanguageTag
-  alias Cldr.Calendar.Options
+  alias Cldr.Calendar.Config
 
   @days_in_week 7
   @iso_week_first_day 1
@@ -22,8 +38,8 @@ defmodule Cldr.Calendar.Gregorian do
     end
   end
 
-  def week_of_year(year, month, day, %{} = options) do
-    week_of_year(year, month, day, options.first_day, options.min_days)
+  def week_of_year(year, month, day, %Config{} = config) do
+    week_of_year(year, month, day, config.first_day, config.min_days)
   end
 
   def week_of_year(year, month, day, first_day, min_days) do
@@ -34,20 +50,26 @@ defmodule Cldr.Calendar.Gregorian do
     cond do
       iso_days < first_week_starts ->
         if long_year?(year - 1, first_day, min_days), do: {year - 1, 53}, else: {year - 1, 52}
+
       iso_days > last_week_ends ->
         {year + 1, 1}
+
       true ->
         week = div(iso_days - first_week_starts, @days_in_week) + 1
         {year, week}
     end
   end
 
-  def long_year?(year, %Options{} = options) do
-    long_year?(year, options.first_day, options.min_days)
+  def long_year?(year, %Config{} = config) do
+    long_year?(year, config.first_day, config.min_days)
   end
 
   def long_year?(year, first_day, min_days) do
-    div(last_week_ends(year, first_day, min_days) - first_week_starts(year, first_day, min_days) + 1, @days_in_week) == 53
+    div(
+      last_week_ends(year, first_day, min_days) - first_week_starts(year, first_day, min_days) +
+        1,
+      @days_in_week
+    ) == 53
   end
 
   def days_in_year(year) do
@@ -55,7 +77,22 @@ defmodule Cldr.Calendar.Gregorian do
   end
 
   defdelegate date_to_string(year, month, day), to: Calendar.ISO
-  defdelegate datetime_to_string(year, month, day, hour, minute, second, microsecond, time_zone, zone_abbr, utc_offset, std_offset), to: Calendar.ISO
+
+  defdelegate datetime_to_string(
+                year,
+                month,
+                day,
+                hour,
+                minute,
+                second,
+                microsecond,
+                time_zone,
+                zone_abbr,
+                utc_offset,
+                std_offset
+              ),
+              to: Calendar.ISO
+
   defdelegate day_of_era(year, month, day), to: Calendar.ISO
   defdelegate day_of_week(year, month, day), to: Calendar.ISO
   defdelegate day_of_year(year, month, day), to: Calendar.ISO
@@ -64,8 +101,13 @@ defmodule Cldr.Calendar.Gregorian do
   defdelegate leap_year?(year), to: Calendar.ISO
   defdelegate months_in_year(year), to: Calendar.ISO
   defdelegate naive_datetime_from_iso_days(iso_days), to: Calendar.ISO
-  defdelegate naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond), to: Calendar.ISO
-  defdelegate naive_datetime_to_string(year, month, day, hour, minute, second, microsecond), to: Calendar. ISO
+
+  defdelegate naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond),
+    to: Calendar.ISO
+
+  defdelegate naive_datetime_to_string(year, month, day, hour, minute, second, microsecond),
+    to: Calendar.ISO
+
   defdelegate quarter_of_year(year, month, day), to: Calendar.ISO
   defdelegate time_from_day_fraction(day_fraction), to: Calendar.ISO
   defdelegate time_to_day_fraction(hour, minute, second, microsecond), to: Calendar.ISO
@@ -74,8 +116,8 @@ defmodule Cldr.Calendar.Gregorian do
   defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
   defdelegate year_of_era(year), to: Calendar.ISO
 
-  def first_week_starts(year, %{} = options) do
-    first_week_starts(year, options.first_day, options.min_days)
+  def first_week_starts(year, %Config{} = config) do
+    first_week_starts(year, config.first_day, config.min_days)
   end
 
   def first_week_starts(year, first_day, min_days) do
@@ -89,8 +131,8 @@ defmodule Cldr.Calendar.Gregorian do
     end
   end
 
-  def last_week_ends(year, %Options{} = options) do
-    last_week_ends(year, options.first_day, options.min_days)
+  def last_week_ends(year, %Config{} = config) do
+    last_week_ends(year, config.first_day, config.min_days)
   end
 
   def last_week_ends(year, first_day, min_days) do
@@ -114,7 +156,7 @@ defmodule Cldr.Calendar.Gregorian do
     format = Keyword.get(options, :format, :wide)
     {min_days, first_day} = get_min_and_first_days(locale, options)
 
-    %Options{
+    %Config{
       format: format,
       locale: locale,
       min_days: min_days,
@@ -124,29 +166,9 @@ defmodule Cldr.Calendar.Gregorian do
   end
 
   defp get_min_and_first_days(locale, options) do
-    min_days = Keyword.get(options, :min_days, get_min_days(locale))
-    first_day = Keyword.get(options, :first_day, get_first_day(locale))
+    min_days = Keyword.get(options, :min_days, Cldr.Calendar.min_days(locale))
+    first_day = Keyword.get(options, :first_day, Cldr.Calendar.first_day(locale))
     {min_days, first_day}
-  end
-
-  defp get_min_days(%LanguageTag{territory: nil}) do
-    get_in(Cldr.Calendar.week_data, [:min_days, :"001"])
-  end
-
-  defp get_min_days(%LanguageTag{territory: territory}) do
-    {:ok, territory} = Cldr.validate_territory(territory)
-    get_in(Cldr.Calendar.week_data, [:min_days, territory]) ||
-    get_in(Cldr.Calendar.week_data, [:min_days, :"001"])
-  end
-
-  defp get_first_day(%LanguageTag{territory: nil}) do
-    get_in(Cldr.Calendar.week_data, [:first_day, :"001"])
-  end
-
-  defp get_first_day(%LanguageTag{territory: territory}) do
-    {:ok, territory} =Cldr.validate_territory(territory)
-    get_in(Cldr.Calendar.week_data, [:first_day, territory]) ||
-    get_in(Cldr.Calendar.week_data, [:first_day, :"001"])
   end
 
   def offset_to_string(utc, std, zone, format \\ :extended)
@@ -188,6 +210,4 @@ defmodule Cldr.Calendar.Gregorian do
       calendar.date_to_string(year, month, day)
     end
   end
-
 end
-

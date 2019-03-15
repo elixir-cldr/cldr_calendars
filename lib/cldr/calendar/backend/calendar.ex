@@ -5,19 +5,22 @@ defmodule Cldr.Calendar.Backend do
     backend = config.backend
 
     quote location: :keep, bind_quoted: [config: Macro.escape(config), backend: backend] do
-      defmodule Calendar.Data do
-        @moduledoc """
-        Data functions to retrieve localised calendar
-        information.
+      defmodule Calendar do
+        @moduledoc false
+        if Cldr.Config.include_module_docs?(config.generate_docs) do
+          @moduledoc """
+          Data functions to retrieve localised calendar
+          information.
 
-        `Cldr` defines formats for several calendars, the names of which
-        are returned by `Cldr.Calendar.known_calendars/0`.
+          `Cldr` defines formats for several calendars, the names of which
+          are returned by `Cldr.Calendar.known_calendars/0`.
 
-        Currently this implementation only supports the `:gregorian`
-        calendar which aligns with the proleptic Gregorian calendar
-        defined by Elixir, `Calendar.ISO`.
+          Currently this implementation only supports the `:gregorian`
+          calendar which aligns with the proleptic Gregorian calendar
+          defined by Elixir, `Calendar.ISO`.
 
-        """
+          """
+        end
 
         alias Cldr.Locale
         alias Cldr.Calendar
@@ -92,9 +95,16 @@ defmodule Cldr.Calendar.Backend do
           end
 
           def era(unquote(locale_name), calendar), do: {:error, Calendar.calendar_error(calendar)}
-          def period(unquote(locale_name), calendar), do: {:error, Calendar.calendar_error(calendar)}
-          def quarter(unquote(locale_name), calendar), do: {:error, Calendar.calendar_error(calendar)}
-          def month(unquote(locale_name), calendar), do: {:error, Calendar.calendar_error(calendar)}
+
+          def period(unquote(locale_name), calendar),
+            do: {:error, Calendar.calendar_error(calendar)}
+
+          def quarter(unquote(locale_name), calendar),
+            do: {:error, Calendar.calendar_error(calendar)}
+
+          def month(unquote(locale_name), calendar),
+            do: {:error, Calendar.calendar_error(calendar)}
+
           def day(unquote(locale_name), calendar), do: {:error, Calendar.calendar_error(calendar)}
         end
 

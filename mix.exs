@@ -61,7 +61,8 @@ defmodule Cldr.Calendar.MixProject do
 
   defp deps do
     [
-      {:ex_cldr, "~> 2.0"},
+      # {:ex_cldr, "~> 2.4"},
+      {:ex_cldr, path: "../cldr", override: true},
       {:jason, "~> 1.0"},
       {:ex_cldr_print, "~> 0.1", runtime: false, only: :dev},
       {:benchee, "~> 0.14", only: [:dev, :test]}

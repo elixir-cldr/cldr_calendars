@@ -14,8 +14,7 @@ defmodule Cldr.Calendar.Kday do
 
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
-  * `k` is an integer or atom representation of the day of the week.
-    See `Cldr.Calendar.Kday.day_cardinal/1`
+  * `k` is an integer day of the week.
 
   ## Returns
 
@@ -23,23 +22,22 @@ defmodule Cldr.Calendar.Kday do
 
   ## Examples
 
-      iex> Cldr.Calendar.Kday.kday_on_or_before(~D[2016-02-29], :tuesday)
+      iex> Cldr.Calendar.Kday.kday_on_or_before(~D[2016-02-29], 2)
       ~D[2016-02-23]
 
-      iex> Cldr.Calendar.Kday.kday_on_or_before(~D[2017-11-30], :monday)
+      iex> Cldr.Calendar.Kday.kday_on_or_before(~D[2017-11-30], 1)
       ~D[2017-11-27]
 
-      # 6 means Saturday.  Use either the integer value or the atom form.
       iex> Cldr.Calendar.Kday.kday_on_or_before(~D[2017-06-30], 6)
       ~D[2017-06-24]
 
   """
-  @spec kday_on_or_before(C.date_or_time, C.day_of_the_week) :: Date.t
+  @spec kday_on_or_before(C.date_or_time(), C.day_of_the_week()) :: Date.t()
   def kday_on_or_before(%{year: _, month: _, day: _, calendar: calendar} = date, k)
-      when is_atom(k) or k in 1..7 do
+      when k in 1..7 do
     date
     |> date_to_iso_days
-    |> kday_on_or_before(day_cardinal(k))
+    |> kday_on_or_before(k)
     |> date_from_iso_days(calendar)
   end
 
@@ -55,8 +53,7 @@ defmodule Cldr.Calendar.Kday do
 
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
-  * `k` is an integer or atom representation of the day of the week.
-    See `Cldr.Calendar.Kday.day_cardinal/1`
+  * `k` is an integer day of the week.
 
   ## Returns
 
@@ -64,23 +61,22 @@ defmodule Cldr.Calendar.Kday do
 
   ## Examples
 
-      iex> Cldr.Calendar.Kday.kday_on_or_after(~D[2016-02-29], :tuesday)
+      iex> Cldr.Calendar.Kday.kday_on_or_after(~D[2016-02-29], 2)
       ~D[2016-03-01]
 
-      iex> Cldr.Calendar.Kday.kday_on_or_after(~D[2017-11-30], :monday)
+      iex> Cldr.Calendar.Kday.kday_on_or_after(~D[2017-11-30], 1)
       ~D[2017-12-04]
 
-      # 6 means Saturday.  Use either the integer value or the atom form.
       iex> Cldr.Calendar.Kday.kday_on_or_after(~D[2017-06-30], 6)
       ~D[2017-07-01]
 
   """
-  @spec kday_on_or_after(C.date_or_time, C.day_of_the_week) :: Date.t
+  @spec kday_on_or_after(C.date_or_time(), C.day_of_the_week()) :: Date.t()
   def kday_on_or_after(%{year: _, month: _, day: _, calendar: calendar} = date, k)
-      when is_atom(k) or k in 1..7 do
+      when k in 1..7 do
     date
     |> date_to_iso_days
-    |> kday_on_or_after(day_cardinal(k))
+    |> kday_on_or_after(k)
     |> date_from_iso_days(calendar)
   end
 
@@ -96,8 +92,7 @@ defmodule Cldr.Calendar.Kday do
 
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
-  * `k` is an integer or atom representation of the day of the week.
-    See `Cldr.Calendar.Kday.day_cardinal/1`
+  * `k` is an integer day of the week.
 
   ## Returns
 
@@ -105,23 +100,22 @@ defmodule Cldr.Calendar.Kday do
 
   ## Examples
 
-      iex> Cldr.Calendar.Kday.kday_nearest(~D[2016-02-29], :tuesday)
+      iex> Cldr.Calendar.Kday.kday_nearest(~D[2016-02-29], 2)
       ~D[2016-03-01]
 
-      iex> Cldr.Calendar.Kday.kday_nearest(~D[2017-11-30], :monday)
+      iex> Cldr.Calendar.Kday.kday_nearest(~D[2017-11-30], 1)
       ~D[2017-11-27]
 
-      # 6 means Saturday.  Use either the integer value or the atom form.
       iex> Cldr.Calendar.Kday.kday_nearest(~D[2017-06-30], 6)
       ~D[2017-07-01]
 
   """
-  @spec kday_nearest(C.date_or_time, C.day_of_the_week) :: Date.t
+  @spec kday_nearest(C.date_or_time(), C.day_of_the_week()) :: Date.t()
   def kday_nearest(%{year: _, month: _, day: _, calendar: calendar} = date, k)
-      when is_atom(k) or k in 1..7 do
+      when k in 1..7 do
     date
     |> date_to_iso_days
-    |> kday_nearest(day_cardinal(k))
+    |> kday_nearest(k)
     |> date_from_iso_days(calendar)
   end
 
@@ -137,8 +131,7 @@ defmodule Cldr.Calendar.Kday do
 
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
-  * `k` is an integer or atom representation of the day of the week.
-    See `Cldr.Calendar.Kday.day_cardinal/1`
+  * `k` is an integer day of the week.
 
   ## Returns
 
@@ -146,10 +139,10 @@ defmodule Cldr.Calendar.Kday do
 
   ## Examples
 
-      iex> Cldr.Calendar.Kday.kday_before(~D[2016-02-29], :tuesday)
+      iex> Cldr.Calendar.Kday.kday_before(~D[2016-02-29], 2)
       ~D[2016-02-23]
 
-      iex> Cldr.Calendar.Kday.kday_before(~D[2017-11-30], :monday)
+      iex> Cldr.Calendar.Kday.kday_before(~D[2017-11-30], 1)
       ~D[2017-11-27]
 
       # 6 means Saturday.  Use either the integer value or the atom form.
@@ -157,12 +150,12 @@ defmodule Cldr.Calendar.Kday do
       ~D[2017-06-24]
 
   """
-  @spec kday_before(C.date_or_time, C.day_of_the_week) :: Date.t
+  @spec kday_before(C.date_or_time(), C.day_of_the_week()) :: Date.t()
   def kday_before(%{year: _, month: _, day: _, calendar: calendar} = date, k)
-      when is_atom(k) or k in 1..7 do
+      when k in 1..7 do
     date
     |> date_to_iso_days
-    |> kday_before(day_cardinal(k))
+    |> kday_before(k)
     |> date_from_iso_days(calendar)
   end
 
@@ -178,8 +171,7 @@ defmodule Cldr.Calendar.Kday do
 
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
-  * `k` is an integer or atom representation of the day of the week.
-    See `Cldr.Calendar.Kday.day_cardinal/1`
+  * `k` is an integer day of the week.
 
   ## Returns
 
@@ -187,23 +179,22 @@ defmodule Cldr.Calendar.Kday do
 
   ## Examples
 
-      iex> Cldr.Calendar.Kday.kday_after(~D[2016-02-29], :tuesday)
+      iex> Cldr.Calendar.Kday.kday_after(~D[2016-02-29], 2)
       ~D[2016-03-01]
 
-      iex> Cldr.Calendar.Kday.kday_after(~D[2017-11-30], :monday)
+      iex> Cldr.Calendar.Kday.kday_after(~D[2017-11-30], 1)
       ~D[2017-12-04]
 
-      # 6 means Saturday.  Use either the integer value or the atom form.
       iex> Cldr.Calendar.Kday.kday_after(~D[2017-06-30], 6)
       ~D[2017-07-01]
 
   """
-  @spec kday_after(C.date_or_time, C.day_of_the_week) :: Date.t
+  @spec kday_after(C.date_or_time(), C.day_of_the_week()) :: Date.t()
   def kday_after(%{year: _, month: _, day: _, calendar: calendar} = date, k)
-      when is_atom(k) or k in 1..7 do
+      when k in 1..7 do
     date
     |> date_to_iso_days
-    |> kday_after(day_cardinal(k))
+    |> kday_after(k)
     |> date_from_iso_days(calendar)
   end
 
@@ -222,8 +213,7 @@ defmodule Cldr.Calendar.Kday do
   * `n` is the cardinal number of `k` before (negative `n`) or after
     (positive `n`) the specified date
 
-  * `k` is an integer or atom representation of the day of the week.
-    See `Cldr.Calendar.Kday.day_cardinal/1`
+  * `k` is an integer day of the week.
 
   ## Returns
 
@@ -232,33 +222,33 @@ defmodule Cldr.Calendar.Kday do
   ## Examples
 
       # Thanksgiving in the US
-      iex> Cldr.Calendar.Kday.nth_kday(~D[2017-11-01], 4, :thursday)
+      iex> Cldr.Calendar.Kday.nth_kday(~D[2017-11-01], 4, 4)
       ~D[2017-11-23]
 
       # Labor day in the US
-      iex> Cldr.Calendar.Kday.nth_kday(~D[2017-09-01], 1, :monday)
+      iex> Cldr.Calendar.Kday.nth_kday(~D[2017-09-01], 1, 1)
       ~D[2017-09-04]
 
       # Daylight savings time starts in the US
-      iex> Cldr.Calendar.Kday.nth_kday(~D[2017-03-01], 2, :sunday)
+      iex> Cldr.Calendar.Kday.nth_kday(~D[2017-03-01], 2, 7)
       ~D[2017-03-12]
 
   """
-  @spec nth_kday(C.date_or_time, integer, C.day_of_the_week) :: Date.t
+  @spec nth_kday(C.date_or_time(), integer, C.day_of_the_week()) :: Date.t()
   def nth_kday(%{year: _, month: _, day: _, calendar: calendar} = date, n, k)
-      when (is_atom(k) or k in 1..7) and is_integer(n) do
+      when k in 1..7 and is_integer(n) do
     date
     |> date_to_iso_days
-    |> nth_kday(n, day_cardinal(k))
+    |> nth_kday(n, k)
     |> date_from_iso_days(calendar)
   end
 
   def nth_kday(iso_days, n, k) when is_integer(iso_days) and n > 0 do
-    weeks(n) + kday_before(iso_days, k)
+    weeks_to_days(n) + kday_before(iso_days, k)
   end
 
   def nth_kday(iso_days, n, k) when is_integer(iso_days) do
-    weeks(n) + kday_after(iso_days, k)
+    weeks_to_days(n) + kday_after(iso_days, k)
   end
 
   @doc """
@@ -269,8 +259,7 @@ defmodule Cldr.Calendar.Kday do
 
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or ISO days
 
-  * `k` is an integer or atom representation of the day of the week.
-    See `Cldr.Calendar.Kday.day_cardinal/1`
+  * `k` is an integer day of the week.
 
   ## Returns
 
@@ -279,20 +268,20 @@ defmodule Cldr.Calendar.Kday do
   ## Examples
 
       # US election day
-      iex> Cldr.Calendar.Kday.first_kday(~D[2017-11-02], :tuesday)
+      iex> Cldr.Calendar.Kday.first_kday(~D[2017-11-02], 2)
       ~D[2017-11-07]
 
       # US Daylight savings end
-      iex> Cldr.Calendar.Kday.first_kday(~D[2017-11-01], :sunday)
+      iex> Cldr.Calendar.Kday.first_kday(~D[2017-11-01], 7)
       ~D[2017-11-05]
 
   """
-  @spec first_kday(C.date_or_time, C.day_of_the_week) :: Date.t
+  @spec first_kday(C.date_or_time(), C.day_of_the_week()) :: Date.t()
   def first_kday(%{year: _, month: _, day: _, calendar: calendar} = date, k)
-      when is_atom(k) or k in 1..7 do
+      when k in 1..7 do
     date
     |> date_to_iso_days
-    |> first_kday(day_cardinal(k))
+    |> first_kday(k)
     |> date_from_iso_days(calendar)
   end
 
@@ -308,8 +297,7 @@ defmodule Cldr.Calendar.Kday do
 
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
-  * `k` is an integer or atom representation of the day of the week.
-    See `Cldr.Calendar.Kday.day_cardinal/1`
+  * `k` is an integer day of the week.
 
   ## Returns
 
@@ -318,21 +306,20 @@ defmodule Cldr.Calendar.Kday do
   ## Example
 
       # Memorial Day in the US
-      iex> Cldr.Calendar.Kday.last_kday(~D[2017-05-31], :monday)
+      iex> Cldr.Calendar.Kday.last_kday(~D[2017-05-31], 1)
       ~D[2017-05-29]
 
   """
-  @spec last_kday(C.date_or_time, C.day_of_the_week) :: Date.t
+  @spec last_kday(C.date_or_time(), C.day_of_the_week()) :: Date.t()
   def last_kday(%{year: _, month: _, day: _, calendar: calendar} = date, k)
-      when is_atom(k) or k in 1..7 do
+      when k in 1..7 do
     date
     |> date_to_iso_days
-    |> last_kday(day_cardinal(k))
+    |> last_kday(k)
     |> date_from_iso_days(calendar)
   end
 
   def last_kday(iso_days, k) do
     nth_kday(iso_days, -1, k)
   end
-
 end

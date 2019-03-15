@@ -1,17 +1,8 @@
 defmodule Cldr.Calendar.Week do
-  @behaviour Calendar
-  # @behaviour Cldr.Calendar
-
-  alias Cldr.Calendar.Options
   alias Cldr.Calendar.Gregorian
 
   @days_in_week 7
   @weeks_per_quarter 13
-
-  @iso_week_first_day 1
-  @iso_week_min_days 4
-
-  @calendar_options %Options{min_days: @iso_week_min_days, first_day: @iso_week_first_day}
 
   defmacro __using__(options \\ []) do
     quote bind_quoted: [options: options] do
@@ -20,8 +11,8 @@ defmodule Cldr.Calendar.Week do
     end
   end
 
-  def valid_date?(year, week, day) do
-    max_weeks = if leap_year?(year), do: 53, else: 52
+  def valid_date?(year, week, day, config) do
+    max_weeks = if leap_year?(year, config), do: 53, else: 52
     week <= max_weeks and day in 1..7
   end
 
@@ -29,12 +20,11 @@ defmodule Cldr.Calendar.Week do
     "#{year}-W#{lpad(week)}-#{day}"
   end
 
-  def days_in_month(_year, _month) do
-
+  def days_in_month(_year, _week, _config) do
   end
 
-  def leap_year?(year) do
-    Cldr.Calendar.Gregorian.long_year?(year, @calendar_options)
+  def leap_year?(year, config) do
+    Cldr.Calendar.Gregorian.long_year?(year, config)
   end
 
   # Quarters are 13 weeks but if there
@@ -49,34 +39,32 @@ defmodule Cldr.Calendar.Week do
   end
 
   def month_of_year(_year, _week, _day) do
-
   end
 
   def week_of_year(_year, week, _day) do
     week
   end
 
-  def day_of_year(year, week, day) do
-    first_day = first_day_of_year(year)
-    first_day + ((week - 1) * @days_in_week) + day
+  def day_of_year(year, week, day, config) do
+    first_day = first_day_of_year(year, config)
+    first_day + (week - 1) * @days_in_week + day
   end
 
-  def day_of_era(_year, _week, _day) do
-
+  def day_of_era(_year, _week, _day, _config) do
   end
 
-  def first_day_of_year(year) do
-    Cldr.Calendar.Gregorian.first_week_starts(year, @calendar_options)
+  def first_day_of_year(year, config) do
+    Cldr.Calendar.Gregorian.first_week_starts(year, config)
   end
 
-  def last_day_of_year(year) do
-    Cldr.Calendar.Gregorian.last_week_ends(year, @calendar_options)
+  def last_day_of_year(year, config) do
+    Cldr.Calendar.Gregorian.last_week_ends(year, config)
   end
 
-  def naive_datetime_from_iso_days({days, day_fraction}) do
+  def naive_datetime_from_iso_days({days, day_fraction}, config) do
     {year, month, day} = Calendar.ISO.date_from_iso_days(days)
     {year, week} = Gregorian.iso_week_of_year(year, month, day)
-    day = days - first_day_of_year(year) - week_to_days(week)
+    day = days - first_day_of_year(year, config) - week_to_days(week)
     {hour, minute, second, microsecond} = Calendar.ISO.time_from_day_fraction(day_fraction)
     {year, week, day, hour, minute, second, microsecond}
   end
@@ -85,13 +73,25 @@ defmodule Cldr.Calendar.Week do
     (week - 1) * @days_in_week
   end
 
-  def naive_datetime_to_iso_days(year, week, day, hour, minute, second, microsecond) do
-    days = first_day_of_year(year) + week_to_days(week) + day
+  def naive_datetime_to_iso_days(year, week, day, hour, minute, second, microsecond, config) do
+    days = first_day_of_year(year, config) + week_to_days(week) + day
     moment = Calendar.ISO.time_to_day_fraction(hour, minute, second, microsecond)
     {days, moment}
   end
 
-  def datetime_to_string(year, month, day, hour, minute, second, microsecond, time_zone, zone_abbr, utc_offset, std_offset) do
+  def datetime_to_string(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        microsecond,
+        time_zone,
+        zone_abbr,
+        utc_offset,
+        std_offset
+      ) do
     date_to_string(year, month, day) <>
       " " <>
       Calendar.ISO.time_to_string(hour, minute, second, microsecond) <>
@@ -99,19 +99,10 @@ defmodule Cldr.Calendar.Week do
       Gregorian.zone_to_string(utc_offset, std_offset, zone_abbr, time_zone)
   end
 
-  def day_of_week(_year, _week, day) do
-    first_day = @calendar_options.first_day
+  def day_of_week(_year, _week, day, config) do
+    first_day = config.first_day
     Cldr.Math.amod(first_day + day, 7)
   end
-
-  defdelegate day_rollover_relative_to_midnight_utc, to: Calendar.ISO
-  defdelegate months_in_year(year), to: Calendar.ISO
-  defdelegate naive_datetime_to_string(year, month, day, hour, minute, second, microsecond), to: Calendar. ISO
-  defdelegate time_from_day_fraction(day_fraction), to: Calendar.ISO
-  defdelegate time_to_day_fraction(hour, minute, second, microsecond), to: Calendar.ISO
-  defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO
-  defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
-  defdelegate year_of_era(year), to: Calendar.ISO
 
   defp lpad(week) when week < 10 do
     "0#{week}"
@@ -121,4 +112,3 @@ defmodule Cldr.Calendar.Week do
     week
   end
 end
-

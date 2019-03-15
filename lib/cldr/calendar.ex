@@ -1,99 +1,55 @@
 defmodule Cldr.Calendar do
-
-  @callback week_of_year(Calendar.year, Calendar.month, Keyword.t) :: {Calendar.year, Calendar.week}
-  @callback iso_week_of_year(Calendar.year, Calendar.month, Keyword.t) :: {Calendar.year, Calendar.week}
+  @callback week_of_year(Calendar.year(), Calendar.month(), Calendar.day(), Keyword.t()) ::
+              {Calendar.year(), Calendar.week()}
+  @callback iso_week_of_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+              {Calendar.year(), Calendar.week()}
 
   @type day_of_the_week :: 1..7
   @type day_names :: :monday | :tuesday | :wednesday | :thursday | :friday | :saturday | :sunday
   @type date_or_time :: Date.t() | NaiveDateTime.t() | IsoDay.t() | map()
 
-  @days_in_a_week 7
+  @days [1, 2, 3, 4, 5, 6, 7]
+  @days_in_a_week Enum.count(@days)
+  @the_world :"001"
 
-  @doc """
-  Returns the integer representation of a day of the week.
+  alias Cldr.LanguageTag
 
-  Both an atom representing the name of a day or a number between
-  1 and 7 is acceptable with 1 meaning :monday and 7 meaning :sunday.
-
-  ## Exmaples
-
-      iex(1)> Cldr.Calendar.day_cardinal :monday
-      1
-
-      iex(2)> Cldr.Calendar.day_cardinal :friday
-      5
-
-      iex(3)> Cldr.Calendar.day_cardinal 5
-      5
-
-  """
-  @spec day_cardinal(day_of_the_week | day_names) :: day_of_the_week
-  def day_cardinal(:monday), do: 1
-  def day_cardinal(:tuesday), do: 2
-  def day_cardinal(:wednesday), do: 3
-  def day_cardinal(:thursday), do: 4
-  def day_cardinal(:friday), do: 5
-  def day_cardinal(:saturday), do: 6
-  def day_cardinal(:sunday), do: 7
-  def day_cardinal(day_number) when day_number in 1..@days_in_a_week, do: day_number
-
-  @doc """
-  Returns the number of days in `n` weeks
-
-  ## Example
-
-      iex> Cldr.Calendar.weeks(2)
-      14
-
-  """
-  @spec weeks(integer) :: integer
-  def weeks(n) do
-    n * @days_in_a_week
+  @doc false
+  def cldr_backend_provider(config) do
+    Cldr.Calendar.Backend.Compiler.define_calendar_modules(config)
   end
 
-  def iso_week_of_year(date, backend, options \\ []) do
-    iso_week_of_year(date, options.first_day, options.min_day)
+  defdelegate day_of_week(date), to: Date
+  defdelegate quarter_of_year(date), to: Date
+  defdelegate days_in_month(date), to: Date
+  defdelegate day_of_era(date), to: Date
+  defdelegate day_of_year(date), to: Date
+  defdelegate months_in_year(date), to: Date
+
+  def iso_week_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
-    options = Keyword.merge(options, [backend: backend])
-    calendar.iso_week_of_year(year, month, day, options)
+    calendar.iso_week_of_year(year, month, day)
   end
 
-  def week_of_year(date, backend, options \\ []) do
+  def week_of_year(date, options \\ []) do
     %{year: year, month: month, day: day, calendar: calendar} = date
-    options = Keyword.merge(options, [backend: backend])
     calendar.week_of_year(year, month, day, options)
   end
 
-  def day_name(date, backend, options \\ []) do
+  def weekend?(date, options \\ []) do
+    locale = Keyword.get(options, :locale, Cldr.get_locale())
+    territory = Keyword.get(options, :territory, locale.territory)
+    day_of_week(date) in weekend(territory)
+  end
+
+  def weekday?(date, options \\ []) do
+    locale = Keyword.get(options, :locale, Cldr.get_locale())
+    territory = Keyword.get(options, :territory, locale.territory)
+    day_of_week(date) in weekdays(territory)
+  end
+
+  def date_to_iso_days(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
-    options = Keyword.merge(options, [backend: backend])
-    calendar.day_name(year, month, day, options)
-  end
-
-  def month_name(date, backend, options \\ []) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
-    options = Keyword.merge(options, [backend: backend])
-    calendar.month_name(year, month, day, options)
-  end
-
-  def quarter_name(date, backend, options \\ []) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
-    options = Keyword.merge(options, [backend: backend])
-    calendar.quarter_name(year, month, day, options)
-  end
-
-  def era_name(date, backend, options \\ []) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
-    options = Keyword.merge(options, [backend: backend])
-    calendar.era_name(year, month, day, options)
-  end
-
-  @doc false
-  def calendar_error(calendar_name) do
-    {Cldr.UnknownCalendarError, "The calendar #{inspect(calendar_name)} is not known."}
-  end
-
-  def date_to_iso_days(%{year: year, month: month, day: day, calendar: calendar}) do
     calendar.date_to_iso_days(year, month, day)
   end
 
@@ -107,16 +63,126 @@ defmodule Cldr.Calendar do
     Integer.mod(iso_days + 5, 7) + 1
   end
 
-  @doc false
-  @week_info Cldr.Config.week_info
-  def week_data do
-    @week_info
+  def weekend_starts(%LanguageTag{territory: territory}) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      weekend_starts(territory)
+    end
+  end
+
+  def weekend_ends(%LanguageTag{territory: territory}) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      weekend_ends(territory)
+    end
+  end
+
+  def first_day(%LanguageTag{territory: territory}) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      first_day(territory)
+    end
+  end
+
+  def min_days(%LanguageTag{territory: territory}) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      min_days(territory)
+    end
+  end
+
+  @week_info Cldr.Config.week_info()
+
+  for territory <- Cldr.known_territories() do
+    starts =
+      get_in(@week_info, [:weekend_start, territory]) ||
+        get_in(@week_info, [:weekend_start, @the_world])
+
+    ends =
+      get_in(@week_info, [:weekend_end, territory]) ||
+        get_in(@week_info, [:weekend_end, @the_world])
+
+    first_day =
+      get_in(@week_info, [:first_day, territory]) ||
+        get_in(@week_info, [:first_day, @the_world])
+
+    min_days =
+      get_in(@week_info, [:min_days, territory]) ||
+        get_in(@week_info, [:min_days, @the_world])
+
+    def weekend_starts(unquote(territory)) do
+      unquote(starts)
+    end
+
+    def weekend_ends(unquote(territory)) do
+      unquote(ends)
+    end
+
+    def first_day(unquote(territory)) do
+      unquote(first_day)
+    end
+
+    def min_days(unquote(territory)) do
+      unquote(min_days)
+    end
+
+    def weekend(unquote(territory)) do
+      unquote(Enum.to_list(starts..ends))
+    end
+
+    def weekdays(unquote(territory)) do
+      unquote(@days -- Enum.to_list(starts..ends))
+    end
+  end
+
+  def weekend_starts(territory) when is_binary(territory) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      weekend_starts(territory)
+    end
+  end
+
+  def weekend_ends(territory) when is_binary(territory) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      weekend_ends(territory)
+    end
+  end
+
+  def first_day(territory) when is_binary(territory) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      first_day(territory)
+    end
+  end
+
+  def min_days(territory) when is_binary(territory) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      min_days(territory)
+    end
+  end
+
+  def weekend(territory) when is_binary(territory) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      weekend(territory)
+    end
+  end
+
+  def weekdays(territory) when is_binary(territory) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      weekdays(territory)
+    end
+  end
+
+  @doc """
+  Returns the number of days in `n` weeks
+
+  ## Example
+
+      iex> Cldr.Calendar.weeks_to_days(2)
+      14
+
+  """
+  @spec weeks_to_days(integer) :: integer
+  def weeks_to_days(n) do
+    n * @days_in_a_week
   end
 
   @doc false
-  @calendar_info Cldr.Config.calendar_info
-  def calendar_data do
-    @calendar_info
+  def calendar_error(calendar_name) do
+    {Cldr.UnknownCalendarError, "The calendar #{inspect(calendar_name)} is not known."}
   end
-
 end
