@@ -31,11 +31,11 @@ defmodule Cldr.Calendar.MixProject do
 
   defp description do
     """
-    Common Locale Data Repository (CLDR) calendar functions
+    Calendars and calendar functions and a set
+    of localised month-based and week-based calendars.
     """
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger]
@@ -61,11 +61,9 @@ defmodule Cldr.Calendar.MixProject do
 
   defp deps do
     [
-      # {:ex_cldr, "~> 2.4"},
-      {:ex_cldr, path: "../cldr", override: true},
+      {:ex_cldr, "~> 2.4"},
       {:jason, "~> 1.0"},
-      {:ex_cldr_print, "~> 0.1", runtime: false, only: :dev},
-      {:benchee, "~> 0.14", only: [:dev, :test]}
+      {:benchee, "~> 0.14", optional: true, only: [:dev, :test]}
     ]
   end
 

@@ -24,12 +24,12 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.valid_date?(year, week, day, @calendar_config)
       end
 
-      def day_of_era(year, week, day) do
-        Week.day_of_era(year, week, day, @calendar_config)
+      def quarter_of_year(year, week, day) do
+        Week.quarter_of_year(year, week, day, @calendar_config)
       end
 
-      def day_of_year(year, week, day) do
-        Week.day_of_year(year, week, day, @calendar_config)
+      def month_of_year(year, week, day) do
+        Week.month_of_year(year, week, day, @calendar_config)
       end
 
       def week_of_year(year, week, day) do
@@ -40,12 +40,12 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.iso_week_of_year(year, week, day, @calendar_config)
       end
 
-      def month_of_year(year, week, day) do
-        Week.month_of_year(year, week, day, @calendar_config)
+      def day_of_era(year, week, day) do
+        Week.day_of_era(year, week, day, @calendar_config)
       end
 
-      def quarter_of_year(year, week, day) do
-        Week.quarter_of_year(year, week, day, @calendar_config)
+      def day_of_year(year, week, day) do
+        Week.day_of_year(year, week, day, @calendar_config)
       end
 
       def day_of_week(year, week, day) do
