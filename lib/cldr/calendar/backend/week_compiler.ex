@@ -1,18 +1,12 @@
-defmodule Cldr.Calendar.Backend.Compiler do
+defmodule Cldr.Calendar.Compiler.Week do
   @moduledoc false
-
-  def define_calendar_modules(config) do
-    quote location: :keep do
-      unquote(Cldr.Calendar.Backend.define_calendar_module(config))
-    end
-  end
 
   defmacro __before_compile__(env) do
     config =
       Module.get_attribute(env.module, :options)
       |> Keyword.put(:calendar, env.module)
       |> validate_config
-      |> Cldr.Calendar.Gregorian.extract_options()
+      |> Cldr.Calendar.extract_options()
 
     Module.put_attribute(env.module, :calendar_config, config)
 
@@ -20,40 +14,68 @@ defmodule Cldr.Calendar.Backend.Compiler do
       @behaviour Calendar
       @behaviour Cldr.Calendar
 
+      alias Cldr.Calendar.Base.Week
+
       def __config__ do
         @calendar_config
       end
 
       def valid_date?(year, week, day) do
-        Cldr.Calendar.Week.valid_date?(year, week, day, @calendar_config)
+        Week.valid_date?(year, week, day, @calendar_config)
       end
 
       def day_of_era(year, week, day) do
-        Cldr.Calendar.Week.day_of_era(year, week, day, @calendar_config)
+        Week.day_of_era(year, week, day, @calendar_config)
       end
 
       def day_of_year(year, week, day) do
-        Cldr.Calendar.Week.day_of_year(year, week, day, @calendar_config)
+        Week.day_of_year(year, week, day, @calendar_config)
+      end
+
+      def week_of_year(year, week, day) do
+        Week.week_of_year(year, week, day, @calendar_config)
+      end
+
+      def iso_week_of_year(year, week, day) do
+        Week.iso_week_of_year(year, week, day, @calendar_config)
       end
 
       def month_of_year(year, week, day) do
-        Cldr.Calendar.Week.month_of_year(year, week, day, @calendar_config)
+        Week.month_of_year(year, week, day, @calendar_config)
+      end
+
+      def quarter_of_year(year, week, day) do
+        Week.quarter_of_year(year, week, day, @calendar_config)
       end
 
       def day_of_week(year, week, day) do
-        Cldr.Calendar.Week.day_of_week(year, week, day, @calendar_config)
+        Week.day_of_week(year, week, day, @calendar_config)
       end
 
       def days_in_month(year, month) do
-        Cldr.Calendar.Week.days_in_month(year, month, @calendar_config)
+        Week.days_in_month(year, month, @calendar_config)
       end
 
       def leap_year?(year) do
-        Cldr.Calendar.Week.leap_year?(year, @calendar_config)
+        Week.leap_year?(year, @calendar_config)
+      end
+
+      def first_day_of_year(year) do
+        Week.first_day_of_year(year, @calendar_config)
+      end
+
+      def last_day_of_year(year) do
+        Week.last_day_of_year(year, @calendar_config)
+      end
+
+      defimpl String.Chars do
+        def to_string(%{calendar: calendar, year: year, month: month, day: day}) do
+          calendar.date_to_string(year, month, day)
+        end
       end
 
       def naive_datetime_to_iso_days(year, week, day, hour, minute, second, microsecond) do
-        Cldr.Calendar.Week.naive_datetime_to_iso_days(
+        Week.naive_datetime_to_iso_days(
           year,
           week,
           day,
@@ -66,10 +88,10 @@ defmodule Cldr.Calendar.Backend.Compiler do
       end
 
       def naive_datetime_from_iso_days({days, day_fraction}) do
-        Cldr.Calendar.Week.naive_datetime_from_iso_days({days, day_fraction}, @calendar_config)
+        Week.naive_datetime_from_iso_days({days, day_fraction}, @calendar_config)
       end
 
-      defdelegate date_to_string(year, week, day), to: Cldr.Calendar.Week
+      defdelegate date_to_string(year, week, day), to: Week
 
       defdelegate datetime_to_string(
                     year,
@@ -84,10 +106,7 @@ defmodule Cldr.Calendar.Backend.Compiler do
                     utc_offset,
                     std_offset
                   ),
-                  to: Cldr.Calendar.Week
-
-      defdelegate quarter_of_year(year, week, day), to: Cldr.Calendar.Week
-      defdelegate week_of_year(year, week, day), to: Cldr.Calendar.Week
+                  to: Week
 
       defdelegate day_rollover_relative_to_midnight_utc, to: Calendar.ISO
       defdelegate months_in_year(year), to: Calendar.ISO

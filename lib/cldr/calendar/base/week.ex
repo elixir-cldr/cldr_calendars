@@ -1,5 +1,5 @@
-defmodule Cldr.Calendar.Week do
-  alias Cldr.Calendar.Gregorian
+defmodule Cldr.Calendar.Base.Week do
+  alias Cldr.Calendar.Base.Month
 
   @days_in_week 7
   @weeks_per_quarter 13
@@ -7,7 +7,7 @@ defmodule Cldr.Calendar.Week do
   defmacro __using__(options \\ []) do
     quote bind_quoted: [options: options] do
       @options options
-      @before_compile Cldr.Calendar.Backend.Compiler
+      @before_compile Cldr.Calendar.Compiler.Week
     end
   end
 
@@ -25,17 +25,17 @@ defmodule Cldr.Calendar.Week do
   end
 
   def leap_year?(year, config) do
-    Cldr.Calendar.Gregorian.long_year?(year, config)
+    Cldr.Calendar.Week.long_year?(year, config)
   end
 
   # Quarters are 13 weeks but if there
   # are 53 weeks in a year then 4th
   # quarter is longer
-  def quarter_of_year(_year, 53, _day) do
+  def quarter_of_year(_year, 53, _day, _config) do
     4
   end
 
-  def quarter_of_year(_year, week, _day) do
+  def quarter_of_year(_year, week, _day, _config) do
     div(week - 1, @weeks_per_quarter) + 1
   end
 
@@ -43,13 +43,18 @@ defmodule Cldr.Calendar.Week do
 
   end
 
-  def week_of_year(_year, week, _day) do
+  def week_of_year(_year, week, _day, _config) do
     week
   end
 
+  def iso_week_of_year(year, week, day, config) do
+    {:ok, date} = Date.new(year, week, day, config.calendar)
+    {:ok, %{year: year, month: month, day: day}} = Date.convert(date, Month)
+    Month.iso_week_of_year(year, month, day)
+  end
+
   def day_of_year(year, week, day, config) do
-    first_day = first_day_of_year(year, config)
-    first_day + (week - 1) * @days_in_week + day
+    first_day_of_year(year, config) + week_to_days(week) + day
   end
 
   defp week_to_days(week) do
@@ -61,16 +66,16 @@ defmodule Cldr.Calendar.Week do
   end
 
   def first_day_of_year(year, config) do
-    Cldr.Calendar.Gregorian.first_week_starts(year, config)
+    Month.first_week_starts(year, config)
   end
 
   def last_day_of_year(year, config) do
-    Cldr.Calendar.Gregorian.last_week_ends(year, config)
+    Month.last_week_ends(year, config)
   end
 
   def naive_datetime_from_iso_days({days, day_fraction}, config) do
     {year, month, day} = Calendar.ISO.date_from_iso_days(days)
-    {year, week} = Gregorian.iso_week_of_year(year, month, day)
+    {year, week} = Month.iso_week_of_year(year, month, day)
     day = days - first_day_of_year(year, config) - week_to_days(week)
     {hour, minute, second, microsecond} = Calendar.ISO.time_from_day_fraction(day_fraction)
     {year, week, day, hour, minute, second, microsecond}
@@ -98,8 +103,8 @@ defmodule Cldr.Calendar.Week do
     date_to_string(year, month, day) <>
       " " <>
       Calendar.ISO.time_to_string(hour, minute, second, microsecond) <>
-      Gregorian.offset_to_string(utc_offset, std_offset, time_zone) <>
-      Gregorian.zone_to_string(utc_offset, std_offset, zone_abbr, time_zone)
+      Cldr.Calendar.offset_to_string(utc_offset, std_offset, time_zone) <>
+      Cldr.Calendar.zone_to_string(utc_offset, std_offset, zone_abbr, time_zone)
   end
 
   def day_of_week(_year, _week, day, config) do

@@ -3,8 +3,8 @@ if Code.ensure_loaded?(Cldr.Print) do
     def print do
       format = "%10s %10s %10s %10s %10s\n"
       iso = %{min_days: 4, first_day: 1}
-      en = Cldr.Calendar.Gregorian.extract_options(locale: "en", backend: MyApp.Cldr)
-      en_001 = Cldr.Calendar.Gregorian.extract_options(locale: "en-001", backend: MyApp.Cldr)
+      en = Cldr.Calendar.extract_options(locale: "en", backend: MyApp.Cldr)
+      en_001 = Cldr.Calendar.extract_options(locale: "en-001", backend: MyApp.Cldr)
 
       erl = "erl [#{inspect(iso.first_day)},#{inspect(iso.min_days)}]"
       iso = "iso [#{inspect(iso.first_day)},#{inspect(iso.min_days)}]"

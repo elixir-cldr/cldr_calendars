@@ -1,27 +1,29 @@
 defmodule Cldr.Calendar do
-  @callback week_of_year(Calendar.year(), Calendar.month(), Calendar.day(), Keyword.t()) ::
+  @type week :: pos_integer()
+  @type day_of_the_week :: 1..7
+  @type day_names :: :monday | :tuesday | :wednesday | :thursday | :friday | :saturday | :sunday
+  @type date_or_time :: Date.t() | NaiveDateTime.t() | IsoDay.t() | map()
+
+  @callback week_of_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
               {Calendar.year(), Calendar.week()}
 
   @callback iso_week_of_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
               {Calendar.year(), Calendar.week()}
 
   @callback first_day_of_year(Calendar.year) :: Date.t()
-  @callback lasy_day_of_year(Calendar.year) :: Date.t()
+  @callback last_day_of_year(Calendar.year) :: Date.t()
 
-  @callback year(Calendar.year()) :: Date.Range.t()
-  @callback quarter(Calendar.year(), Calendar.quarter()) :: Date.Range.t()
-  @callback month(Calendar.year(), Calendar.month()) :: Date.Range.t()
-  @callback week(Calendar.year(), Calendar.week()) :: Date.Range.t()
-
-  @type day_of_the_week :: 1..7
-  @type day_names :: :monday | :tuesday | :wednesday | :thursday | :friday | :saturday | :sunday
-  @type date_or_time :: Date.t() | NaiveDateTime.t() | IsoDay.t() | map()
+  # @callback year(Calendar.year()) :: Date.Range.t()
+  # @callback quarter(Calendar.year(), Calendar.quarter()) :: Date.Range.t()
+  # @callback month(Calendar.year(), Calendar.month()) :: Date.Range.t()
+  # @callback week(Calendar.year(), Calendar.week()) :: Date.Range.t()
 
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
   @the_world :"001"
 
   alias Cldr.LanguageTag
+  alias Cldr.Calendar.Config
 
   @doc false
   def cldr_backend_provider(config) do
@@ -35,14 +37,30 @@ defmodule Cldr.Calendar do
   defdelegate day_of_year(date), to: Date
   defdelegate months_in_year(date), to: Date
 
+  def first_day_of_year(date) do
+    %{year: year, calendar: calendar} = date
+
+    year
+    |> calendar.first_day_of_year
+    |> date_from_iso_days(calendar)
+  end
+
+  def last_day_of_year(date) do
+    %{year: year, calendar: calendar} = date
+
+    year
+    |> calendar.last_day_of_year
+    |> date_from_iso_days(calendar)
+  end
+
   def iso_week_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.iso_week_of_year(year, month, day)
   end
 
-  def week_of_year(date, options \\ []) do
+  def week_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
-    calendar.week_of_year(year, month, day, options)
+    calendar.week_of_year(year, month, day)
   end
 
   def weekend?(date, options \\ []) do
@@ -201,5 +219,60 @@ defmodule Cldr.Calendar do
   @doc false
   def calendar_error(calendar_name) do
     {Cldr.UnknownCalendarError, "The calendar #{inspect(calendar_name)} is not known."}
+  end
+
+  @doc false
+  def extract_options(options) do
+    backend = Keyword.get(options, :backend)
+    locale = Keyword.get(options, :locale, Cldr.get_locale())
+    calendar = Keyword.get(options, :calendar)
+    {min_days, first_day} = get_min_and_first_days(locale, options)
+
+    %Config{
+      min_days: min_days,
+      first_day: first_day,
+      backend: backend,
+      calendar: calendar
+    }
+  end
+
+  defp get_min_and_first_days(locale, options) do
+    min_days = Keyword.get(options, :min_days, Cldr.Calendar.min_days(locale))
+    first_day = Keyword.get(options, :first_day, Cldr.Calendar.first_day(locale))
+    {min_days, first_day}
+  end
+
+  def offset_to_string(utc, std, zone, format \\ :extended)
+  def offset_to_string(0, 0, "Etc/UTC", _format), do: "Z"
+
+  def offset_to_string(utc, std, _zone, format) do
+    total = utc + std
+    second = abs(total)
+    minute = second |> rem(3600) |> div(60)
+    hour = div(second, 3600)
+    format_offset(total, hour, minute, format)
+  end
+
+  def format_offset(total, hour, minute, :extended) do
+    sign(total) <> zero_pad(hour, 2) <> ":" <> zero_pad(minute, 2)
+  end
+
+  def format_offset(total, hour, minute, :basic) do
+    sign(total) <> zero_pad(hour, 2) <> zero_pad(minute, 2)
+  end
+
+  def zone_to_string(0, 0, _abbr, "Etc/UTC"), do: ""
+  def zone_to_string(_, _, abbr, zone), do: " " <> abbr <> " " <> zone
+
+  def sign(total) when total < 0, do: "-"
+  def sign(_), do: "+"
+
+  def zero_pad(val, count) when val >= 0 do
+    num = Integer.to_string(val)
+    :binary.copy("0", max(count - byte_size(num), 0)) <> num
+  end
+
+  def zero_pad(val, count) do
+    "-" <> zero_pad(-val, count)
   end
 end
