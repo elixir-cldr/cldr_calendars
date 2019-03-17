@@ -33,8 +33,15 @@ defmodule Cldr.Calendar.Base.Month do
     end
   end
 
-  def valid_date?(year, month, day, config) do
+  def valid_date?(year, month, day, %Config{first_month: 1}) do
+    Calendar.ISO.valid_date?(year, month, day)
+  end
 
+  # Month here is an offset from first month,
+  # not the literal month
+  def valid_date?(year, month, day, %Config{first_month: first_month}) do
+    iso_month = Math.amod(first_month + month, ISO.months_in_year(year))
+    Calendar.ISO.valid_date?(year, iso_month, day)
   end
 
   def quarter_of_year(year, month, day, config) do
@@ -121,12 +128,42 @@ defmodule Cldr.Calendar.Base.Month do
     days_in_year == 366
   end
 
-  def naive_datetime_from_iso_days(iso_days, config) do
+  def naive_datetime_from_iso_days(iso_days, %Config{first_month: 1}) do
+    ISO.naive_datetime_from_iso_days(iso_days)
+  end
 
+  def naive_datetime_from_iso_days({days, day_fraction}, %Config{first_month: first_month}) do
+    {year, month, day} = Calendar.ISO.date_from_iso_days(days)
+
+    month =
+      Math.amod(month - first_month + 1, ISO.months_in_year(year))
+
+    year =
+      if first_month > month do
+        year - 1
+      else
+        year
+      end
+
+    {hour, minute, second, microsecond} = Calendar.ISO.time_from_day_fraction(day_fraction)
+    {year, month, day, hour, minute, second, microsecond}
   end
 
   def naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond, config) do
+    %Config{first_month: first_month} = config
+    IO.puts "First month: #{first_month}"
+    IO.puts "Month: #{month}"
+    month =
+      Math.amod(month + first_month - 1, ISO.months_in_year(year))
+    IO.puts "New month: #{month}"
+    year =
+      if first_month > month do
+        year + 1
+      else
+        year
+      end
 
+    ISO.naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond)
   end
 
 end

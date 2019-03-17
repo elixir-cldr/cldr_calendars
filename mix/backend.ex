@@ -10,3 +10,4 @@ end
 defmodule NoDocs.Cldr do
   use Cldr, generate_docs: false, providers: [Cldr.Calendar]
 end
+

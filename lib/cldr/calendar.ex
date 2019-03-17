@@ -30,27 +30,24 @@ defmodule Cldr.Calendar do
     Cldr.Calendar.Backend.Compiler.define_calendar_modules(config)
   end
 
-  defdelegate day_of_week(date), to: Date
-  defdelegate quarter_of_year(date), to: Date
-  defdelegate days_in_month(date), to: Date
-  defdelegate day_of_era(date), to: Date
-  defdelegate day_of_year(date), to: Date
-  defdelegate months_in_year(date), to: Date
-
-  def first_day_of_year(date) do
-    %{year: year, calendar: calendar} = date
-
+  def first_day_of_year(year, calendar) do
     year
     |> calendar.first_day_of_year
     |> date_from_iso_days(calendar)
   end
 
-  def last_day_of_year(date) do
-    %{year: year, calendar: calendar} = date
+  def first_day_of_year(%{year: year, calendar: calendar}) do
+    first_day_of_year(year, calendar)
+  end
 
+  def last_day_of_year(year, calendar) do
     year
     |> calendar.last_day_of_year
     |> date_from_iso_days(calendar)
+  end
+
+  def last_day_of_year(%{year: year, calendar: calendar}) do
+    calendar.last_day_of_year(year)
   end
 
   def iso_week_of_year(date) do
@@ -226,11 +223,13 @@ defmodule Cldr.Calendar do
     backend = Keyword.get(options, :backend)
     locale = Keyword.get(options, :locale, Cldr.get_locale())
     calendar = Keyword.get(options, :calendar)
+    first_month = Keyword.get(options, :first_month, 1)
     {min_days, first_day} = get_min_and_first_days(locale, options)
 
     %Config{
       min_days: min_days,
       first_day: first_day,
+      first_month: first_month,
       backend: backend,
       calendar: calendar
     }
@@ -275,4 +274,11 @@ defmodule Cldr.Calendar do
   def zero_pad(val, count) do
     "-" <> zero_pad(-val, count)
   end
+
+  defdelegate day_of_week(date), to: Date
+  defdelegate quarter_of_year(date), to: Date
+  defdelegate days_in_month(date), to: Date
+  defdelegate day_of_era(date), to: Date
+  defdelegate day_of_year(date), to: Date
+  defdelegate months_in_year(date), to: Date
 end
