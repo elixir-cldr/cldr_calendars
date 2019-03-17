@@ -57,7 +57,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       end
 
       def leap_year?(year) do
-        Week.leap_year?(year, @calendar_config)
+        Week.long_year?(year, @calendar_config)
       end
 
       def first_day_of_year(year) do
