@@ -223,21 +223,25 @@ defmodule Cldr.Calendar do
     backend = Keyword.get(options, :backend)
     locale = Keyword.get(options, :locale, Cldr.get_locale())
     calendar = Keyword.get(options, :calendar)
-    first_month = Keyword.get(options, :first_month, 1)
-    {min_days, first_day} = get_min_and_first_days(locale, options)
+    anchor = Keyword.get(options, :anchor, :first)
+    weeks_in_month = Keyword.get(options, :weeks_in_month, {4,5,4})
+    month = Keyword.get(options, :month, 1)
+    {min_days, day} = min_and_first_days(locale, options)
 
     %Config{
       min_days: min_days,
-      first_day: first_day,
-      first_month: first_month,
+      day: day,
+      month: month,
       backend: backend,
-      calendar: calendar
+      calendar: calendar,
+      anchor: anchor,
+      weeks_in_month: weeks_in_month
     }
   end
 
-  defp get_min_and_first_days(locale, options) do
-    min_days = Keyword.get(options, :min_days, Cldr.Calendar.min_days(locale))
-    first_day = Keyword.get(options, :first_day, Cldr.Calendar.first_day(locale))
+  defp min_and_first_days(locale, options) do
+    min_days = Keyword.get(options, :min_days, min_days(locale))
+    first_day = Keyword.get(options, :day, first_day(locale))
     {min_days, first_day}
   end
 

@@ -16,13 +16,13 @@ defmodule Cldr.Calendar.Config do
 
             # Calendar begins on the
             # :first, :last or :nearest
-            begins: :first,
+            anchor: :first,
 
             # Year begins on this day
-            first_day: 1,
+            day: 1,
 
             # Year begins in this month
-            first_month: 1,
+            month: 1,
 
             # First week has at least
             # this many days in current

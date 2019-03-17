@@ -101,8 +101,8 @@ defmodule Cldr.Calendar.Base.Week do
   gregorian year in which the year ends.
 
   """
-  def first_day_of_year(year, %Config{begins: :first} = config) do
-    %{first_month: first_month, first_day: first_day, min_days: min_days} = config
+  def first_day_of_year(year, %Config{anchor: :first} = config) do
+    %{month: first_month, day: first_day, min_days: min_days} = config
     iso_days = ISO.date_to_iso_days(year, first_month, min_days)
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)
 
@@ -113,8 +113,8 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  def last_week_starts(year, %Config{begins: :first} = config) do
-    %{first_month: first_month, first_day: first_day, min_days: min_days} = config
+  def last_week_starts(year, %Config{anchor: :first} = config) do
+    %{month: first_month, day: first_day, min_days: min_days} = config
     months_in_year = ISO.months_in_year(year)
     last_month_of_year = Cldr.Math.amod(first_month - 1, months_in_year)
     days_in_month = ISO.days_in_month(year, last_month_of_year)

@@ -76,6 +76,11 @@ defmodule Cldr.Calendar.Compiler.Month do
         Calendar.ISO.date_from_iso_days(iso_days)
       end
 
+      def date_to_iso_days(year, month, day) do
+        {days, _day_fraction} = naive_datetime_to_iso_days(year, month, day, 0, 0, 0, {0, 6})
+        days
+      end
+
       def naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond) do
         Month.naive_datetime_to_iso_days(
           year,

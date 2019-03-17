@@ -22,6 +22,7 @@ defmodule Cldr.Calendar.Base.Month do
   alias Cldr.Math
 
   @days_in_week 7
+  @quarters_in_year 4
   @iso_week_first_day 1
   @iso_week_min_days 4
   @january 1
@@ -33,45 +34,21 @@ defmodule Cldr.Calendar.Base.Month do
     end
   end
 
-  def valid_date?(year, month, day, %Config{first_month: 1}) do
+  def valid_date?(year, month, day, %Config{month: 1}) do
     Calendar.ISO.valid_date?(year, month, day)
   end
 
-  # Month here is an offset from first month,
-  # not the literal month
-  def valid_date?(year, month, day, %Config{first_month: first_month}) do
-    iso_month = Math.amod(first_month + month, ISO.months_in_year(year))
-    Calendar.ISO.valid_date?(year, iso_month, day)
+  def valid_date?(year, month, day, config) do
+    {year, month, day} = date_to_iso_date(year, month, day, config)
+    Calendar.ISO.valid_date?(year, month, day)
   end
 
-  def quarter_of_year(year, month, day, config) do
-
+  def quarter_of_year(_year, month, _day, _config) do
+    div(month - 1, @quarters_in_year) + 1
   end
 
-  def month_of_year(year, month, day, config) do
-
-  end
-
-  def day_of_era(_year, _week, _day, _config) do
-
-  end
-
-  def day_of_week(year, month, day, config) do
-
-  end
-
-  def day_of_year(year, month, day, config) do
-
-  end
-
-  def days_in_year(year, config) do
-    if leap_year?(year, config), do: 366, else: 365
-  end
-
-  # Incorrect - month is an offset from the
-  # first month of year
-  def days_in_month(year, month, config) do
-    ISO.days_in_month(year, month)
+  def month_of_year(_year, month, _day, _config) do
+    month
   end
 
   def week_of_year(year, month, day, %Config{} = config) do
@@ -94,7 +71,29 @@ defmodule Cldr.Calendar.Base.Month do
 
   def iso_week_of_year(year, month, day) do
     week_of_year(year, month, day,
-      %Config{first_day: @iso_week_first_day, min_days: @iso_week_min_days, first_month: @january})
+      %Config{day: @iso_week_first_day, min_days: @iso_week_min_days, month: @january})
+  end
+
+  def day_of_era(_year, _week, _day, _config) do
+
+  end
+
+  def day_of_week(year, month, day, config) do
+    {year, month, day} = date_to_iso_date(year, month, day, config)
+    ISO.day_of_week(year, month, day)
+  end
+
+  def day_of_year(_year, _month, _day, _config) do
+
+  end
+
+  def days_in_year(year, config) do
+    if leap_year?(year, config), do: 366, else: 365
+  end
+
+  def days_in_month(year, month, config) do
+    {iso_year, iso_month, _day} = date_to_iso_date(year, month, 1, config)
+    ISO.days_in_month(iso_year, iso_month)
   end
 
   @doc """
@@ -105,21 +104,21 @@ defmodule Cldr.Calendar.Base.Month do
   gregorian year in which the year ends.
 
   """
-  def first_day_of_year(year, %Config{first_month: 1}) do
+  def first_day_of_year(year, %Config{month: 1}) do
     ISO.date_to_iso_days(year, 1, 1)
   end
 
-  def first_day_of_year(year, %Config{first_month: first_month, calendar: calendar}) do
+  def first_day_of_year(year, %Config{month: first_month}) do
     ISO.date_to_iso_days(year - 1, first_month, 1)
   end
 
-  def last_day_of_year(year, %Config{first_month: first_month, calendar: calendar}) do
+  def last_day_of_year(year, %Config{month: first_month}) do
     last_month = Math.amod(first_month - 1, ISO.months_in_year(year))
     last_day = ISO.days_in_month(year, last_month)
     ISO.date_to_iso_days(year, last_month, last_day)
   end
 
-  def leap_year?(year, %Config{first_month: 1}) do
+  def leap_year?(year, %Config{month: 1}) do
     ISO.leap_year?(year)
   end
 
@@ -128,42 +127,47 @@ defmodule Cldr.Calendar.Base.Month do
     days_in_year == 366
   end
 
-  def naive_datetime_from_iso_days(iso_days, %Config{first_month: 1}) do
+  def naive_datetime_from_iso_days(iso_days, %Config{month: 1}) do
     ISO.naive_datetime_from_iso_days(iso_days)
   end
 
-  def naive_datetime_from_iso_days({days, day_fraction}, %Config{first_month: first_month}) do
+  def naive_datetime_from_iso_days({days, day_fraction}, config) do
     {year, month, day} = Calendar.ISO.date_from_iso_days(days)
-
-    month =
-      Math.amod(month - first_month + 1, ISO.months_in_year(year))
-
-    year =
-      if first_month > month do
-        year - 1
-      else
-        year
-      end
-
+    {year, month, day} = date_from_iso_date(year, month, day, config)
     {hour, minute, second, microsecond} = Calendar.ISO.time_from_day_fraction(day_fraction)
     {year, month, day, hour, minute, second, microsecond}
   end
 
   def naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond, config) do
-    %Config{first_month: first_month} = config
-    IO.puts "First month: #{first_month}"
-    IO.puts "Month: #{month}"
-    month =
+    {year, month, day} = date_to_iso_date(year, month, day, config)
+    ISO.naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond)
+  end
+
+  def date_to_iso_date(year, month, day, %Config{month: first_month}) do
+    iso_month =
       Math.amod(month + first_month - 1, ISO.months_in_year(year))
-    IO.puts "New month: #{month}"
-    year =
-      if first_month > month do
-        year + 1
+
+    iso_year =
+      if month - first_month < 0 do
+        year - 1
       else
         year
       end
 
-    ISO.naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond)
+    {iso_year, iso_month, day}
   end
 
+  def date_from_iso_date(iso_year, iso_month, day, %Config{month: first_month}) do
+    month =
+      Math.amod(iso_month - first_month + 1, ISO.months_in_year(iso_year))
+
+    year =
+      if month - iso_month < 0 do
+        iso_year + 1
+      else
+        iso_year
+      end
+
+    {year, month, day}
+  end
 end
