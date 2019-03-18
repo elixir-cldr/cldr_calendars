@@ -1,9 +1,9 @@
 require Cldr.Calendar.Compiler.Week
 
-defmodule Cldr.Calendar.NRF do
+defmodule Cldr.Calendar.CSCO do
   use Cldr.Calendar.Base.Week,
-    min_days: 4,
+    min_days: 5,
     anchor: :last,
     day: 6,
-    month: 1
+    month: 7
 end

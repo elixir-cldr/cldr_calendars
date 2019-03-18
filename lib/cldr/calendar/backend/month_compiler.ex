@@ -68,19 +68,6 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.last_day_of_year(year, @calendar_config)
       end
 
-      def date_from_iso_days(iso_days) when is_integer(iso_days) do
-        Calendar.ISO.date_from_iso_days(iso_days)
-      end
-
-      def date_from_iso_days({iso_days, _}) when is_integer(iso_days) do
-        Calendar.ISO.date_from_iso_days(iso_days)
-      end
-
-      def date_to_iso_days(year, month, day) do
-        {days, _day_fraction} = naive_datetime_to_iso_days(year, month, day, 0, 0, 0, {0, 6})
-        days
-      end
-
       def naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond) do
         Month.naive_datetime_to_iso_days(
           year,

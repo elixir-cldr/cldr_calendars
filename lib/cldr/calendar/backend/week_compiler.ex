@@ -52,6 +52,10 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.day_of_week(year, week, day, @calendar_config)
       end
 
+      def weeks_in_year(year) do
+        Week.weeks_in_year(year, @calendar_config)
+      end
+
       def days_in_month(year, month) do
         Week.days_in_month(year, month, @calendar_config)
       end

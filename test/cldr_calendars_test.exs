@@ -28,8 +28,8 @@ defmodule Cldr.Calendar.Test do
         month <- 1..12,
         day <- 1..Cldr.Calendar.Gregorian.days_in_month(year, month) do
       {:ok, gregorian} = Date.new(year, month, day, Cldr.Calendar.Gregorian)
-      iso_days = Cldr.Calendar.date_to_iso_days(gregorian)
-      converted = Cldr.Calendar.date_from_iso_days(iso_days, Cldr.Calendar.Gregorian)
+      {:ok, iso} = Date.convert(gregorian, Calendar.ISO)
+      {:ok, converted} = Date.convert(iso, Cldr.Calendar.Gregorian)
       assert Date.compare(gregorian, converted) == :eq
     end
   end
@@ -39,8 +39,8 @@ defmodule Cldr.Calendar.Test do
         month <- 1..12,
         day <- 1..Cldr.Calendar.AU.days_in_month(year, month) do
       {:ok, au} = Date.new(year, month, day, Cldr.Calendar.AU)
-      iso_days = Cldr.Calendar.date_to_iso_days(au)
-      converted = Cldr.Calendar.date_from_iso_days(iso_days, Cldr.Calendar.AU)
+      {:ok, iso} = Date.convert(au, Calendar.ISO)
+      {:ok, converted} = Date.convert(iso, Cldr.Calendar.AU)
       assert Date.compare(au, converted) == :eq
     end
   end
