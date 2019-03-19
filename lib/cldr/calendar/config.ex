@@ -24,9 +24,14 @@ defmodule Cldr.Calendar.Config do
             # Year begins in this month
             month: 1,
 
+            # The year of the last_day or first_day
+            # is either the year with the :majority
+            # of months or the :beginning year
+            # or :ending year
+            year: :majority,
+
             # First week has at least
             # this many days in current
             # year
             min_days: 4
-
 end

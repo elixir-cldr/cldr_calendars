@@ -94,7 +94,8 @@ defmodule Cldr.Calendar.Backend do
             end
           end
 
-          def eras(unquote(locale_name), calendar), do: {:error, Calendar.calendar_error(calendar)}
+          def eras(unquote(locale_name), calendar),
+            do: {:error, Calendar.calendar_error(calendar)}
 
           def periods(unquote(locale_name), calendar),
             do: {:error, Calendar.calendar_error(calendar)}
@@ -105,7 +106,8 @@ defmodule Cldr.Calendar.Backend do
           def months(unquote(locale_name), calendar),
             do: {:error, Calendar.calendar_error(calendar)}
 
-          def days(unquote(locale_name), calendar), do: {:error, Calendar.calendar_error(calendar)}
+          def days(unquote(locale_name), calendar),
+            do: {:error, Calendar.calendar_error(calendar)}
         end
 
         def eras(locale, _calendar), do: {:error, Locale.locale_error(locale)}

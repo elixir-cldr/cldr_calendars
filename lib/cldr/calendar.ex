@@ -10,8 +10,8 @@ defmodule Cldr.Calendar do
   @callback iso_week_of_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
               {Calendar.year(), Calendar.week()}
 
-  @callback first_day_of_year(Calendar.year) :: Date.t()
-  @callback last_day_of_year(Calendar.year) :: Date.t()
+  @callback first_day_of_year(Calendar.year()) :: Date.t()
+  @callback last_day_of_year(Calendar.year()) :: Date.t()
 
   # @callback year(Calendar.year()) :: Date.Range.t()
   # @callback quarter(Calendar.year(), Calendar.quarter()) :: Date.Range.t()
@@ -91,7 +91,7 @@ defmodule Cldr.Calendar do
     iso_days_to_day_of_week(days, calendar)
   end
 
-  def iso_days_to_day_of_week(iso_days)  when is_integer(iso_days) do
+  def iso_days_to_day_of_week(iso_days) when is_integer(iso_days) do
     Integer.mod(iso_days + 5, 7) + 1
   end
 
@@ -175,7 +175,7 @@ defmodule Cldr.Calendar do
     end
   end
 
-  def first_day(territory)  do
+  def first_day(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       first_day(territory)
     end
@@ -197,6 +197,55 @@ defmodule Cldr.Calendar do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       weekdays(territory)
     end
+  end
+
+  # At least 6 months of the year are in the beginning year
+  def beginning_gregorian_year(year, %Config{anchor: :first, year: :majority, month: month})
+      when month > 6 do
+    year - 1
+  end
+
+  def beginning_gregorian_year(year, %Config{anchor: :first, year: :ending}) do
+    year - 1
+  end
+
+  def ending_gregorian_year(year, %Config{anchor: :first, year: :ending}) do
+    year
+  end
+
+  # The year is defined as the beginning year
+  def ending_gregorian_year(year, %Config{anchor: :first, year: :majority, month: month})
+      when month > 6 do
+    year
+  end
+
+  # The year is defined as the beginning year
+  def ending_gregorian_year(year, %Config{anchor: :last, year: :beginning}) do
+    year
+  end
+
+  # At least 6 months of the year are in the beginning year
+  def ending_gregorian_year(year, %Config{anchor: :last, year: :majority, month: month})
+      when month > 6 do
+    year
+  end
+
+  # At least 6 months are in the next gregorian year so thats
+  # the ending year
+  def ending_gregorian_year(year, %Config{anchor: :last, year: :majority}) do
+    year + 1
+  end
+
+  # If the ending month is 12 then the entire year is the same
+  # gregorian year
+  def ending_gregorian_year(year, %Config{anchor: :last, month: 12}) do
+    year
+  end
+
+  # The ending month extends into the next year. Therefore
+  # the ending year is next gregorian year
+  def ending_gregorian_year(year, %Config{anchor: :last, year: :ending}) do
+    year + 1
   end
 
   @doc """
@@ -224,7 +273,8 @@ defmodule Cldr.Calendar do
     locale = Keyword.get(options, :locale, Cldr.get_locale())
     calendar = Keyword.get(options, :calendar)
     anchor = Keyword.get(options, :anchor, :first)
-    weeks_in_month = Keyword.get(options, :weeks_in_month, {4,5,4})
+    weeks_in_month = Keyword.get(options, :weeks_in_month, {4, 5, 4})
+    year = Keyword.get(options, :year, :majority)
     month = Keyword.get(options, :month, 1)
     {min_days, day} = min_and_first_days(locale, options)
 
@@ -232,6 +282,7 @@ defmodule Cldr.Calendar do
       min_days: min_days,
       day: day,
       month: month,
+      year: year,
       backend: backend,
       calendar: calendar,
       anchor: anchor,

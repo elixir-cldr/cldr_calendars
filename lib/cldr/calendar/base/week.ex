@@ -33,8 +33,8 @@ defmodule Cldr.Calendar.Base.Week do
     div(week - 1, @weeks_in_quarter) + 1
   end
 
-  def month_of_year(_year, @weeks_in_long_year, _day, _config) do+
-    12
+  def month_of_year(_year, @weeks_in_long_year, _day, _config) do
+    +12
   end
 
   def month_of_year(year, week, day, config) do
@@ -47,8 +47,10 @@ defmodule Cldr.Calendar.Base.Week do
     cond do
       week_in_quarter <= m1 ->
         offset_month + 1
+
       week_in_quarter <= m2 ->
         offset_month + 2
+
       week_in_quarter <= m3 ->
         offset_month + 3
     end
@@ -65,7 +67,6 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def day_of_era(_year, _week, _day, _config) do
-
   end
 
   def day_of_year(year, week, day, config) do
@@ -89,6 +90,7 @@ defmodule Cldr.Calendar.Base.Week do
 
   def days_in_month(year, @months_in_year, config) do
     %Config{weeks_in_month: {_, _, weeks_in_month}} = config
+
     if long_year?(year, config) do
       (weeks_in_month + 1) * @days_in_week
     else
@@ -140,6 +142,7 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def last_day_of_year(year, %Config{anchor: :last} = config) do
+    year = Cldr.Calendar.ending_gregorian_year(year, config)
     %{month: last_month, day: last_day, min_days: min_days} = config
     days_in_last_month = ISO.days_in_month(year, last_month)
     iso_days = ISO.date_to_iso_days(year, last_month, days_in_last_month - min_days)
@@ -208,5 +211,4 @@ defmodule Cldr.Calendar.Base.Week do
   defp week_to_days(week) do
     (week - 1) * @days_in_week
   end
-
 end

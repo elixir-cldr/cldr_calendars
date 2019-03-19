@@ -7,5 +7,4 @@ defmodule Cldr.Calendar.Symmetery do
     day: 1,
     month: 1,
     weeks_in_month: {4, 5, 4}
-
 end

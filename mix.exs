@@ -54,7 +54,8 @@ defmodule Cldr.Calendar.MixProject do
         "README*",
         "CHANGELOG*",
         "FEATURE*",
-        "LICENSE*"
+        "LICENSE*",
+        "priv/fiscal_years_by_territory.csv"
       ]
     ]
   end
@@ -63,6 +64,7 @@ defmodule Cldr.Calendar.MixProject do
     [
       {:ex_cldr, "~> 2.4"},
       {:jason, "~> 1.0"},
+      {:nimble_csv, "~> 0.5", only: [:dev, :test]},
       {:benchee, "~> 0.14", optional: true, only: [:dev, :test]}
     ]
   end

@@ -70,12 +70,14 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def iso_week_of_year(year, month, day) do
-    week_of_year(year, month, day,
-      %Config{day: @iso_week_first_day, min_days: @iso_week_min_days, month: @january})
+    week_of_year(year, month, day, %Config{
+      day: @iso_week_first_day,
+      min_days: @iso_week_min_days,
+      month: @january
+    })
   end
 
   def day_of_era(_year, _week, _day, _config) do
-
   end
 
   def day_of_week(year, month, day, config) do
@@ -84,7 +86,6 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def day_of_year(_year, _month, _day, _config) do
-
   end
 
   def days_in_year(year, config) do
@@ -108,14 +109,16 @@ defmodule Cldr.Calendar.Base.Month do
     ISO.date_to_iso_days(year, 1, 1)
   end
 
-  def first_day_of_year(year, %Config{month: first_month}) do
-    ISO.date_to_iso_days(year - 1, first_month, 1)
+  def first_day_of_year(year, %Config{month: first_month} = config) do
+    beginning_year = Cldr.Calendar.beginning_gregorian_year(year, config)
+    ISO.date_to_iso_days(beginning_year, first_month, 1)
   end
 
-  def last_day_of_year(year, %Config{month: first_month}) do
-    last_month = Math.amod(first_month - 1, ISO.months_in_year(year))
-    last_day = ISO.days_in_month(year, last_month)
-    ISO.date_to_iso_days(year, last_month, last_day)
+  def last_day_of_year(year, %Config{month: first_month} = config) do
+    ending_year = Cldr.Calendar.ending_gregorian_year(year, config)
+    last_month = Math.amod(first_month - 1, ISO.months_in_year(ending_year))
+    last_day = ISO.days_in_month(ending_year, last_month)
+    ISO.date_to_iso_days(ending_year, last_month, last_day)
   end
 
   def leap_year?(year, %Config{month: 1}) do
@@ -144,8 +147,7 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def date_to_iso_date(year, month, day, %Config{month: first_month}) do
-    iso_month =
-      Math.amod(month + first_month - 1, ISO.months_in_year(year))
+    iso_month = Math.amod(month + first_month - 1, ISO.months_in_year(year))
 
     iso_year =
       if month - first_month < 0 do
@@ -158,8 +160,7 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def date_from_iso_date(iso_year, iso_month, day, %Config{month: first_month}) do
-    month =
-      Math.amod(iso_month - first_month + 1, ISO.months_in_year(iso_year))
+    month = Math.amod(iso_month - first_month + 1, ISO.months_in_year(iso_year))
 
     year =
       if month - iso_month < 0 do

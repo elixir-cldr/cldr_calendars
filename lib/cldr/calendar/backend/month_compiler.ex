@@ -108,7 +108,6 @@ defmodule Cldr.Calendar.Compiler.Month do
                   ),
                   to: Calendar.ISO
 
-
       defdelegate naive_datetime_to_string(year, month, day, hour, minute, second, microsecond),
         to: Calendar.ISO
 
@@ -119,7 +118,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO
       defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
       defdelegate year_of_era(year), to: Calendar.ISO
-
     end
   end
 
