@@ -1,7 +1,7 @@
 require Cldr.Calendar.Compiler.Month
 
-defmodule Cldr.Calendar.AU do
+defmodule Cldr.Calendar.US do
   use Cldr.Calendar.Base.Month,
-    month: 7,
-    backend: MyApp.Cldr
+    month: 10
+
 end
