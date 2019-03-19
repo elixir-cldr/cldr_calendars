@@ -31,7 +31,7 @@ defmodule Cldr.Calendar.FiscalYear do
   def calendar_for(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory),
          territory in known_fiscal_calendars() do
-      get_or_create_calendar(territory, Map.get(territory_fiscal_years(), territory))
+      get_or_create_calendar_for(territory, Map.get(territory_fiscal_years(), territory))
     end
   end
 
