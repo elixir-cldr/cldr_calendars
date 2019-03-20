@@ -21,19 +21,19 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       def valid_date?(year, month, day) do
-        Month.valid_date?(year, month, day, @calendar_config)
+        Month.valid_date?(year, month, day, __config__())
       end
 
       def quarter_of_year(year, month, day) do
-        Month.quarter_of_year(year, month, day, @calendar_config)
+        Month.quarter_of_year(year, month, day, __config__())
       end
 
       def month_of_year(year, month, day) do
-        Month.month_of_year(year, month, day, @calendar_config)
+        Month.month_of_year(year, month, day, __config__())
       end
 
       def week_of_year(year, month, day) do
-        Month.week_of_year(year, month, day, @calendar_config)
+        Month.week_of_year(year, month, day, __config__())
       end
 
       def iso_week_of_year(year, month, day) do
@@ -41,31 +41,47 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       def day_of_era(year, month, day) do
-        Month.day_of_era(year, month, day, @calendar_config)
+        Month.day_of_era(year, month, day, __config__())
       end
 
       def day_of_year(year, month, day) do
-        Month.day_of_year(year, month, day, @calendar_config)
+        Month.day_of_year(year, month, day, __config__())
       end
 
       def day_of_week(year, month, day) do
-        Month.day_of_week(year, month, day, @calendar_config)
+        Month.day_of_week(year, month, day, __config__())
       end
 
       def days_in_month(year, month) do
-        Month.days_in_month(year, month, @calendar_config)
+        Month.days_in_month(year, month, __config__())
+      end
+
+      def year(year) do
+        Month.year(year, __config__())
+      end
+
+      def quarter(year, quarter) do
+        Month.quarter(year, quarter, __config__())
+      end
+
+      def month(year, month) do
+        Month.month(year, month, __config__())
+      end
+
+      def week(year, week) do
+        Month.week(year, week, __config__())
       end
 
       def leap_year?(year) do
-        Month.leap_year?(year, @calendar_config)
+        Month.leap_year?(year, __config__())
       end
 
       def first_day_of_year(year) do
-        Month.first_day_of_year(year, @calendar_config)
+        Month.first_gregorian_day_of_year(year, __config__())
       end
 
       def last_day_of_year(year) do
-        Month.last_day_of_year(year, @calendar_config)
+        Month.last_gregorian_day_of_year(year, __config__())
       end
 
       def naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond) do
@@ -77,12 +93,12 @@ defmodule Cldr.Calendar.Compiler.Month do
           minute,
           second,
           microsecond,
-          @calendar_config
+          __config__()
         )
       end
 
       def naive_datetime_from_iso_days({days, day_fraction}) do
-        Month.naive_datetime_from_iso_days({days, day_fraction}, @calendar_config)
+        Month.naive_datetime_from_iso_days({days, day_fraction}, __config__())
       end
 
       defimpl String.Chars do

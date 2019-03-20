@@ -21,55 +21,71 @@ defmodule Cldr.Calendar.Compiler.Week do
       end
 
       def valid_date?(year, week, day) do
-        Week.valid_date?(year, week, day, @calendar_config)
+        Week.valid_date?(year, week, day, __config__())
       end
 
       def quarter_of_year(year, week, day) do
-        Week.quarter_of_year(year, week, day, @calendar_config)
+        Week.quarter_of_year(year, week, day, __config__())
       end
 
       def month_of_year(year, week, day) do
-        Week.month_of_year(year, week, day, @calendar_config)
+        Week.month_of_year(year, week, day, __config__())
       end
 
       def week_of_year(year, week, day) do
-        Week.week_of_year(year, week, day, @calendar_config)
+        Week.week_of_year(year, week, day, __config__())
       end
 
       def iso_week_of_year(year, week, day) do
-        Week.iso_week_of_year(year, week, day, @calendar_config)
+        Week.iso_week_of_year(year, week, day, __config__())
       end
 
       def day_of_era(year, week, day) do
-        Week.day_of_era(year, week, day, @calendar_config)
+        Week.day_of_era(year, week, day, __config__())
       end
 
       def day_of_year(year, week, day) do
-        Week.day_of_year(year, week, day, @calendar_config)
+        Week.day_of_year(year, week, day, __config__())
       end
 
       def day_of_week(year, week, day) do
-        Week.day_of_week(year, week, day, @calendar_config)
+        Week.day_of_week(year, week, day, __config__())
       end
 
       def weeks_in_year(year) do
-        Week.weeks_in_year(year, @calendar_config)
+        Week.weeks_in_year(year, __config__())
       end
 
       def days_in_month(year, month) do
-        Week.days_in_month(year, month, @calendar_config)
+        Week.days_in_month(year, month, __config__())
+      end
+
+      def year(year) do
+        Week.year(year, __config__())
+      end
+
+      def quarter(year, quarter) do
+        Week.quarter(year, quarter, __config__())
+      end
+
+      def month(year, month) do
+        Week.month(year, month, __config__())
+      end
+
+      def week(year, week) do
+        Week.week(year, week, __config__())
       end
 
       def leap_year?(year) do
-        Week.long_year?(year, @calendar_config)
+        Week.long_year?(year, __config__())
       end
 
       def first_day_of_year(year) do
-        Week.first_day_of_year(year, @calendar_config)
+        Week.first_gregorian_day_of_year(year, __config__())
       end
 
       def last_day_of_year(year) do
-        Week.last_day_of_year(year, @calendar_config)
+        Week.last_gregorian_day_of_year(year, __config__())
       end
 
       defimpl String.Chars do
@@ -87,12 +103,12 @@ defmodule Cldr.Calendar.Compiler.Week do
           minute,
           second,
           microsecond,
-          @calendar_config
+          __config__()
         )
       end
 
       def naive_datetime_from_iso_days({days, day_fraction}) do
-        Week.naive_datetime_from_iso_days({days, day_fraction}, @calendar_config)
+        Week.naive_datetime_from_iso_days({days, day_fraction}, __config__())
       end
 
       defdelegate date_to_string(year, week, day), to: Week

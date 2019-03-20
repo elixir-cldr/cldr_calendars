@@ -67,15 +67,20 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def day_of_era(_year, _week, _day, _config) do
+
   end
 
   def day_of_year(year, week, day, config) do
-    first_day_of_year(year, config) + week_to_days(week) + day
+    first_gregorian_day_of_year(year, config) + week_to_days(week) + day
   end
 
   def day_of_week(_year, _week, day, config) do
     first_day = config.first_day
     Math.amod(first_day + day, @days_in_week)
+  end
+
+  def months_in_year(year, _config) do
+    Calendar.ISO.months_in_year(year)
   end
 
   def weeks_in_year(year, config) do
@@ -98,11 +103,29 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
+  def year(year, config) do
+    first_day = first_gregorian_day_of_year(year, config)
+    last_day = last_gregorian_day_of_year(year, config)
+    Date.range(first_day, last_day)
+  end
+
+  def quarter(year, quarter, config) do
+
+  end
+
+  def month(year, month, config) do
+
+  end
+
+  def week(year, week, config) do
+
+  end
+
   @doc """
   Returns the `iso_days` that is the first
   day of the `year`.
   """
-  def first_day_of_year(year, %Config{anchor: :first} = config) do
+  def first_gregorian_day_of_year(year, %Config{anchor: :first} = config) do
     %{month: first_month, day: first_day, min_days: min_days} = config
     iso_days = ISO.date_to_iso_days(year, first_month, min_days)
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)
@@ -114,8 +137,8 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  def first_day_of_year(year, %Config{anchor: :last} = config) do
-    last_day_of_year(year - 1, config) + 1
+  def first_gregorian_day_of_year(year, %Config{anchor: :last} = config) do
+    last_gregorian_day_of_year(year - 1, config) + 1
   end
 
   def last_week_starts(year, %Config{anchor: :first} = config) do
@@ -134,14 +157,14 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def last_week_starts(year, %Config{anchor: :last} = config) do
-    last_day_of_year(year, config) - @days_in_week
+    last_gregorian_day_of_year(year, config) - @days_in_week
   end
 
-  def last_day_of_year(year, %Config{anchor: :first} = config) do
+  def last_gregorian_day_of_year(year, %Config{anchor: :first} = config) do
     last_week_starts(year, config) + @days_in_week
   end
 
-  def last_day_of_year(year, %Config{anchor: :last} = config) do
+  def last_gregorian_day_of_year(year, %Config{anchor: :last} = config) do
     year = Cldr.Calendar.ending_gregorian_year(year, config)
     %{month: last_month, day: last_day, min_days: min_days} = config
     days_in_last_month = ISO.days_in_month(year, last_month)
@@ -156,8 +179,8 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def long_year?(year, %Config{} = config) do
-    first_day = first_day_of_year(year, config)
-    last_day = last_day_of_year(year, config)
+    first_day = first_gregorian_day_of_year(year, config)
+    last_day = last_gregorian_day_of_year(year, config)
     days_in_year = last_day - first_day + 1
     div(days_in_year, @days_in_week) == @weeks_in_long_year
   end
@@ -169,15 +192,15 @@ defmodule Cldr.Calendar.Base.Week do
   def naive_datetime_from_iso_days({days, day_fraction}, config) do
     {year, month, day} = Calendar.ISO.date_from_iso_days(days)
     {year, week} = Base.Month.iso_week_of_year(year, month, day)
-    day = days - first_day_of_year(year, config) - week_to_days(week) + 1
+    day = days - first_gregorian_day_of_year(year, config) - week_to_days(week) + 1
     {hour, minute, second, microsecond} = Calendar.ISO.time_from_day_fraction(day_fraction)
     {year, week, day, hour, minute, second, microsecond}
   end
 
   def naive_datetime_to_iso_days(year, week, day, hour, minute, second, microsecond, config) do
-    days = first_day_of_year(year, config) + week_to_days(week) + day - 1
-    moment = Calendar.ISO.time_to_day_fraction(hour, minute, second, microsecond)
-    {days, moment}
+    days = first_gregorian_day_of_year(year, config) + week_to_days(week) + day - 1
+    day_fraction = Calendar.ISO.time_to_day_fraction(hour, minute, second, microsecond)
+    {days, day_fraction}
   end
 
   def datetime_to_string(

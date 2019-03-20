@@ -44,7 +44,7 @@ defmodule Cldr.Calendar.Ends.Test do
     for {expected_date, day_of_week} <- days do
       config = Map.put(config, :day, day_of_week)
       {year, _, _} = expected_date
-      last_day = Cldr.Calendar.Base.Week.last_day_of_year(year, config)
+      last_day = Cldr.Calendar.Base.Week.last_gregorian_day_of_year(year, config)
       calculated_date = Calendar.ISO.date_from_iso_days(last_day)
       assert expected_date == calculated_date
     end
@@ -80,7 +80,7 @@ defmodule Cldr.Calendar.Ends.Test do
 
     for {date} <- days do
       {year, _, _} = date
-      last_day = Cldr.Calendar.Base.Week.last_day_of_year(year, config)
+      last_day = Cldr.Calendar.Base.Week.last_gregorian_day_of_year(year, config)
       last_date = Calendar.ISO.date_from_iso_days(last_day)
       assert last_date == date
     end
@@ -101,7 +101,7 @@ defmodule Cldr.Calendar.Ends.Test do
     }
 
     for {year, date} <- days do
-      first_day = Cldr.Calendar.Base.Week.first_day_of_year(year, config)
+      first_day = Cldr.Calendar.Base.Week.first_gregorian_day_of_year(year, config)
       first_date = Calendar.ISO.date_from_iso_days(first_day)
       assert first_date == date
     end
