@@ -21,8 +21,12 @@ be found at [https://hexdocs.pm/cldr_calendars](https://hexdocs.pm/cldr_calendar
 
 ### To Do
 
-* [ ] Cldr.Calendar.Week is a factory calendar and all functions should take options.  The options will be passed by generated calendars.
+* [ ] Implement hybrid base calendar. This is a week-based calendar that presents dates in a monthly format.  Symmetry454 is an example.
 
-* [ ] Generate Cldr.Calendar.ISO.Week and Cldr.Calendar.NRF as examples of week based calendars.  NRF is defined as min_days 5, first_day 7.
+* [ ] Implement date ranges year, quarter, month and week
 
-* [ ] Add variable year support: (first/last/nearest day_of_week, month).  Combined with min_days we get a lot of flexibility.  An ISO week calendar is defined as "first Monday of January, min 4 days"
+* [ ] Add @specs
+
+* [ ] Add module docs
+
+* [ ] Add guides

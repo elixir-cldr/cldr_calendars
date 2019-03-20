@@ -20,6 +20,7 @@ defmodule Cldr.Calendar do
 
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
+  @quarters_in_year 4
   @the_world :"001"
 
   alias Cldr.LanguageTag
@@ -31,9 +32,8 @@ defmodule Cldr.Calendar do
   end
 
   def first_day_of_year(year, calendar) do
-    year
-    |> calendar.first_day_of_year
-    |> date_from_iso_days(calendar)
+    {:ok, date} = Date.new(year, 1, 1, calendar)
+    date
   end
 
   def first_day_of_year(%{year: year, calendar: calendar}) do
@@ -41,13 +41,14 @@ defmodule Cldr.Calendar do
   end
 
   def last_day_of_year(year, calendar) do
-    year
-    |> calendar.last_day_of_year
-    |> date_from_iso_days(calendar)
+    last_month = calendar.months_in_year(year)
+    last_day = calendar.days_in_month(year, last_month)
+    {:ok, date} = Date.new(year, last_month, last_day, calendar)
+    date
   end
 
   def last_day_of_year(%{year: year, calendar: calendar}) do
-    calendar.last_day_of_year(year)
+    last_day_of_year(year, calendar)
   end
 
   def iso_week_of_year(date) do
@@ -58,6 +59,32 @@ defmodule Cldr.Calendar do
   def week_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.week_of_year(year, month, day)
+  end
+
+  def year(year, calendar) do
+    Date.range(first_day_of_year(year, calendar), last_day_of_year(year, calendar))
+  end
+
+  def quarter(year, quarter, calendar) do
+    months_in_quarter = div(calendar.months_in_year(year), @quarters_in_year)
+    starting_month = (months_in_quarter * (quarter - 1)) + 1
+    starting_day = 1
+
+    ending_month = starting_month + months_in_quarter - 1
+    ending_day = calendar.days_in_month(year, ending_month)
+
+    {:ok, start_date} = Date.new(year, starting_month, starting_day, calendar)
+    {:ok, end_date} = Date.new(year, ending_month, ending_day, calendar)
+    Date.range(start_date, end_date)
+  end
+
+  def month(year, month, calendar) do
+    starting_day = 1
+    ending_day = calendar.days_in_month(year, month)
+
+    {:ok, start_date} = Date.new(year, month, starting_day, calendar)
+    {:ok, end_date} = Date.new(year, month, ending_day, calendar)
+    Date.range(start_date, end_date)
   end
 
   def weekend?(date, options \\ []) do
