@@ -16,7 +16,7 @@ defmodule Cldr.Calendar do
   # @callback year(Calendar.year()) :: Date.Range.t()
   # @callback quarter(Calendar.year(), Calendar.quarter()) :: Date.Range.t()
   # @callback month(Calendar.year(), Calendar.month()) :: Date.Range.t()
-  # @callback week(Calendar.year(), Calendar.week()) :: Date.Range.t()
+  # @callback week(Calendar.year(), Cldr.Calendar.week()) :: Date.Range.t()
 
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
@@ -29,6 +29,14 @@ defmodule Cldr.Calendar do
   def cldr_backend_provider(config) do
     Cldr.Calendar.Backend.Compiler.define_calendar_modules(config)
   end
+
+  def monday, do: 1
+  def tuesday, do: 2
+  def wednesday, do: 3
+  def thursday, do: 4
+  def friday, do: 5
+  def saturday, do: 6
+  def sunday, do: 7
 
   def first_day_of_year(year, calendar) do
     year
