@@ -5,7 +5,7 @@ defmodule Cldr.Calendar.Compiler.Week do
     config =
       Module.get_attribute(env.module, :options)
       |> Keyword.put(:calendar, env.module)
-      |> validate_config
+      |> validate_config!
       |> Cldr.Calendar.extract_options()
 
     Module.put_attribute(env.module, :calendar_config, config)
@@ -22,6 +22,10 @@ defmodule Cldr.Calendar.Compiler.Week do
 
       def valid_date?(year, week, day) do
         Week.valid_date?(year, week, day, __config__())
+      end
+
+      def year_of_era(year) do
+        Week.year_of_era(year, __config__())
       end
 
       def quarter_of_year(year, week, day) do
@@ -88,12 +92,6 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.last_gregorian_day_of_year(year, __config__())
       end
 
-      defimpl String.Chars do
-        def to_string(%{calendar: calendar, year: year, month: month, day: day}) do
-          calendar.date_to_string(year, month, day)
-        end
-      end
-
       def naive_datetime_to_iso_days(year, week, day, hour, minute, second, microsecond) do
         Week.naive_datetime_to_iso_days(
           year,
@@ -138,11 +136,16 @@ defmodule Cldr.Calendar.Compiler.Week do
       defdelegate time_to_day_fraction(hour, minute, second, microsecond), to: Calendar.ISO
       defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO
       defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
-      defdelegate year_of_era(year), to: Calendar.ISO
+
+      defimpl String.Chars do
+        def to_string(%{calendar: calendar, year: year, month: month, day: day}) do
+          calendar.date_to_string(year, month, day)
+        end
+      end
     end
   end
 
-  def validate_config(config) do
+  def validate_config!(config) do
     config
   end
 end

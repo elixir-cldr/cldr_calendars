@@ -19,7 +19,13 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def valid_date?(year, week, day, config) do
-    week <= weeks_in_year(year, config) and day in 1..@days_in_week
+    week <= weeks_in_year(year, config) and day in 1..days_in_week()
+  end
+
+  def year_of_era(year, config) do
+    year
+    |> Cldr.Calendar.ending_gregorian_year(config)
+    |> Calendar.ISO.year_of_era
   end
 
   # Quarters are 13 weeks but if there
@@ -66,8 +72,10 @@ defmodule Cldr.Calendar.Base.Week do
     Base.Month.iso_week_of_year(year, month, day)
   end
 
-  def day_of_era(_year, _week, _day, _config) do
-
+  def day_of_era(year, week, day, config) do
+    {:ok, date} = Date.new(year, week, day, config.calendar)
+    {:ok, %{year: year, month: month, day: day}} = Date.convert(date, Calendar.ISO)
+    Calendar.ISO.day_of_era(year, month, day)
   end
 
   def day_of_year(year, week, day, config) do
@@ -76,7 +84,7 @@ defmodule Cldr.Calendar.Base.Week do
 
   def day_of_week(_year, _week, day, config) do
     first_day = config.first_day
-    Math.amod(first_day + day, @days_in_week)
+    Math.amod(first_day + day, days_in_week())
   end
 
   def months_in_year(year, _config) do
@@ -90,27 +98,39 @@ defmodule Cldr.Calendar.Base.Week do
   def days_in_month(_year, month, config) when month in 1..11 do
     %Config{weeks_in_month: weeks_in_month} = config
     month_in_quarter = Math.amod(rem(month, @months_in_quarter), @months_in_quarter)
-    elem(weeks_in_month, month_in_quarter - 1) * @days_in_week
+    elem(weeks_in_month, month_in_quarter - 1) * days_in_week()
   end
 
   def days_in_month(year, @months_in_year, config) do
     %Config{weeks_in_month: {_, _, weeks_in_month}} = config
 
     if long_year?(year, config) do
-      (weeks_in_month + 1) * @days_in_week
+      (weeks_in_month + 1) * days_in_week()
     else
-      weeks_in_month * @days_in_week
+      weeks_in_month * days_in_week()
     end
   end
 
+  def days_in_week do
+    @days_in_week
+  end
+
+  def days_in_week(_year, _week) do
+    @days_in_week
+  end
+
   def year(year, config) do
-    first_day = first_gregorian_day_of_year(year, config)
-    last_day = last_gregorian_day_of_year(year, config)
+    {:ok, first_day} = Date.new(year, 1, 1, config.calendar)
+    {:ok, last_day} = Date.new(year, weeks_in_year(year, config), days_in_week(), config.calendar)
     Date.range(first_day, last_day)
   end
 
   def quarter(year, quarter, config) do
-
+    starting_week = ((quarter - 1) * @weeks_in_quarter) + 1
+    ending_week = starting_week + @weeks_in_quarter - 1
+    {:ok, first_day} = Date.new(year, starting_week, 1, config.calendar)
+    {:ok, last_day} = Date.new(year, ending_week, days_in_week(), config.calendar)
+    Date.range(first_day, last_day)
   end
 
   def month(year, month, config) do
@@ -118,12 +138,14 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def week(year, week, config) do
-
+    {:ok, first_day} = Date.new(year, week, 1, config.calendar)
+    {:ok, last_day} = Date.new(year, week, days_in_week(), config.calendar)
+    Date.range(first_day, last_day)
   end
 
   @doc """
   Returns the `iso_days` that is the first
-  day of the `year`.
+  gregorian day of the `year`.
   """
   def first_gregorian_day_of_year(year, %Config{anchor: :first} = config) do
     %{month: first_month, day: first_day, min_days: min_days} = config
@@ -157,11 +179,11 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def last_week_starts(year, %Config{anchor: :last} = config) do
-    last_gregorian_day_of_year(year, config) - @days_in_week
+    last_gregorian_day_of_year(year, config) - days_in_week()
   end
 
   def last_gregorian_day_of_year(year, %Config{anchor: :first} = config) do
-    last_week_starts(year, config) + @days_in_week
+    last_week_starts(year, config) + days_in_week()
   end
 
   def last_gregorian_day_of_year(year, %Config{anchor: :last} = config) do
@@ -182,7 +204,7 @@ defmodule Cldr.Calendar.Base.Week do
     first_day = first_gregorian_day_of_year(year, config)
     last_day = last_gregorian_day_of_year(year, config)
     days_in_year = last_day - first_day + 1
-    div(days_in_year, @days_in_week) == @weeks_in_long_year
+    div(days_in_year, days_in_week()) == @weeks_in_long_year
   end
 
   def date_to_string(year, week, day) do
@@ -232,6 +254,6 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   defp week_to_days(week) do
-    (week - 1) * @days_in_week
+    (week - 1) * days_in_week()
   end
 end

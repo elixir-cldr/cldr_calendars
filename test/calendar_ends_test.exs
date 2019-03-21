@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.Ends.Test do
   use ExUnit.Case
 
-  test "that anchor: :last returns the last day of year for a range of days of the week" do
+  test "that anchor: :last returns the last gregorian day of year for a range of days of the week" do
     days = %{
       {2019, 7, 25} => 4,
       {2019, 7, 26} => 5,
@@ -51,7 +51,7 @@ defmodule Cldr.Calendar.Ends.Test do
   end
 
   # Examples from https://en.wikipedia.org/wiki/4–4–5_calendar
-  test "the last day of year for last Saturday in August" do
+  test "the last gregorian day of year for last Saturday in August" do
     days = [
       {2014, 8, 30},
       {2015, 8, 29},
@@ -86,7 +86,7 @@ defmodule Cldr.Calendar.Ends.Test do
     end
   end
 
-  test "that anchor: :last returns the first day of year for a set of years" do
+  test "that anchor: :last returns the first gregorian day of year for a set of years" do
     days = %{
       2019 => {2018, 7, 29},
       2000 => {1999, 8, 1}

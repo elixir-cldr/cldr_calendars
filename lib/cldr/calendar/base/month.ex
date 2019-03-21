@@ -43,6 +43,12 @@ defmodule Cldr.Calendar.Base.Month do
     Calendar.ISO.valid_date?(year, month, day)
   end
 
+  def year_of_era(year, config) do
+    year
+    |> Cldr.Calendar.ending_gregorian_year(config)
+    |> Calendar.ISO.year_of_era
+  end
+
   def quarter_of_year(_year, month, _day, _config) do
     div(month - 1, @quarters_in_year) + 1
   end
@@ -77,12 +83,15 @@ defmodule Cldr.Calendar.Base.Month do
     })
   end
 
-  def day_of_era(_year, _week, _day, _config) do
-
+  def day_of_era(year, month, day, config) do
+    {year, month, day} = date_to_iso_date(year, month, day, config)
+    Calendar.ISO.day_of_era(year, month, day)
   end
 
-  def day_of_year(_year, _month, _day, _config) do
-
+  def day_of_year(year, month, day, config) do
+    {iso_year, iso_month, iso_day} = date_to_iso_date(year, month, day, config)
+    iso_days = Calendar.ISO.date_to_iso_days(iso_year, iso_month, iso_day)
+    iso_days - first_gregorian_day_of_year(year, config) + 1
   end
 
   def day_of_week(year, month, day, config) do
@@ -101,6 +110,14 @@ defmodule Cldr.Calendar.Base.Month do
   def days_in_month(year, month, config) do
     {iso_year, iso_month, _day} = date_to_iso_date(year, month, 1, config)
     ISO.days_in_month(iso_year, iso_month)
+  end
+
+  def days_in_week do
+    @days_in_week
+  end
+
+  def days_in_week(_year, _week) do
+    @days_in_week
   end
 
   def year(year, config) do
@@ -133,7 +150,7 @@ defmodule Cldr.Calendar.Base.Month do
     Date.range(start_date, end_date)
   end
 
-  def week(year, week, calendar) do
+  def week(year, week, config) do
 
   end
 
