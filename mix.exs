@@ -64,6 +64,7 @@ defmodule Cldr.Calendar.MixProject do
     [
       {:ex_cldr, "~> 2.4"},
       {:jason, "~> 1.0"},
+      {:ex_doc, "~> 0.18", only: [:release, :dev]},
       {:nimble_csv, "~> 0.5", only: [:dev, :test]},
       {:benchee, "~> 0.14", optional: true, only: [:dev, :test]}
     ]

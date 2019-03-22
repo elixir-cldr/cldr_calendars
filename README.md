@@ -1,23 +1,20 @@
-# CldrCalendars
+# Cldr Calendars
 
-**TODO: Add description**
+> My wife's jealousy is getting ridiculous. The other day she looked at my calendar and wanted to know who May was.
+> -- Rodney Dangerfield
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `cldr_calendars` to your list of dependencies in `mix.exs`:
+Add `ex_cldr_calendars` to your `deps` in `mix.exs`:
 
 ```elixir
 def deps do
   [
     {:ex_cldr_calendars, "~> 0.1.0"}
+    ...
   ]
 end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/cldr_calendars](https://hexdocs.pm/cldr_calendars).
 
 ### To Do
 
