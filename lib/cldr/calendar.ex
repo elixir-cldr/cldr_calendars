@@ -30,6 +30,29 @@ defmodule Cldr.Calendar do
     Cldr.Calendar.Backend.Compiler.define_calendar_modules(config)
   end
 
+  def new(calendar_module, calendar_type, config)
+      when is_atom(calendar_module) and calendar_type in [:week, :month] do
+    if Code.ensure_loaded?(calendar_module) do
+      {:ok, calendar_module}
+    else
+      create_calendar(calendar_module, calendar_type, config)
+    end
+  end
+
+  defp create_calendar(calendar_module, calendar_type, config) do
+    calendar_type =
+      calendar_type
+      |> to_string
+      |> String.capitalize
+
+    contents = quote do
+      use unquote(Module.concat(Cldr.Calendar.Base, calendar_type)), unquote(config)
+    end
+
+    {:module, module, _, :ok} = Module.create(calendar_module, contents, Macro.Env.location(__ENV__))
+    {:ok, module}
+  end
+
   def monday, do: 1
   def tuesday, do: 2
   def wednesday, do: 3
