@@ -30,8 +30,8 @@ defmodule Cldr.Calendar do
     Cldr.Calendar.Backend.Compiler.define_calendar_modules(config)
   end
 
-  def new(calendar_module, calendar_type, config)
-      when is_atom(calendar_module) and calendar_type in [:week, :month] do
+  def new(calendar_module, calendar_type, config \\ [])
+      when is_atom(calendar_module) and is_list(config) and calendar_type in [:week, :month] do
     if Code.ensure_loaded?(calendar_module) do
       {:ok, calendar_module}
     else
