@@ -127,8 +127,6 @@ defmodule Cldr.Calendar.Base.Month do
     with {:ok, start_date} <- date_from_iso_days(starting_day, config),
          {:ok, end_date} <- date_from_iso_days(ending_day, config) do
       Date.range(start_date, end_date)
-    else
-      other -> IO.inspect other
     end
   end
 

@@ -5,8 +5,8 @@ defmodule Cldr.Calendar.Compiler.Month do
     config =
       Module.get_attribute(env.module, :options)
       |> Keyword.put(:calendar, env.module)
-      |> validate_config!
       |> Cldr.Calendar.extract_options()
+      |> Cldr.Calendar.validate_config!(:month)
 
     Module.put_attribute(env.module, :calendar_config, config)
 

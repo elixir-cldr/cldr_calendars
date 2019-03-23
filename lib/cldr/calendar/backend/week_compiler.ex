@@ -5,8 +5,8 @@ defmodule Cldr.Calendar.Compiler.Week do
     config =
       Module.get_attribute(env.module, :options)
       |> Keyword.put(:calendar, env.module)
-      |> validate_config!
       |> Cldr.Calendar.extract_options()
+      |> Cldr.Calendar.validate_config!(:week)
 
     Module.put_attribute(env.module, :calendar_config, config)
 
@@ -137,9 +137,5 @@ defmodule Cldr.Calendar.Compiler.Week do
       defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO
       defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
     end
-  end
-
-  def validate_config!(config) do
-    config
   end
 end

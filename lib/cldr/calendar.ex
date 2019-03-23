@@ -192,24 +192,27 @@ defmodule Cldr.Calendar do
   def new(calendar_module, calendar_type, config)
       when is_atom(calendar_module) and calendar_type in [:week, :month] do
     if Code.ensure_loaded?(calendar_module) do
-      {:ok, calendar_module}
+      {:already_exists, calendar_module}
     else
       create_calendar(calendar_module, calendar_type, config)
     end
   end
 
   defp create_calendar(calendar_module, calendar_type, config) do
-    calendar_type =
-      calendar_type
-      |> to_string
-      |> String.capitalize
+    structured_config = extract_options(config)
+    with {:ok, _} <- validate_config(structured_config, calendar_type) do
+      calendar_type =
+        calendar_type
+        |> to_string
+        |> String.capitalize
 
-    contents = quote do
-      use unquote(Module.concat(Cldr.Calendar.Base, calendar_type)), unquote(config)
+      contents = quote do
+        use unquote(Module.concat(Cldr.Calendar.Base, calendar_type)), unquote(config)
+      end
+
+      {:module, module, _, :ok} = Module.create(calendar_module, contents, Macro.Env.location(__ENV__))
+      {:ok, module}
     end
-
-    {:module, module, _, :ok} = Module.create(calendar_module, contents, Macro.Env.location(__ENV__))
-    {:ok, module}
   end
 
   @doc """
@@ -553,6 +556,11 @@ defmodule Cldr.Calendar do
 
   """
   @spec year(Calendar.year(), calendar()) :: Date.Range.t()
+  @spec year({:year, Calendar.year(), calendar()}) :: Date.Range.t()
+
+  def year({:year, year, calendar}) do
+    year(year, calendar)
+  end
 
   def year(year, calendar) do
     calendar.year(year)
@@ -590,6 +598,11 @@ defmodule Cldr.Calendar do
 
   """
   @spec quarter(Calendar.year(), Calendar.quarter(), calendar()) :: Date.Range.t()
+  @spec quarter({:quarter, Calendar.year(), Calendar.quarter(), calendar()}) :: Date.Range.t()
+
+  def quarter({:quarter, year, quarter, calendar}) do
+    quarter(year, quarter, calendar)
+  end
 
   def quarter(year, quarter, calendar) do
     calendar.quarter(year, quarter)
@@ -627,6 +640,11 @@ defmodule Cldr.Calendar do
 
   """
   @spec month(Calendar.year(), Calendar.month(), calendar()) :: Date.Range.t()
+  @spec month({:month, Calendar.year(), Calendar.month(), calendar()}) :: Date.Range.t()
+
+  def month({:month, year, month, calendar}) do
+    month(year, month, calendar)
+  end
 
   def month(year, month, calendar) do
     calendar.month(year, month)
@@ -667,6 +685,11 @@ defmodule Cldr.Calendar do
 
   """
   @spec week(Calendar.year(), Cldr.Calendar.week(), calendar()) :: Date.Range.t()
+  @spec week({:week, Calendar.year(), Cldr.Calendar.week(), calendar()}) :: Date.Range.t()
+
+  def week({:week, year, week, calendar}) do
+    week(year, week, calendar)
+  end
 
   def week(year, week, calendar) do
     calendar.week(year, week)
@@ -954,6 +977,63 @@ defmodule Cldr.Calendar do
     min_days = Keyword.get(options, :min_days, min_days(locale))
     first_day = Keyword.get(options, :day, first_day(locale))
     {min_days, first_day}
+  end
+
+  @valid_weeks_in_month [{4,4,5}, {4,5,4}, {5,4,4}]
+  @valid_year [:majority, :beginning, :ending]
+  def validate_config(config, :week) do
+    with :ok <- assert(config.day in 1..7, day_error(config.day)),
+         :ok <- assert(config.month in 1..12, month_error(config.month)),
+         :ok <- assert(config.year in @valid_year, year_error(config.year)),
+         :ok <- assert(config.min_days in 1..7, min_days_error(config.min_days)),
+         :ok <- assert(config.anchor in [:first, :last], anchor_error(config.anchor)),
+         :ok <- assert(config.weeks_in_month in @valid_weeks_in_month,
+           weeks_in_month_error(config.weeks_in_month)) do
+      {:ok, config}
+    end
+  end
+
+  def validate_config(config, :month) do
+    validate_config(config, :week)
+  end
+
+  def validate_config!(config, calendar_type) do
+    case validate_config(config, calendar_type) do
+      {:ok, config} -> config
+      {:error, message} -> raise ArgumentError, message
+    end
+  end
+
+  def assert(true, _) do
+    :ok
+  end
+
+  def assert(false, message) do
+    {:error, message}
+  end
+
+  defp day_error(day) do
+    ":day must be in the range 1..7. Found #{inspect day}."
+  end
+
+  defp month_error(month) do
+    ":month must be in the range 1..12. Found #{inspect month}."
+  end
+
+  defp year_error(year) do
+    ":year must be either :beginning, :ending or :majority. Found #{inspect year}."
+  end
+
+  defp min_days_error(min_days) do
+    ":min_days must be in the rnage 1..7. Found #{inspect min_days}."
+  end
+
+  defp anchor_error(anchor) do
+    ":anchor must be :first or :last. Found #{inspect anchor}."
+  end
+
+  defp weeks_in_month_error(weeks_in_month) do
+    ":weeks_in_month must be {4,4,5}, {4,5,4} or {5,4,4}. Found #{inspect weeks_in_month}"
   end
 
   @doc false
