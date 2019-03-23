@@ -79,7 +79,9 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def day_of_year(year, week, day, config) do
-    first_gregorian_day_of_year(year, config) + week_to_days(week) + day
+    start_of_year = first_gregorian_day_of_year(year, config)
+    this_day = first_gregorian_day_of_year(year, config) + week_to_days(week) + day
+    this_day - start_of_year + 1
   end
 
   def day_of_week(_year, _week, day, config) do

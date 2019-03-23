@@ -136,12 +136,6 @@ defmodule Cldr.Calendar.Compiler.Week do
       defdelegate time_to_day_fraction(hour, minute, second, microsecond), to: Calendar.ISO
       defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO
       defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
-
-      defimpl String.Chars do
-        def to_string(%{calendar: calendar, year: year, month: month, day: day}) do
-          calendar.date_to_string(year, month, day)
-        end
-      end
     end
   end
 
