@@ -62,7 +62,7 @@ defmodule Cldr.Calendar.MixProject do
 
   defp deps do
     [
-      {:ex_cldr, "~> 2.4"},
+      {:ex_cldr, "~> 2.5"},
       {:jason, "~> 1.0"},
       {:nimble_csv, "~> 0.5", only: [:dev, :test]},
       {:benchee, "~> 0.14", optional: true, only: [:dev, :test]}

@@ -80,11 +80,11 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.leap_year?(year, __config__())
       end
 
-      def first_day_of_year(year) do
+      def first_gregorian_day_of_year(year) do
         Month.first_gregorian_day_of_year(year, __config__())
       end
 
-      def last_day_of_year(year) do
+      def last_gregorian_day_of_year(year) do
         Month.last_gregorian_day_of_year(year, __config__())
       end
 

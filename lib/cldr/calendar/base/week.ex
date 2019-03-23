@@ -120,17 +120,20 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def year(year, config) do
-    {:ok, first_day} = Date.new(year, 1, 1, config.calendar)
-    {:ok, last_day} = Date.new(year, weeks_in_year(year, config), days_in_week(), config.calendar)
-    Date.range(first_day, last_day)
+    with {:ok, first_day} <- Date.new(year, 1, 1, config.calendar),
+         {:ok, last_day} <- Date.new(year, weeks_in_year(year, config), days_in_week(), config.calendar) do
+      Date.range(first_day, last_day)
+    end
   end
 
   def quarter(year, quarter, config) do
     starting_week = ((quarter - 1) * @weeks_in_quarter) + 1
     ending_week = starting_week + @weeks_in_quarter - 1
-    {:ok, first_day} = Date.new(year, starting_week, 1, config.calendar)
-    {:ok, last_day} = Date.new(year, ending_week, days_in_week(), config.calendar)
-    Date.range(first_day, last_day)
+
+    with {:ok, first_day} <- Date.new(year, starting_week, 1, config.calendar),
+         {:ok, last_day} <- Date.new(year, ending_week, days_in_week(), config.calendar) do
+      Date.range(first_day, last_day)
+    end
   end
 
   def month(year, month, config) do
@@ -138,9 +141,10 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def week(year, week, config) do
-    {:ok, first_day} = Date.new(year, week, 1, config.calendar)
-    {:ok, last_day} = Date.new(year, week, days_in_week(), config.calendar)
-    Date.range(first_day, last_day)
+    with {:ok, first_day} <- Date.new(year, week, 1, config.calendar),
+         {:ok, last_day} <- Date.new(year, week, days_in_week(), config.calendar) do
+      Date.range(first_day, last_day)
+    end
   end
 
   @doc """
@@ -205,6 +209,10 @@ defmodule Cldr.Calendar.Base.Week do
     last_day = last_gregorian_day_of_year(year, config)
     days_in_year = last_day - first_day + 1
     div(days_in_year, days_in_week()) == @weeks_in_long_year
+  end
+
+  def date_from_iso_days(iso_day_number, config) do
+    Cldr.Calendar.date_from_iso_days(iso_day_number, config.calendar)
   end
 
   def date_to_string(year, week, day) do
