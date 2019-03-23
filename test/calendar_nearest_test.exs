@@ -26,7 +26,7 @@ defmodule Cldr.Calendar.Nearest.Test do
     ]
 
     config = %Cldr.Calendar.Config{
-      anchor: :last,
+      first_or_last: :last,
       day: 6,
       min_days: 4,
       month: 8

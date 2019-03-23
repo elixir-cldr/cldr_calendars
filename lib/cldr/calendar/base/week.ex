@@ -153,7 +153,7 @@ defmodule Cldr.Calendar.Base.Week do
   Returns the `iso_days` that is the first
   gregorian day of the `year`.
   """
-  def first_gregorian_day_of_year(year, %Config{anchor: :first} = config) do
+  def first_gregorian_day_of_year(year, %Config{first_or_last: :first} = config) do
     %{month: first_month, day: first_day, min_days: min_days} = config
     iso_days = ISO.date_to_iso_days(year, first_month, min_days)
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)
@@ -165,11 +165,11 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  def first_gregorian_day_of_year(year, %Config{anchor: :last} = config) do
+  def first_gregorian_day_of_year(year, %Config{first_or_last: :last} = config) do
     last_gregorian_day_of_year(year - 1, config) + 1
   end
 
-  def last_week_starts(year, %Config{anchor: :first} = config) do
+  def last_week_starts(year, %Config{first_or_last: :first} = config) do
     %{month: first_month, day: first_day, min_days: min_days} = config
     months_in_year = ISO.months_in_year(year)
     last_month_of_year = Cldr.Math.amod(first_month - 1, months_in_year)
@@ -184,15 +184,15 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  def last_week_starts(year, %Config{anchor: :last} = config) do
+  def last_week_starts(year, %Config{first_or_last: :last} = config) do
     last_gregorian_day_of_year(year, config) - days_in_week()
   end
 
-  def last_gregorian_day_of_year(year, %Config{anchor: :first} = config) do
+  def last_gregorian_day_of_year(year, %Config{first_or_last: :first} = config) do
     last_week_starts(year, config) + days_in_week()
   end
 
-  def last_gregorian_day_of_year(year, %Config{anchor: :last} = config) do
+  def last_gregorian_day_of_year(year, %Config{first_or_last: :last} = config) do
     year = Cldr.Calendar.ending_gregorian_year(year, config)
     %{month: last_month, day: last_day, min_days: min_days} = config
     days_in_last_month = ISO.days_in_month(year, last_month)

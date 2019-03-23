@@ -34,7 +34,7 @@ defmodule Cldr.Calendar.Ends.Test do
     }
 
     config = %Cldr.Calendar.Config{
-      anchor: :last,
+      first_or_last: :last,
       min_days: 7,
       year: :beginning,
       month: 7,
@@ -72,7 +72,7 @@ defmodule Cldr.Calendar.Ends.Test do
     ]
 
     config = %Cldr.Calendar.Config{
-      anchor: :last,
+      first_or_last: :last,
       day: 6,
       min_days: 7,
       month: 8
@@ -93,7 +93,7 @@ defmodule Cldr.Calendar.Ends.Test do
     }
 
     config = %Cldr.Calendar.Config{
-      anchor: :last,
+      first_or_last: :last,
       day: 6,
       min_days: 7,
       month: 7,

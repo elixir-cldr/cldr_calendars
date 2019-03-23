@@ -31,6 +31,9 @@ defmodule Cldr.Calendar do
 
   ## Creating new calendars
 
+  Calendar [starts | ends] on the [last | first] [day] of [month]
+  Calendar [starts | ends] on the [day] [nearest to the] [last | first] [day] of [month]
+
   ### Creating calendars statically
 
   ### Creating calendars dynamically
@@ -882,52 +885,52 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def beginning_gregorian_year(year, %Config{anchor: :first, year: :majority, month: month})
+  def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: month})
       when month > 6 do
     year - 1
   end
 
-  def beginning_gregorian_year(year, %Config{anchor: :first, year: :ending}) do
+  def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :ending}) do
     year - 1
   end
 
   @doc false
-  def ending_gregorian_year(year, %Config{anchor: :first, year: :ending}) do
+  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :ending}) do
     year
   end
 
   # The year is defined as the beginning year
-  def ending_gregorian_year(year, %Config{anchor: :first, year: :majority, month: month})
+  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: month})
       when month > 6 do
     year
   end
 
   # The year is defined as the beginning year
-  def ending_gregorian_year(year, %Config{anchor: :last, year: :beginning}) do
+  def ending_gregorian_year(year, %Config{first_or_last: :last, year: :beginning}) do
     year
   end
 
   # At least 6 months of the year are in the beginning year
-  def ending_gregorian_year(year, %Config{anchor: :last, year: :majority, month: month})
+  def ending_gregorian_year(year, %Config{first_or_last: :last, year: :majority, month: month})
       when month > 6 do
     year
   end
 
   # At least 6 months are in the next gregorian year so thats
   # the ending year
-  def ending_gregorian_year(year, %Config{anchor: :last, year: :majority}) do
+  def ending_gregorian_year(year, %Config{first_or_last: :last, year: :majority}) do
     year + 1
   end
 
   # If the ending month is 12 then the entire year is the same
   # gregorian year
-  def ending_gregorian_year(year, %Config{anchor: :last, month: 12}) do
+  def ending_gregorian_year(year, %Config{first_or_last: :last, month: 12}) do
     year
   end
 
   # The ending month extends into the next year. Therefore
   # the ending year is next gregorian year
-  def ending_gregorian_year(year, %Config{anchor: :last, year: :ending}) do
+  def ending_gregorian_year(year, %Config{first_or_last: :last, year: :ending}) do
     year + 1
   end
 
@@ -955,7 +958,8 @@ defmodule Cldr.Calendar do
     backend = Keyword.get(options, :backend)
     locale = Keyword.get(options, :locale, Cldr.get_locale())
     calendar = Keyword.get(options, :calendar)
-    anchor = Keyword.get(options, :anchor, :first)
+    first_or_last = Keyword.get(options, :first_or_last, :first)
+    begins_or_ends = Keyword.get(options, :begins_or_ends, :begins)
     weeks_in_month = Keyword.get(options, :weeks_in_month, {4, 5, 4})
     year = Keyword.get(options, :year, :majority)
     month = Keyword.get(options, :month, 1)
@@ -966,9 +970,10 @@ defmodule Cldr.Calendar do
       day: day,
       month: month,
       year: year,
-      backend: backend,
+      cldr_backend: backend,
       calendar: calendar,
-      anchor: anchor,
+      first_or_last: first_or_last,
+      begins_or_ends: begins_or_ends,
       weeks_in_month: weeks_in_month
     }
   end
@@ -986,7 +991,8 @@ defmodule Cldr.Calendar do
          :ok <- assert(config.month in 1..12, month_error(config.month)),
          :ok <- assert(config.year in @valid_year, year_error(config.year)),
          :ok <- assert(config.min_days in 1..7, min_days_error(config.min_days)),
-         :ok <- assert(config.anchor in [:first, :last], anchor_error(config.anchor)),
+         :ok <- assert(config.first_or_last in [:first, :last], first_or_last_error(config.first_or_last)),
+         :ok <- assert(config.begins_or_ends in [:begins, :ends], begins_or_ends_error(config.begins_or_ends)),
          :ok <- assert(config.weeks_in_month in @valid_weeks_in_month,
            weeks_in_month_error(config.weeks_in_month)) do
       {:ok, config}
@@ -1028,8 +1034,12 @@ defmodule Cldr.Calendar do
     ":min_days must be in the rnage 1..7. Found #{inspect min_days}."
   end
 
-  defp anchor_error(anchor) do
-    ":anchor must be :first or :last. Found #{inspect anchor}."
+  defp first_or_last_error(first_or_last) do
+    ":first_or_last must be :first or :last. Found #{inspect first_or_last}."
+  end
+
+  defp begins_or_ends_error(begins_or_ends) do
+    ":begins_or_ends must be :begins or :ends. Found #{inspect begins_or_ends}."
   end
 
   defp weeks_in_month_error(weeks_in_month) do
