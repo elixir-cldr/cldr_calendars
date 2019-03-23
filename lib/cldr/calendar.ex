@@ -352,6 +352,18 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Returns the `day_of_year`
+  for a `date`.
+
+  """
+  @spec day_of_year(Date.t) :: Calendar.day()
+
+  def day_of_year(date) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.day_of_year(year, month, day)
+  end
+
+  @doc """
   Returns whether a given date is a weekend day.
 
   Weekend days are locale-specific and depend on
@@ -987,7 +999,6 @@ defmodule Cldr.Calendar do
   defdelegate quarter_of_year(date), to: Date
   defdelegate days_in_month(date), to: Date
   defdelegate day_of_era(date), to: Date
-  defdelegate day_of_year(date), to: Date
   defdelegate months_in_year(date), to: Date
 
 end
