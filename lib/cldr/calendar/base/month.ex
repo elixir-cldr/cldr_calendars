@@ -23,6 +23,7 @@ defmodule Cldr.Calendar.Base.Month do
 
   @days_in_week 7
   @quarters_in_year 4
+  @months_in_quarter 3
   @iso_week_first_day 1
   @iso_week_min_days 4
   @january 1
@@ -166,6 +167,27 @@ defmodule Cldr.Calendar.Base.Month do
     end
   end
 
+  def plus(year, month, day, config, :quarters, quarters) do
+    months = (quarters * @months_in_quarter)
+    plus(year, month, day, config, :months, months)
+  end
+
+  # TODO use Cldr.Math.div_amod when its published
+  def plus(year, month, day, config, :months, months) do
+    months_in_year = months_in_year(year, config)
+    {year_increment, new_month} = Cldr.Math.div_mod(month + months, months_in_year)
+    {year_increment, new_month} =
+      if new_month == 0 do
+        {year_increment - 1, months_in_year}
+      else
+        {year_increment, new_month}
+      end
+    new_year = year + year_increment
+    max_new_day = days_in_month(new_year, new_month, config)
+    new_day = min(day, max_new_day)
+    {new_year, new_month, new_day}
+  end
+
   @doc """
   Returns the `iso_days` that is the first
   day of the `year`.
@@ -207,10 +229,6 @@ defmodule Cldr.Calendar.Base.Month do
   def date_from_iso_days(iso_day_number, config) do
    {year, month, day, _, _, _, _} = naive_datetime_from_iso_days(iso_day_number, config)
    Date.new(year, month, day, config.calendar)
-  end
-
-  def naive_datetime_from_iso_days(iso_days, %Config{month: 1}) do
-    ISO.naive_datetime_from_iso_days(iso_days)
   end
 
   def naive_datetime_from_iso_days(iso_day_number, config) when is_integer(iso_day_number) do

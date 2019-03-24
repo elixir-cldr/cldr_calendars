@@ -149,6 +149,21 @@ defmodule Cldr.Calendar do
   """
   @callback week(Calendar.year(), Cldr.Calendar.week()) :: Date.Range.t()
 
+  @doc """
+  Increments a `Date.t` or `Date.Range.t` by a specified positive
+  or negative integer number of periods (year, quarter, month,
+  week or day).
+
+  Calendars need only implement this callback for `:months` and `:quarters`
+  since all other date periods can be derived.
+
+  """
+  @callback plus(Calendar.year, Calendar.month | Cldr.Calendar.week, Calendar.day,
+    :months, integer) :: Date.t() | Date.Range.t()
+
+  @callback plus(Calendar.year, Calendar.month | Cldr.Calendar.week, Calendar.day,
+    :quarters, integer) :: Date.t() | Date.Range.t()
+
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
   @the_world :"001"
@@ -335,11 +350,36 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Returns the `{year, quarter}`
+  for a `date`.
+
+  """
+  @spec quarter_of_year(Date.t) :: {Calendar.year(), Calendar.quarter()}
+
+  def quarter_of_year(date) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.quarter_of_year(year, month, day)
+  end
+
+  @doc """
+  Returns the `{year, month}`
+  for a `date`.
+
+  """
+  @spec month_of_year(Date.t) :: {Calendar.year(), Calendar.month()}
+
+  def month_of_year(date) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.month_of_year(year, month, day)
+  end
+
+  @doc """
   Returns the `{year, iso_week_number}`
   for a `date`.
 
   """
   @spec iso_week_of_year(Date.t) :: {Calendar.year(), week()}
+
   def iso_week_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.iso_week_of_year(year, month, day)
@@ -368,6 +408,7 @@ defmodule Cldr.Calendar do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.day_of_year(year, month, day)
   end
+
 
   @doc """
   Returns whether a given date is a weekend day.
@@ -559,10 +600,10 @@ defmodule Cldr.Calendar do
 
   """
   @spec year(Calendar.year(), calendar()) :: Date.Range.t()
-  @spec year({:year, Calendar.year(), calendar()}) :: Date.Range.t()
+  @spec year(Date.t()) :: Date.Range.t()
 
-  def year({:year, year, calendar}) do
-    year(year, calendar)
+  def year(date) do
+    year(date.year, date.calendar)
   end
 
   def year(year, calendar) do
@@ -601,10 +642,11 @@ defmodule Cldr.Calendar do
 
   """
   @spec quarter(Calendar.year(), Calendar.quarter(), calendar()) :: Date.Range.t()
-  @spec quarter({:quarter, Calendar.year(), Calendar.quarter(), calendar()}) :: Date.Range.t()
+  @spec quarter(Date.t()) :: Date.Range.t()
 
-  def quarter({:quarter, year, quarter, calendar}) do
-    quarter(year, quarter, calendar)
+  def quarter(date) do
+    quarter = quarter_of_year(date)
+    quarter(date.year, quarter, date.calendar)
   end
 
   def quarter(year, quarter, calendar) do
@@ -643,11 +685,13 @@ defmodule Cldr.Calendar do
 
   """
   @spec month(Calendar.year(), Calendar.month(), calendar()) :: Date.Range.t()
-  @spec month({:month, Calendar.year(), Calendar.month(), calendar()}) :: Date.Range.t()
+  @spec month(Date.t()) :: Date.Range.t()
 
-  def month({:month, year, month, calendar}) do
-    month(year, month, calendar)
+  def month(date) do
+    month = month_of_year(date)
+    month(date.year, month, date.calendar)
   end
+
 
   def month(year, month, calendar) do
     calendar.month(year, month)
@@ -688,14 +732,309 @@ defmodule Cldr.Calendar do
 
   """
   @spec week(Calendar.year(), Cldr.Calendar.week(), calendar()) :: Date.Range.t()
-  @spec week({:week, Calendar.year(), Cldr.Calendar.week(), calendar()}) :: Date.Range.t()
+  @spec week(Date.t()) :: Date.Range.t()
 
-  def week({:week, year, week, calendar}) do
-    week(year, week, calendar)
+  def week(date) do
+    {year, week} = week_of_year(date)
+    week(year, week, date.calendar)
   end
 
   def week(year, week, calendar) do
     calendar.week(year, week)
+  end
+
+  @doc """
+  Returns the current date or date range for
+  a date period (year, quarter, month, week
+  or day).
+
+  ## Arguments
+
+  * `date_or_date_range` is any `Date.t` or
+    `Date.Range.t`
+
+  * `period` is `:year`, `:quarter`, `:month`,
+  ` :week` or `:day`
+
+  ## Returns
+
+  When a `Date.t` is passed, a `Date.t` is
+  returned.  When a `Date.Range.t` is passed
+  a `Date.Range.t` is returned.
+
+  ## Examples
+
+  """
+  def current(%Date.Range{first: date}, :year) do
+    current(date, :year)
+    |> year
+  end
+
+  def current(date, :year) do
+    plus(date, :years, 0)
+  end
+
+  def current(%Date.Range{first: date}, :quarter) do
+    current(date, :quarter)
+    |> quarter
+  end
+
+  def current(date, :quarter) do
+    plus(date, :quarters, 0)
+  end
+
+  def current(%Date.Range{first: date}, :month) do
+    current(date, :month)
+    |> month
+  end
+
+  def current(date, :month) do
+    plus(date, :months, 0)
+  end
+
+  def current(%Date.Range{first: date}, :week) do
+    current(date, :week)
+    |> week
+  end
+
+  def current(date, :week) do
+    plus(date, :weeks, 0)
+  end
+
+  def current(%Date.Range{first: date}, :day) do
+    current(date, :day)
+    # |> day
+  end
+
+  def current(date, :day) do
+    plus(date, :days, 0)
+  end
+
+  @doc """
+  Returns the nexy date or date range for
+  a date period (year, quarter, month, week
+  or day).
+
+  ## Arguments
+
+  * `date_or_date_range` is any `Date.t` or
+    `Date.Range.t`
+
+  * `period` is `:year`, `:quarter`, `:month`,
+  ` :week` or `:day`
+
+  ## Returns
+
+  When a `Date.t` is passed, a `Date.t` is
+  returned.  When a `Date.Range.t` is passed
+  a `Date.Range.t` is returned.
+
+  ## Examples
+
+  """
+  def next(%Date.Range{last: date}, :year) do
+    next(date, :year)
+    |> year
+  end
+
+  def next(date, :year) do
+    plus(date, :years, 1)
+  end
+
+  def next(%Date.Range{last: date}, :quarter) do
+    next(date, :quarter)
+    |> quarter
+  end
+
+  def next(date, :quarter) do
+    plus(date, :quarters, 1)
+  end
+
+  def next(%Date.Range{last: date}, :month) do
+    next(date, :month)
+    |> month
+  end
+
+  def next(date, :month) do
+    plus(date, :months, 1)
+  end
+
+  def next(%Date.Range{last: date}, :week) do
+    next(date, :week)
+    |> week
+  end
+
+  def next(date, :week) do
+    plus(date, :weeks, 1)
+  end
+
+  def next(%Date.Range{last: date}, :day) do
+    next(date, :day)
+    # |> day
+  end
+
+  def next(date, :day) do
+    plus(date, :days, 1)
+  end
+
+  @doc """
+  Returns the previous date or date range for
+  a date period (year, quarter, month, week
+  or day).
+
+  ## Arguments
+
+  * `date_or_date_range` is any `Date.t` or
+    `Date.Range.t`
+
+  * `period` is `:year`, `:quarter`, `:month`,
+  ` :week` or `:day`
+
+  ## Returns
+
+  When a `Date.t` is passed, a `Date.t` is
+  returned.  When a `Date.Range.t` is passed
+  a `Date.Range.t` is returned.
+
+  ## Examples
+
+  """
+  def previous(%Date.Range{last: date}, :year) do
+    previous(date, :year)
+    |> year
+  end
+
+  def previous(date, :year) do
+    plus(date, :years, -1)
+  end
+
+  def previous(%Date.Range{last: date}, :quarter) do
+    previous(date, :quarter)
+    |> quarter
+  end
+
+  def previous(date, :quarter) do
+    plus(date, :quarters, -1)
+  end
+
+  def previous(%Date.Range{last: date}, :month) do
+    previous(date, :month)
+    |> month
+  end
+
+  def previous(date, :month) do
+    plus(date, :months, -1)
+  end
+
+  def previous(%Date.Range{last: date}, :week) do
+    previous(date, :week)
+    |> week
+  end
+
+  def previous(date, :week) do
+    plus(date, :weeks, -1)
+  end
+
+  def previous(%Date.Range{last: date}, :day) do
+    previous(date, :day)
+  end
+
+  def previous(date, :day) do
+    minus(date, :days, 1)
+  end
+
+  @doc """
+  Increments a date or date range by an
+  integer amount of a date period (year,
+  quarter, month, week or day).
+
+  ## Arguments
+
+  * `date_or_date_range` is any `Date.t` or
+    `Date.Range.t`
+
+  * `period` is `:year`, `:quarter`, `:month`,
+  ` :week` or `:day`
+
+  ## Returns
+
+  When a `Date.t` is passed, a `Date.t` is
+  returned.  When a `Date.Range.t` is passed
+  a `Date.Range.t` is returned.
+
+  ## Examples
+
+  """
+  def plus(value, increment) when is_integer(value) and is_integer(increment) do
+    value + increment
+  end
+
+  def plus(date, period, days \\ 1)
+
+  def plus(date, :years, years) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    new_year =
+      year + years
+
+    new_day =
+      new_year
+      |> calendar.days_in_month(month)
+      |> min(day)
+
+    {:ok, date} = Date.new(new_year, month, new_day, calendar)
+    date
+  end
+
+  def plus(date, :quarters, quarters) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.plus(year, month, day, :quarters, quarters)
+    |> date_from_tuple(calendar)
+  end
+
+  def plus(date, :months, months) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.plus(year, month, day, :months, months)
+    |> date_from_tuple(calendar)
+  end
+
+  def plus(%{calendar: calendar} = date, :weeks, weeks) do
+    date
+    |> date_to_iso_days
+    |> plus(weeks_to_days(weeks))
+    |> date_from_iso_days(calendar)
+  end
+
+  def plus(%{calendar: calendar} = date, :days, days) do
+    date
+    |> date_to_iso_days
+    |> plus(days)
+    |> date_from_iso_days(calendar)
+  end
+
+  @doc """
+  Decrements a date or date range by an
+  integer amount of a date period (year,
+  quarter, month, week or day).
+
+  ## Arguments
+
+  * `date_or_date_range` is any `Date.t` or
+    `Date.Range.t`
+
+  * `period` is `:year`, `:quarter`, `:month`,
+  ` :week` or `:day`
+
+  ## Returns
+
+  When a `Date.t` is passed, a `Date.t` is
+  returned.  When a `Date.Range.t` is passed
+  a `Date.Range.t` is returned.
+
+  ## Examples
+
+  """
+  def minus(%{calendar: _calendar} = date, period, amount) do
+    plus(date, period, -amount)
   end
 
   @doc """
@@ -775,6 +1114,31 @@ defmodule Cldr.Calendar do
          {:ok, date} <- Date.convert(date, calendar) do
       date
     end
+  end
+
+  @doc """
+  Returns a `Date.t` from a date tuple of
+  `{year, month, day}` and a calendar.
+
+  ## Arguments
+
+  * `{year, month, day}` is a tuple
+    representing a date
+
+  * `calendar` is any module implementing
+    the `Calendar` and `Cldr.Calendar`
+    behaviours
+
+  ## Returns
+
+  * a `Date.t`
+
+  ## Examples
+
+  """
+  def date_from_tuple({year, month, day}, calendar) do
+    {:ok, date} = Date.new(year, month, day, calendar)
+    date
   end
 
   @doc """
@@ -1086,7 +1450,6 @@ defmodule Cldr.Calendar do
   end
 
   defdelegate day_of_week(date), to: Date
-  defdelegate quarter_of_year(date), to: Date
   defdelegate days_in_month(date), to: Date
   defdelegate day_of_era(date), to: Date
   defdelegate months_in_year(date), to: Date

@@ -76,8 +76,24 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.week(year, week, __config__())
       end
 
+      def plus(year, month, day, :quarters, months) do
+        Month.plus(year, month, day, __config__(), :quarters, months)
+      end
+
+      def plus(year, month, day, :months, months) do
+        Month.plus(year, month, day, __config__(), :months, months)
+      end
+
       def leap_year?(year) do
         Month.leap_year?(year, __config__())
+      end
+
+      def date_to_iso_days(year, month, day) do
+        Month.date_to_iso_days(year, month, day, __config__())
+      end
+
+      def date_from_iso_days(iso_days) do
+        Month.date_from_iso_days(iso_days, __config__())
       end
 
       def first_gregorian_day_of_year(year) do
@@ -132,9 +148,5 @@ defmodule Cldr.Calendar.Compiler.Month do
       defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO
       defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
     end
-  end
-
-  def validate_config!(config) do
-    config
   end
 end

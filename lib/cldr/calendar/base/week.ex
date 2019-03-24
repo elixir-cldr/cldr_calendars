@@ -138,7 +138,7 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  def month(year, month, config) do
+  def month(_year, _month, _config) do
 
   end
 
@@ -147,6 +147,15 @@ defmodule Cldr.Calendar.Base.Week do
          {:ok, last_day} <- Date.new(year, week, days_in_week(), config.calendar) do
       Date.range(first_day, last_day)
     end
+  end
+
+  def plus(year, week, day, config, :quarters, quarters) do
+    weeks = (quarters * @weeks_in_quarter)
+    plus(year, week, day, config, :weeks, weeks)
+  end
+
+  def plus(_year, _week, _day, _config, :months, _months) do
+
   end
 
   @doc """
@@ -211,6 +220,11 @@ defmodule Cldr.Calendar.Base.Week do
     last_day = last_gregorian_day_of_year(year, config)
     days_in_year = last_day - first_day + 1
     div(days_in_year, days_in_week()) == @weeks_in_long_year
+  end
+
+  def date_to_iso_days(year, week, day, config) do
+    {days, _day_fraction} = naive_datetime_to_iso_days(year, week, day, 0, 0, 0, {0, 6}, config)
+    days
   end
 
   def date_from_iso_days(iso_day_number, config) do

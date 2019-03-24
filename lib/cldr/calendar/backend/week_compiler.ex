@@ -80,8 +80,24 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.week(year, week, __config__())
       end
 
+      def plus(year, week, day, :quarters, quarters) do
+        Week.plus(year, week, day, __config__(), :quarters, quarters)
+      end
+
+      def plus(year, week, day, :months, months) do
+        Week.plus(year, week, day, __config__(), :months, months)
+      end
+
       def leap_year?(year) do
         Week.long_year?(year, __config__())
+      end
+
+      def date_to_iso_days(year, week, day) do
+        Week.date_to_iso_days(year, week, day, __config__())
+      end
+
+      def date_from_iso_days(iso_days) do
+        Week.date_from_iso_days(iso_days, __config__())
       end
 
       def first_gregorian_day_of_year(year) do
