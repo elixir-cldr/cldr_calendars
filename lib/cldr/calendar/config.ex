@@ -42,5 +42,5 @@ defmodule Cldr.Calendar.Config do
             # First week has at least
             # this many days in current
             # year
-            min_days: 4
+            min_days: 7
 end

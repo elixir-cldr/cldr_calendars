@@ -1635,9 +1635,9 @@ defmodule Cldr.Calendar do
     }
   end
 
-  defp min_and_first_days(locale, options) do
-    min_days = Keyword.get(options, :min_days, min_days(locale))
-    first_day = Keyword.get(options, :day, first_day(locale))
+  defp min_and_first_days(_locale, options) do
+    min_days = Keyword.get(options, :min_days, 7)
+    first_day = Keyword.get(options, :day, 1)
     {min_days, first_day}
   end
 
