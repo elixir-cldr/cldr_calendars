@@ -5,8 +5,8 @@ defmodule Cldr.Calendar.Compiler.Month do
     config =
       Module.get_attribute(env.module, :options)
       |> Keyword.put(:calendar, env.module)
-      |> validate_config!
       |> Cldr.Calendar.extract_options()
+      |> Cldr.Calendar.validate_config!(:month)
 
     Module.put_attribute(env.module, :calendar_config, config)
 
@@ -56,8 +56,16 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.day_of_week(year, month, day, __config__())
       end
 
+      def days_in_year(year) do
+        Month.days_in_year(year, __config__())
+      end
+
       def days_in_month(year, month) do
         Month.days_in_month(year, month, __config__())
+      end
+
+      def days_in_week do
+        Month.days_in_week()
       end
 
       def year(year) do
@@ -76,15 +84,31 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.week(year, week, __config__())
       end
 
+      def plus(year, month, day, :quarters, months) do
+        Month.plus(year, month, day, __config__(), :quarters, months)
+      end
+
+      def plus(year, month, day, :months, months) do
+        Month.plus(year, month, day, __config__(), :months, months)
+      end
+
       def leap_year?(year) do
         Month.leap_year?(year, __config__())
       end
 
-      def first_day_of_year(year) do
+      def date_to_iso_days(year, month, day) do
+        Month.date_to_iso_days(year, month, day, __config__())
+      end
+
+      def date_from_iso_days(iso_days) do
+        Month.date_from_iso_days(iso_days, __config__())
+      end
+
+      def first_gregorian_day_of_year(year) do
         Month.first_gregorian_day_of_year(year, __config__())
       end
 
-      def last_day_of_year(year) do
+      def last_gregorian_day_of_year(year) do
         Month.last_gregorian_day_of_year(year, __config__())
       end
 
@@ -131,16 +155,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       defdelegate time_to_day_fraction(hour, minute, second, microsecond), to: Calendar.ISO
       defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO
       defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
-
-      defimpl String.Chars do
-        def to_string(%{calendar: calendar, year: year, month: month, day: day}) do
-          calendar.date_to_string(year, month, day)
-        end
-      end
     end
-  end
-
-  def validate_config!(config) do
-    config
   end
 end

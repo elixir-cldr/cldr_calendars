@@ -8,15 +8,24 @@ defmodule Cldr.Calendar.Config do
             # the :first_day and :min_days
             locale: nil,
 
+            # A default backend for this
+            # calendar
+            cldr_backend: nil,
+
             # Each quarter has three
             # 'months` each of 13 weeks
             # in either of a 4,4,5; 4,5,4
             # of 5,4,4 layout
             weeks_in_month: {4, 4, 5},
 
+            # Indicates if the anchor
+            # represents the beginning
+            # of the year or the end
+            begins_or_ends: :begins,
+
             # Calendar begins on the
             # :first, :last or :nearest
-            anchor: :first,
+            first_or_last: :first,
 
             # Year begins on this day
             day: 1,

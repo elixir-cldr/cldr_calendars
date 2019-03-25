@@ -23,6 +23,7 @@ defmodule Cldr.Calendar.Base.Month do
 
   @days_in_week 7
   @quarters_in_year 4
+  @months_in_quarter 3
   @iso_week_first_day 1
   @iso_week_min_days 4
   @january 1
@@ -57,7 +58,7 @@ defmodule Cldr.Calendar.Base.Month do
     month
   end
 
-  def week_of_year(year, month, day, %Config{} = config) do
+  def week_of_year(year, month, day, config) do
     iso_days = date_to_iso_days(year, month, day, config)
     first_gregorian_day_of_year = Base.Week.first_gregorian_day_of_year(year, config)
     last_gregorian_day_of_year = Base.Week.last_gregorian_day_of_year(year, config)
@@ -121,9 +122,13 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def year(year, config) do
-    first_day = first_gregorian_day_of_year(year, config)
-    last_day = last_gregorian_day_of_year(year, config)
-    Date.range(first_day, last_day)
+    starting_day = first_gregorian_day_of_year(year, config)
+    ending_day = last_gregorian_day_of_year(year, config)
+
+    with {:ok, start_date} <- date_from_iso_days(starting_day, config),
+         {:ok, end_date} <- date_from_iso_days(ending_day, config) do
+      Date.range(start_date, end_date)
+    end
   end
 
   def quarter(year, quarter, config) do
@@ -134,24 +139,53 @@ defmodule Cldr.Calendar.Base.Month do
     ending_month = starting_month + months_in_quarter - 1
     ending_day = days_in_month(year, ending_month, config)
 
-    {:ok, start_date} = Date.new(year, starting_month, starting_day, config.calendar)
-    {:ok, end_date} = Date.new(year, ending_month, ending_day, config.calendar)
-
-    Date.range(start_date, end_date)
+    with {:ok, start_date} <- Date.new(year, starting_month, starting_day, config.calendar),
+         {:ok, end_date} <- Date.new(year, ending_month, ending_day, config.calendar) do
+      Date.range(start_date, end_date)
+    end
   end
 
-  def month(year, month, calendar) do
+  def month(year, month, config) do
     starting_day = 1
-    ending_day = calendar.days_in_month(year, month)
+    ending_day = days_in_month(year, month, config)
 
-    {:ok, start_date} = Date.new(year, month, starting_day, calendar)
-    {:ok, end_date} = Date.new(year, month, ending_day, calendar)
-
-    Date.range(start_date, end_date)
+    with {:ok, start_date} <- Date.new(year, month, starting_day, config.calendar),
+         {:ok, end_date} <- Date.new(year, month, ending_day, config.calendar) do
+      Date.range(start_date, end_date)
+    end
   end
 
   def week(year, week, config) do
+    starting_day = Cldr.Calendar.Base.Week.first_gregorian_day_of_year(year, config) +
+      Cldr.Calendar.weeks_to_days(week - 1)
 
+    ending_day = (starting_day + days_in_week() - 1)
+
+    with {:ok, start_date} <- date_from_iso_days(starting_day, config),
+         {:ok, end_date} <- date_from_iso_days(ending_day, config) do
+      Date.range(start_date, end_date)
+    end
+  end
+
+  def plus(year, month, day, config, :quarters, quarters) do
+    months = (quarters * @months_in_quarter)
+    plus(year, month, day, config, :months, months)
+  end
+
+  # TODO use Cldr.Math.div_amod when its published
+  def plus(year, month, day, config, :months, months) do
+    months_in_year = months_in_year(year, config)
+    {year_increment, new_month} = Cldr.Math.div_mod(month + months, months_in_year)
+    {year_increment, new_month} =
+      if new_month == 0 do
+        {year_increment - 1, months_in_year}
+      else
+        {year_increment, new_month}
+      end
+    new_year = year + year_increment
+    max_new_day = days_in_month(new_year, new_month, config)
+    new_day = min(day, max_new_day)
+    {new_year, new_month, new_day}
   end
 
   @doc """
@@ -192,8 +226,13 @@ defmodule Cldr.Calendar.Base.Month do
     days
   end
 
-  def naive_datetime_from_iso_days(iso_days, %Config{month: 1}) do
-    ISO.naive_datetime_from_iso_days(iso_days)
+  def date_from_iso_days(iso_day_number, config) do
+   {year, month, day, _, _, _, _} = naive_datetime_from_iso_days(iso_day_number, config)
+   Date.new(year, month, day, config.calendar)
+  end
+
+  def naive_datetime_from_iso_days(iso_day_number, config) when is_integer(iso_day_number) do
+    naive_datetime_from_iso_days({iso_day_number, {0, 6}}, config)
   end
 
   def naive_datetime_from_iso_days({days, day_fraction}, config) do
@@ -233,4 +272,5 @@ defmodule Cldr.Calendar.Base.Month do
 
     {year, month, day}
   end
+
 end

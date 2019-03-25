@@ -14,8 +14,8 @@ defmodule Cldr.Calendar.NRF.Test do
     }
 
     for {year, [starts, ends]} <- nrf_years do
-      assert  Calendar.ISO.date_from_iso_days(Cldr.Calendar.NRF.first_day_of_year(year)) == starts
-      assert  Calendar.ISO.date_from_iso_days(Cldr.Calendar.NRF.last_day_of_year(year)) == ends
+      assert  Calendar.ISO.date_from_iso_days(Cldr.Calendar.NRF.first_gregorian_day_of_year(year)) == starts
+      assert  Calendar.ISO.date_from_iso_days(Cldr.Calendar.NRF.last_gregorian_day_of_year(year)) == ends
     end
   end
 

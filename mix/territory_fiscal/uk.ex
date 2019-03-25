@@ -2,7 +2,7 @@ require Cldr.Calendar.Compiler.Month
 
 defmodule Cldr.Calendar.UK do
   use Cldr.Calendar.Base.Month,
-    anchor: :first,
+    first_or_last: :first,
     month: 4,
     year: :ending
 
