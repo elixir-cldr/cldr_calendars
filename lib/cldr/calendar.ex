@@ -1456,15 +1456,15 @@ defmodule Cldr.Calendar do
   # Helpers
   #
 
-  defp first_day(%LanguageTag{territory: territory}) do
+  def first_day_for_locale(%LanguageTag{territory: territory}) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
-      first_day(territory)
+      first_day_for_locale(territory)
     end
   end
 
-  defp min_days(%LanguageTag{territory: territory}) do
+  def min_days_for_locale(%LanguageTag{territory: territory}) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
-      min_days(territory)
+      min_days_for_locale(territory)
     end
   end
 
@@ -1487,11 +1487,11 @@ defmodule Cldr.Calendar do
       get_in(@week_info, [:min_days, territory]) ||
         get_in(@week_info, [:min_days, @the_world])
 
-    defp first_day(unquote(territory)) do
+    def first_day_for_locale(unquote(territory)) do
       unquote(first_day)
     end
 
-    defp min_days(unquote(territory)) do
+    def min_days_for_locale(unquote(territory)) do
       unquote(min_days)
     end
 
@@ -1504,15 +1504,15 @@ defmodule Cldr.Calendar do
     end
   end
 
-  defp first_day(territory) do
+  def first_day_for_locale(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
-      first_day(territory)
+      first_day_for_locale(territory)
     end
   end
 
-  defp min_days(territory) do
+  def min_days_for_locale(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
-      min_days(territory)
+      min_days_for_locale(territory)
     end
   end
 
@@ -1647,7 +1647,7 @@ defmodule Cldr.Calendar do
     with :ok <- assert(config.day in 1..7, day_error(config.day)),
          :ok <- assert(config.month in 1..12, month_error(config.month)),
          :ok <- assert(config.year in @valid_year, year_error(config.year)),
-         :ok <- assert(config.min_days in 1..7, min_days_error(config.min_days)),
+         :ok <- assert(config.min_days in 1..7, min_days_for_locale_error(config.min_days)),
          :ok <- assert(config.first_or_last in [:first, :last], first_or_last_error(config.first_or_last)),
          :ok <- assert(config.begins_or_ends in [:begins, :ends], begins_or_ends_error(config.begins_or_ends)),
          :ok <- assert(config.weeks_in_month in @valid_weeks_in_month,
@@ -1689,7 +1689,7 @@ defmodule Cldr.Calendar do
     ":year must be either :beginning, :ending or :majority. Found #{inspect year}."
   end
 
-  defp min_days_error(min_days) do
+  def min_days_for_locale_error(min_days) do
     ":min_days must be in the rnage 1..7. Found #{inspect min_days}."
   end
 
