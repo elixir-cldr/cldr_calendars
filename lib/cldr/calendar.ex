@@ -231,7 +231,7 @@ defmodule Cldr.Calendar do
         |> String.capitalize
 
       contents = quote do
-        use unquote(Module.concat(Cldr.Calendar.Base, calendar_type)), unquote(config)
+        use unquote(Module.concat(Cldr.Calendar.Base, calendar_type)), unquote(Macro.escape(config))
       end
 
       {:module, module, _, :ok} = Module.create(calendar_module, contents, Macro.Env.location(__ENV__))
