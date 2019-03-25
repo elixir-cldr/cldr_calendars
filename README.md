@@ -90,7 +90,7 @@ If you look carefully at where we asked for the date range for Cisco's first qua
 
 ## Week-based calendars
 
-Cisco's calendar is an example of a "week-based" calendar. Week-based calendars are an example of [fiscal year calendars](https://en.wikipedia.org/wiki/Fiscal_year). In `Cldr Calendar`, any calendar that is defined in terms of "first or last day of week of month" is a week-based calendar.  These calendars have a year of 52 weeks duration except in "leap years" that have 52 weeks.
+Cisco's calendar is an example of a "week-based" calendar. Such week-based calendars are examples of [fiscal year calendars](https://en.wikipedia.org/wiki/Fiscal_year). In `Cldr Calendar`, any calendar that is defined in terms of "[first | last] [day] of [month]" is a week-based calendar.  These calendars have a year of 52 weeks duration except in "leap years" that have 53 weeks.
 
 The most well-known week-based calendar may be the [ISO Week Calendar](https://en.wikipedia.org/wiki/ISO_week_date). How would we define that calendar in `Cldr Calendars`? Easy!
 ```
