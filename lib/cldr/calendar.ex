@@ -1600,6 +1600,11 @@ defmodule Cldr.Calendar do
     n * @days_in_a_week
   end
 
+  def date_to_string(date) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.date_to_string(year, month, day)
+  end
+
   @doc false
   def calendar_error(calendar_name) do
     {Cldr.UnknownCalendarError, "The calendar #{inspect(calendar_name)} is not known."}
