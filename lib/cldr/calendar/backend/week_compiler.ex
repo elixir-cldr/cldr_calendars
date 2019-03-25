@@ -60,8 +60,16 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.weeks_in_year(year, __config__())
       end
 
+      def days_in_year(year) do
+        Week.days_in_year(year, __config__())
+      end
+
       def days_in_month(year, month) do
         Week.days_in_month(year, month, __config__())
+      end
+
+      def days_in_week do
+        Week.days_in_week()
       end
 
       def year(year) do

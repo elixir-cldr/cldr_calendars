@@ -97,6 +97,14 @@ defmodule Cldr.Calendar.Base.Week do
     if long_year?(year, config), do: @weeks_in_long_year, else: @weeks_in_normal_year
   end
 
+  def days_in_year(year, config) do
+    if long_year?(year, config) do
+      @weeks_in_long_year * @days_in_week
+    else
+      @weeks_in_normal_year * @days_in_week
+    end
+  end
+
   def days_in_month(_year, month, config) when month in 1..11 do
     %Config{weeks_in_month: weeks_in_month} = config
     month_in_quarter = Math.amod(rem(month, @months_in_quarter), @months_in_quarter)
@@ -228,7 +236,8 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def date_from_iso_days(iso_day_number, config) do
-    Cldr.Calendar.date_from_iso_days(iso_day_number, config.calendar)
+    {year, week, day, _, _, _, _} = naive_datetime_from_iso_days({iso_day_number, {0, 6}}, config)
+    Date.new(year, week, day, config.calendar)
   end
 
   def date_to_string(year, week, day) do
@@ -236,9 +245,22 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def naive_datetime_from_iso_days({days, day_fraction}, config) do
-    {year, month, day} = Calendar.ISO.date_from_iso_days(days)
-    {year, week} = Base.Month.iso_week_of_year(year, month, day)
-    day = days - first_gregorian_day_of_year(year, config) - week_to_days(week) + 1
+    {year, _month, _day} = Calendar.ISO.date_from_iso_days(days)
+    first_day = first_gregorian_day_of_year(year, config)
+    {year, first_day} =
+      cond do
+        first_day > days ->
+          {year - 1, first_gregorian_day_of_year(year - 1, config)}
+        (days - first_day + 1) > config.calendar.days_in_year(year) ->
+          {year + 1, first_gregorian_day_of_year(year + 1, config)}
+        true ->
+          {year, first_day}
+      end
+
+    day_of_year = days - first_day + 1
+    week = trunc(Float.ceil(day_of_year / days_in_week()))
+    day = day_of_year - ((week - 1) * days_in_week())
+
     {hour, minute, second, microsecond} = Calendar.ISO.time_from_day_fraction(day_fraction)
     {year, week, day, hour, minute, second, microsecond}
   end

@@ -122,6 +122,12 @@ defmodule Cldr.Calendar do
   @callback last_gregorian_day_of_year(Calendar.year()) :: Date.t()
 
   @doc """
+  Returns the number of days in a year
+
+  """
+  @callback days_in_year(Calendar.year()) :: Calendar.day()
+
+  @doc """
   Returns a date range representing the days in a
   calendar year.
 
@@ -293,12 +299,35 @@ defmodule Cldr.Calendar do
   Returns the first date of a `year`
   for a `calendar`.
 
+  ## Arguments
+
+  * `year` is any year
+
+  * `calendar` is any module that implements
+    the `Calendar` and `Cldr.Calendar`
+    behaviours
+
+  ## Returns
+
+  * a `Date.t() or
+
+  * {:error, :invalid_date}
+
+  ## Examples
+
+      iex> Cldr.Calendar.first_day_of_year 2019, Cldr.Calendar.Gregorian
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 1, year: 2019}
+
+      iex> Cldr.Calendar.first_day_of_year 2019, Cldr.Calendar.NRF
+      %Date{calendar: Cldr.Calendar.NRF, day: 1, month: 1, year: 2019}
+
   """
   @spec first_day_of_year(Calendar.year, calendar()) :: Date.t
 
   def first_day_of_year(year, calendar) do
-    {:ok, date} = Date.new(year, 1, 1, calendar)
-    date
+    with {:ok, date} <- Date.new(year, 1, 1, calendar) do
+      date
+    end
   end
 
   def first_day_of_year(%{year: year, calendar: calendar}) do
@@ -309,14 +338,36 @@ defmodule Cldr.Calendar do
   Returns the last date of a `year`
   for a `calendar`.
 
+  ## Arguments
+
+  * `year` is any year
+
+  * `calendar` is any module that implements
+    the `Calendar` and `Cldr.Calendar`
+    behaviours
+
+  ## Returns
+
+  * a `Date.t() or
+
+  * {:error, :invalid_date}
+
+  ## Examples
+
+      iex> Cldr.Calendar.last_day_of_year 2019, Cldr.Calendar.Gregorian
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 12, year: 2019}
+
+      iex> Cldr.Calendar.last_day_of_year 2019, Cldr.Calendar.NRF
+      %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}
+
   """
   @spec last_day_of_year(Calendar.year, calendar()) :: Date.t
 
   def last_day_of_year(year, calendar) do
-    last_month = calendar.months_in_year(year)
-    last_day = calendar.days_in_month(year, last_month)
-    {:ok, date} = Date.new(year, last_month, last_day, calendar)
-    date
+    iso_days = calendar.last_gregorian_day_of_year(year)
+    with {:ok, date} <- calendar.date_from_iso_days(iso_days) do
+      date
+    end
   end
 
   @doc """
@@ -329,7 +380,7 @@ defmodule Cldr.Calendar do
   def first_gregorian_day_of_year(year, calendar) do
     year
     |> calendar.first_gregorian_day_of_year
-    |> Calendar.ISO.date_from_iso_days
+    |> Cldr.Calendar.Gregorian.date_from_iso_days
   end
 
   @doc """
@@ -342,7 +393,7 @@ defmodule Cldr.Calendar do
   def last_gregorian_day_of_year(year, calendar) do
     year
     |> calendar.last_gregorian_day_of_year
-    |> Calendar.ISO.date_from_iso_days
+    |> Cldr.Calendar.Gregorian.date_from_iso_days
   end
 
   def last_day_of_year(%{year: year, calendar: calendar}) do
@@ -744,6 +795,58 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Returns a `Date.Range.t` that represents
+  the `day`.
+
+  The range is enumerable.
+
+  ## Arguments
+
+  * `year` is any `year` for `calendar`
+
+  * `day` is any `day` in the `year`
+    for `calendar`
+
+  * `calendar` is any module that implements
+    the `Calendar` and `Cldr.Calendar`
+    behaviours
+
+  ## Returns
+
+  * A `Date.Range.t()` representing the
+    the enumerable days in the `week`
+
+  ## Examples
+
+      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.US
+      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 21, month: 12, year: 2020}, %Date{calendar: Cldr.Calendar.US, day: 27, month: 12, year: 2020}>
+
+      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.NRF
+      #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}>
+
+      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.ISOWeek
+      #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 52, year: 2019}>
+
+  """
+  @spec day(Calendar.year(), Calendar.day(), calendar()) :: Date.Range.t()
+  @spec day(Date.t()) :: Date.Range.t()
+
+  def day(date) do
+    Date.range(date, date)
+  end
+
+  def day(year, day, calendar) do
+    if day <= calendar.days_in_year(year) do
+      iso_days = calendar.first_gregorian_day_of_year(year) + day - 1
+      with {:ok, date} <- calendar.date_from_iso_days(iso_days) do
+        day(date)
+      end
+    else
+      {:error, :invalid_date}
+    end
+  end
+
+  @doc """
   Returns the current date or date range for
   a date period (year, quarter, month, week
   or day).
@@ -803,7 +906,7 @@ defmodule Cldr.Calendar do
 
   def current(%Date.Range{first: date}, :day) do
     current(date, :day)
-    # |> day
+    |> day
   end
 
   def current(date, :day) do
@@ -870,7 +973,7 @@ defmodule Cldr.Calendar do
 
   def next(%Date.Range{last: date}, :day) do
     next(date, :day)
-    # |> day
+    |> day
   end
 
   def next(date, :day) do
@@ -914,7 +1017,7 @@ defmodule Cldr.Calendar do
   end
 
   def previous(date, :quarter) do
-    plus(date, :quarters, -1)
+    minus(date, :quarters, 1)
   end
 
   def previous(%Date.Range{last: date}, :month) do
@@ -923,7 +1026,7 @@ defmodule Cldr.Calendar do
   end
 
   def previous(date, :month) do
-    plus(date, :months, -1)
+    minus(date, :months, 1)
   end
 
   def previous(%Date.Range{last: date}, :week) do
@@ -932,7 +1035,7 @@ defmodule Cldr.Calendar do
   end
 
   def previous(date, :week) do
-    plus(date, :weeks, -1)
+    minus(date, :weeks, 1)
   end
 
   def previous(%Date.Range{last: date}, :day) do
@@ -971,6 +1074,11 @@ defmodule Cldr.Calendar do
 
   def plus(date, period, days \\ 1)
 
+  def plus(%Date.Range{last: date}, :years, years) do
+    plus(date, :years, years)
+    |> year
+  end
+
   def plus(date, :years, years) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     new_year =
@@ -985,10 +1093,20 @@ defmodule Cldr.Calendar do
     date
   end
 
+  def plus(%Date.Range{last: date}, :quarters, quarters) do
+    plus(date, :quarters, quarters)
+    |> quarter
+  end
+
   def plus(date, :quarters, quarters) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.plus(year, month, day, :quarters, quarters)
     |> date_from_tuple(calendar)
+  end
+
+  def plus(%Date.Range{last: date}, :months, months) do
+    plus(date, :months, months)
+    |> month
   end
 
   def plus(date, :months, months) do
@@ -997,11 +1115,21 @@ defmodule Cldr.Calendar do
     |> date_from_tuple(calendar)
   end
 
+  def plus(%Date.Range{last: date}, :weeks, weeks) do
+    plus(date, :weeks, weeks)
+    |> week
+  end
+
   def plus(%{calendar: calendar} = date, :weeks, weeks) do
     date
     |> date_to_iso_days
     |> plus(weeks_to_days(weeks))
     |> date_from_iso_days(calendar)
+  end
+
+  def plus(%Date.Range{last: date}, :days, days) do
+    plus(date, :days, days)
+    |> day
   end
 
   def plus(%{calendar: calendar} = date, :days, days) do
@@ -1031,6 +1159,22 @@ defmodule Cldr.Calendar do
   a `Date.Range.t` is returned.
 
   ## Examples
+
+      iex> import Cldr.Calendar.Sigils
+      iex> Cldr.Calendar.minus ~d[2016-03-01], :days, 1
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 29, month: 2, year: 2016}
+      iex> Cldr.Calendar.minus ~d[2019-03-01], :months, 1
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2019}
+      iex> Cldr.Calendar.minus ~d[2016-03-01], :days, 1
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 29, month: 2, year: 2016}
+      iex> Cldr.Calendar.minus ~d[2019-03-01], :days, 1
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019}
+      iex> Cldr.Calendar.minus ~d[2019-03-01], :months, 1
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2019}
+      iex> Cldr.Calendar.minus ~d[2019-03-01], :quarters, 1
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 12, year: 2018}
+      iex> Cldr.Calendar.minus ~d[2019-03-01], :years, 1
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 3, year: 2018}
 
   """
   def minus(%{calendar: _calendar} = date, period, amount) do
@@ -1135,10 +1279,17 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
+      iex> Cldr.Calendar.date_from_tuple {2019, 3, 25}, Cldr.Calendar.Gregorian
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 25, month: 3, year: 2019}
+
+      iex> Cldr.Calendar.date_from_tuple {2019, 2, 29}, Cldr.Calendar.Gregorian
+      {:error, :invalid_date}
+
   """
   def date_from_tuple({year, month, day}, calendar) do
-    {:ok, date} = Date.new(year, month, day, calendar)
-    date
+    with {:ok, date} <- Date.new(year, month, day, calendar) do
+      date
+    end
   end
 
   @doc """
@@ -1254,6 +1405,10 @@ defmodule Cldr.Calendar do
     year - 1
   end
 
+  def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :majority}) do
+    year
+  end
+
   def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :ending}) do
     year - 1
   end
@@ -1266,6 +1421,10 @@ defmodule Cldr.Calendar do
   # The year is defined as the beginning year
   def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: month})
       when month > 6 do
+    year
+  end
+
+  def ending_gregorian_year(year, %Config{first_or_last: :first, month: 1}) do
     year
   end
 

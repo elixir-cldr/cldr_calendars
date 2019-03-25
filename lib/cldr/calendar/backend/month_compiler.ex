@@ -56,8 +56,16 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.day_of_week(year, month, day, __config__())
       end
 
+      def days_in_year(year) do
+        Month.days_in_year(year, __config__())
+      end
+
       def days_in_month(year, month) do
         Month.days_in_month(year, month, __config__())
+      end
+
+      def days_in_week do
+        Month.days_in_week()
       end
 
       def year(year) do
