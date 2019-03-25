@@ -194,7 +194,7 @@ defmodule Cldr.Calendar do
     name of the created calendar.
 
   * `calendar_type` is an atom of either `:month` or
-    :week` indicating whcih type of calendar is to
+    `:week` indicating whcih type of calendar is to
     be created
 
   * `config` is a keyword list defining the configuration
@@ -309,9 +309,9 @@ defmodule Cldr.Calendar do
 
   ## Returns
 
-  * a `Date.t() or
+  * a `Date.t()` or
 
-  * {:error, :invalid_date}
+  * `{:error, :invalid_date}`
 
   ## Examples
 
@@ -348,9 +348,9 @@ defmodule Cldr.Calendar do
 
   ## Returns
 
-  * a `Date.t() or
+  * a `Date.t()` or
 
-  * {:error, :invalid_date}
+  * `{:error, :invalid_date}`
 
   ## Examples
 
@@ -986,7 +986,7 @@ defmodule Cldr.Calendar do
     `Date.Range.t`
 
   * `period` is `:year`, `:quarter`, `:month`,
-  ` :week` or `:day`
+    `:week` or `:day`
 
   ## Returns
 
@@ -1000,15 +1000,6 @@ defmodule Cldr.Calendar do
   def current(%Date.Range{first: date}, :year) do
     current(date, :year)
     |> year
-  end
-
-  def new(calendar_module, calendar_type, config \\ [])
-      when is_atom(calendar_module) and is_list(config) and calendar_type in [:week, :month] do
-    if Code.ensure_loaded?(calendar_module) do
-      {:ok, calendar_module}
-    else
-      create_calendar(calendar_module, calendar_type, config)
-    end
   end
 
   def current(date, :year) do
@@ -1129,7 +1120,7 @@ defmodule Cldr.Calendar do
     `Date.Range.t`
 
   * `period` is `:year`, `:quarter`, `:month`,
-  ` :week` or `:day`
+    `:week` or `:day`
 
   ## Returns
 
@@ -1195,7 +1186,7 @@ defmodule Cldr.Calendar do
     `Date.Range.t`
 
   * `period` is `:year`, `:quarter`, `:month`,
-  ` :week` or `:day`
+    `:week` or `:day`
 
   ## Returns
 
@@ -1288,7 +1279,7 @@ defmodule Cldr.Calendar do
     `Date.Range.t`
 
   * `period` is `:year`, `:quarter`, `:month`,
-  ` :week` or `:day`
+    `:week` or `:day`
 
   ## Returns
 
@@ -1660,10 +1651,12 @@ defmodule Cldr.Calendar do
     end
   end
 
+  @doc false
   def validate_config(config, :month) do
     validate_config(config, :week)
   end
 
+  @doc false
   def validate_config!(config, calendar_type) do
     case validate_config(config, calendar_type) do
       {:ok, config} -> config
@@ -1671,11 +1664,11 @@ defmodule Cldr.Calendar do
     end
   end
 
-  def assert(true, _) do
+  defp assert(true, _) do
     :ok
   end
 
-  def assert(false, message) do
+  defp assert(false, message) do
     {:error, message}
   end
 
