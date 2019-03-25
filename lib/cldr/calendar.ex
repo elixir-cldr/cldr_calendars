@@ -371,8 +371,20 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns the first gregorian date of a `year`
+  Returns the gregorian date of the first day of of a `year`
   for a `calendar`.
+
+  ## Arguements
+
+  * `year` is any integer year number
+
+  ## Examples
+
+      iex> Cldr.Calendar.first_gregorian_day_of_year 2019, Cldr.Calendar.Gregorian
+      {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 1, year: 2019}}
+
+      iex> Cldr.Calendar.first_gregorian_day_of_year 2019, Cldr.Calendar.NRF
+      {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 3, month: 2, year: 2019}}
 
   """
   @spec first_gregorian_day_of_year(Calendar.year, calendar()) :: Date.t
@@ -384,11 +396,23 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns the last gregorian date of a `year`
+  Returns the gregorian date of the first day of a `year`
   for a `calendar`.
 
+  ## Arguements
+
+  * `year` is any integer year number
+
+  ## Examples
+
+      iex> Cldr.Calendar.last_gregorian_day_of_year 2019, Cldr.Calendar.Gregorian
+      {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 12, year: 2019}}
+
+      iex> Cldr.Calendar.last_gregorian_day_of_year 2019, Cldr.Calendar.NRF
+      {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2020}}
+
   """
-  @spec last_day_of_year(Calendar.year, calendar()) :: Date.t
+  @spec last_gregorian_day_of_year(Calendar.year, calendar()) :: Date.t
 
   def last_gregorian_day_of_year(year, calendar) do
     year
@@ -396,16 +420,36 @@ defmodule Cldr.Calendar do
     |> Cldr.Calendar.Gregorian.date_from_iso_days
   end
 
-  def last_day_of_year(%{year: year, calendar: calendar}) do
-    last_day_of_year(year, calendar)
+  def last_gregorian_day_of_year(%{year: year, calendar: calendar}) do
+    last_gregorian_day_of_year(year, calendar)
   end
 
   @doc """
-  Returns the `{year, quarter}`
-  for a `date`.
+  Returns the `quarter` number for
+  a `date`.
+
+  ## Arguments
+
+  * `date` is any `Date.t()
+
+  ## Returns
+
+  * a the quarter of the year as an
+    integer
+
+  ## Examples
+
+      iex> Cldr.Calendar.quarter_of_year ~D[2019-01-01]
+      1
+
+      iex> Cldr.Calendar.quarter_of_year Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      1
+
+      iex> Cldr.Calendar.quarter_of_year Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      4
 
   """
-  @spec quarter_of_year(Date.t) :: {Calendar.year(), Calendar.quarter()}
+  @spec quarter_of_year(Date.t) :: Calendar.quarter()
 
   def quarter_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
@@ -413,8 +457,29 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns the `{year, month}`
-  for a `date`.
+  Returns the `month` number for
+  a `date`.
+
+  ## Arguments
+
+  * `date` is any `Date.t()
+
+  ## Returns
+
+  * a the quarter of the year as an
+    integer
+
+  ## Examples
+
+      iex> import Cldr.Calendar.Sigils
+      iex> Cldr.Calendar.month_of_year ~d[2019-01-01]
+      1
+      iex> Cldr.Calendar.month_of_year ~d[2019-12-01]
+      12
+      iex> Cldr.Calendar.month_of_year ~d[2019-52-01]NRF
+      12
+      iex> Cldr.Calendar.month_of_year ~d[2019-26-01]NRF
+      6
 
   """
   @spec month_of_year(Date.t) :: {Calendar.year(), Calendar.month()}
@@ -425,8 +490,29 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns the `{year, iso_week_number}`
-  for a `date`.
+  Returns the `ISO week` number for
+  a `date`.
+
+  ## Arguments
+
+  * `date` is any `Date.t()
+
+  ## Returns
+
+  * a the ISO week of the year as an
+    integer
+
+  ## Examples
+
+      iex> import Cldr.Calendar.Sigils
+      iex> Cldr.Calendar.iso_week_of_year ~d[2019-01-01]
+      {2019, 1}
+      iex> Cldr.Calendar.iso_week_of_year ~d[2019-02-01]
+      {2019, 5}
+      iex> Cldr.Calendar.iso_week_of_year ~d[2019-52-01]NRF
+      {2020, 4}
+      iex> Cldr.Calendar.iso_week_of_year ~d[2019-26-01]NRF
+      {2019, 30}
 
   """
   @spec iso_week_of_year(Date.t) :: {Calendar.year(), week()}
@@ -440,6 +526,27 @@ defmodule Cldr.Calendar do
   Returns the `{year, week_number}`
   for a `date`.
 
+  ## Arguments
+
+  * `date` is any `Date.t()
+
+  ## Returns
+
+  * a the week of the year as an
+    integer
+
+  ## Examples
+
+      iex> import Cldr.Calendar.Sigils
+      iex> Cldr.Calendar.week_of_year ~d[2019-01-01]
+      {2019, 1}
+      iex> Cldr.Calendar.week_of_year ~d[2019-12-01]
+      {2019, 48}
+      iex> Cldr.Calendar.week_of_year ~d[2019-52-01]NRF
+      {2019, 52}
+      iex> Cldr.Calendar.week_of_year ~d[2019-26-01]NRF
+      {2019, 26}
+
   """
   @spec week_of_year(Date.t) :: {Calendar.year(), week()}
 
@@ -449,8 +556,31 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns the `day_of_year`
+  Returns the `day` of the year
   for a `date`.
+
+  ## Arguments
+
+  * `date` is any `Date.t()
+
+  ## Returns
+
+  * a the day of the year as an
+    integer
+
+  ## Examples
+
+      iex> import Cldr.Calendar.Sigils
+      iex> Cldr.Calendar.day_of_year ~d[2019-01-01]
+      1
+      iex> Cldr.Calendar.day_of_year ~d[2016-12-31]
+      366
+      iex> Cldr.Calendar.day_of_year ~d[2019-12-31]
+      365
+      iex> Cldr.Calendar.day_of_year ~d[2019-52-07]NRF
+      365
+      iex> Cldr.Calendar.day_of_year ~d[2012-53-07]NRF
+      372
 
   """
   @spec day_of_year(Date.t) :: Calendar.day()
@@ -742,7 +872,6 @@ defmodule Cldr.Calendar do
     month = month_of_year(date)
     month(date.year, month, date.calendar)
   end
-
 
   def month(year, month, calendar) do
     calendar.month(year, month)

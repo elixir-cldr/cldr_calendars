@@ -1,5 +1,4 @@
 defmodule Cldr.Calendar.Base.Week do
-  alias Cldr.Calendar.Base
   alias Cldr.Calendar.Config
   alias Calendar.ISO
   alias Cldr.Math
@@ -62,14 +61,14 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  def week_of_year(_year, week, _day, _config) do
-    week
+  def week_of_year(year, week, _day, _config) do
+    {year, week}
   end
 
   def iso_week_of_year(year, week, day, config) do
     {:ok, date} = Date.new(year, week, day, config.calendar)
-    {:ok, %{year: year, month: month, day: day}} = Date.convert(date, Base.Month)
-    Base.Month.iso_week_of_year(year, month, day)
+    {:ok, %{year: year, month: month, day: day}} = Date.convert(date, Cldr.Calendar.Gregorian)
+    Cldr.Calendar.Gregorian.iso_week_of_year(year, month, day)
   end
 
   def day_of_era(year, week, day, config) do

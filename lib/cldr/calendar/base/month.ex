@@ -58,7 +58,7 @@ defmodule Cldr.Calendar.Base.Month do
     month
   end
 
-  def week_of_year(year, month, day, %Config{} = config) do
+  def week_of_year(year, month, day, config) do
     iso_days = date_to_iso_days(year, month, day, config)
     first_gregorian_day_of_year = Base.Week.first_gregorian_day_of_year(year, config)
     last_gregorian_day_of_year = Base.Week.last_gregorian_day_of_year(year, config)
@@ -272,4 +272,5 @@ defmodule Cldr.Calendar.Base.Month do
 
     {year, month, day}
   end
+
 end
