@@ -88,7 +88,7 @@ But wait a minute, these don't look like familiar dates!  Shouldn't they be form
 
 If you looked carefully at where we asked for the date range for Cisco's first quarter of 2019 you would have seen `%Date{calendar: Cldr.Calendar.CSCO, day: 7, month: 13, year: 2019}` as the last date in the range. There is, of course, no such month as `13` in the Gregorian calendar.  What's going on?
 
-### Week-based calendars
+## Week-based calendars
 
 Cisco's calendar is an example of a "week-based" calendar. Week-based calendars are an example of [fiscal year calendars](https://en.wikipedia.org/wiki/Fiscal_year). In `Cldr Calendar`, any calendar that is defined in terms of "first or last day of week of month" is a week-based calendar.  These calendars have a year of 52 weeks duration except in "leap years" that have 52 weeks.
 
@@ -117,7 +117,7 @@ That's interesting.  The first day of the 2019 year in the ISO Week calendar is 
 
 Week-based calendars can start or end on a given day of the week in a given month.  But there is a third option: the given day of the week *nearest* to the start or end of the given month.  This is indicated by the configuration parameter `:min_days`.  For the `ISO Week` calendar we have `min_days: 4`.  That means that at least `4` days of the first or last week have to be in the specified `:month` and then we select the nearest day of the week.  Hence it is possible and even common for the gregorian start of the year for a week-based calendar to be up to 6 days before or after the Gregorian starts of the year.
 
-### Month-based calendars
+## Month-based calendars
 
 ## Installation
 
