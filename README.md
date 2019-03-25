@@ -20,10 +20,6 @@ end
 
 * [ ] Implement hybrid base calendar. This is a week-based calendar that presents dates in a monthly format.  Symmetry454 is an example.
 
-* [ ] Implement date ranges year, quarter, month and week
-
-* [ ] Add @specs
-
-* [ ] Add module docs
+* [ ] Add module docs, especially configuration
 
 * [ ] Add guides
