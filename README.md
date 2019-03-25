@@ -86,7 +86,7 @@ iex> Enum.map range, &Cldr.Calendar.date_to_string/1
 ```
 But wait a minute, these don't look like familiar dates!  Shouldn't they be formatted as "yyy-mm-dd"? The answer in this case is "no".
 
-If you looked carefully at where we asked for the date range for Cisco's first quarter of 2019 you would have seen `%Date{calendar: Cldr.Calendar.CSCO, day: 7, month: 13, year: 2019}` as the last date in the range. There is, of course, no such month as `13` in the Gregorian calendar.  What's going on?
+If you look carefully at where we asked for the date range for Cisco's first quarter of 2019 you will see `%Date{calendar: Cldr.Calendar.CSCO, day: 7, month: 13, year: 2019}` as the last date in the range. There is, of course, no such month as `13` in the Gregorian calendar.  What's going on?
 
 ## Week-based calendars
 
@@ -116,6 +116,13 @@ iex> Date.convert(date, Calendar.ISO)
 That's interesting.  The first day of the 2019 year in the ISO Week calendar is actually December 31st, 2018. Why is that?
 
 Week-based calendars can start or end on a given day of the week in a given month.  But there is a third option: the given day of the week *nearest* to the start or end of the given month.  This is indicated by the configuration parameter `:min_days`.  For the `ISO Week` calendar we have `min_days: 4`.  That means that at least `4` days of the first or last week have to be in the specified `:month` and then we select the nearest day of the week.  Hence it is possible and even common for the gregorian start of the year for a week-based calendar to be up to 6 days before or after the Gregorian starts of the year.
+
+Whats the last week of 2019 in the `ISO Week` calendar?
+```
+ iex> date = Cldr.Calendar.week(2019, 52, Cldr.Calendar.ISOWeek)
+ #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 52, year: 2019}>
+```
+You'll see that for week-based calendars the date is actually stored as `year, week, day` where the `:month` field of the `Date.t` is actually the week in the year and `:day` is the day in the week.
 
 ## Month-based calendars
 
