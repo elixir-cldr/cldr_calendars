@@ -174,10 +174,12 @@ defmodule Cldr.Calendar.Base.Week do
     iso_days = ISO.date_to_iso_days(year, first_month, min_days)
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)
 
-    if first_day < day_of_week do
-      iso_days - (day_of_week - first_day)
+    # The iso_days calulation is the last possible first day of the first week
+    # All starting days are less than or equal to this day
+    if first_day > day_of_week do
+       iso_days + (first_day - days_in_week() - day_of_week)
     else
-      iso_days + (day_of_week - first_day)
+      iso_days - (day_of_week - first_day)
     end
   end
 
