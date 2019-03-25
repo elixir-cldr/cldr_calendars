@@ -115,7 +115,7 @@ iex> Date.convert(date, Calendar.ISO)
 ```
 That's interesting.  The first day of the 2019 year in the ISO Week calendar is actually December 31st, 2018. Why is that?
 
-Week-based calendars can start or end on a given day of the week in a given month.  But there is a third option: the given day of the week *nearest* to the start or end of the given month.  This is indicated by the configuration parameter `:min_days`.  For the `ISO Week` calendar we have `min_days: 4`.  That means that at least `4` days of the first or last week have to be in the specified `:month` and then we select the nearest day of the week.  Hence it is possible and even common for the gregorian start of the year for a week-based calendar to be up to 6 days before or after the Gregorian starts of the year.
+Week-based calendars can start or end on a given day of the week in a given month.  But there is a third option: the given day of the week *nearest* to the start or end of the given month.  This is indicated by the configuration parameter `:min_days`.  For the `ISO Week` calendar we have `min_days: 4`.  That means that at least `4` days of the first or last week have to be in the specified `:month` and then we select the nearest day of the week.  Hence it is possible and even common for the gregorian start of the year for a week-based calendar to be up to 6 days before or after the Gregorian start of the year.
 
 Whats the last week of 2019 in the `ISO Week` calendar?
 ```
