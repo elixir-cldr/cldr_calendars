@@ -199,7 +199,7 @@ defmodule Cldr.Calendar.Base.Week do
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)
 
     if last_day <= day_of_week do
-      iso_days - (day_of_week - last_day) + 7
+      iso_days - (day_of_week - last_day) + days_in_week()
     else
       iso_days - (day_of_week - last_day)
     end
