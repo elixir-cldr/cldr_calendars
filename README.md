@@ -68,7 +68,7 @@ Want to know what is the first quarter of Cisco's financial year in 2019?
  iex> range = Cldr.Calendar.quarter 2019, 1, Cldr.Calendar.CSCO
  #DateRange<%Date{calendar: Cldr.Calendar.CSCO, day: 1, month: 1, year: 2019}, %Date{calendar: Cldr.Calendar.CSCO, day: 7, month: 13, year: 2019}>
 ```
-A `Date.Range.t` is returned which can be enumerated with any of Elixir's `Enum` or `Stream` functions. The same applies for `year`, `month`, `week` and `day`.
+A `Date.Range.t` is returned which can be enumerated with any of Elixir's [Enum](https://hexdocs.pm/elixir/Enum.html) or [Stream](https://hexdocs.pm/elixir/Stream.html) functions. The same applies for `year`, `month`, `week` and `day`.
 
 Let's list all of the days Cisco's first quarter:
 ```
@@ -84,13 +84,40 @@ iex> Enum.map range, &Cldr.Calendar.date_to_string/1
  "2019-W06-6", "2019-W06-7", "2019-W07-1", "2019-W07-2", "2019-W07-3",
  "2019-W07-4", "2019-W07-5", "2019-W07-6", "2019-W07-7", "2019-W08-1", ...]
 ```
-But wait a minute, these don't look like familiar dates!  Shouldn't they be of the format "yyy-mm-dd"? The answer in this case is "no".
+But wait a minute, these don't look like familiar dates!  Shouldn't they be formatted as "yyy-mm-dd"? The answer in this case is "no".
 
-If you looked carefully at the example about were we asked for the date range for Cisco's first quarter of 2019 you would have seen `%Date{calendar: Cldr.Calendar.CSCO, day: 7, month: 13, year: 2019}` as the last date in the range. There is, of course, no such month as `13` in the Gregorian calendar.  What's going on?
+If you looked carefully at where we asked for the date range for Cisco's first quarter of 2019 you would have seen `%Date{calendar: Cldr.Calendar.CSCO, day: 7, month: 13, year: 2019}` as the last date in the range. There is, of course, no such month as `13` in the Gregorian calendar.  What's going on?
 
-### Week-based and Month-based calendars
+### Week-based calendars
 
-Cisco's calendar is an example of a "week-based" calendar. Week-based calendars are an example of [fiscal year calendars](https://en.wikipedia.org/wiki/Fiscal_year)
+Cisco's calendar is an example of a "week-based" calendar. Week-based calendars are an example of [fiscal year calendars](https://en.wikipedia.org/wiki/Fiscal_year). In `Cldr Calendar`, any calendar that is defined in terms of "first or last day of week of month" is a week-based calendar.  These calendars have a year of 52 weeks duration except in "leap years" that have 52 weeks.
+
+The most well-known week-based calendar may be the [ISO Week Calendar](https://en.wikipedia.org/wiki/ISO_week_date). How would we define that calendar in `Cldr Calendars`? Easy!
+```
+defmodule Cldr.Calendar.ISOWeek do
+  use Cldr.Calendar.Base.Week,
+    day: 1,
+    min_days: 4
+end
+```
+This says that the calendar starts on the first Monday in January. How do we know that?  It's because
+`:month` defaults to `1` (January) and `:first_or_last` defaults to `:first`.
+
+Lets see what the first day of 2019 is in the `ISOWeek` calendar.
+```
+iex> date = Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.ISOWeek)
+%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 1, year: 2019}
+```
+As expected, the date is expressed in terms of the calendar `Cldr.Calendar.ISOWeek`. What's the equivalent Gregorian day?
+```
+iex> Date.convert(date, Calendar.ISO)
+{:ok, ~D[2018-12-31]}
+```
+That's interesting.  The first day of the 2019 year in the ISO Week calendar is actually December 31st, 2018. Why is that?
+
+Week-based calendars can start or end on a given day of the week in a given month.  But there is a third option: the given day of the week *nearest* to the start or end of the given month.  This is indicated by the configuration parameter `:min_days`.  For the `ISO Week` calendar we have `min_days: 4`.  That means that at least `4` days of the first or last week have to be in the specified `:month` and then we select the nearest day of the week.  Hence it is possible and even common for the gregorian start of the year for a week-based calendar to be up to 6 days before or after the Gregorian starts of the year.
+
+### Month-based calendars
 
 ## Installation
 
