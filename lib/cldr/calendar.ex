@@ -1553,6 +1553,10 @@ defmodule Cldr.Calendar do
     year
   end
 
+  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority}) do
+    year + 1
+  end
+
   def ending_gregorian_year(year, %Config{first_or_last: :first, month: 1}) do
     year
   end
