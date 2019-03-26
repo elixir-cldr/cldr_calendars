@@ -180,7 +180,6 @@ defmodule Cldr.Calendar.Base.Week do
 
   def plus(year, week, day, %{weeks_in_month: weeks_in_month} = config, :months, months) do
     {quarters, months_remaining} = Cldr.Math.div_mod(months, @months_in_quarter)
-    IO.puts "Months remaining: #{months_remaining}"
     weeks_from_months = Enum.take(weeks_in_month, abs(months_remaining)) |> Enum.sum
     days = (((quarters * @weeks_in_quarter) + weeks_from_months) * days_in_week()) * sign(months)
     iso_days = date_to_iso_days(year, week, day, config) + days
