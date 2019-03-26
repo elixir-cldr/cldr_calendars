@@ -172,10 +172,10 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def plus(year, week, day, config, :quarters, quarters) do
-    weeks = quarters * @weeks_in_quarter
-    {:ok, date} = Date.new(year, week, day, config.calendar)
-    date = Cldr.Calendar.plus(date, :weeks, weeks)
-    {date.year, date.month, date.day}
+    days = (quarters * @weeks_in_quarter) * days_in_week()
+    iso_days = date_to_iso_days(year, week, day, config) + days
+    {year, month, day, _, _, _, _} = naive_datetime_from_iso_days({iso_days, {0, 6}}, config)
+    {year, month, day}
   end
 
   def plus(year, week, day, %{weeks_in_month: weeks_in_month} = config, :months, months) do
