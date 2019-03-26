@@ -106,7 +106,7 @@ defmodule Cldr.Calendar.Base.Week do
   def days_in_month(_year, month, config) when month in 1..11 do
     %Config{weeks_in_month: weeks_in_month} = config
     month_in_quarter = Math.amod(rem(month, @months_in_quarter), @months_in_quarter)
-    elem(weeks_in_month, month_in_quarter - 1) * days_in_week()
+    Enum.at(weeks_in_month, month_in_quarter - 1) * days_in_week()
   end
 
   def days_in_month(year, @months_in_year, config) do
