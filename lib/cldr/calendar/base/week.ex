@@ -1,5 +1,6 @@
 defmodule Cldr.Calendar.Base.Week do
   alias Cldr.Calendar.Config
+  alias Cldr.Calendar.Base.Month
   alias Calendar.ISO
   alias Cldr.Math
 
@@ -42,23 +43,21 @@ defmodule Cldr.Calendar.Base.Week do
     +12
   end
 
-  def month_of_year(year, week, day, config) do
-    %Config{weeks_in_month: {m1, m2, m3}} = config
-    {m1, m2, m3} = {m1, m1 + m2, m1 + m2 + m3}
+  def month_of_year(year, week, day, %Config{weeks_in_month: weeks_in_month} = config) do
     quarter = quarter_of_year(year, week, day, config)
-    offset_month = (quarter - 1) * @months_in_quarter
+    months_in_prior_quarters = (quarter - 1) * @months_in_quarter
+
     week_in_quarter = Math.amod(week, @weeks_in_quarter)
+    [m1, m2, _m3] = weeks_in_month
 
-    cond do
-      week_in_quarter <= m1 ->
-        offset_month + 1
+    month_in_quarter =
+      cond do
+        week_in_quarter <= m1 -> 1
+        week_in_quarter <= m1 + m2 -> 2
+        true -> 3
+      end
 
-      week_in_quarter <= m2 ->
-        offset_month + 2
-
-      week_in_quarter <= m3 ->
-        offset_month + 3
-    end
+    months_in_prior_quarters + month_in_quarter
   end
 
   def week_of_year(year, week, _day, _config) do
@@ -145,8 +144,24 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  def month(_year, _month, _config) do
+  def month(year, month, %{weeks_in_month: weeks_in_month} = config) do
+    months_prior_in_quarter = rem(month - 1, @months_in_quarter)
+    prior_quarters = Month.quarter_of_year(year, month, 1, config) - 1
+    quarter_weeks_prior = prior_quarters * @weeks_in_quarter
 
+    weeks_prior_in_quarter =
+      weeks_in_month
+      |> Enum.take(months_prior_in_quarter)
+      |> Enum.sum
+
+    weeks_in_month = Enum.at(weeks_in_month, months_prior_in_quarter)
+    first_week = quarter_weeks_prior + weeks_prior_in_quarter + 1
+    last_week = first_week + weeks_in_month - 1
+
+    {:ok, start_of_month} = Date.new(year, first_week, 1, config.calendar)
+    {:ok, end_of_month} = Date.new(year, last_week, days_in_week(), config.calendar)
+
+    Date.range(start_of_month, end_of_month)
   end
 
   def week(year, week, config) do
@@ -157,12 +172,19 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def plus(year, week, day, config, :quarters, quarters) do
-    weeks = (quarters * @weeks_in_quarter)
-    plus(year, week, day, config, :weeks, weeks)
+    weeks = quarters * @weeks_in_quarter
+    {:ok, date} = Date.new(year, week, day, config.calendar)
+    date = Cldr.Calendar.plus(date, :weeks, weeks)
+    {date.year, date.month, date.day}
   end
 
-  def plus(_year, _week, _day, _config, :months, _months) do
-
+  def plus(year, week, day, %{weeks_in_month: weeks_in_month} = config, :months, months) do
+    {quarters, months_remaining} = Cldr.Math.div_mod(months, @months_in_quarter)
+    weeks_from_months = Enum.take(weeks_in_month, months_remaining) |> Enum.sum
+    days = ((quarters * @weeks_in_quarter) + weeks_from_months) * days_in_week()
+    iso_days = date_to_iso_days(year, week, day, config) + days
+    {year, month, day, _, _, _, _} = naive_datetime_from_iso_days({iso_days, {0, 6}}, config)
+    {year, month, day}
   end
 
   @doc """

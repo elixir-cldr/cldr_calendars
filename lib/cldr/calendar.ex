@@ -1617,7 +1617,7 @@ defmodule Cldr.Calendar do
     calendar = Keyword.get(options, :calendar)
     first_or_last = Keyword.get(options, :first_or_last, :first)
     begins_or_ends = Keyword.get(options, :begins_or_ends, :begins)
-    weeks_in_month = Keyword.get(options, :weeks_in_month, {4, 5, 4})
+    weeks_in_month = Keyword.get(options, :weeks_in_month, [4, 5, 4])
     year = Keyword.get(options, :year, :majority)
     month = Keyword.get(options, :month, 1)
     {min_days, day} = min_and_first_days(locale, options)
@@ -1641,7 +1641,7 @@ defmodule Cldr.Calendar do
     {min_days, first_day}
   end
 
-  @valid_weeks_in_month [{4,4,5}, {4,5,4}, {5,4,4}]
+  @valid_weeks_in_month [[4,4,5], [4,5,4], [5,4,4]]
   @valid_year [:majority, :beginning, :ending]
   def validate_config(config, :week) do
     with :ok <- assert(config.day in 1..7, day_error(config.day)),
@@ -1702,7 +1702,7 @@ defmodule Cldr.Calendar do
   end
 
   defp weeks_in_month_error(weeks_in_month) do
-    ":weeks_in_month must be {4,4,5}, {4,5,4} or {5,4,4}. Found #{inspect weeks_in_month}"
+    ":weeks_in_month must be [4,4,5], [4,5,4] or [5,4,4]. Found #{inspect weeks_in_month}"
   end
 
   @doc false

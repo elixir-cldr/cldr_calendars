@@ -51,7 +51,8 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def quarter_of_year(_year, month, _day, _config) do
-    div(month - 1, @quarters_in_year) + 1
+    Float.ceil(month / @months_in_quarter)
+    |> trunc
   end
 
   def month_of_year(_year, month, _day, _config) do
@@ -175,6 +176,7 @@ defmodule Cldr.Calendar.Base.Month do
   def plus(year, month, day, config, :months, months) do
     months_in_year = months_in_year(year, config)
     {year_increment, new_month} = Cldr.Math.div_amod(month + months, months_in_year)
+    # This is the original code for the line above - just in case!
     # {year_increment, new_month} = Cldr.Math.div_mod(month + months, months_in_year)
     # {year_increment, new_month} =
     #   if new_month == 0 do

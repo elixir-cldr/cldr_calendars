@@ -6,5 +6,5 @@ defmodule Cldr.Calendar.Symmetery do
     first_or_last: :first,
     day: 1,
     month: 1,
-    weeks_in_month: {4, 5, 4}
+    weeks_in_month: [4, 5, 4]
 end

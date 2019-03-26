@@ -16,7 +16,7 @@ defmodule Cldr.Calendar.Config do
             # 'months` each of 13 weeks
             # in either of a 4,4,5; 4,5,4
             # of 5,4,4 layout
-            weeks_in_month: {4, 4, 5},
+            weeks_in_month: [4, 4, 5],
 
             # Indicates if the anchor
             # represents the beginning
