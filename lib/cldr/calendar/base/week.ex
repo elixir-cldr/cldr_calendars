@@ -195,6 +195,7 @@ defmodule Cldr.Calendar.Base.Week do
   gregorian day of the `year`.
   """
   def first_gregorian_day_of_year(year, %Config{first_or_last: :first} = config) do
+    year = Cldr.Calendar.beginning_gregorian_year(year, config)
     %{month: first_month, day: first_day, min_days: min_days} = config
     iso_days = ISO.date_to_iso_days(year, first_month, min_days)
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)

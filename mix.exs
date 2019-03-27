@@ -23,7 +23,7 @@ defmodule Cldr.Calendar.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       dialyzer: [
         ignore_warnings: ".dialyzer_ignore_warnings",
-        plt_add_apps: ~w(gettext inets jason mix plug)a
+        plt_add_apps: ~w(inets jason mix)a
       ],
       compilers: Mix.compilers()
     ]
@@ -67,7 +67,8 @@ defmodule Cldr.Calendar.MixProject do
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.18", only: [:release, :dev]},
       {:nimble_csv, "~> 0.5", only: [:dev, :test]},
-      {:benchee, "~> 0.14", optional: true, only: [:dev, :test]}
+      {:benchee, "~> 0.14", optional: true, only: [:dev, :test]},
+      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false}
     ]
   end
 

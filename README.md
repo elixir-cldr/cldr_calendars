@@ -124,7 +124,50 @@ Whats the last week of 2019 in the `ISO Week` calendar?
 ```
 You'll see that for week-based calendars the date is actually stored as `year, week, day` where the `:month` field of the `Date.t` is actually the week in the year and `:day` is the day in the week.
 
+
 ## Month-based calendars
+
+## Beginning and ending gregorian years
+
+When we talk about the Gregorian calendar we refer to the 12 months from January to December. However when we consider the various fiscal calendars, the Gregorian starting date and the Gregorian ending date will often be in different years.
+
+In these cases, when we say "the 2019 US Fiscal Year" what does that mean?  The US fiscal year starts in October. Now we need to know whether refering to the "the 2019 US Fiscal Year" means the year that ends in September 2019 or the year that starts in October 2019.
+
+Some further examples are:
+
+* The UK Fiscal Year starts in April. By convention, the Fiscal Year is the year that starts with April.
+
+* The US Fiscal Year starts in October.  By convention , the Fiscal Year is the year that has the ending October in it.
+
+* The Australian Fiscal Year starts in July. By convention, the Fiscal Year is the year that ends in July.
+
+* The National Retail Federation has a calendar that starts on the Saturday nearest the end of January.  By convention, the Fiscal Year is the year of the starting Saturday.
+
+To cater for these varying definitions of what a Fiscal Year means, a configuration option `:year` can be set to `:majority` (which is the default), `:beginning` and `:ending`.
+
+* `:majority` means that the Fiscal Year is the year that has the most Gregorian months in it. This is the default.
+* `:beginning` means that the Fiscal Year is the year in which the first Gregorian month is found.
+* `:ending` means that the Fiscal Year is the year in which the last Gregorian month is found.
+
+First lets consider the default `:majority` strategy.  This strategy says that the Fiscal Year is that year in which the majority of Gregorian months are found.
+
+                            2018                      2019                      2020
+                  J F M A M J J A S O N D | J F M A M J J A S O N D | J F M A M J J A S O N D |
+                  . . . . . . . . . . . . | . . . . . . . . . . . . | . . . . . . . . . . . . |
+    Majority
+      Starts Jan                            <--------------------->
+      Starts Mar                                <----------------------->
+      Starts Jun                                      <----------------------->
+      Starts Jul              <----------------------->
+      Starts Oct                    <----------------------->
+
+      Ends Dec                              <--------------------->
+      Ends Feb                                  <----------------------->
+      Ends May                                        <----------------------->
+      Ends Jun                <----------------------->
+      Ends Aug                    <----------------------->
+
+
 
 ## Installation
 

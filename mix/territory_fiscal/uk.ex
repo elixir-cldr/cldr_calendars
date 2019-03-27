@@ -4,6 +4,6 @@ defmodule Cldr.Calendar.UK do
   use Cldr.Calendar.Base.Month,
     first_or_last: :first,
     month: 4,
-    year: :ending
+    year: :majority
 
 end

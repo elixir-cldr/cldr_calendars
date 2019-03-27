@@ -1,8 +1,5 @@
 defmodule Cldr.Calendar.Config do
-  defstruct backend: nil,
-
-            # The name of this calendar
-            calendar: nil,
+  defstruct calendar: nil,
 
             # Locale can be used to derive
             # the :first_day and :min_days

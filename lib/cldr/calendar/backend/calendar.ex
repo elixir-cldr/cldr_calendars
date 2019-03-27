@@ -13,7 +13,7 @@ defmodule Cldr.Calendar.Backend do
           information.
 
           `Cldr` defines formats for several calendars, the names of which
-          are returned by `Cldr.Calendar.known_calendars/0`.
+          are returned by `Cldr.known_calendars/0`.
 
           Currently this implementation only supports the `:gregorian`
           calendar which aligns with the proleptic Gregorian calendar

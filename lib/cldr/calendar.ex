@@ -430,7 +430,7 @@ defmodule Cldr.Calendar do
 
   ## Arguments
 
-  * `date` is any `Date.t()
+  * `date` is any `Date.t()`
 
   ## Returns
 
@@ -462,7 +462,7 @@ defmodule Cldr.Calendar do
 
   ## Arguments
 
-  * `date` is any `Date.t()
+  * `date` is any `Date.t()`
 
   ## Returns
 
@@ -495,7 +495,7 @@ defmodule Cldr.Calendar do
 
   ## Arguments
 
-  * `date` is any `Date.t()
+  * `date` is any `Date.t()`
 
   ## Returns
 
@@ -528,7 +528,7 @@ defmodule Cldr.Calendar do
 
   ## Arguments
 
-  * `date` is any `Date.t()
+  * `date` is any `Date.t()`
 
   ## Returns
 
@@ -561,7 +561,7 @@ defmodule Cldr.Calendar do
 
   ## Arguments
 
-  * `date` is any `Date.t()
+  * `date` is any `Date.t()`
 
   ## Returns
 
@@ -902,7 +902,7 @@ defmodule Cldr.Calendar do
   ## Examples
 
       iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.US
-      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 21, month: 12, year: 2020}, %Date{calendar: Cldr.Calendar.US, day: 27, month: 12, year: 2020}>
+      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 23, month: 12, year: 2019}, %Date{calendar: Cldr.Calendar.US, day: 29, month: 12, year: 2019}>
 
       iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.NRF
       #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}>
@@ -948,7 +948,7 @@ defmodule Cldr.Calendar do
   ## Examples
 
       iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.US
-      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 21, month: 12, year: 2020}, %Date{calendar: Cldr.Calendar.US, day: 27, month: 12, year: 2020}>
+      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 23, month: 12, year: 2019}, %Date{calendar: Cldr.Calendar.US, day: 29, month: 12, year: 2019}>
 
       iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.NRF
       #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}>
@@ -1530,31 +1530,43 @@ defmodule Cldr.Calendar do
 
   @doc false
   def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: month})
-      when month > 6 do
-    year - 1
-  end
-
-  def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :majority}) do
+      when month <= 7 do
     year
   end
 
+  # Otherwise it should be the previous year because the majority of months will be in the
+  # next year so the year of record is the ending year
+  def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :majority}) do
+    year - 1
+  end
+
+  # When the strategy is :ending then the beginning year is the prior year
   def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :ending}) do
     year - 1
   end
 
   @doc false
+
+  # When the strategy is :ending the year of record is the :ending year
   def ending_gregorian_year(year, %Config{first_or_last: :first, year: :ending}) do
     year
   end
 
-  # The year is defined as the beginning year
-  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: month})
-      when month > 6 do
+  # The year starts in January so it ends in December of the same year
+  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: 1}) do
     year
   end
 
-  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority}) do
+  # The year starts in the range 2..7 which means the majority of months are on the
+  # year of record and the ending year is next year
+  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: month})
+      when month <= 7 do
     year + 1
+  end
+
+  # The year is defined as the ending year
+  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority}) do
+    year
   end
 
   def ending_gregorian_year(year, %Config{first_or_last: :first, month: 1}) do

@@ -123,13 +123,14 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def year(year, config) do
-    starting_day = first_gregorian_day_of_year(year, config)
-    ending_day = last_gregorian_day_of_year(year, config)
+    calendar = config.calendar
+    last_month = calendar.months_in_year(year)
+    days_in_last_month  = calendar.days_in_month(year, last_month)
 
-    with {:ok, start_date} <- date_from_iso_days(starting_day, config),
-         {:ok, end_date} <- date_from_iso_days(ending_day, config) do
-      Date.range(start_date, end_date)
-    end
+    {:ok, start_date} = Date.new(year, 1, 1, config.calendar)
+    {:ok, end_date} = Date.new(year, last_month, days_in_last_month, config.calendar)
+
+    Date.range(start_date, end_date)
   end
 
   def quarter(year, quarter, config) do
