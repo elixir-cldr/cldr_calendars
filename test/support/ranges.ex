@@ -1,5 +1,15 @@
 defmodule Cldr.Calendar.Range do
-  def daterange_periods(calendar) do
+  defmodule Feb do
+    use Cldr.Calendar.Base.Month,
+      month: 2
+  end
+
+  defmodule Jan do
+    use Cldr.Calendar.Base.Month,
+      month: 1
+  end
+
+  def daterange_periods(calendar \\ Cldr.Calendar.Range.Feb) do
     {:ok, today} = Date.convert(Date.utc_today(), calendar)
     this_week = Cldr.Calendar.week(today)
     this_month = Cldr.Calendar.month(today)

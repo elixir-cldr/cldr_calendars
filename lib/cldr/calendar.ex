@@ -1530,7 +1530,7 @@ defmodule Cldr.Calendar do
 
   @doc false
   def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: month})
-      when month <= 7 do
+      when month <= 6 do
     year
   end
 
@@ -1560,7 +1560,7 @@ defmodule Cldr.Calendar do
   # The year starts in the range 2..7 which means the majority of months are on the
   # year of record and the ending year is next year
   def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: month})
-      when month <= 7 do
+      when month <= 6 do
     year + 1
   end
 

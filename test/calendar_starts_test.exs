@@ -35,7 +35,7 @@ defmodule Cldr.Calendar.Starts.Test do
 
     config = %Cldr.Calendar.Config{
       first_or_last: :first,
-      min_days: 7
+      min_days: 7,
       month: 2,
       day: 6
     }

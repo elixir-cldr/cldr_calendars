@@ -167,7 +167,11 @@ First lets consider the default `:majority` strategy.  This strategy says that t
       Ends Jun                <----------------------->
       Ends Aug                    <----------------------->
 
+From the diagram above we can define the following rules:
 
+* For `:starts` calendars, we can say that the *starting* gregorian year is is the same as the *fiscal year* if the starting month is January through June inclusive. If the starting month is July through to December then the starting Gregorian year is the year *prior* to the *fiscal year*. Similarly, the *ending* Gregorian year is the *next* year for calendars that start in February through June and it's the *fiscal year* for calendars that start in July through December. Years that start in January end in January of the same year.
+
+* For ":ends" calendars ...
 
 ## Installation
 

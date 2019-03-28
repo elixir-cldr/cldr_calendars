@@ -110,7 +110,7 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def days_in_month(year, @months_in_year, config) do
-    %Config{weeks_in_month: {_, _, weeks_in_month}} = config
+    %Config{weeks_in_month: [_, _, weeks_in_month]} = config
 
     if long_year?(year, config) do
       (weeks_in_month + 1) * days_in_week()

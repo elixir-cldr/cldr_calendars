@@ -126,7 +126,6 @@ defmodule Cldr.Calendar.Base.Month do
     calendar = config.calendar
     last_month = calendar.months_in_year(year)
     days_in_last_month  = calendar.days_in_month(year, last_month)
-
     {:ok, start_date} = Date.new(year, 1, 1, config.calendar)
     {:ok, end_date} = Date.new(year, last_month, days_in_last_month, config.calendar)
 
@@ -267,7 +266,7 @@ defmodule Cldr.Calendar.Base.Month do
     month = Math.amod(iso_month - first_month + 1, ISO.months_in_year(iso_year))
 
     year =
-      if month - iso_month < 0 do
+      if month - first_month < 0 do
         iso_year + 1
       else
         iso_year
