@@ -45,9 +45,8 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def year_of_era(year, config) do
-    year
-    |> Cldr.Calendar.ending_gregorian_year(config)
-    |> Calendar.ISO.year_of_era
+    {_, year} = Cldr.Calendar.start_end_gregorian_years(year, config)
+    Calendar.ISO.year_of_era(year)
   end
 
   def quarter_of_year(_year, month, _day, _config) do
@@ -203,12 +202,12 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def first_gregorian_day_of_year(year, %Config{month: first_month} = config) do
-    beginning_year = Cldr.Calendar.beginning_gregorian_year(year, config)
+    {beginning_year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)
     ISO.date_to_iso_days(beginning_year, first_month, 1)
   end
 
   def last_gregorian_day_of_year(year, %Config{month: first_month} = config) do
-    ending_year = Cldr.Calendar.ending_gregorian_year(year, config)
+    {_, ending_year} = Cldr.Calendar.start_end_gregorian_years(year, config)
     last_month = Math.amod(first_month - 1, ISO.months_in_year(ending_year))
     last_day = ISO.days_in_month(ending_year, last_month)
     ISO.date_to_iso_days(ending_year, last_month, last_day)

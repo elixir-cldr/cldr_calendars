@@ -22,9 +22,8 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def year_of_era(year, config) do
-    year
-    |> Cldr.Calendar.ending_gregorian_year(config)
-    |> Calendar.ISO.year_of_era
+    {_, year} = Cldr.Calendar.start_end_gregorian_years(year, config)
+    Calendar.ISO.year_of_era(year)
   end
 
   # Quarters are 13 weeks but if there
@@ -184,7 +183,7 @@ defmodule Cldr.Calendar.Base.Week do
   gregorian day of the `year`.
   """
   def first_gregorian_day_of_year(year, %Config{first_or_last: :first} = config) do
-    year = Cldr.Calendar.beginning_gregorian_year(year, config)
+    {year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)
     %{month: first_month, day: first_day, min_days: min_days} = config
     iso_days = ISO.date_to_iso_days(year, first_month, min_days)
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)
@@ -207,7 +206,7 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def last_gregorian_day_of_year(year, %Config{first_or_last: :last} = config) do
-    year = Cldr.Calendar.ending_gregorian_year(year, config)
+    {_, year} = Cldr.Calendar.start_end_gregorian_years(year, config)
     %{month: last_month, day: last_day, min_days: min_days} = config
     days_in_last_month = ISO.days_in_month(year, last_month)
     iso_days = ISO.date_to_iso_days(year, last_month, days_in_last_month - min_days)

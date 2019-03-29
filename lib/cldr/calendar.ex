@@ -1529,77 +1529,45 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: month})
+
+  ## January starts end the same year, December ends starts the same year
+  def start_end_gregorian_years(year, %Config{first_or_last: :first, month: 1}) do
+    {year, year}
+  end
+
+  def start_end_gregorian_years(year, %Config{first_or_last: :last, month: 12}) do
+    {year, year}
+  end
+
+  ## Majority years
+  def start_end_gregorian_years(year, %Config{first_or_last: :first, year: :majority, month: month})
       when month <= 6 do
-    year
+    {year, year + 1}
   end
 
-  # Otherwise it should be the previous year because the majority of months will be in the
-  # next year so the year of record is the ending year
-  def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :majority}) do
-    year - 1
-  end
-
-  # When the strategy is :ending then the beginning year is the prior year
-  def beginning_gregorian_year(year, %Config{first_or_last: :first, year: :ending}) do
-    year - 1
-  end
-
-  @doc false
-
-  # When the strategy is :ending the year of record is the :ending year
-  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :ending}) do
-    year
-  end
-
-  # The year starts in January so it ends in December of the same year
-  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: 1}) do
-    year
-  end
-
-  # The year starts in the range 2..7 which means the majority of months are on the
-  # year of record and the ending year is next year
-  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority, month: month})
-      when month <= 6 do
-    year + 1
-  end
-
-  # The year is defined as the ending year
-  def ending_gregorian_year(year, %Config{first_or_last: :first, year: :majority}) do
-    year
-  end
-
-  def ending_gregorian_year(year, %Config{first_or_last: :first, month: 1}) do
-    year
-  end
-
-  # The year is defined as the beginning year
-  def ending_gregorian_year(year, %Config{first_or_last: :last, year: :beginning}) do
-    year
-  end
-
-  # At least 6 months of the year are in the beginning year
-  def ending_gregorian_year(year, %Config{first_or_last: :last, year: :majority, month: month})
+  def start_end_gregorian_years(year, %Config{first_or_last: :first, year: :majority, month: month})
       when month > 6 do
-    year
+    {year - 1, year}
   end
 
-  # At least 6 months are in the next gregorian year so thats
-  # the ending year
-  def ending_gregorian_year(year, %Config{first_or_last: :last, year: :majority}) do
-    year + 1
+  def start_end_gregorian_years(year, %Config{first_or_last: :last, year: :majority, month: month})
+      when month > 6 do
+    {year - 1, year}
   end
 
-  # If the ending month is 12 then the entire year is the same
-  # gregorian year
-  def ending_gregorian_year(year, %Config{first_or_last: :last, month: 12}) do
-    year
+  def start_end_gregorian_years(year, %Config{first_or_last: :last, year: :majority, month: month})
+      when month <= 6 do
+    {year, year + 1}
   end
 
-  # The ending month extends into the next year. Therefore
-  # the ending year is next gregorian year
-  def ending_gregorian_year(year, %Config{first_or_last: :last, year: :ending}) do
-    year + 1
+  ## Beginning years
+  def start_end_gregorian_years(year, %Config{first_or_last: :last, year: :beginning}) do
+    {year - 1, year}
+  end
+
+  ## Ending years
+  def start_end_gregorian_years(year, %Config{first_or_last: :first, year: :ending}) do
+    {year - 1, year}
   end
 
   @doc """
