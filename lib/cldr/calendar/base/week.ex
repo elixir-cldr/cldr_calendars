@@ -9,7 +9,6 @@ defmodule Cldr.Calendar.Base.Week do
   @months_in_quarter 3
   @weeks_in_long_year 53
   @weeks_in_normal_year 52
-  @months_in_year 12
 
   defmacro __using__(options \\ []) do
     quote bind_quoted: [options: options] do
@@ -103,20 +102,10 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  def days_in_month(_year, month, config) when month in 1..11 do
+  def days_in_month(_year, month, config) do
     %Config{weeks_in_month: weeks_in_month} = config
     month_in_quarter = Math.amod(rem(month, @months_in_quarter), @months_in_quarter)
     Enum.at(weeks_in_month, month_in_quarter - 1) * days_in_week()
-  end
-
-  def days_in_month(year, @months_in_year, config) do
-    %Config{weeks_in_month: [_, _, weeks_in_month]} = config
-
-    if long_year?(year, config) do
-      (weeks_in_month + 1) * days_in_week()
-    else
-      weeks_in_month * days_in_week()
-    end
   end
 
   def days_in_week do
