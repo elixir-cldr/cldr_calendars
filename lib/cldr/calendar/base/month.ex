@@ -260,7 +260,7 @@ defmodule Cldr.Calendar.Base.Month do
     {year, month, day}
   end
 
-  def add_month(year, month, add) do
+  defp add_month(year, month, add) do
     calculated_month = month + add
     month = Math.amod(calculated_month, ISO.months_in_year(year))
 
@@ -272,7 +272,7 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   @random_year 2000
-  def slide(%Config{month: month} = config) do
+  defp slide(%Config{month: month} = config) do
     {starts, _ends} = Cldr.Calendar.start_end_gregorian_years(@random_year, config)
     direction = if starts < @random_year, do: -1, else: +1
     month = Math.amod((month - 1) * direction, ISO.months_in_year(starts))
