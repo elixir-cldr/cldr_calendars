@@ -15,7 +15,7 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 ## Getting Started
 
-Let's say you work for [Cisco Systems](https://cisco.com). Your financial year is around knowing that the year ends on the last Saturday of July. To make things easy you'd like to compare the results of this financial year to last finanical year.  And you'd like to know how many days are left this quarter in order to achieve your sales targets.
+Let's say you work for [Cisco Systems](https://cisco.com). Your learn that the financial year ends on the last Saturday of July. To make things easy you'd like to compare the results of this financial year to last finanical year.  And you'd like to know how many days are left this quarter in order to achieve your sales targets.
 
 Here's how we do that:
 
@@ -36,7 +36,7 @@ The `:last` day is Saturday, which is in `Calendar` speak, the sixth day of the 
 
 The `:month` is July.  Months are numbered from January being `1` to December being `12`.
 
-There we have it, a calendar that is based upon the definition of "ends of the last Saturday or July".
+There we have it, a calendar that is based upon the definition of "ends on the last Saturday of July".
 
 ### Dates in Cisco's calendar
 
@@ -57,7 +57,7 @@ This would also mean that the last day of Fiscal Year 2018 must be July 28th, 20
 iex> Cldr.Calendar.last_gregorian_day_of_year(2018, Cldr.Calendar.CSCO)
 {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 7, year: 2018}}
 ```
-Which you will see if the last Saturday in July for 2018.
+Which you will see is the last Saturday in July for 2018.
 
 ### Years, quarters, months, weeks and days
 
