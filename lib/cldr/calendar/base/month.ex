@@ -175,14 +175,6 @@ defmodule Cldr.Calendar.Base.Month do
   def plus(year, month, day, config, :months, months) do
     months_in_year = months_in_year(year, config)
     {year_increment, new_month} = Cldr.Math.div_amod(month + months, months_in_year)
-    # This is the original code for the line above - just in case!
-    # {year_increment, new_month} = Cldr.Math.div_mod(month + months, months_in_year)
-    # {year_increment, new_month} =
-    #   if new_month == 0 do
-    #     {year_increment - 1, months_in_year}
-    #   else
-    #     {year_increment, new_month}
-    #   end
     new_year = year + year_increment
     max_new_day = days_in_month(new_year, new_month, config)
     new_day = min(day, max_new_day)
@@ -248,12 +240,14 @@ defmodule Cldr.Calendar.Base.Month do
     ISO.naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond)
   end
 
+  @compile {:inline, date_to_iso_date: 4}
   def date_to_iso_date(year, month, day, %Config{} = config) do
     slide = slide(config)
     {iso_year, iso_month} = add_month(year, month, -slide)
     {iso_year, iso_month, day}
   end
 
+  @compile {:inline, date_from_iso_date: 4}
   def date_from_iso_date(iso_year, iso_month, day, %Config{} = config) do
     slide = slide(config)
     {year, month} = add_month(iso_year, iso_month, slide)
