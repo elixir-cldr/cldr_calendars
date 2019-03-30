@@ -8,12 +8,6 @@ defmodule Cldr.Calendar.Base.Month do
   calendar but adds the `Cldr.Calendar`
   behaviour.
 
-  This behaviour adds the following
-  functions:
-
-  * `week_of_year/4` and `iso_week_of_year/3`
-    functions.
-
   """
 
   alias Cldr.Calendar.Config
