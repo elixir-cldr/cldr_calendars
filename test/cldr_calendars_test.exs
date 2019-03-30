@@ -34,6 +34,17 @@ defmodule Cldr.Calendar.Test do
     end
   end
 
+  test "that Cldr.Calendar.ISOWeek dates all round trip" do
+    for year <- 0001..2200,
+        month <- 1..Cldr.Calendar.ISOWeek.weeks_in_year(year),
+        day <- 1..7 do
+      {:ok, iso_week} = Date.new(year, month, day, Cldr.Calendar.ISOWeek)
+      {:ok, iso} = Date.convert(iso_week, Calendar.ISO)
+      {:ok, converted} = Date.convert(iso, Cldr.Calendar.ISOWeek)
+      assert Date.compare(iso_week, converted) == :eq
+    end
+  end
+
   test "that Cldr.Calendar.AU dates all round trip" do
     for year <- 0001..2200,
         month <- 1..12,
