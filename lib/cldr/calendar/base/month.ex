@@ -248,30 +248,34 @@ defmodule Cldr.Calendar.Base.Month do
     ISO.naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond)
   end
 
-  def date_to_iso_date(year, month, day, %Config{month: first_month}) do
-    iso_month = Math.amod(month + first_month - 1, ISO.months_in_year(year))
-
-    iso_year =
-      if month - first_month < 0 do
-        year - 1
-      else
-        year
-      end
-
+  def date_to_iso_date(year, month, day, %Config{} = config) do
+    slide = slide(config)
+    {iso_year, iso_month} = add_month(year, month, -slide)
     {iso_year, iso_month, day}
   end
 
-  def date_from_iso_date(iso_year, iso_month, day, %Config{month: first_month}) do
-    month = Math.amod(iso_month - first_month + 1, ISO.months_in_year(iso_year))
-
-    year =
-      if month - first_month < 0 do
-        iso_year + 1
-      else
-        iso_year
-      end
-
+  def date_from_iso_date(iso_year, iso_month, day, %Config{} = config) do
+    slide = slide(config)
+    {year, month} = add_month(iso_year, iso_month, slide)
     {year, month, day}
   end
 
+  @random_year 2000
+  def add_month(year, month, add) do
+    est_month = month + add
+    month = Math.amod(est_month, ISO.months_in_year(@random_year))
+
+    cond do
+      est_month < 1 -> {year - 1, month}
+      est_month > 12 -> {year + 1, month}
+      true -> {year, month}
+    end
+  end
+
+  def slide(%Config{month: month} = config) do
+    {starts, _ends} = Cldr.Calendar.start_end_gregorian_years(@random_year, config)
+    direction = if starts < @random_year, do: -1, else: +1
+    month = Math.amod((month - 1) * direction, ISO.months_in_year(starts))
+    if month == 12, do: 0, else: month * direction * -1
+  end
 end

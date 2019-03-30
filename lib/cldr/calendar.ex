@@ -947,14 +947,14 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.US
-      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 23, month: 12, year: 2019}, %Date{calendar: Cldr.Calendar.US, day: 29, month: 12, year: 2019}>
+      iex> Cldr.Calendar.day 2019, 52, Cldr.Calendar.US
+      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 21, month: 2, year: 2019}, %Date{calendar: Cldr.Calendar.US, day: 21, month: 2, year: 2019}>
 
-      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.NRF
-      #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}>
+      iex(6)> Cldr.Calendar.day 2019, 92, Cldr.Calendar.NRF
+      #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 14, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 1, month: 14, year: 2019}>
 
-      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.ISOWeek
-      #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 52, year: 2019}>
+      Cldr.Calendar.day 2019, 8, Cldr.Calendar.ISOWeek
+      #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 2, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 2, year: 2019}>
 
   """
   @spec day(Calendar.year(), Calendar.day(), calendar()) :: Date.Range.t()
@@ -1567,7 +1567,7 @@ defmodule Cldr.Calendar do
 
   ## Ending years
   def start_end_gregorian_years(year, %Config{first_or_last: :first, year: :ending}) do
-    {year - 1, year}
+    {year, year + 1}
   end
 
   @doc """
