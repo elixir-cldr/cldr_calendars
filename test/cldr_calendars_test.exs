@@ -45,6 +45,28 @@ defmodule Cldr.Calendar.Test do
     end
   end
 
+  test "that Cldr.Calendar.UK dates all round trip" do
+    for year <- 0001..2200,
+        month <- 1..12,
+        day <- 1..Cldr.Calendar.UK.days_in_month(year, month) do
+      {:ok, uk} = Date.new(year, month, day, Cldr.Calendar.UK)
+      {:ok, iso} = Date.convert(uk, Calendar.ISO)
+      {:ok, converted} = Date.convert(iso, Cldr.Calendar.UK)
+      assert Date.compare(uk, converted) == :eq
+    end
+  end
+
+  test "that Cldr.Calendar.US dates all round trip" do
+    for year <- 0001..2200,
+        month <- 1..12,
+        day <- 1..Cldr.Calendar.US.days_in_month(year, month) do
+      {:ok, us} = Date.new(year, month, day, Cldr.Calendar.US)
+      {:ok, iso} = Date.convert(us, Calendar.ISO)
+      {:ok, converted} = Date.convert(iso, Cldr.Calendar.US)
+      assert Date.compare(us, converted) == :eq
+    end
+  end
+
   if function_exported?(Code, :fetch_docs, 1) do
     test "that no module docs are generated for a backend" do
       assert {:docs_v1, _, :elixir, _, :hidden, %{}, _} = Code.fetch_docs(NoDocs.Cldr.Calendar)
