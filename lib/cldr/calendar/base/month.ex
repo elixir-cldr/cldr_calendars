@@ -262,12 +262,12 @@ defmodule Cldr.Calendar.Base.Month do
 
   @random_year 2000
   def add_month(year, month, add) do
-    est_month = month + add
-    month = Math.amod(est_month, ISO.months_in_year(@random_year))
+    calculated_month = month + add
+    month = Math.amod(calculated_month, ISO.months_in_year(@random_year))
 
     cond do
-      est_month < 1 -> {year - 1, month}
-      est_month > 12 -> {year + 1, month}
+      calculated_month < 1 -> {year - 1, month}
+      calculated_month > 12 -> {year + 1, month}
       true -> {year, month}
     end
   end
