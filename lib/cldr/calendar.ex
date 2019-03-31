@@ -959,7 +959,7 @@ defmodule Cldr.Calendar do
   ## Examples
 
       iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.US
-      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 23, month: 12, year: 2019}, %Date{calendar: Cldr.Calendar.US, day: 29, month: 12, year: 2019}>
+      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 22, month: 12, year: 2019}, %Date{calendar: Cldr.Calendar.US, day: 28, month: 12, year: 2019}>
 
       iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.NRF
       #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}>
@@ -1664,10 +1664,9 @@ defmodule Cldr.Calendar do
       true
 
   """
-  @spec iso_days_to_day_of_week(Calendar.iso_days() | iso_day_number, calendar()) :: day_of_week()
-
-  def iso_days_to_day_of_week({days, _}, calendar) do
-    iso_days_to_day_of_week(days, calendar)
+  @spec iso_days_to_day_of_week(Calendar.iso_days() | Calendar.day()) :: day_of_week()
+  def iso_days_to_day_of_week({days, _}) do
+    iso_days_to_day_of_week(days)
   end
 
   def iso_days_to_day_of_week(iso_day_number) when is_integer(iso_day_number) do

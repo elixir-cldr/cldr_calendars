@@ -74,9 +74,6 @@ defmodule Cldr.Calendar.Base.Week do
     Calendar.ISO.day_of_era(year, month, day)
   end
 
-  @spec day_of_week(Calendar.year(), Cldr.Calendar.week(), Calendar.day(), Cldr.Calendar.Config.t()) ::
-    Cldr.Calendar.day_of_week
-
   def day_of_year(year, week, day, config) do
     start_of_year = first_gregorian_day_of_year(year, config)
     this_day = first_gregorian_day_of_year(year, config) + week_to_days(week) + day
@@ -84,7 +81,7 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def day_of_week(_year, _week, day, config) do
-    first_day = config.first_day
+    first_day = config.day
     Math.amod(first_day + day, days_in_week())
   end
 

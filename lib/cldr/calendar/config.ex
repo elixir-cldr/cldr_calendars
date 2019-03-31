@@ -40,4 +40,18 @@ defmodule Cldr.Calendar.Config do
             # this many days in current
             # year
             min_days: 7
+
+  @type t() :: %__MODULE__{
+    calendar: Cldr.Calendar.calendar() | nil,
+    locale: Cldr.Locale.locale_name | Cldr.LanguageTag.t | nil,
+    cldr_backend: Cldr.backend() | nil,
+    weeks_in_month: list(pos_integer()),
+    begins_or_ends: :begins | :ends,
+    first_or_last: :first | :last,
+    day: Cldr.Calendar.day_of_week(),
+    month: pos_integer(),
+    year: :majority | :starts | :ends,
+    min_days: 1..7
+  }
+
 end
