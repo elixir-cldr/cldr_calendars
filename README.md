@@ -11,7 +11,7 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 * Supports localisation of common calendar terms such as "day of the week" and "month of the year" using the [CLDR](https://cldr.unicode.org) data that is available for over 500 locales. See `Cldr.Calendar.localize/3`
 
-* Supports locale-specific knowledge of what is a weekend or a workday. See `Cldr.Calendar.weekend/1`, `Cldr.Calendar.weekend?/2`, `Cldr.Calendar.weekday/1` and `Cldr.Calendar.weekday?/2`.
+* Supports locale-specific knowledge of what is a weekend or a workday. See `Cldr.Calendar.weekend/1`, `Cldr.Calendar.weekend?/2`, `Cldr.Calendar.weekdays/1` and `Cldr.Calendar.weekday?/2`.
 
 **See the documentation for `Cldr.Calendar` for the main public API and the functions contained therein.**
 

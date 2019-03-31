@@ -29,18 +29,6 @@ defmodule Cldr.Calendar do
     enables a more straight forware comparison with
     same-period-last-year financial performance.
 
-  ## Creating new calendars
-
-  Calendar [starts | ends] on the [last | first] [day] of [month]
-  Calendar [starts | ends] on the [day] [nearest to the] [last | first] [day] of [month]
-
-  ### Creating calendars statically
-
-  ### Creating calendars dynamically
-
-  ## Calendar configuration parameters
-
-
   """
 
   alias Cldr.Calendar.Config
@@ -62,13 +50,13 @@ defmodule Cldr.Calendar do
   @type calendar_type :: :month | :week
 
   @typedoc """
-  Soecifies the quarter of year for a calendar date.
+  Specifies the quarter of year for a calendar date.
 
   """
   @type quarter :: 1..4
 
   @typedoc """
-  Soecifies the week of year for a calendar date.
+  Specifies the week of year for a calendar date.
 
   """
   @type week :: pos_integer()
@@ -102,7 +90,7 @@ defmodule Cldr.Calendar do
   The `week_in_year` is calculated based upon the calendar configuration.
 
   """
-  @callback week_of_year(Calendar.year(), Calendar.month() | Cldr.Calendar.week(), Calendar.day()) ::
+  @callback week_of_year(year :: Calendar.year(), month :: Calendar.month() | Cldr.Calendar.week(), day :: Calendar.day()) ::
               {Calendar.year(), Calendar.week()}
 
   @doc """
@@ -112,54 +100,54 @@ defmodule Cldr.Calendar do
   The `iso_week_of_year` is calculated based the ISO calendar..
 
   """
-  @callback iso_week_of_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+  @callback iso_week_of_year(year :: Calendar.year(), month :: Calendar.month(), day :: Calendar.day()) ::
               {Calendar.year(), Calendar.week()}
 
   @doc """
   Returns the first day of a calendar year as a gregorian date.
 
   """
-  @callback first_gregorian_day_of_year(Calendar.year()) :: integer()
+  @callback first_gregorian_day_of_year(year :: Calendar.year()) :: integer()
 
   @doc """
   Returns the last day of a calendar year as a gregorian date.
 
   """
-  @callback last_gregorian_day_of_year(Calendar.year()) :: integer()
+  @callback last_gregorian_day_of_year(year :: Calendar.year()) :: integer()
 
   @doc """
   Returns the number of days in a year
 
   """
-  @callback days_in_year(Calendar.year()) :: Calendar.day()
+  @callback days_in_year(year :: Calendar.year()) :: Calendar.day()
 
   @doc """
   Returns a date range representing the days in a
   calendar year.
 
   """
-  @callback year(Calendar.year()) :: Date.Range.t()
+  @callback year(year :: Calendar.year()) :: Date.Range.t()
 
   @doc """
   Returns a date range representing the days in a
   given quarter for a calendar year.
 
   """
-  @callback quarter(Calendar.year(), Cldr.Calendar.quarter()) :: Date.Range.t()
+  @callback quarter(year :: Calendar.year(), quarter :: Cldr.Calendar.quarter()) :: Date.Range.t()
 
   @doc """
   Returns a date range representing the days in a
   given month for a calendar year.
 
   """
-  @callback month(Calendar.year(), Calendar.month()) :: Date.Range.t()
+  @callback month(year :: Calendar.year(), month :: Calendar.month()) :: Date.Range.t()
 
   @doc """
   Returns a date range representing the days in a
   given week for a calendar year.
 
   """
-  @callback week(Calendar.year(), Cldr.Calendar.week()) :: Date.Range.t()
+  @callback week(year :: Calendar.year(), week :: Cldr.Calendar.week()) :: Date.Range.t()
 
   @doc """
   Increments a `Date.t` or `Date.Range.t` by a specified positive
@@ -171,19 +159,11 @@ defmodule Cldr.Calendar do
 
   """
   @callback plus(
-              Calendar.year(),
-              Calendar.month() | Cldr.Calendar.week(),
-              Calendar.day(),
-              :months,
-              integer
-            ) :: {Calendar.year(), Calendar.month(), Calendar.day()}
-
-  @callback plus(
-              Calendar.year(),
-              Calendar.month() | Cldr.Calendar.week(),
-              Calendar.day(),
-              :quarters,
-              integer
+              year :: Calendar.year(),
+              month :: Calendar.month() | Cldr.Calendar.week(),
+              day :: Calendar.day(),
+              months_or_quarters :: :months | :quarters,
+              increment :: integer
             ) :: {Calendar.year(), Calendar.month(), Calendar.day()}
 
   @days [1, 2, 3, 4, 5, 6, 7]
@@ -850,7 +830,7 @@ defmodule Cldr.Calendar do
 
   @doc """
   Returns a `Date.Range.t` that represents
-  the `year`.
+  the `quarter`.
 
   The range is enumerable.
 
@@ -1876,6 +1856,18 @@ defmodule Cldr.Calendar do
     n * @days_in_a_week
   end
 
+  @doc """
+  Formats a date into a string representation
+
+  ## Example
+
+      iex> import Cldr.Calendar.Sigils
+      iex> Cldr.Calendar.date_to_string ~d[2019-12-04]
+      "2019-12-04"
+      iex> Cldr.Calendar.date_to_string ~d[2019-23-04]NRF
+      "2019-W23-4"
+
+  """
   def date_to_string(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.date_to_string(year, month, day)
