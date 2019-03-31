@@ -4,10 +4,9 @@ defmodule Cldr.Calendar.Kday do
   """
 
   import Cldr.Calendar
-  alias Cldr.Calendar, as: C
 
   @doc """
-  Return the date of the `day_of_the_week` on or before the
+  Return the date of the `day_of_week` on or before the
   specified `date`.
 
   ## Arguments
@@ -32,7 +31,9 @@ defmodule Cldr.Calendar.Kday do
       ~D[2017-06-24]
 
   """
-  @spec kday_on_or_before(C.date_or_time(), C.day_of_the_week()) :: Date.t()
+  @spec kday_on_or_before(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
+    Calendar.day() | Date.t()
+
   def kday_on_or_before(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
     date
@@ -46,7 +47,7 @@ defmodule Cldr.Calendar.Kday do
   end
 
   @doc """
-  Return the date of the `day_of_the_week` on or after the
+  Return the date of the `day_of_week` on or after the
   specified `date`.
 
   ## Arguments
@@ -71,7 +72,9 @@ defmodule Cldr.Calendar.Kday do
       ~D[2017-07-01]
 
   """
-  @spec kday_on_or_after(C.date_or_time(), C.day_of_the_week()) :: Date.t()
+  @spec kday_on_or_after(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
+    Calendar.day() | Date.t()
+
   def kday_on_or_after(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
     date
@@ -85,7 +88,7 @@ defmodule Cldr.Calendar.Kday do
   end
 
   @doc """
-  Return the date of the `day_of_the_week` nearest the
+  Return the date of the `day_of_week` nearest the
   specified `date`.
 
   ## Arguments
@@ -110,7 +113,9 @@ defmodule Cldr.Calendar.Kday do
       ~D[2017-07-01]
 
   """
-  @spec kday_nearest(C.date_or_time(), C.day_of_the_week()) :: Date.t()
+  @spec kday_nearest(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
+    Calendar.day() | Date.t()
+
   def kday_nearest(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
     date
@@ -124,7 +129,7 @@ defmodule Cldr.Calendar.Kday do
   end
 
   @doc """
-  Return the date of the `day_of_the_week` before the
+  Return the date of the `day_of_week` before the
   specified `date`.
 
   ## Arguments
@@ -150,7 +155,9 @@ defmodule Cldr.Calendar.Kday do
       ~D[2017-06-24]
 
   """
-  @spec kday_before(C.date_or_time(), C.day_of_the_week()) :: Date.t()
+  @spec kday_before(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
+    Calendar.day() | Date.t()
+
   def kday_before(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
     date
@@ -164,7 +171,7 @@ defmodule Cldr.Calendar.Kday do
   end
 
   @doc """
-  Return the date of the `day_of_the_week` after the
+  Return the date of the `day_of_week` after the
   specified `date`.
 
   ## Arguments
@@ -189,7 +196,9 @@ defmodule Cldr.Calendar.Kday do
       ~D[2017-07-01]
 
   """
-  @spec kday_after(C.date_or_time(), C.day_of_the_week()) :: Date.t()
+  @spec kday_after(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
+    Calendar.day() | Date.t()
+
   def kday_after(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
     date
@@ -203,7 +212,7 @@ defmodule Cldr.Calendar.Kday do
   end
 
   @doc """
-  Return the date of the `nth` `day_of_the_week` on or before/after the
+  Return the date of the `nth` `day_of_week` on or before/after the
   specified `date`.
 
   ## Arguments
@@ -234,7 +243,9 @@ defmodule Cldr.Calendar.Kday do
       ~D[2017-03-12]
 
   """
-  @spec nth_kday(C.date_or_time(), integer, C.day_of_the_week()) :: Date.t()
+  @spec nth_kday(Calendar.day() | Date.t(), integer(), Cldr.Calendar.day_of_week()) ::
+    Calendar.day() | Date.t()
+
   def nth_kday(%{year: _, month: _, day: _, calendar: calendar} = date, n, k)
       when k in 1..7 and is_integer(n) do
     date
@@ -252,7 +263,7 @@ defmodule Cldr.Calendar.Kday do
   end
 
   @doc """
-  Return the date of the first `day_of_the_week` on or after the
+  Return the date of the first `day_of_week` on or after the
   specified `date`.
 
   ## Arguments
@@ -276,7 +287,9 @@ defmodule Cldr.Calendar.Kday do
       ~D[2017-11-05]
 
   """
-  @spec first_kday(C.date_or_time(), C.day_of_the_week()) :: Date.t()
+  @spec first_kday(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
+    Calendar.day() | Date.t()
+
   def first_kday(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
     date
@@ -290,7 +303,7 @@ defmodule Cldr.Calendar.Kday do
   end
 
   @doc """
-  Return the date of the last `day_of_the_week` on or before the
+  Return the date of the last `day_of_week` on or before the
   specified `date`.
 
   ## Arguments
@@ -310,7 +323,9 @@ defmodule Cldr.Calendar.Kday do
       ~D[2017-05-29]
 
   """
-  @spec last_kday(C.date_or_time(), C.day_of_the_week()) :: Date.t()
+  @spec last_kday(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
+    Calendar.day() | Date.t()
+
   def last_kday(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
     date

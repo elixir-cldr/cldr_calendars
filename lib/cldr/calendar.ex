@@ -62,6 +62,12 @@ defmodule Cldr.Calendar do
   @type calendar_type :: :month | :week
 
   @typedoc """
+  Soecifies the quarter of year for a calendar date.
+
+  """
+  @type quarter :: 1..4
+
+  @typedoc """
   Soecifies the week of year for a calendar date.
 
   """
@@ -96,7 +102,7 @@ defmodule Cldr.Calendar do
   The `week_in_year` is calculated based upon the calendar configuration.
 
   """
-  @callback week_of_year(Calendar.year(), Calendar.month() | Clde.Calendar.week(), Calendar.day()) ::
+  @callback week_of_year(Calendar.year(), Calendar.month() | Cldr.Calendar.week(), Calendar.day()) ::
               {Calendar.year(), Calendar.week()}
 
   @doc """
@@ -113,13 +119,13 @@ defmodule Cldr.Calendar do
   Returns the first day of a calendar year as a gregorian date.
 
   """
-  @callback first_gregorian_day_of_year(Calendar.year()) :: Date.t()
+  @callback first_gregorian_day_of_year(Calendar.year()) :: integer()
 
   @doc """
   Returns the last day of a calendar year as a gregorian date.
 
   """
-  @callback last_gregorian_day_of_year(Calendar.year()) :: Date.t()
+  @callback last_gregorian_day_of_year(Calendar.year()) :: integer()
 
   @doc """
   Returns the number of days in a year
@@ -139,7 +145,7 @@ defmodule Cldr.Calendar do
   given quarter for a calendar year.
 
   """
-  @callback quarter(Calendar.year(), Calendar.quarter()) :: Date.Range.t()
+  @callback quarter(Calendar.year(), Cldr.Calendar.quarter()) :: Date.Range.t()
 
   @doc """
   Returns a date range representing the days in a
@@ -170,7 +176,7 @@ defmodule Cldr.Calendar do
               Calendar.day(),
               :months,
               integer
-            ) :: Date.t() | Date.Range.t()
+            ) :: {Calendar.year(), Calendar.month(), Calendar.day()}
 
   @callback plus(
               Calendar.year(),
@@ -178,7 +184,7 @@ defmodule Cldr.Calendar do
               Calendar.day(),
               :quarters,
               integer
-            ) :: Date.t() | Date.Range.t()
+            ) :: {Calendar.year(), Calendar.month(), Calendar.day()}
 
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
@@ -403,7 +409,8 @@ defmodule Cldr.Calendar do
       {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 3, month: 2, year: 2019}}
 
   """
-  @spec first_gregorian_day_of_year(Calendar.year(), calendar()) :: Date.t()
+  @spec first_gregorian_day_of_year(Calendar.year(), calendar()) ::
+    {:ok, Date.t()} | {:error, :invalid_date}
 
   def first_gregorian_day_of_year(year, calendar) do
     year
@@ -428,7 +435,8 @@ defmodule Cldr.Calendar do
       {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2020}}
 
   """
-  @spec last_gregorian_day_of_year(Calendar.year(), calendar()) :: Date.t()
+  @spec last_gregorian_day_of_year(Calendar.year(), calendar()) ::
+    {:ok, Date.t()} | {:error, :invalid_date}
 
   def last_gregorian_day_of_year(year, calendar) do
     year
@@ -465,7 +473,7 @@ defmodule Cldr.Calendar do
       {737456, 1}
 
   """
-  @spec day_of_era(Date.t()) :: Calendar.era()
+  @spec day_of_era(Date.t()) :: {Calendar.day(), Calendar.era()}
 
   def day_of_era(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
@@ -497,7 +505,7 @@ defmodule Cldr.Calendar do
       4
 
   """
-  @spec quarter_of_year(Date.t()) :: Calendar.quarter()
+  @spec quarter_of_year(Date.t()) :: Cldr.Calendar.quarter()
 
   def quarter_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
@@ -530,7 +538,7 @@ defmodule Cldr.Calendar do
       6
 
   """
-  @spec month_of_year(Date.t()) :: {Calendar.year(), Calendar.month()}
+  @spec month_of_year(Date.t()) :: Calendar.month()
 
   def month_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
@@ -871,7 +879,7 @@ defmodule Cldr.Calendar do
       #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 14, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 26, year: 2019}>
 
   """
-  @spec quarter(Calendar.year(), Calendar.quarter(), calendar()) :: Date.Range.t()
+  @spec quarter(Calendar.year(), Cldr.Calendar.quarter(), calendar()) :: Date.Range.t()
   @spec quarter(Date.t()) :: Date.Range.t()
 
   def quarter(date) do
@@ -1313,7 +1321,8 @@ defmodule Cldr.Calendar do
     end
   end
 
-  defp localize(date, :era, format, backend, locale) do
+  @doc false
+  def localize(date, :era, format, backend, locale) do
     {_, era} = day_of_era(date)
 
     locale
@@ -1321,7 +1330,8 @@ defmodule Cldr.Calendar do
     |> get_in([format, era])
   end
 
-  defp localize(date, :quarter, format, backend, locale) do
+  @doc false
+  def localize(date, :quarter, format, backend, locale) do
     quarter = quarter_of_year(date)
 
     locale
@@ -1329,7 +1339,8 @@ defmodule Cldr.Calendar do
     |> get_in([:format, format, quarter])
   end
 
-  defp localize(date, :month, format, backend, locale) do
+  @doc false
+  def localize(date, :month, format, backend, locale) do
     month = month_of_year(date)
 
     locale
@@ -1337,7 +1348,8 @@ defmodule Cldr.Calendar do
     |> get_in([:format, format, month])
   end
 
-  defp localize(date, :day_of_week, format, backend, locale) do
+  @doc false
+  def localize(date, :day_of_week, format, backend, locale) do
     day = day_of_week(date)
 
     locale
@@ -1405,6 +1417,9 @@ defmodule Cldr.Calendar do
   def plus(value, increment) when is_integer(value) and is_integer(increment) do
     value + increment
   end
+
+  @spec plus(Date.t(), atom(), integer()) :: Date.t()
+  @spec plus(Date.Range.t(), atom(), integer()) :: Date.Range.t()
 
   def plus(date, period, days \\ 1)
 
