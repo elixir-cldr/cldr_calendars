@@ -53,7 +53,6 @@ defmodule Cldr.Calendar.MixProject do
         "mix.exs",
         "README*",
         "CHANGELOG*",
-        "FEATURE*",
         "LICENSE*",
         "priv/fiscal_years_by_territory.csv"
       ]

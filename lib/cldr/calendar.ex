@@ -1716,11 +1716,11 @@ defmodule Cldr.Calendar do
       unquote(min_days)
     end
 
-    defp weekend(unquote(territory)) do
+    def weekend(unquote(territory)) do
       unquote(Enum.to_list(starts..ends))
     end
 
-    defp weekdays(unquote(territory)) do
+    def weekdays(unquote(territory)) do
       unquote(@days -- Enum.to_list(starts..ends))
     end
   end
@@ -1737,13 +1737,76 @@ defmodule Cldr.Calendar do
     end
   end
 
-  defp weekend(territory) do
+  @doc """
+  Returns a list of the days of the week that
+  are considered a weekend for a given
+  territory (country)
+
+  ## Arguments
+
+  * `territory` is any valid ISO3166-2 code
+
+  ## Returns
+
+  * A list of integers representing the days of
+    the week that are weekend days
+
+  ## Examples
+
+      iex> Cldr.Calendar.weekend("US")
+      [6, 7]
+
+      iex> Cldr.Calendar.weekend("IN")
+      [7]
+
+      iex> Cldr.Calendar.weekend("SA")
+      [5, 6]
+
+      iex> Cldr.Calendar.weekend("xx")
+      {:error, {Cldr.UnknownTerritoryError, "The territory \\"xx\\" is unknown"}}
+
+  """
+  def weekend(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       weekend(territory)
     end
   end
 
-  defp weekdays(territory) do
+  @doc """
+  Returns a list of the days of the week that
+  are considered a weekend for a given
+  territory (country)
+
+  ## Arguments
+
+  * `territory` is any valid ISO3166-2 code
+
+  ## Returns
+
+  * A list of integers representing the days of
+    the week that are week days
+
+  ## Notes
+
+  The list of days may not my monotonic. See
+  the example for Saudi Arabia below.
+
+  ## Examples
+
+      iex> Cldr.Calendar.weekdays("US")
+      [1, 2, 3, 4, 5]
+
+      iex> Cldr.Calendar.weekdays("IN")
+      [1, 2, 3, 4, 5, 6]
+
+      iex> Cldr.Calendar.weekdays("SA")
+      [1, 2, 3, 4, 7]
+
+      iex> Cldr.Calendar.weekdays("xx")
+      {:error, {Cldr.UnknownTerritoryError, "The territory \\"xx\\" is unknown"}}
+
+  """
+  def weekdays(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       weekdays(territory)
     end
