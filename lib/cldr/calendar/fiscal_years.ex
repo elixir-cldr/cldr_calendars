@@ -30,8 +30,16 @@ defmodule Cldr.Calendar.FiscalYear do
 
   def calendar_for(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory),
-         territory in known_fiscal_calendars() do
+         {:ok, territory} <- known_fiscal_calendar(territory) do
       get_or_create_calendar_for(territory, Map.get(known_fiscal_years(), territory))
+    end
+  end
+
+  defp known_fiscal_calendar(territory) do
+    if territory in @known_fiscal_calendars do
+      {:ok, territory}
+    else
+      {:error, {Cldr.UnknownCalendarError, "Fiscal calendar is unknown for #{inspect territory}"}}
     end
   end
 

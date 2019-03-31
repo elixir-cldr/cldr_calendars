@@ -124,8 +124,42 @@ Whats the last week of 2019 in the `ISO Week` calendar?
 ```
 You'll see that for week-based calendars the date is actually stored as `year, week, day` where the `:month` field of the `Date.t` is actually the week in the year and `:day` is the day in the week.
 
-
 ## Month-based calendars
+
+The Gregorian calendar is the canonical example of a month-based calendar. It starts on January 1st and end on Deceber 31st each year.  But not all calendars start in January and end in December.
+
+* The United States fiscal year starts on October 1st and ends on September 30th
+* The United Kingdom fiscal year starts on April 1st and ends on March 31st
+* The Australian fiscal year starts on July 1st and ends on June 30th
+
+`Cldr Calendars` allows month-based calendars to be defined based upon the first or last gregorian month of the year for that calendar.
+
+Of course sometimes we also want to refer to weeks within a year although this is less common than refering to days within months.  Nevertheless, a momth-based calendar can also take advantage of `:first_day` and `:min_days` to determine how to calculate weeks for month-based calendars too.
+
+Here's how we define each of the three example calendars above:
+
+```
+defmodule Cldr.Calendar.US do
+  use Cldr.Calendar.Base.Month,
+    month: 10,
+    min_days: 4,   # The first week of the year is that with at least 4 days of October in it
+    first_day: 7   # When referring to weeks, Sunday is the first day
+end
+
+defmodule Cldr.Calendar.UK do
+  use Cldr.Calendar.Base.Month,
+    month: 4       # The fiscal year starts in April
+end
+
+defmodule Cldr.Calendar.AU do
+  use Cldr.Calendar.Base.Month,
+    month: 7,      # The fiscal year starts in July
+    year: :ending  # A year refers to the ending Gregorian year.
+                   # In this example, the Australian fiscal
+                   # year 2017 is the year that starts in July
+                   # 2016 and ends in June 2017
+end
+```
 
 ## Beginning and ending gregorian years
 
@@ -171,16 +205,76 @@ From the diagram above we can define the following rules:
 
 * For `:starts` calendars, we can say that the *starting* gregorian year is is the same as the *fiscal year* if the starting month is January through June inclusive. If the starting month is July through to December then the starting Gregorian year is the year *prior* to the *fiscal year*. Similarly, the *ending* Gregorian year is the *next* year for calendars that start in February through June and it's the *fiscal year* for calendars that start in July through December. Years that start in January end in January of the same year.
 
-* For ":ends" calendars ...
+* For ":ends" calendars .....
 
-## Installation
+## Calendar Creation
+
+Since calendars defined in `Cldr.Calendar` are intended to be compatible and converible to other Calendars supporting Elixir's `Calendar` behaviour, the configuration of calendars needs to be encapsulated.
+
+The simplest way to is to define a module that uses either `Cldr.Calendar.Base.Week` or `Cldr.Calendar.Base.Month`. This is how we have been defining calendar modules in the examples so far.
+
+A calendar module can also be created at run time.  It is semantically identical to defining a static module but the module is built at run time rather than compile time. New calendars are created with the function `Cldr.Calendar.new/3`. For example:
+```
+iex> Cldr.Calendar.new :my_new_calendar, :week, first_or_last: :first, first_day: 1, min_days: 7
+{:ok, :my_new_calendar}
+```
+Calendar functions are now available on the module `:my_new_calendar`.
+```
+iex> :my_new_calendar.
+__config__/0
+date_from_iso_days/1
+date_to_iso_days/3
+date_to_string/3
+datetime_to_string/11
+day_of_era/3
+day_of_week/3
+day_of_year/3
+...
+```
+### Fiscal Calendars for Territories
+
+`Cldr Calendars` can create a fiscal year calendar for many territories (countries) based upon data from ____.  To create a fiscal year calendar for a territory use the `Cldr.Calendar.FiscalYear/1` function.
+
+```
+ iex> Cldr.Calendar.FiscalYear.calendar_for("IS")
+ {:ok, Cldr.Calendar.FiscalYear.IS}
+
+ iex> Cldr.Calendar.FiscalYear.calendar_for("ZZ")
+ {:error, {Cldr.UnknownTerritoryError, "The territory \"ZZ\" is unknown"}}
+
+ iex> Cldr.Calendar.FiscalYear.calendar_for(:AF)
+ {:error, {Cldr.UnknownCalendarError, "Fiscal calendar is unknown for :AF"}}
+```
+
+## Sigil ~d
+
+`Cldr Calendars` provides a convenince sigil for the creation of dates in calendars. Note that it is necessary to import the `Cldr.Calendar.Sigils` module before using the `~d` sigil.
+```
+ iex> import Cldr.Calendar.Sigils
+
+ # Create a date in the default Cldr.Calendar.Gregorian
+ iex> ~d[2019-01-01]
+ %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 1, year: 2019}
+
+ # Inbuilt calendars can be referred to by their shortened form
+ iex> ~d[2019-01-01]NRF
+ %Date{calendar: Cldr.Calendar.NRF, day: 1, month: 1, year: 2019}
+
+ # Create a calendar and define a date in it
+ iex> Cldr.Calendar.new FiscalAU, :month, month: 7
+ {:ok, FiscalAU}
+ iex> iex(21)> ~d[2019-01-01]FiscalAU
+ %Date{calendar: FiscalAU, day: 1, month: 1, year: 2019}
+ ```
+
+## Cldr Calendars Installation
 
 Add `ex_cldr_calendars` to your `deps` in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:ex_cldr_calendars, "~> 0.1.0"}
+    {:ex_cldr_calendars, "~> 0.1"}
     ...
   ]
 end
@@ -189,7 +283,3 @@ end
 ### To Do
 
 * [ ] Implement hybrid base calendar. This is a week-based calendar that presents dates in a monthly format.  Symmetry454 is an example.
-
-* [ ] Add module docs, especially configuration
-
-* [ ] Add guides
