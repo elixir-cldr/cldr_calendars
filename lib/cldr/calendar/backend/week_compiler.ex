@@ -20,6 +20,10 @@ defmodule Cldr.Calendar.Compiler.Week do
         @calendar_config
       end
 
+      def cldr_calendar_type do
+        :gregorian
+      end
+
       def valid_date?(year, week, day) do
         Week.valid_date?(year, week, day, __config__())
       end

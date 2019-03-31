@@ -34,12 +34,6 @@ defmodule Cldr.Calendar.Backend do
           eras(cldr_locale_name, calendar)
         end
 
-        def periods(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
-
-        def periods(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
-          periods(cldr_locale_name, calendar)
-        end
-
         def quarters(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
 
         def quarters(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
@@ -77,10 +71,6 @@ defmodule Cldr.Calendar.Backend do
               unquote(Macro.escape(get_in(date_data, [:calendars, calendar, :eras])))
             end
 
-            def periods(unquote(locale_name), unquote(calendar)) do
-              unquote(Macro.escape(get_in(date_data, [:calendars, calendar, :day_periods])))
-            end
-
             def quarters(unquote(locale_name), unquote(calendar)) do
               unquote(Macro.escape(get_in(date_data, [:calendars, calendar, :quarters])))
             end
@@ -97,9 +87,6 @@ defmodule Cldr.Calendar.Backend do
           def eras(unquote(locale_name), calendar),
             do: {:error, Calendar.calendar_error(calendar)}
 
-          def periods(unquote(locale_name), calendar),
-            do: {:error, Calendar.calendar_error(calendar)}
-
           def quarters(unquote(locale_name), calendar),
             do: {:error, Calendar.calendar_error(calendar)}
 
@@ -111,7 +98,6 @@ defmodule Cldr.Calendar.Backend do
         end
 
         def eras(locale, _calendar), do: {:error, Locale.locale_error(locale)}
-        def periods(locale, _calendar), do: {:error, Locale.locale_error(locale)}
         def quarters(locale, _calendar), do: {:error, Locale.locale_error(locale)}
         def months(locale, _calendar), do: {:error, Locale.locale_error(locale)}
         def days(locale, _calendar), do: {:error, Locale.locale_error(locale)}

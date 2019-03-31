@@ -10,12 +10,15 @@ defmodule Cldr.Calendar.NRF.Test do
       2020 => [{2020, 2, 2}, {2021, 1, 30}],
       2021 => [{2021, 1, 31}, {2022, 1, 29}],
       2022 => [{2022, 1, 30}, {2023, 1, 28}],
-      2023 => [{2023, 1, 29}, {2024, 2, 3}],
+      2023 => [{2023, 1, 29}, {2024, 2, 3}]
     }
 
     for {year, [starts, ends]} <- nrf_years do
-      assert  Calendar.ISO.date_from_iso_days(Cldr.Calendar.NRF.first_gregorian_day_of_year(year)) == starts
-      assert  Calendar.ISO.date_from_iso_days(Cldr.Calendar.NRF.last_gregorian_day_of_year(year)) == ends
+      assert Calendar.ISO.date_from_iso_days(Cldr.Calendar.NRF.first_gregorian_day_of_year(year)) ==
+               starts
+
+      assert Calendar.ISO.date_from_iso_days(Cldr.Calendar.NRF.last_gregorian_day_of_year(year)) ==
+               ends
     end
   end
 

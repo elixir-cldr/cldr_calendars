@@ -117,13 +117,14 @@ defmodule Cldr.Calendar.Base.Week do
 
   def year(year, config) do
     with {:ok, first_day} <- Date.new(year, 1, 1, config.calendar),
-         {:ok, last_day} <- Date.new(year, weeks_in_year(year, config), days_in_week(), config.calendar) do
+         {:ok, last_day} <-
+           Date.new(year, weeks_in_year(year, config), days_in_week(), config.calendar) do
       Date.range(first_day, last_day)
     end
   end
 
   def quarter(year, quarter, config) do
-    starting_week = ((quarter - 1) * @weeks_in_quarter) + 1
+    starting_week = (quarter - 1) * @weeks_in_quarter + 1
     ending_week = starting_week + @weeks_in_quarter - 1
 
     with {:ok, first_day} <- Date.new(year, starting_week, 1, config.calendar),
@@ -140,7 +141,7 @@ defmodule Cldr.Calendar.Base.Week do
     weeks_prior_in_quarter =
       weeks_in_month
       |> Enum.take(months_prior_in_quarter)
-      |> Enum.sum
+      |> Enum.sum()
 
     weeks_in_month = Enum.at(weeks_in_month, months_prior_in_quarter)
     first_week = quarter_weeks_prior + weeks_prior_in_quarter + 1
@@ -160,7 +161,7 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def plus(year, week, day, config, :quarters, quarters) do
-    days = (quarters * @weeks_in_quarter) * days_in_week()
+    days = quarters * @weeks_in_quarter * days_in_week()
     iso_days = date_to_iso_days(year, week, day, config) + days
     {year, month, day, _, _, _, _} = naive_datetime_from_iso_days({iso_days, {0, 6}}, config)
     {year, month, day}
@@ -168,8 +169,8 @@ defmodule Cldr.Calendar.Base.Week do
 
   def plus(year, week, day, %{weeks_in_month: weeks_in_month} = config, :months, months) do
     {quarters, months_remaining} = Cldr.Math.div_mod(months, @months_in_quarter)
-    weeks_from_months = Enum.take(weeks_in_month, abs(months_remaining)) |> Enum.sum
-    days = (((quarters * @weeks_in_quarter) + weeks_from_months) * days_in_week()) * sign(months)
+    weeks_from_months = Enum.take(weeks_in_month, abs(months_remaining)) |> Enum.sum()
+    days = (quarters * @weeks_in_quarter + weeks_from_months) * days_in_week() * sign(months)
     iso_days = date_to_iso_days(year, week, day, config) + days
     {year, month, day, _, _, _, _} = naive_datetime_from_iso_days({iso_days, {0, 6}}, config)
     {year, month, day}
@@ -191,7 +192,7 @@ defmodule Cldr.Calendar.Base.Week do
     # The iso_days calulation is the last possible first day of the first week
     # All starting days are less than or equal to this day
     if first_day > day_of_week do
-       iso_days + (first_day - days_in_week() - day_of_week)
+      iso_days + (first_day - days_in_week() - day_of_week)
     else
       iso_days - (day_of_week - first_day)
     end
@@ -243,19 +244,22 @@ defmodule Cldr.Calendar.Base.Week do
   def naive_datetime_from_iso_days({days, day_fraction}, config) do
     {year, _month, _day} = Calendar.ISO.date_from_iso_days(days)
     first_day = first_gregorian_day_of_year(year, config)
+
     {year, first_day} =
       cond do
         first_day > days ->
           {year - 1, first_gregorian_day_of_year(year - 1, config)}
-        (days - first_day + 1) > config.calendar.days_in_year(year) ->
+
+        days - first_day + 1 > config.calendar.days_in_year(year) ->
           {year + 1, first_gregorian_day_of_year(year + 1, config)}
+
         true ->
           {year, first_day}
       end
 
     day_of_year = days - first_day + 1
     week = trunc(Float.ceil(day_of_year / days_in_week()))
-    day = day_of_year - ((week - 1) * days_in_week())
+    day = day_of_year - (week - 1) * days_in_week()
 
     {hour, minute, second, microsecond} = Calendar.ISO.time_from_day_fraction(day_fraction)
     {year, week, day, hour, minute, second, microsecond}

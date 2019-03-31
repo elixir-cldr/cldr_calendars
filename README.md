@@ -267,6 +267,76 @@ day_of_year/3
  %Date{calendar: FiscalAU, day: 1, month: 1, year: 2019}
  ```
 
+## Date localization
+
+`Cldr Calendars` is able to localize parts of a date include the `era`,
+`quarter`, `month` and `day_of_week`.  The [CLDR](htts://cldr.unicode.org)
+provides the underlying data.  The function `Cldr.Calendar.localize/3`
+provides the required functionality. Some examples are:
+```
+ iex> Cldr.Calendar.localize ~D[2019-01-01], :era
+ "AD"
+
+ iex> Cldr.Calendar.localize ~D[2019-01-01], :day_of_week
+ "Tue"
+
+ iex> Cldr.Calendar.localize ~D[0001-01-01], :day_of_week
+ "Mon"
+
+ iex> Cldr.Calendar.localize ~D[2019-06-01], :era
+ "AD"
+
+ iex> Cldr.Calendar.localize ~D[2019-06-01], :quarter
+ "Q2"
+
+ iex> Cldr.Calendar.localize ~D[2019-06-01], :month
+ "Jun"
+
+ iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week
+ "Sat"
+
+ iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week, format: :wide
+ "Saturday"
+
+ iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week, format: :narrow
+ "S"
+
+ iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week, locale: "ar"
+      "السبت"
+```
+
+### Configuring a Cldr backend for localization
+
+In order to localize date parts a`backend` module must be defined. This
+is a module which hosts the CLDR data for a set of locales. The detailed
+information for configuring a `backend` is [documented here](https://hexdocs.pm/ex_cldr/readme.html#configuration).
+
+For a simple configuration the following steps may be used:
+
+1. Create a backend module.
+```
+defmodule MyApp.Cldr do
+  use Cldr, locales: ["en", "fr", "jp", "ar"]
+end
+```
+
+2. Optionally configure this backend as the system default in your `config.exs`.
+```
+config :ex_cldr,
+  default_backend: MyApp.Cldr
+```
+
+3. When creating a calendar a default backend may also be defined for this calendar.
+```
+defmodule MyCalendar do
+  use Cldr.Calendar.Base.Month,
+    month: 4,
+    cldr_backend: MyApp.Cldr
+end
+```
+
+It is also possible to pass the name of a backend module to the `Cldr.Calendar.localize/3` function by specifying the `:backend` option with a `backend` module name.
+
 ## Cldr Calendars Installation
 
 Add `ex_cldr_calendars` to your `deps` in `mix.exs`:

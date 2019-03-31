@@ -21,10 +21,11 @@ defmodule Cldr.Calendar.Sigils do
 
   defp calendar_from_charlist(calendar) do
     calendar = List.to_string(calendar)
+
     inbuilt_calendar(calendar) ||
-    fiscal_calendar(calendar) ||
-    user_calendar(calendar) ||
-    calendar_error(calendar)
+      fiscal_calendar(calendar) ||
+      user_calendar(calendar) ||
+      calendar_error(calendar)
   end
 
   defp inbuilt_calendar(calendar) do
@@ -51,6 +52,6 @@ defmodule Cldr.Calendar.Sigils do
   end
 
   defp calendar_error(calendar) do
-    {:error,  {Cldr.UnknownCalendarError, calendar}}
+    {:error, {Cldr.UnknownCalendarError, calendar}}
   end
 end

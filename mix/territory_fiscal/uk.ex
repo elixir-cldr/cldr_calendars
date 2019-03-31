@@ -5,5 +5,4 @@ defmodule Cldr.Calendar.UK do
     first_or_last: :first,
     month: 4,
     year: :majority
-
 end

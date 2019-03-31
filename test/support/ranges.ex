@@ -20,6 +20,7 @@ defmodule Cldr.Calendar.Range do
     last_week = Cldr.Calendar.week(last_week_day)
     last_month = Cldr.Calendar.month(last_month_day)
     last_year = Cldr.Calendar.year(last_year_day)
+
     %{
       "This week" => [this_week.first, this_week.last],
       "Last week" => [last_week.first, last_week.last],

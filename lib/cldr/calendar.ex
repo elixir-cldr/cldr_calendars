@@ -164,11 +164,21 @@ defmodule Cldr.Calendar do
   since all other date periods can be derived.
 
   """
-  @callback plus(Calendar.year, Calendar.month | Cldr.Calendar.week, Calendar.day,
-    :months, integer) :: Date.t() | Date.Range.t()
+  @callback plus(
+              Calendar.year(),
+              Calendar.month() | Cldr.Calendar.week(),
+              Calendar.day(),
+              :months,
+              integer
+            ) :: Date.t() | Date.Range.t()
 
-  @callback plus(Calendar.year, Calendar.month | Cldr.Calendar.week, Calendar.day,
-    :quarters, integer) :: Date.t() | Date.Range.t()
+  @callback plus(
+              Calendar.year(),
+              Calendar.month() | Cldr.Calendar.week(),
+              Calendar.day(),
+              :quarters,
+              integer
+            ) :: Date.t() | Date.Range.t()
 
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
@@ -224,17 +234,22 @@ defmodule Cldr.Calendar do
 
   defp create_calendar(calendar_module, calendar_type, config) do
     structured_config = extract_options(config)
+
     with {:ok, _} <- validate_config(structured_config, calendar_type) do
       calendar_type =
         calendar_type
         |> to_string
-        |> String.capitalize
+        |> String.capitalize()
 
-      contents = quote do
-        use unquote(Module.concat(Cldr.Calendar.Base, calendar_type)), unquote(Macro.escape(config))
-      end
+      contents =
+        quote do
+          use unquote(Module.concat(Cldr.Calendar.Base, calendar_type)),
+              unquote(Macro.escape(config))
+        end
 
-      {:module, module, _, :ok} = Module.create(calendar_module, contents, Macro.Env.location(__ENV__))
+      {:module, module, _, :ok} =
+        Module.create(calendar_module, contents, Macro.Env.location(__ENV__))
+
       {:ok, module}
     end
   end
@@ -322,7 +337,7 @@ defmodule Cldr.Calendar do
       %Date{calendar: Cldr.Calendar.NRF, day: 1, month: 1, year: 2019}
 
   """
-  @spec first_day_of_year(Calendar.year, calendar()) :: Date.t
+  @spec first_day_of_year(Calendar.year(), calendar()) :: Date.t()
 
   def first_day_of_year(year, calendar) do
     with {:ok, date} <- Date.new(year, 1, 1, calendar) do
@@ -361,10 +376,11 @@ defmodule Cldr.Calendar do
       %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}
 
   """
-  @spec last_day_of_year(Calendar.year, calendar()) :: Date.t
+  @spec last_day_of_year(Calendar.year(), calendar()) :: Date.t()
 
   def last_day_of_year(year, calendar) do
     iso_days = calendar.last_gregorian_day_of_year(year)
+
     with {:ok, date} <- calendar.date_from_iso_days(iso_days) do
       date
     end
@@ -387,12 +403,12 @@ defmodule Cldr.Calendar do
       {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 3, month: 2, year: 2019}}
 
   """
-  @spec first_gregorian_day_of_year(Calendar.year, calendar()) :: Date.t
+  @spec first_gregorian_day_of_year(Calendar.year(), calendar()) :: Date.t()
 
   def first_gregorian_day_of_year(year, calendar) do
     year
     |> calendar.first_gregorian_day_of_year
-    |> Cldr.Calendar.Gregorian.date_from_iso_days
+    |> Cldr.Calendar.Gregorian.date_from_iso_days()
   end
 
   @doc """
@@ -412,16 +428,48 @@ defmodule Cldr.Calendar do
       {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2020}}
 
   """
-  @spec last_gregorian_day_of_year(Calendar.year, calendar()) :: Date.t
+  @spec last_gregorian_day_of_year(Calendar.year(), calendar()) :: Date.t()
 
   def last_gregorian_day_of_year(year, calendar) do
     year
     |> calendar.last_gregorian_day_of_year
-    |> Cldr.Calendar.Gregorian.date_from_iso_days
+    |> Cldr.Calendar.Gregorian.date_from_iso_days()
   end
 
   def last_gregorian_day_of_year(%{year: year, calendar: calendar}) do
     last_gregorian_day_of_year(year, calendar)
+  end
+
+  @doc """
+  Returns the `{day_of_era, era}` for
+  a `date`.
+
+  ## Arguments
+
+  * `date` is any `Date.t()`
+
+  ## Returns
+
+  * a the days since the start of the era and
+    the era of the year as a tuple
+
+  ## Examples
+
+      iex> Cldr.Calendar.day_of_era ~D[2019-01-01]
+      {737060, 1}
+
+      iex> Cldr.Calendar.day_of_era Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      {737093, 1}
+
+      iex> Cldr.Calendar.day_of_era Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      {737456, 1}
+
+  """
+  @spec day_of_era(Date.t()) :: Calendar.era()
+
+  def day_of_era(date) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.day_of_era(year, month, day)
   end
 
   @doc """
@@ -449,7 +497,7 @@ defmodule Cldr.Calendar do
       4
 
   """
-  @spec quarter_of_year(Date.t) :: Calendar.quarter()
+  @spec quarter_of_year(Date.t()) :: Calendar.quarter()
 
   def quarter_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
@@ -482,7 +530,7 @@ defmodule Cldr.Calendar do
       6
 
   """
-  @spec month_of_year(Date.t) :: {Calendar.year(), Calendar.month()}
+  @spec month_of_year(Date.t()) :: {Calendar.year(), Calendar.month()}
 
   def month_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
@@ -515,7 +563,7 @@ defmodule Cldr.Calendar do
       {2019, 30}
 
   """
-  @spec iso_week_of_year(Date.t) :: {Calendar.year(), week()}
+  @spec iso_week_of_year(Date.t()) :: {Calendar.year(), week()}
 
   def iso_week_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
@@ -548,7 +596,7 @@ defmodule Cldr.Calendar do
       {2019, 26}
 
   """
-  @spec week_of_year(Date.t) :: {Calendar.year(), week()}
+  @spec week_of_year(Date.t()) :: {Calendar.year(), week()}
 
   def week_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
@@ -583,13 +631,12 @@ defmodule Cldr.Calendar do
       372
 
   """
-  @spec day_of_year(Date.t) :: Calendar.day()
+  @spec day_of_year(Date.t()) :: Calendar.day()
 
   def day_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.day_of_year(year, month, day)
   end
-
 
   @doc """
   Returns whether a given date is a weekend day.
@@ -668,9 +715,10 @@ defmodule Cldr.Calendar do
   def weekend?(date, options \\ []) do
     locale = Keyword.get(options, :locale, Cldr.get_locale())
     backend = Keyword.get(options, :backend, Cldr.default_backend())
+
     with {:ok, locale} <- Cldr.validate_locale(locale, backend),
-        territory = Keyword.get(options, :territory, locale.territory),
-        {:ok, territory} <- Cldr.validate_territory(territory) do
+         territory = Keyword.get(options, :territory, locale.territory),
+         {:ok, territory} <- Cldr.validate_territory(territory) do
       day_of_week(date) in weekend(territory)
     end
   end
@@ -745,9 +793,10 @@ defmodule Cldr.Calendar do
   def weekday?(date, options \\ []) do
     locale = Keyword.get(options, :locale, Cldr.get_locale())
     backend = Keyword.get(options, :backend, Cldr.default_backend())
+
     with {:ok, locale} <- Cldr.validate_locale(locale, backend),
-        territory = Keyword.get(options, :territory, locale.territory),
-        {:ok, territory} <- Cldr.validate_territory(territory) do
+         territory = Keyword.get(options, :territory, locale.territory),
+         {:ok, territory} <- Cldr.validate_territory(territory) do
       day_of_week(date) in weekdays(territory)
     end
   end
@@ -967,6 +1016,7 @@ defmodule Cldr.Calendar do
   def day(year, day, calendar) do
     if day <= calendar.days_in_year(year) do
       iso_days = calendar.first_gregorian_day_of_year(year) + day - 1
+
       with {:ok, date} <- calendar.date_from_iso_days(iso_days) do
         day(date)
       end
@@ -1176,6 +1226,161 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Returns a localized string for a part of
+  a `Date.t`.
+
+  ## Arguments
+
+  * `date_` is any `Date.t`
+
+  * `part` is one of `:era`, `:quarter`, `:month`
+    or `:day_of_week`
+
+  * `options` is a keyword list of options
+
+  ## Options
+
+  * `:locale` is any valid locale name in the list returned by
+    `Cldr.known_locale_names/1` or a `Cldr.LanguageTag` struct
+    returned by `Cldr.Locale.new!/2`. The default is `Cldr.get_locale()`.
+
+  * `backend` is any module that includes `use Cldr` and therefore
+    is a `Cldr` backend module. The default is `Cldr.default_backend/0`.
+
+  * `:format` is one of `:wide`, `:abbreviated` or `:narrow`. The
+    default is `:abbreviated`.
+
+  ## Returns
+
+  * A string representing the localized date part, or
+
+  * `{error, {exception_module, message}}` if an error is detected
+
+  ## Examples
+
+      iex> Cldr.Calendar.localize ~D[2019-01-01], :era
+      "AD"
+
+      iex> Cldr.Calendar.localize ~D[2019-01-01], :day_of_week
+      "Tue"
+
+      iex> Cldr.Calendar.localize ~D[0001-01-01], :day_of_week
+      "Mon"
+
+      iex> Cldr.Calendar.localize ~D[2019-06-01], :era
+      "AD"
+
+      iex> Cldr.Calendar.localize ~D[2019-06-01], :quarter
+      "Q2"
+
+      iex> Cldr.Calendar.localize ~D[2019-06-01], :month
+      "Jun"
+
+      iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week
+      "Sat"
+
+      iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week, format: :wide
+      "Saturday"
+
+      iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week, format: :narrow
+      "S"
+
+      iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week, locale: "ar"
+      "السبت"
+
+  """
+  @spec localize(Date.t(), atom(), Keyword.t) :: String.t | {:error, {module(), String.t}}
+
+  def localize(date, part, options \\ [])
+
+  def localize(%{calendar: Calendar.ISO} = date, part, options) do
+    date = %{date | calendar: Cldr.Calendar.Gregorian}
+    localize(date, part, options)
+  end
+
+  def localize(date, part, options) do
+    cldr_backend = date.calendar.__config__().cldr_backend
+    backend = Keyword.get(options, :backend, cldr_backend || Cldr.default_backend())
+    backend = Module.concat(backend, Calendar)
+    locale = Keyword.get(options, :locale, Cldr.get_locale())
+    format = Keyword.get(options, :format, :abbreviated)
+
+    with {:ok, locale} <- Cldr.validate_locale(locale),
+         {:ok, part} <- validate_part(part),
+         {:ok, format} <- validate_format(format),
+         {:ok, backend} <- validate_backend(backend) do
+      localize(date, part, format, backend, locale)
+    end
+  end
+
+  defp localize(date, :era, format, backend, locale) do
+    {_, era} = day_of_era(date)
+
+    locale
+    |> backend.eras(date.calendar.cldr_calendar_type)
+    |> get_in([format, era])
+  end
+
+  defp localize(date, :quarter, format, backend, locale) do
+    quarter = quarter_of_year(date)
+
+    locale
+    |> backend.quarters(date.calendar.cldr_calendar_type)
+    |> get_in([:format, format, quarter])
+  end
+
+  defp localize(date, :month, format, backend, locale) do
+    month = month_of_year(date)
+
+    locale
+    |> backend.months(date.calendar.cldr_calendar_type)
+    |> get_in([:format, format, month])
+  end
+
+  defp localize(date, :day_of_week, format, backend, locale) do
+    day = day_of_week(date)
+
+    locale
+    |> backend.days(date.calendar.cldr_calendar_type)
+    |> get_in([:format, format, day])
+  end
+
+  @valid_parts [:era, :quarter, :month, :day_of_week]
+  defp validate_part(part) do
+    if part in @valid_parts do
+      {:ok, part}
+    else
+      {:error,
+       {ArgumentError,
+        "The date part #{inspect(part)} is not known. " <>
+          "Valid date parts are #{inspect(@valid_parts)}"}}
+    end
+  end
+
+  @valid_formats [:wide, :abbreviated, :narrow]
+  defp validate_format(format) do
+    if format in @valid_formats do
+      {:ok, format}
+    else
+      {:error,
+       {ArgumentError,
+        "The date format #{inspect(format)} is not known. " <>
+          "Valid formats are #{inspect(@valid_formats)}"}}
+    end
+  end
+
+  defp validate_backend(nil) do
+    {:error,
+     {ArgumentError,
+      "No CLDR backend could be found. Please configure a backend. " <>
+      "See https://hexdocs.pm/ex_cldr/readme.html#configuration"}}
+  end
+
+  defp validate_backend(backend) do
+    {:ok, backend}
+  end
+
+  @doc """
   Increments a date or date range by an
   integer amount of a date period (year,
   quarter, month, week or day).
@@ -1210,8 +1415,7 @@ defmodule Cldr.Calendar do
 
   def plus(date, :years, years) do
     %{year: year, month: month, day: day, calendar: calendar} = date
-    new_year =
-      year + years
+    new_year = year + years
 
     new_day =
       new_year
@@ -1229,6 +1433,7 @@ defmodule Cldr.Calendar do
 
   def plus(date, :quarters, quarters) do
     %{year: year, month: month, day: day, calendar: calendar} = date
+
     calendar.plus(year, month, day, :quarters, quarters)
     |> date_from_tuple(calendar)
   end
@@ -1240,6 +1445,7 @@ defmodule Cldr.Calendar do
 
   def plus(date, :months, months) do
     %{year: year, month: month, day: day, calendar: calendar} = date
+
     calendar.plus(year, month, day, :months, months)
     |> date_from_tuple(calendar)
   end
@@ -1375,7 +1581,7 @@ defmodule Cldr.Calendar do
       ~D[0000-01-01]
 
   """
-  @spec date_from_iso_days(Calendar.iso_days | iso_day_number, calendar()) :: Date.t()
+  @spec date_from_iso_days(Calendar.iso_days() | iso_day_number, calendar()) :: Date.t()
 
   def date_from_iso_days({days, _}, calendar) do
     date_from_iso_days(days, calendar)
@@ -1383,6 +1589,7 @@ defmodule Cldr.Calendar do
 
   def date_from_iso_days(iso_day_number, calendar) do
     {year, month, day} = Calendar.ISO.date_from_iso_days(iso_day_number)
+
     with {:ok, date} <- Date.new(year, month, day),
          {:ok, date} <- Date.convert(date, calendar) do
       date
@@ -1442,7 +1649,7 @@ defmodule Cldr.Calendar do
       true
 
   """
-  @spec iso_days_to_day_of_week(Calendar.iso_days | iso_day_number, calendar()) :: day_of_week()
+  @spec iso_days_to_day_of_week(Calendar.iso_days() | iso_day_number, calendar()) :: day_of_week()
 
   def iso_days_to_day_of_week({days, _}, calendar) do
     iso_days_to_day_of_week(days, calendar)
@@ -1540,12 +1747,20 @@ defmodule Cldr.Calendar do
   end
 
   ## Majority years
-  def start_end_gregorian_years(year, %Config{first_or_last: :first, year: :majority, month: month})
+  def start_end_gregorian_years(year, %Config{
+        first_or_last: :first,
+        year: :majority,
+        month: month
+      })
       when month <= 6 do
     {year, year + 1}
   end
 
-  def start_end_gregorian_years(year, %Config{first_or_last: :first, year: :majority, month: month})
+  def start_end_gregorian_years(year, %Config{
+        first_or_last: :first,
+        year: :majority,
+        month: month
+      })
       when month > 6 do
     {year - 1, year}
   end
@@ -1625,17 +1840,28 @@ defmodule Cldr.Calendar do
     {min_days, first_day}
   end
 
-  @valid_weeks_in_month [[4,4,5], [4,5,4], [5,4,4]]
+  @valid_weeks_in_month [[4, 4, 5], [4, 5, 4], [5, 4, 4]]
   @valid_year [:majority, :beginning, :ending]
   def validate_config(config, :week) do
     with :ok <- assert(config.day in 1..7, day_error(config.day)),
          :ok <- assert(config.month in 1..12, month_error(config.month)),
          :ok <- assert(config.year in @valid_year, year_error(config.year)),
          :ok <- assert(config.min_days in 1..7, min_days_for_locale_error(config.min_days)),
-         :ok <- assert(config.first_or_last in [:first, :last], first_or_last_error(config.first_or_last)),
-         :ok <- assert(config.begins_or_ends in [:begins, :ends], begins_or_ends_error(config.begins_or_ends)),
-         :ok <- assert(config.weeks_in_month in @valid_weeks_in_month,
-           weeks_in_month_error(config.weeks_in_month)) do
+         :ok <-
+           assert(
+             config.first_or_last in [:first, :last],
+             first_or_last_error(config.first_or_last)
+           ),
+         :ok <-
+           assert(
+             config.begins_or_ends in [:begins, :ends],
+             begins_or_ends_error(config.begins_or_ends)
+           ),
+         :ok <-
+           assert(
+             config.weeks_in_month in @valid_weeks_in_month,
+             weeks_in_month_error(config.weeks_in_month)
+           ) do
       {:ok, config}
     end
   end
@@ -1662,31 +1888,31 @@ defmodule Cldr.Calendar do
   end
 
   defp day_error(day) do
-    ":day must be in the range 1..7. Found #{inspect day}."
+    ":day must be in the range 1..7. Found #{inspect(day)}."
   end
 
   defp month_error(month) do
-    ":month must be in the range 1..12. Found #{inspect month}."
+    ":month must be in the range 1..12. Found #{inspect(month)}."
   end
 
   defp year_error(year) do
-    ":year must be either :beginning, :ending or :majority. Found #{inspect year}."
+    ":year must be either :beginning, :ending or :majority. Found #{inspect(year)}."
   end
 
   def min_days_for_locale_error(min_days) do
-    ":min_days must be in the rnage 1..7. Found #{inspect min_days}."
+    ":min_days must be in the rnage 1..7. Found #{inspect(min_days)}."
   end
 
   defp first_or_last_error(first_or_last) do
-    ":first_or_last must be :first or :last. Found #{inspect first_or_last}."
+    ":first_or_last must be :first or :last. Found #{inspect(first_or_last)}."
   end
 
   defp begins_or_ends_error(begins_or_ends) do
-    ":begins_or_ends must be :begins or :ends. Found #{inspect begins_or_ends}."
+    ":begins_or_ends must be :begins or :ends. Found #{inspect(begins_or_ends)}."
   end
 
   defp weeks_in_month_error(weeks_in_month) do
-    ":weeks_in_month must be [4,4,5], [4,5,4] or [5,4,4]. Found #{inspect weeks_in_month}"
+    ":weeks_in_month must be [4,4,5], [4,5,4] or [5,4,4]. Found #{inspect(weeks_in_month)}"
   end
 
   @doc false
@@ -1730,7 +1956,5 @@ defmodule Cldr.Calendar do
 
   defdelegate day_of_week(date), to: Date
   defdelegate days_in_month(date), to: Date
-  defdelegate day_of_era(date), to: Date
   defdelegate months_in_year(date), to: Date
-
 end

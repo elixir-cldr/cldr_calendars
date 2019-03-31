@@ -20,6 +20,10 @@ defmodule Cldr.Calendar.Compiler.Month do
         @calendar_config
       end
 
+      def cldr_calendar_type do
+        :gregorian
+      end
+
       def valid_date?(year, month, day) do
         Month.valid_date?(year, month, day, __config__())
       end

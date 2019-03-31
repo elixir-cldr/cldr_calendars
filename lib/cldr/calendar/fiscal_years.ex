@@ -1,22 +1,32 @@
 defmodule Cldr.Calendar.FiscalYear do
-
   @fiscal_year_data "./priv/fiscal_years_by_territory.csv"
   @fiscal_year_by_territory @fiscal_year_data
-    |> File.read!
-    |> NimbleCSV.RFC4180.parse_string
-    |> Enum.map(fn
-      [_, "", _, _, _month, _day, _min_days, _] ->
-        nil
-      [_, territory, _, "Cldr.Calendar.Gregorian" = calendar, month, _day, _min_days, _] ->
-        {:ok, territory} = Cldr.validate_territory(territory)
-        calendar = Module.concat([calendar])
-        month = String.to_integer(month)
-        {territory, [calendar: calendar, month: month]}
-      _other  ->
-        nil
-      end)
-    |> Enum.reject(&is_nil/1)
-    |> Map.new
+                            |> File.read!()
+                            |> NimbleCSV.RFC4180.parse_string()
+                            |> Enum.map(fn
+                              [_, "", _, _, _month, _day, _min_days, _] ->
+                                nil
+
+                              [
+                                _,
+                                territory,
+                                _,
+                                "Cldr.Calendar.Gregorian" = calendar,
+                                month,
+                                _day,
+                                _min_days,
+                                _
+                              ] ->
+                                {:ok, territory} = Cldr.validate_territory(territory)
+                                calendar = Module.concat([calendar])
+                                month = String.to_integer(month)
+                                {territory, [calendar: calendar, month: month]}
+
+                              _other ->
+                                nil
+                            end)
+                            |> Enum.reject(&is_nil/1)
+                            |> Map.new()
 
   @known_fiscal_calendars Map.keys(@fiscal_year_by_territory)
 
@@ -39,7 +49,8 @@ defmodule Cldr.Calendar.FiscalYear do
     if territory in @known_fiscal_calendars do
       {:ok, territory}
     else
-      {:error, {Cldr.UnknownCalendarError, "Fiscal calendar is unknown for #{inspect territory}"}}
+      {:error,
+       {Cldr.UnknownCalendarError, "Fiscal calendar is unknown for #{inspect(territory)}"}}
     end
   end
 
