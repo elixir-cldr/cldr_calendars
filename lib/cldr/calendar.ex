@@ -461,6 +461,37 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Returns the Modified Julian Day of
+  a `Date.t`.
+
+  ## Arguments
+
+  * `date` is any `Date.t()`
+
+  ## Returns
+
+  * an integer number representing the
+    Modified Julian Day of the `date`
+
+  ## Notes
+
+  The Modified Julian Day is the number of days
+  since November 17, 1858. Therefore this function
+  only returns valid values for dates after this
+  date.
+
+  ## Examples
+
+      iex> Cldr.Calendar.modified_julian_day ~D[2019-01-01]
+      58484
+
+  """
+  @mjd_epoch 678941
+  def modified_julian_day(date) do
+    date_to_iso_days(date) - @mjd_epoch
+  end
+
+  @doc """
   Returns the `quarter` number for
   a `date`.
 

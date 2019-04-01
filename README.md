@@ -356,3 +356,7 @@ end
 ### To Do
 
 * [ ] Implement hybrid base calendar. This is a week-based calendar that presents dates in a monthly format.  Symmetry454 is an example.
+
+* [ ] Add `week_of_month` to callbacks calendars
+
+
