@@ -341,12 +341,13 @@ It is also possible to pass the name of a backend module to the `Cldr.Calendar.l
 
 ## Cldr Calendars Installation
 
-Add `ex_cldr_calendars` to your `deps` in `mix.exs`:
+Add `ex_cldr_calendars` to your `deps` in `mix.exs`. `nimble_csv` is also required at build time (it is not requried at runtime).
 
 ```elixir
 def deps do
   [
-    {:ex_cldr_calendars, "~> 0.1"}
+    {:ex_cldr_calendars, "~> 0.1"},
+    {:nimble_csv, "~> 0.6", runtime: false}
     ...
   ]
 end
