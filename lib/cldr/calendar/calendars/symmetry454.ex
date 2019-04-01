@@ -1,6 +1,8 @@
 require Cldr.Calendar.Compiler.Week
 
 defmodule Cldr.Calendar.Symmetery do
+  @moduledoc false
+
   use Cldr.Calendar.Base.Week,
     min_days: 4,
     first_or_last: :first,

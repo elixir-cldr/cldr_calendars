@@ -1,4 +1,8 @@
 defmodule Cldr.Calendar.Config do
+  @moduledoc """
+  Defines the configuration for a calendar.
+
+  """
   defstruct calendar: nil,
 
             # Locale can be used to derive
@@ -41,6 +45,9 @@ defmodule Cldr.Calendar.Config do
             # year
             min_days: 7
 
+  @typedoc """
+  Defines the struct type for a calendar configuration
+  """
   @type t() :: %__MODULE__{
     calendar: Cldr.Calendar.calendar() | nil,
     locale: Cldr.Locale.locale_name | Cldr.LanguageTag.t | nil,

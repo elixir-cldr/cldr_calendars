@@ -1,4 +1,6 @@
 defmodule Cldr.Calendar.Base.Week do
+  @moduledoc false
+
   alias Cldr.Calendar.Config
   alias Cldr.Calendar.Base.Month
   alias Calendar.ISO

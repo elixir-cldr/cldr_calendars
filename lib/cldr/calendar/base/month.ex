@@ -1,14 +1,5 @@
 defmodule Cldr.Calendar.Base.Month do
-  @moduledoc """
-  Implements the `Calendar` behaviour for the
-  Gregorian proleptic calendar.
-
-  In this regard it implements the same
-  calendar as the Elixir `Calendar.ISO`
-  calendar but adds the `Cldr.Calendar`
-  behaviour.
-
-  """
+  @moduledoc false
 
   alias Cldr.Calendar.Config
   alias Cldr.Calendar.Base

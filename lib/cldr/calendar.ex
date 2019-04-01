@@ -298,7 +298,7 @@ defmodule Cldr.Calendar do
 
   @doc """
   Returns the first date of a `year`
-  for a `calendar`.
+  in a `calendar`.
 
   ## Arguments
 
@@ -323,13 +323,35 @@ defmodule Cldr.Calendar do
       %Date{calendar: Cldr.Calendar.NRF, day: 1, month: 1, year: 2019}
 
   """
-  @spec first_day_of_year(Calendar.year(), calendar()) :: Date.t()
+  @spec first_day_of_year(year :: Calendar.year(), calendar :: calendar()) :: Date.t()
 
   def first_day_of_year(year, calendar) do
     with {:ok, date} <- Date.new(year, 1, 1, calendar) do
       date
     end
   end
+
+  @doc """
+  Returns the first date of a `year`
+  for a `Date.t`.
+
+  ## Arguments
+
+  * `date` is any `Date.t()`
+
+  ## Returns
+
+  * a `Date.t()` or
+
+  * `{:error, :invalid_date}`
+
+  ## Examples
+
+      iex>  Cldr.Calendar.first_day_of_year ~D[2019-12-01]
+      ~D[2019-01-01]
+
+  """
+  @spec first_day_of_year(date :: Date.t) :: Date.t
 
   def first_day_of_year(%{year: year, calendar: calendar}) do
     first_day_of_year(year, calendar)
@@ -362,7 +384,15 @@ defmodule Cldr.Calendar do
       %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}
 
   """
-  @spec last_day_of_year(Calendar.year(), calendar()) :: Date.t()
+  @spec last_day_of_year(year :: Calendar.year(), calendar :: calendar()) :: Date.t()
+
+  def last_day_of_year(year, Calendar.ISO) do
+    last_month = Calendar.ISO.months_in_year(year)
+    last_day = Calendar.ISO.days_in_month(year, last_month)
+    with {:ok, date} <- Date.new(year, last_month, last_day) do
+      date
+    end
+  end
 
   def last_day_of_year(year, calendar) do
     iso_days = calendar.last_gregorian_day_of_year(year)
@@ -370,6 +400,32 @@ defmodule Cldr.Calendar do
     with {:ok, date} <- calendar.date_from_iso_days(iso_days) do
       date
     end
+  end
+
+  @doc """
+  Returns the last date of a `year`
+  for a `Date.t`.
+
+  ## Arguments
+
+  * `date` is any `Date.t()`
+
+  ## Returns
+
+  * a `Date.t()` or
+
+  * `{:error, :invalid_date}`
+
+  ## Examples
+
+      iex>  Cldr.Calendar.last_day_of_year ~D[2019-01-01]
+      ~D[2019-12-31]
+
+  """
+  @spec last_day_of_year(date :: Date.t) :: Date.t()
+
+  def last_day_of_year(%{year: year, calendar: calendar}) do
+    last_day_of_year(year, calendar)
   end
 
   @doc """
@@ -391,6 +447,10 @@ defmodule Cldr.Calendar do
   """
   @spec first_gregorian_day_of_year(Calendar.year(), calendar()) ::
     {:ok, Date.t()} | {:error, :invalid_date}
+
+  def first_gregorian_day_of_year(year, Calendar.ISO) do
+    first_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
+  end
 
   def first_gregorian_day_of_year(year, calendar) do
     year
@@ -417,6 +477,10 @@ defmodule Cldr.Calendar do
   """
   @spec last_gregorian_day_of_year(Calendar.year(), calendar()) ::
     {:ok, Date.t()} | {:error, :invalid_date}
+
+  def last_gregorian_day_of_year(year, Calendar.ISO) do
+    last_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
+  end
 
   def last_gregorian_day_of_year(year, calendar) do
     year
@@ -1688,12 +1752,14 @@ defmodule Cldr.Calendar do
   # Helpers
   #
 
+  @doc false
   def first_day_for_locale(%LanguageTag{territory: territory}) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       first_day_for_locale(territory)
     end
   end
 
+  @doc false
   def min_days_for_locale(%LanguageTag{territory: territory}) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       min_days_for_locale(territory)
@@ -1999,7 +2065,7 @@ defmodule Cldr.Calendar do
     ":year must be either :beginning, :ending or :majority. Found #{inspect(year)}."
   end
 
-  def min_days_for_locale_error(min_days) do
+  defp min_days_for_locale_error(min_days) do
     ":min_days must be in the rnage 1..7. Found #{inspect(min_days)}."
   end
 
