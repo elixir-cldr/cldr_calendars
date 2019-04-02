@@ -50,4 +50,17 @@ defmodule Cldr.Calendar.Week.Test do
     last_year_day = Cldr.Calendar.previous(today, :year)
     assert last_year_day == %Date{calendar: Saturday, day: 4, month: 13, year: 2018}
   end
+
+  test "sunday week calendar" do
+    defmodule Sunday do
+      use Cldr.Calendar.Base.Week, day: 7, month: 4, weeks_in_month: [4, 4, 5], min_days: 7
+    end
+
+    {:ok, today} = Date.new(2018, 53, 3, Sunday)
+    current_period = Cldr.Calendar.month(today)
+    first_day_of_period = current_period.first
+    last_day_of_period = current_period.last
+    assert first_day_of_period == %Date{calendar: Sunday, day: 1, month: 48, year: 2018}
+    assert last_day_of_period == %Date{calendar: Sunday, day: 7, month: 53, year: 2018}
+  end
 end
