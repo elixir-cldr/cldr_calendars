@@ -163,7 +163,8 @@ defmodule Cldr.Calendar do
               month :: Calendar.month() | Cldr.Calendar.week(),
               day :: Calendar.day(),
               months_or_quarters :: :months | :quarters,
-              increment :: integer
+              increment :: integer,
+              options :: Keyword.t
             ) :: {Calendar.year(), Calendar.month(), Calendar.day()}
 
   @days [1, 2, 3, 4, 5, 6, 7]
@@ -1197,49 +1198,51 @@ defmodule Cldr.Calendar do
   ## Examples
 
   """
-  def next(%Date.Range{last: date}, :year) do
-    next(date, :year)
+  def next(date_or_date_range, date_part, options \\ [])
+
+  def next(%Date.Range{last: date}, :year, options) do
+    next(date, :year, options)
     |> year
   end
 
-  def next(date, :year) do
-    plus(date, :years, 1)
+  def next(date, :year, options) do
+    plus(date, :years, 1, options)
   end
 
-  def next(%Date.Range{last: date}, :quarter) do
-    next(date, :quarter)
+  def next(%Date.Range{last: date}, :quarter, options) do
+    next(date, :quarter, options)
     |> quarter
   end
 
-  def next(date, :quarter) do
-    plus(date, :quarters, 1)
+  def next(date, :quarter, options) do
+    plus(date, :quarters, 1, options)
   end
 
-  def next(%Date.Range{last: date}, :month) do
-    next(date, :month)
+  def next(%Date.Range{last: date}, :month, options) do
+    next(date, :month, options)
     |> month
   end
 
-  def next(date, :month) do
-    plus(date, :months, 1)
+  def next(date, :month, options) do
+    plus(date, :months, 1, options)
   end
 
-  def next(%Date.Range{last: date}, :week) do
-    next(date, :week)
+  def next(%Date.Range{last: date}, :week, options) do
+    next(date, :week, options)
     |> week
   end
 
-  def next(date, :week) do
-    plus(date, :weeks, 1)
+  def next(date, :week, options) do
+    plus(date, :weeks, 1, options)
   end
 
-  def next(%Date.Range{last: date}, :day) do
-    next(date, :day)
+  def next(%Date.Range{last: date}, :day, options) do
+    next(date, :day, options)
     |> day
   end
 
-  def next(date, :day) do
-    plus(date, :days, 1)
+  def next(date, :day, options) do
+    plus(date, :days, 1, options)
   end
 
   @doc """
@@ -1255,6 +1258,9 @@ defmodule Cldr.Calendar do
   * `period` is `:year`, `:quarter`, `:month`,
     `:week` or `:day`
 
+  * `options` is a Keyword list of options that is
+    passed to `plus/4` or `minus/4`
+
   ## Returns
 
   When a `Date.t` is passed, a `Date.t` is
@@ -1264,48 +1270,50 @@ defmodule Cldr.Calendar do
   ## Examples
 
   """
-  def previous(%Date.Range{last: date}, :year) do
-    previous(date, :year)
+  def previous(date_or_date_range, date_part, options \\ [])
+
+  def previous(%Date.Range{last: date}, :year, options) do
+    previous(date, :year, options)
     |> year
   end
 
-  def previous(date, :year) do
-    plus(date, :years, -1)
+  def previous(date, :year, options) do
+    plus(date, :years, -1, options)
   end
 
-  def previous(%Date.Range{last: date}, :quarter) do
-    previous(date, :quarter)
+  def previous(%Date.Range{last: date}, :quarter, options) do
+    previous(date, :quarter, options)
     |> quarter
   end
 
-  def previous(date, :quarter) do
-    minus(date, :quarters, 1)
+  def previous(date, :quarter, options) do
+    minus(date, :quarters, 1, options)
   end
 
-  def previous(%Date.Range{last: date}, :month) do
-    previous(date, :month)
+  def previous(%Date.Range{last: date}, :month, options) do
+    previous(date, :month, options)
     |> month
   end
 
-  def previous(date, :month) do
-    minus(date, :months, 1)
+  def previous(date, :month, options) do
+    minus(date, :months, 1, options)
   end
 
-  def previous(%Date.Range{last: date}, :week) do
-    previous(date, :week)
+  def previous(%Date.Range{last: date}, :week, options) do
+    previous(date, :week, options)
     |> week
   end
 
-  def previous(date, :week) do
-    minus(date, :weeks, 1)
+  def previous(date, :week, options) do
+    minus(date, :weeks, 1, options)
   end
 
-  def previous(%Date.Range{last: date}, :day) do
-    previous(date, :day)
+  def previous(%Date.Range{last: date}, :day, options) do
+    previous(date, :day, options)
   end
 
-  def previous(date, :day) do
-    minus(date, :days, 1)
+  def previous(date, :day, options) do
+    minus(date, :days, 1, options)
   end
 
   @doc """
@@ -1480,6 +1488,17 @@ defmodule Cldr.Calendar do
   * `period` is `:year`, `:quarter`, `:month`,
     `:week` or `:day`
 
+  * `options` is a Kwyrod list of options
+
+  ## Options
+
+  * `:coerce` is a boolean which, when set to `true`
+    will coerce the month and/or day to be a valid date.
+    This affects,for example, moving to the previous month
+    from `~D[2019-03-31]`. Sincce there is no date `~D[2019-02-31]`
+    this would normally return `{:error, :invalid_date}`.
+    Setting `coerce: true` it will return `~D[2019-02-28]`.
+
   ## Returns
 
   When a `Date.t` is passed, a `Date.t` is
@@ -1493,75 +1512,93 @@ defmodule Cldr.Calendar do
     value + increment
   end
 
-  @spec plus(Date.t(), atom(), integer()) :: Date.t()
-  @spec plus(Date.Range.t(), atom(), integer()) :: Date.Range.t()
+  @spec plus(Date.t(), atom(), integer(), Keyword.t()) :: Date.t()
+  @spec plus(Date.Range.t(), atom(), integer(), Keyword.t()) :: Date.Range.t()
 
-  def plus(date, period, days \\ 1)
+  def plus(date, period, increment, options \\ [])
 
-  def plus(%Date.Range{last: date}, :years, years) do
-    plus(date, :years, years)
+  def plus(%Date.Range{last: date}, :years, years, options) do
+    plus(date, :years, years, options)
     |> year
   end
 
-  def plus(date, :years, years) do
+  def plus(date, :years, years, options) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     new_year = year + years
 
-    new_day =
-      new_year
-      |> calendar.days_in_month(month)
-      |> min(day)
+    coerce? = Keyword.get(options,:coerce, false)
+    {new_month, new_day} = month_day(new_year, month, day, calendar, coerce?)
 
-    {:ok, date} = Date.new(new_year, month, new_day, calendar)
-    date
+    with {:ok, date} <- Date.new(new_year, new_month, new_day, calendar) do
+      date
+    end
   end
 
-  def plus(%Date.Range{last: date}, :quarters, quarters) do
+  def plus(%Date.Range{last: date}, :quarters, quarters, _options) do
     plus(date, :quarters, quarters)
     |> quarter
   end
 
-  def plus(date, :quarters, quarters) do
+  def plus(date, :quarters, quarters, _options) do
     %{year: year, month: month, day: day, calendar: calendar} = date
 
     calendar.plus(year, month, day, :quarters, quarters)
     |> date_from_tuple(calendar)
   end
 
-  def plus(%Date.Range{last: date}, :months, months) do
+  def plus(%Date.Range{last: date}, :months, months, _options) do
     plus(date, :months, months)
     |> month
   end
 
-  def plus(date, :months, months) do
+  def plus(date, :months, months, _options) do
     %{year: year, month: month, day: day, calendar: calendar} = date
 
     calendar.plus(year, month, day, :months, months)
     |> date_from_tuple(calendar)
   end
 
-  def plus(%Date.Range{last: date}, :weeks, weeks) do
+  def plus(%Date.Range{last: date}, :weeks, weeks, _options) do
     plus(date, :weeks, weeks)
     |> week
   end
 
-  def plus(%{calendar: calendar} = date, :weeks, weeks) do
+  def plus(%{calendar: calendar} = date, :weeks, weeks, _options) do
     date
     |> date_to_iso_days
     |> plus(weeks_to_days(weeks))
     |> date_from_iso_days(calendar)
   end
 
-  def plus(%Date.Range{last: date}, :days, days) do
+  def plus(%Date.Range{last: date}, :days, days, _options) do
     plus(date, :days, days)
     |> day
   end
 
-  def plus(%{calendar: calendar} = date, :days, days) do
+  def plus(%{calendar: calendar} = date, :days, days, _options) do
     date
     |> date_to_iso_days
     |> plus(days)
     |> date_from_iso_days(calendar)
+  end
+
+
+  defp month_day(_year, month, day, _calendar, false) do
+    {month, day}
+  end
+
+  defp month_day(year, month, day, calendar, true) do
+    new_month =
+      year
+      |> calendar.periods_in_year
+      |> min(month)
+
+    new_day =
+      year
+      |> calendar.days_in_month(month)
+      |> min(day)
+
+    {new_month, new_day}
   end
 
   @doc """
@@ -1576,6 +1613,17 @@ defmodule Cldr.Calendar do
 
   * `period` is `:year`, `:quarter`, `:month`,
     `:week` or `:day`
+
+  * `options` is a Kwyrod list of options
+
+  ## Options
+
+  * `:coerce` is a boolean which, when set to `true`
+    will coerce the month and/or day to be a valid date.
+    This affects,for example, moving to the previous month
+    from `~D[2019-03-31]`. Sincce there is no date `~D[2019-02-31]`
+    this would normally return `{:error, :invalid_date}`.
+    Setting `coerce: true` it will return `~D[2019-02-28]`.
 
   ## Returns
 
@@ -1602,8 +1650,8 @@ defmodule Cldr.Calendar do
       %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 3, year: 2018}
 
   """
-  def minus(%{calendar: _calendar} = date, period, amount) do
-    plus(date, period, -amount)
+  def minus(%{calendar: _calendar} = date, period, amount, options \\ []) do
+    plus(date, period, -amount, options)
   end
 
   @doc """

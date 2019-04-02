@@ -1,9 +1,16 @@
 defmodule Cldr.Calendar.Kday do
   @moduledoc """
   Provide K-Day functions for Dates, DateTimes and NaiveDateTimes.
+
   """
 
-  import Cldr.Calendar
+  import Cldr.Calendar,
+    only: [
+      date_to_iso_days: 1,
+      date_from_iso_days: 2,
+      iso_days_to_day_of_week: 1,
+      weeks_to_days: 1
+    ]
 
   @doc """
   Return the date of the `day_of_week` on or before the

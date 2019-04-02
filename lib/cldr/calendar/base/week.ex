@@ -162,14 +162,14 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  def plus(year, week, day, config, :quarters, quarters) do
+  def plus(year, week, day, config, :quarters, quarters, _options) do
     days = quarters * @weeks_in_quarter * days_in_week()
     iso_days = date_to_iso_days(year, week, day, config) + days
     {year, month, day, _, _, _, _} = naive_datetime_from_iso_days({iso_days, {0, 6}}, config)
     {year, month, day}
   end
 
-  def plus(year, week, day, %{weeks_in_month: weeks_in_month} = config, :months, months) do
+  def plus(year, week, day, %{weeks_in_month: weeks_in_month} = config, :months, months, _options) do
     {quarters, months_remaining} = Cldr.Math.div_mod(months, @months_in_quarter)
     weeks_from_months = Enum.take(weeks_in_month, abs(months_remaining)) |> Enum.sum()
     days = (quarters * @weeks_in_quarter + weeks_from_months) * days_in_week() * sign(months)

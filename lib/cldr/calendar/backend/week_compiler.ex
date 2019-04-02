@@ -62,6 +62,10 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.day_of_week(year, week, day, __config__())
       end
 
+      def periods_in_year(year) do
+        weeks_in_year(year)
+      end
+
       def weeks_in_year(year) do
         Week.weeks_in_year(year, __config__())
       end
@@ -94,12 +98,14 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.week(year, week, __config__())
       end
 
-      def plus(year, week, day, :quarters, quarters) do
-        Week.plus(year, week, day, __config__(), :quarters, quarters)
+      def plus(year, month, day, date_part, increment, options \\ [])
+
+      def plus(year, week, day, :quarters, quarters, options) do
+        Week.plus(year, week, day, __config__(), :quarters, quarters, options)
       end
 
-      def plus(year, week, day, :months, months) do
-        Week.plus(year, week, day, __config__(), :months, months)
+      def plus(year, week, day, :months, months, options) do
+        Week.plus(year, week, day, __config__(), :months, months, options)
       end
 
       def leap_year?(year) do

@@ -153,17 +153,24 @@ defmodule Cldr.Calendar.Base.Month do
     end
   end
 
-  def plus(year, month, day, config, :quarters, quarters) do
+  def plus(year, month, day, config, :quarters, quarters, options) do
     months = quarters * @months_in_quarter
-    plus(year, month, day, config, :months, months)
+    plus(year, month, day, config, :months, months, options)
   end
 
-  def plus(year, month, day, config, :months, months) do
+  def plus(year, month, day, config, :months, months, options) do
     months_in_year = months_in_year(year, config)
     {year_increment, new_month} = Cldr.Math.div_amod(month + months, months_in_year)
     new_year = year + year_increment
-    max_new_day = days_in_month(new_year, new_month, config)
-    new_day = min(day, max_new_day)
+
+    new_day =
+      if Keyword.get(options, :coerce, false) do
+        max_new_day = days_in_month(new_year, new_month, config)
+        min(day, max_new_day)
+      else
+        day
+      end
+
     {new_year, new_month, new_day}
   end
 
