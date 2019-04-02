@@ -65,15 +65,17 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def iso_week_of_year(year, week, day, config) do
-    {:ok, date} = Date.new(year, week, day, config.calendar)
-    {:ok, %{year: year, month: month, day: day}} = Date.convert(date, Cldr.Calendar.Gregorian)
-    Cldr.Calendar.Gregorian.iso_week_of_year(year, month, day)
+    with {:ok, date} <- Date.new(year, week, day, config.calendar) do
+      {:ok, %{year: year, month: month, day: day}} = Date.convert(date, Cldr.Calendar.Gregorian)
+      Cldr.Calendar.Gregorian.iso_week_of_year(year, month, day)
+    end
   end
 
   def day_of_era(year, week, day, config) do
-    {:ok, date} = Date.new(year, week, day, config.calendar)
-    {:ok, %{year: year, month: month, day: day}} = Date.convert(date, Calendar.ISO)
-    Calendar.ISO.day_of_era(year, month, day)
+    with {:ok, date} <- Date.new(year, week, day, config.calendar) do
+      {:ok, %{year: year, month: month, day: day}} = Date.convert(date, Calendar.ISO)
+      Calendar.ISO.day_of_era(year, month, day)
+    end
   end
 
   def day_of_year(year, week, day, config) do

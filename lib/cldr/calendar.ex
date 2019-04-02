@@ -90,7 +90,11 @@ defmodule Cldr.Calendar do
   The `week_in_year` is calculated based upon the calendar configuration.
 
   """
-  @callback week_of_year(year :: Calendar.year(), month :: Calendar.month() | Cldr.Calendar.week(), day :: Calendar.day()) ::
+  @callback week_of_year(
+              year :: Calendar.year(),
+              month :: Calendar.month() | Cldr.Calendar.week(),
+              day :: Calendar.day()
+            ) ::
               {Calendar.year(), Calendar.week()}
 
   @doc """
@@ -100,7 +104,11 @@ defmodule Cldr.Calendar do
   The `iso_week_of_year` is calculated based the ISO calendar..
 
   """
-  @callback iso_week_of_year(year :: Calendar.year(), month :: Calendar.month(), day :: Calendar.day()) ::
+  @callback iso_week_of_year(
+              year :: Calendar.year(),
+              month :: Calendar.month(),
+              day :: Calendar.day()
+            ) ::
               {Calendar.year(), Calendar.week()}
 
   @doc """
@@ -164,7 +172,7 @@ defmodule Cldr.Calendar do
               day :: Calendar.day(),
               months_or_quarters :: :months | :quarters,
               increment :: integer,
-              options :: Keyword.t
+              options :: Keyword.t()
             ) :: {Calendar.year(), Calendar.month(), Calendar.day()}
 
   @days [1, 2, 3, 4, 5, 6, 7]
@@ -352,7 +360,7 @@ defmodule Cldr.Calendar do
       ~D[2019-01-01]
 
   """
-  @spec first_day_of_year(date :: Date.t) :: Date.t
+  @spec first_day_of_year(date :: Date.t()) :: Date.t()
 
   def first_day_of_year(%{year: year, calendar: calendar}) do
     first_day_of_year(year, calendar)
@@ -390,6 +398,7 @@ defmodule Cldr.Calendar do
   def last_day_of_year(year, Calendar.ISO) do
     last_month = Calendar.ISO.months_in_year(year)
     last_day = Calendar.ISO.days_in_month(year, last_month)
+
     with {:ok, date} <- Date.new(year, last_month, last_day) do
       date
     end
@@ -423,7 +432,7 @@ defmodule Cldr.Calendar do
       ~D[2019-12-31]
 
   """
-  @spec last_day_of_year(date :: Date.t) :: Date.t()
+  @spec last_day_of_year(date :: Date.t()) :: Date.t()
 
   def last_day_of_year(%{year: year, calendar: calendar}) do
     last_day_of_year(year, calendar)
@@ -447,7 +456,7 @@ defmodule Cldr.Calendar do
 
   """
   @spec first_gregorian_day_of_year(Calendar.year(), calendar()) ::
-    {:ok, Date.t()} | {:error, :invalid_date}
+          {:ok, Date.t()} | {:error, :invalid_date}
 
   def first_gregorian_day_of_year(year, Calendar.ISO) do
     first_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
@@ -477,7 +486,7 @@ defmodule Cldr.Calendar do
 
   """
   @spec last_gregorian_day_of_year(Calendar.year(), calendar()) ::
-    {:ok, Date.t()} | {:error, :invalid_date}
+          {:ok, Date.t()} | {:error, :invalid_date}
 
   def last_gregorian_day_of_year(year, Calendar.ISO) do
     last_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
@@ -551,7 +560,7 @@ defmodule Cldr.Calendar do
       58484
 
   """
-  @mjd_epoch 678941
+  @mjd_epoch 678_941
   def modified_julian_day(date) do
     date_to_iso_days(date) - @mjd_epoch
   end
@@ -1380,7 +1389,7 @@ defmodule Cldr.Calendar do
       "السبت"
 
   """
-  @spec localize(Date.t(), atom(), Keyword.t) :: String.t | {:error, {module(), String.t}}
+  @spec localize(Date.t(), atom(), Keyword.t()) :: String.t() | {:error, {module(), String.t()}}
 
   def localize(date, part, options \\ [])
 
@@ -1468,7 +1477,7 @@ defmodule Cldr.Calendar do
     {:error,
      {ArgumentError,
       "No CLDR backend could be found. Please configure a backend. " <>
-      "See https://hexdocs.pm/ex_cldr/readme.html#configuration"}}
+        "See https://hexdocs.pm/ex_cldr/readme.html#configuration"}}
   end
 
   defp validate_backend(backend) do
@@ -1526,7 +1535,7 @@ defmodule Cldr.Calendar do
     %{year: year, month: month, day: day, calendar: calendar} = date
     new_year = year + years
 
-    coerce? = Keyword.get(options,:coerce, false)
+    coerce? = Keyword.get(options, :coerce, false)
     {new_month, new_day} = month_day(new_year, month, day, calendar, coerce?)
 
     with {:ok, date} <- Date.new(new_year, new_month, new_day, calendar) do
@@ -1581,7 +1590,6 @@ defmodule Cldr.Calendar do
     |> plus(days)
     |> date_from_iso_days(calendar)
   end
-
 
   defp month_day(_year, month, day, _calendar, false) do
     {month, day}

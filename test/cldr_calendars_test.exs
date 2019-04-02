@@ -16,14 +16,16 @@ defmodule Cldr.Calendar.Test do
 
   test "that previous year when a leap year for a week-based calendar" do
     {:ok, date} = Date.new(2015, 53, 7, Cldr.Calendar.ISOWeek)
+
     assert Cldr.Calendar.previous(date, :year, coerce: true) ==
-      %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 52, year: 2014}
+             %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 52, year: 2014}
   end
 
   test "that previous year when a leap year for a month-based calendar" do
     {:ok, date} = Date.new(2016, 2, 29, Cldr.Calendar.Gregorian)
+
     assert Cldr.Calendar.previous(date, :year, coerce: true) ==
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2015}
+             %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2015}
   end
 
   if function_exported?(Code, :fetch_docs, 1) do

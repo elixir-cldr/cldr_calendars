@@ -19,5 +19,4 @@ defmodule Cldr.Calendar.Gregorian do
     month: 1,
     min_days: 4,
     day: 1
-
 end
