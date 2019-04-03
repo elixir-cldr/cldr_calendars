@@ -9,6 +9,7 @@ defmodule Cldr.Calendar.Base.Week do
   @days_in_week 7
   @weeks_in_quarter 13
   @months_in_quarter 3
+  @months_in_year 12
   @weeks_in_long_year 53
   @weeks_in_normal_year 52
 
@@ -147,7 +148,8 @@ defmodule Cldr.Calendar.Base.Week do
       |> Enum.take(months_prior_in_quarter)
       |> Enum.sum()
 
-    weeks_in_month = Enum.at(weeks_in_month, months_prior_in_quarter)
+    weeks_in_month = Enum.at(weeks_in_month, months_prior_in_quarter) +
+      long_year_inc(year, month, config)
     first_week = quarter_weeks_prior + weeks_prior_in_quarter + 1
     last_week = first_week + weeks_in_month - 1
 
@@ -305,5 +307,13 @@ defmodule Cldr.Calendar.Base.Week do
 
   defp week_to_days(week) do
     (week - 1) * days_in_week()
+  end
+
+  defp long_year_inc(year, @months_in_year, config) do
+    if long_year?(year, config), do: 1, else: 0
+  end
+
+  defp long_year_inc(_year, _month, _config) do
+    0
   end
 end
