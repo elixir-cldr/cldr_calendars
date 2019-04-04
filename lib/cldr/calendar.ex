@@ -84,6 +84,20 @@ defmodule Cldr.Calendar do
   @type day_of_week :: 1..7
 
   @doc """
+  Returns the `month` for a given `year`, `month` or `week`, and `day`
+  for a a calendar.
+
+  The `month_in_year` is calculated based upon the calendar configuration.
+
+  """
+  @callback month_of_year(
+              year :: Calendar.year(),
+              month :: Calendar.month() | Cldr.Calendar.week(),
+              day :: Calendar.day()
+            ) ::
+              Calendar.month()
+
+  @doc """
   Returns a tuple of `{year, week_in_year}` for a given `year`, `month` or `week`, and `day`
   for a a calendar.
 
@@ -101,7 +115,7 @@ defmodule Cldr.Calendar do
   Returns a tuple of `{year, week_in_year}` for a given `year`, `month` or `week`, and `day`
   for a a calendar.
 
-  The `iso_week_of_year` is calculated based the ISO calendar..
+  The `iso_week_of_year` is calculated based on the ISO calendar.
 
   """
   @callback iso_week_of_year(
@@ -110,6 +124,13 @@ defmodule Cldr.Calendar do
               day :: Calendar.day()
             ) ::
               {Calendar.year(), Calendar.week()}
+
+  @doc """
+  Returns the CLDR calendar type.
+
+  Currently only `:gregorian` is supported.
+  """
+  @callback cldr_calendar_type() :: :gregorian
 
   @doc """
   Returns the first day of a calendar year as a gregorian date.
@@ -1281,7 +1302,7 @@ defmodule Cldr.Calendar do
   """
   def previous(date_or_date_range, date_part, options \\ [])
 
-  def previous(%Date.Range{last: date}, :year, options) do
+  def previous(%Date.Range{first: date}, :year, options) do
     previous(date, :year, options)
     |> year
   end
@@ -1290,7 +1311,7 @@ defmodule Cldr.Calendar do
     plus(date, :years, -1, options)
   end
 
-  def previous(%Date.Range{last: date}, :quarter, options) do
+  def previous(%Date.Range{first: date}, :quarter, options) do
     previous(date, :quarter, options)
     |> quarter
   end
@@ -1299,7 +1320,7 @@ defmodule Cldr.Calendar do
     minus(date, :quarters, 1, options)
   end
 
-  def previous(%Date.Range{last: date}, :month, options) do
+  def previous(%Date.Range{first: date}, :month, options) do
     previous(date, :month, options)
     |> month
   end
@@ -1308,7 +1329,7 @@ defmodule Cldr.Calendar do
     minus(date, :months, 1, options)
   end
 
-  def previous(%Date.Range{last: date}, :week, options) do
+  def previous(%Date.Range{first: date}, :week, options) do
     previous(date, :week, options)
     |> week
   end
@@ -1317,7 +1338,7 @@ defmodule Cldr.Calendar do
     minus(date, :weeks, 1, options)
   end
 
-  def previous(%Date.Range{last: date}, :day, options) do
+  def previous(%Date.Range{first: date}, :day, options) do
     previous(date, :day, options)
   end
 

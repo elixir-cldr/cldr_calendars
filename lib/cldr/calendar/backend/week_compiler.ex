@@ -16,47 +16,131 @@ defmodule Cldr.Calendar.Compiler.Week do
       @behaviour Calendar
       @behaviour Cldr.Calendar
 
+      @type year :: -9999..9999
+      @type month :: 1..12
+      @type week :: 1..53
+      @type day :: 1..7
+
       alias Cldr.Calendar.Base.Week
 
       def __config__ do
         @calendar_config
       end
 
+      @doc """
+      Defines the CLDR calendar type for this calendar.
+
+      This type is used in support of `Cldr.Calendar.localize/3`.
+      Currently only `:gregorian` is supported.
+
+      """
+      @impl true
+
       def cldr_calendar_type do
         :gregorian
       end
 
+      @doc """
+      Determines if the date given is valid according to the this calendar.
+
+      """
+      @impl true
       def valid_date?(year, week, day) do
         Week.valid_date?(year, week, day, __config__())
       end
+
+      @doc """
+      Calculates the year and era from the given `year`.
+      The ISO calendar has two eras: the current era which
+      starts in year 1 and is defined as era "1". And a
+      second era for those years less than 1 defined as
+      era "0".
+
+      """
+      @spec year_of_era(year) :: {year, era :: 0..1}
+      @impl true
 
       def year_of_era(year) do
         Week.year_of_era(year, __config__())
       end
 
+      @doc """
+      Calculates the quarter of the year from the given `year`, `month`, and `day`.
+      It is an integer from 1 to 4.
+
+      """
+      @spec quarter_of_year(year, month, day) :: 1..4
+      @impl true
+
       def quarter_of_year(year, week, day) do
         Week.quarter_of_year(year, week, day, __config__())
       end
+
+      @doc """
+      Calculates the month of the year from the given `year`, `month`, and `day`.
+      It is an integer from 1 to 12.
+
+      """
+      @spec month_of_year(year, month, day) :: month
+      @impl true
 
       def month_of_year(year, week, day) do
         Week.month_of_year(year, week, day, __config__())
       end
 
+      @doc """
+      Calculates the week of the year from the given `year`, `month`, and `day`.
+      It is an integer from 1 to 53.
+
+      """
+      @spec week_of_year(year, month, day) :: {year, Cldr.Calendar.week}
+      @impl true
+
       def week_of_year(year, week, day) do
         Week.week_of_year(year, week, day, __config__())
       end
+
+      @doc """
+      Calculates the ISO week of the year from the given `year`, `month`, and `day`.
+      It is an integer from 1 to 53.
+
+      """
+      @spec iso_week_of_year(year, month, day) :: {year, Cldr.Calendar.week}
+      @impl true
 
       def iso_week_of_year(year, week, day) do
         Week.iso_week_of_year(year, week, day, __config__())
       end
 
+      @doc """
+      Calculates the day and era from the given `year`, `month`, and `day`.
+
+      """
+      @spec day_of_era(year, month, day) :: {day :: pos_integer(), era :: 0..1}
+      @impl true
       def day_of_era(year, week, day) do
         Week.day_of_era(year, week, day, __config__())
       end
 
+      @doc """
+      Calculates the day of the year from the given `year`, `month`, and `day`.
+      It is an integer from 1 to 366.
+
+      """
+      @spec day_of_year(year, month, day) :: 1..366
+      @impl true
+
       def day_of_year(year, week, day) do
         Week.day_of_year(year, week, day, __config__())
       end
+
+      @doc """
+      Calculates the day of the week from the given `year`, `month`, and `day`.
+      It is an integer from 1 to 7, where 1 is Monday and 7 is Sunday.
+
+      """
+      @spec day_of_week(year, month, day) :: 1..7
+      @impl true
 
       def day_of_week(year, week, day) do
         Week.day_of_week(year, week, day, __config__())
@@ -70,9 +154,17 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.weeks_in_year(year, __config__())
       end
 
+      @impl true
       def days_in_year(year) do
         Week.days_in_year(year, __config__())
       end
+
+      @doc """
+      Returns how many days there are in the given year-month.
+
+      """
+      @spec days_in_month(year, month) :: 28..31
+      @impl true
 
       def days_in_month(year, month) do
         Week.days_in_month(year, month, __config__())
@@ -82,22 +174,27 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.days_in_week()
       end
 
+      @impl true
       def year(year) do
         Week.year(year, __config__())
       end
 
+      @impl true
       def quarter(year, quarter) do
         Week.quarter(year, quarter, __config__())
       end
 
+      @impl true
       def month(year, month) do
         Week.month(year, month, __config__())
       end
 
+      @impl true
       def week(year, week) do
         Week.week(year, week, __config__())
       end
 
+      @impl true
       def plus(year, month, day, date_part, increment, options \\ [])
 
       def plus(year, week, day, :quarters, quarters, options) do
@@ -107,6 +204,13 @@ defmodule Cldr.Calendar.Compiler.Week do
       def plus(year, week, day, :months, months, options) do
         Week.plus(year, week, day, __config__(), :months, months, options)
       end
+
+      @doc """
+      Returns if the given year is a leap year.
+
+      """
+      @spec leap_year?(year) :: boolean()
+      @impl true
 
       def leap_year?(year) do
         Week.long_year?(year, __config__())
@@ -120,13 +224,30 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.date_from_iso_days(iso_days, __config__())
       end
 
+      @impl true
       def first_gregorian_day_of_year(year) do
         Week.first_gregorian_day_of_year(year, __config__())
       end
 
+      @impl true
       def last_gregorian_day_of_year(year) do
         Week.last_gregorian_day_of_year(year, __config__())
       end
+
+      @doc """
+      Returns the `t:Calendar.iso_days/0` format of the specified date.
+
+      """
+      @impl true
+      @spec naive_datetime_to_iso_days(
+              Calendar.year(),
+              Calendar.month(),
+              Calendar.day(),
+              Calendar.hour(),
+              Calendar.minute(),
+              Calendar.second(),
+              Calendar.microsecond()
+            ) :: Calendar.iso_days()
 
       def naive_datetime_to_iso_days(year, week, day, hour, minute, second, microsecond) do
         Week.naive_datetime_to_iso_days(
@@ -141,12 +262,29 @@ defmodule Cldr.Calendar.Compiler.Week do
         )
       end
 
+      @doc """
+      Converts the `t:Calendar.iso_days/0` format to the datetime format specified by this calendar.
+
+      """
+      @spec naive_datetime_from_iso_days(Calendar.iso_days()) :: {
+              Calendar.year(),
+              Calendar.month(),
+              Calendar.day(),
+              Calendar.hour(),
+              Calendar.minute(),
+              Calendar.second(),
+              Calendar.microsecond()
+            }
+      @impl true
+
       def naive_datetime_from_iso_days({days, day_fraction}) do
         Week.naive_datetime_from_iso_days({days, day_fraction}, __config__())
       end
 
+      @doc false
       defdelegate date_to_string(year, week, day), to: Week
 
+      @doc false
       defdelegate datetime_to_string(
                     year,
                     month,
@@ -162,15 +300,26 @@ defmodule Cldr.Calendar.Compiler.Week do
                   ),
                   to: Week
 
+      @doc false
       defdelegate day_rollover_relative_to_midnight_utc, to: Calendar.ISO
+
+      @doc false
       defdelegate months_in_year(year), to: Calendar.ISO
 
+      @doc false
       defdelegate naive_datetime_to_string(year, month, day, hour, minute, second, microsecond),
         to: Calendar.ISO
 
+      @doc false
       defdelegate time_from_day_fraction(day_fraction), to: Calendar.ISO
+
+      @doc false
       defdelegate time_to_day_fraction(hour, minute, second, microsecond), to: Calendar.ISO
+
+      @doc false
       defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO
+
+      @doc false
       defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
     end
   end
