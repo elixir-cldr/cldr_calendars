@@ -13,6 +13,10 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 * Supports locale-specific knowledge of what is a weekend or a workday. See `Cldr.Calendar.weekend/1`, `Cldr.Calendar.weekend?/2`, `Cldr.Calendar.weekdays/1` and `Cldr.Calendar.weekday?/2`.
 
+* Provides convenient `Date.Range` calculators for years, quarters, months and weeks for calendars and provides the means to move to the `next` and `previous` period in a calendar where a period may be a year, quarter, month, week or day.
+
+* Supports adding or substracting periods to dates and date ranges. See `Calendar.plus/3` and `Calendar.minus/3`
+
 **See the documentation for `Cldr.Calendar` for the main public API and the functions contained therein.**
 
 ## Getting Started
