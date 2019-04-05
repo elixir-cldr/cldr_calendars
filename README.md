@@ -17,6 +17,10 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 * Supports adding or substracting periods to dates and date ranges. See `Calendar.plus/3` and `Calendar.minus/3`
 
+* Includes pre-defined calendars for Gregorian (compatible with the builtin `Calendar` module), `ISOWeek` and `National Retail Federation (NRF)` calendars
+
+* Includes functions to find the first, last, nearest and `nth` days of the week from a date. For example, find the `2nd Tuesday in November`.
+
 **See the documentation for `Cldr.Calendar` for the main public API and the functions contained therein.**
 
 ## Getting Started
