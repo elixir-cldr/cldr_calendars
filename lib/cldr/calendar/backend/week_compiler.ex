@@ -286,8 +286,8 @@ defmodule Cldr.Calendar.Compiler.Week do
       end
 
       @doc """
-      Returns the `{year, month,day}` in the gregorian
-      calendar that is the first day of the given
+      Returns the number of `iso_days` that is
+      the first day of the given
       year for this calendar.
 
       """
@@ -298,8 +298,8 @@ defmodule Cldr.Calendar.Compiler.Week do
       end
 
       @doc """
-      Returns the `{year, month,day}` in the gregorian
-      calendar that is the last day of the given
+      Returns the number of `iso_days` that is
+      the last day of the given
       year for this calendar.
 
       """

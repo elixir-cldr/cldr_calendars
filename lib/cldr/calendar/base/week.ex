@@ -185,10 +185,6 @@ defmodule Cldr.Calendar.Base.Week do
   defp sign(number) when number < 0, do: -1
   defp sign(_number), do: +1
 
-  @doc """
-  Returns the `iso_days` that is the first
-  gregorian day of the `year`.
-  """
   def first_gregorian_day_of_year(year, %Config{first_or_last: :first} = config) do
     {year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)
     %{month: first_month, day: first_day, min_days: min_days} = config

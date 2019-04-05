@@ -174,14 +174,6 @@ defmodule Cldr.Calendar.Base.Month do
     {new_year, new_month, new_day}
   end
 
-  @doc """
-  Returns the `iso_days` that is the first
-  day of the `year`.
-
-  Note that by convention, the `year` is the
-  gregorian year in which the year ends.
-
-  """
   def first_gregorian_day_of_year(year, %Config{month: 1}) do
     ISO.date_to_iso_days(year, 1, 1)
   end
