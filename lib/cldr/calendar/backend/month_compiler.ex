@@ -22,6 +22,7 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       alias Cldr.Calendar.Base.Month
 
+      @doc false
       def __config__ do
         @calendar_config
       end
@@ -44,6 +45,7 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @impl true
+
       def valid_date?(year, month, day) do
         Month.valid_date?(year, month, day, __config__())
       end
@@ -145,11 +147,22 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.day_of_week(year, month, day, __config__())
       end
 
+      @doc """
+      Calculates the number of period in a given `year`. A period
+      corresponds to a month in month-based calendars and
+      a week in week-based calendars..
+
+      """
       def periods_in_year(year) do
         months_in_year(year)
       end
 
+      @doc """
+      Returns the number days in a given year.
+
+      """
       @impl true
+
       def days_in_year(year) do
         Month.days_in_year(year, __config__())
       end
@@ -165,31 +178,68 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.days_in_month(year, month, __config__())
       end
 
+      @doc """
+      Returns the number days in a a week.
+
+      """
       def days_in_week do
         Month.days_in_week()
       end
 
+      @doc """
+      Returns a `Date.Range.t` representing
+      a given year.
+
+      """
       @impl true
+
       def year(year) do
         Month.year(year, __config__())
       end
 
+      @doc """
+      Returns a `Date.Range.t` representing
+      a given quarter of a year.
+
+      """
       @impl true
+
       def quarter(year, quarter) do
         Month.quarter(year, quarter, __config__())
       end
 
+      @doc """
+      Returns a `Date.Range.t` representing
+      a given month of a year.
+
+      """
       @impl true
+
       def month(year, month) do
         Month.month(year, month, __config__())
       end
 
+      @doc """
+      Returns a `Date.Range.t` representing
+      a given week of a year.
+
+      """
       @impl true
+
       def week(year, week) do
         Month.week(year, week, __config__())
       end
 
+      @doc """
+      Adds an `increment` number of `date_part`s
+      to a `year-month-day`.
+
+      `date_part` can be `:quarters`
+       or`:months`.
+
+      """
       @impl true
+
       def plus(year, month, day, date_part, increment, options \\ [])
 
       def plus(year, month, day, :quarters, months, options) do
@@ -211,20 +261,44 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.leap_year?(year, __config__())
       end
 
+      @doc """
+      Returns the number of days since the calendar
+      epoch for a given `year-month-day`
+
+      """
       def date_to_iso_days(year, month, day) do
         Month.date_to_iso_days(year, month, day, __config__())
       end
 
+      @doc """
+      Returns `{year, month, day}` calculated from
+      the number of `iso_days`.
+
+      """
       def date_from_iso_days(iso_days) do
         Month.date_from_iso_days(iso_days, __config__())
       end
 
+      @doc """
+      Returns the `{year, month,day}` in the gregorian
+      calendar that is the first day of the given
+      year for this calendar.
+
+      """
       @impl true
+
       def first_gregorian_day_of_year(year) do
         Month.first_gregorian_day_of_year(year, __config__())
       end
 
+      @doc """
+      Returns the `{year, month,day}` in the gregorian
+      calendar that is the last day of the given
+      year for this calendar.
+
+      """
       @impl true
+
       def last_gregorian_day_of_year(year) do
         Month.last_gregorian_day_of_year(year, __config__())
       end
@@ -276,8 +350,10 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.naive_datetime_from_iso_days({days, day_fraction}, __config__())
       end
 
+      @doc false
       defdelegate date_to_string(year, month, day), to: Calendar.ISO
 
+      @doc false
       defdelegate datetime_to_string(
                     year,
                     month,
