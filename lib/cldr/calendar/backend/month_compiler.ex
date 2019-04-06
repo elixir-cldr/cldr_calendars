@@ -285,8 +285,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       year for this calendar.
 
       """
-      @impl true
-
       def first_gregorian_day_of_year(year) do
         Month.first_gregorian_day_of_year(year, __config__())
       end
@@ -297,8 +295,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       year for this calendar.
 
       """
-      @impl true
-
       def last_gregorian_day_of_year(year) do
         Month.last_gregorian_day_of_year(year, __config__())
       end

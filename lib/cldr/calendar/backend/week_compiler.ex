@@ -291,8 +291,6 @@ defmodule Cldr.Calendar.Compiler.Week do
       year for this calendar.
 
       """
-      @impl true
-
       def first_gregorian_day_of_year(year) do
         Week.first_gregorian_day_of_year(year, __config__())
       end
@@ -303,8 +301,6 @@ defmodule Cldr.Calendar.Compiler.Week do
       year for this calendar.
 
       """
-      @impl true
-
       def last_gregorian_day_of_year(year) do
         Week.last_gregorian_day_of_year(year, __config__())
       end

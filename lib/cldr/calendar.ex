@@ -128,21 +128,10 @@ defmodule Cldr.Calendar do
   @doc """
   Returns the CLDR calendar type.
 
-  Currently only `:gregorian` is supported.
+  Only algorithmic calendars are considered
+  in this implementation
   """
-  @callback cldr_calendar_type() :: :gregorian
-
-  @doc """
-  Returns the first day of a calendar year as a gregorian date.
-
-  """
-  @callback first_gregorian_day_of_year(year :: Calendar.year()) :: integer()
-
-  @doc """
-  Returns the last day of a calendar year as a gregorian date.
-
-  """
-  @callback last_gregorian_day_of_year(year :: Calendar.year()) :: integer()
+  @callback cldr_calendar_type() :: :gregorian | :persian | :coptic | :ethiopic
 
   @doc """
   Returns the number of days in a year
