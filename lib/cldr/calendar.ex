@@ -396,10 +396,10 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> Cldr.Calendar.last_day_of_year 2019, Cldr.Calendar.Gregorian
+      iex> Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.Gregorian)
       %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 12, year: 2019}
 
-      iex> Cldr.Calendar.last_day_of_year 2019, Cldr.Calendar.NRF
+      iex> Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
       %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}
 
   """
@@ -417,7 +417,8 @@ defmodule Cldr.Calendar do
   def last_day_of_year(year, calendar) do
     iso_days = calendar.last_gregorian_day_of_year(year)
 
-    with {:ok, date} <- calendar.date_from_iso_days(iso_days) do
+    with {year, month, day} <- calendar.date_from_iso_days(iso_days),
+         {:ok, date} <- Date.new(year, month, day, calendar) do
       date
     end
   end
@@ -459,10 +460,10 @@ defmodule Cldr.Calendar do
   ## Examples
 
       iex> Cldr.Calendar.first_gregorian_day_of_year 2019, Cldr.Calendar.Gregorian
-      {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 1, year: 2019}}
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 1, year: 2019}
 
       iex> Cldr.Calendar.first_gregorian_day_of_year 2019, Cldr.Calendar.NRF
-      {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 3, month: 2, year: 2019}}
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 3, month: 2, year: 2019}
 
   """
   @spec first_gregorian_day_of_year(Calendar.year(), calendar()) ::
@@ -473,9 +474,14 @@ defmodule Cldr.Calendar do
   end
 
   def first_gregorian_day_of_year(year, calendar) do
-    year
-    |> calendar.first_gregorian_day_of_year
-    |> Cldr.Calendar.Gregorian.date_from_iso_days()
+    {year, month, day} =
+      year
+      |> calendar.first_gregorian_day_of_year
+      |> Cldr.Calendar.Gregorian.date_from_iso_days()
+
+    with {:ok, date} <- Date.new(year, month, day, Cldr.Calendar.Gregorian) do
+      date
+    end
   end
 
   @doc """
@@ -489,10 +495,10 @@ defmodule Cldr.Calendar do
   ## Examples
 
       iex> Cldr.Calendar.last_gregorian_day_of_year 2019, Cldr.Calendar.Gregorian
-      {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 12, year: 2019}}
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 12, year: 2019}
 
       iex> Cldr.Calendar.last_gregorian_day_of_year 2019, Cldr.Calendar.NRF
-      {:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2020}}
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2020}
 
   """
   @spec last_gregorian_day_of_year(Calendar.year(), calendar()) ::
@@ -503,9 +509,14 @@ defmodule Cldr.Calendar do
   end
 
   def last_gregorian_day_of_year(year, calendar) do
-    year
-    |> calendar.last_gregorian_day_of_year
-    |> Cldr.Calendar.Gregorian.date_from_iso_days()
+    {year, month, day} =
+      year
+      |> calendar.last_gregorian_day_of_year
+      |> Cldr.Calendar.Gregorian.date_from_iso_days()
+
+    with {:ok, date} <- Date.new(year, month, day, Cldr.Calendar.Gregorian) do
+      date
+    end
   end
 
   def last_gregorian_day_of_year(%{year: year, calendar: calendar}) do
@@ -1120,7 +1131,8 @@ defmodule Cldr.Calendar do
     if day <= calendar.days_in_year(year) do
       iso_days = calendar.first_gregorian_day_of_year(year) + day - 1
 
-      with {:ok, date} <- calendar.date_from_iso_days(iso_days) do
+      with {year, month, day} = calendar.date_from_iso_days(iso_days),
+           {:ok, date} <- Date.new(year, month, day, calendar) do
         day(date)
       end
     else

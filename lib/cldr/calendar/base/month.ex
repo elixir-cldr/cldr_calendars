@@ -110,10 +110,11 @@ defmodule Cldr.Calendar.Base.Month do
     calendar = config.calendar
     last_month = calendar.months_in_year(year)
     days_in_last_month = calendar.days_in_month(year, last_month)
-    {:ok, start_date} = Date.new(year, 1, 1, config.calendar)
-    {:ok, end_date} = Date.new(year, last_month, days_in_last_month, config.calendar)
 
-    Date.range(start_date, end_date)
+    with {:ok, start_date} <- Date.new(year, 1, 1, config.calendar),
+         {:ok, end_date} <- Date.new(year, last_month, days_in_last_month, config.calendar) do
+      Date.range(start_date, end_date)
+    end
   end
 
   def quarter(year, quarter, config) do
@@ -147,8 +148,10 @@ defmodule Cldr.Calendar.Base.Month do
 
     ending_day = starting_day + days_in_week() - 1
 
-    with {:ok, start_date} <- date_from_iso_days(starting_day, config),
-         {:ok, end_date} <- date_from_iso_days(ending_day, config) do
+    with {year, month, day} <- date_from_iso_days(starting_day, config),
+         {:ok, start_date} <- Date.new(year, month, day, config.calendar),
+         {year, month, day} <- date_from_iso_days(ending_day, config),
+         {:ok, end_date} <- Date.new(year, month, day, config.calendar) do
       Date.range(start_date, end_date)
     end
   end
@@ -208,7 +211,7 @@ defmodule Cldr.Calendar.Base.Month do
 
   def date_from_iso_days(iso_day_number, config) do
     {year, month, day, _, _, _, _} = naive_datetime_from_iso_days(iso_day_number, config)
-    Date.new(year, month, day, config.calendar)
+    {year, month, day}
   end
 
   def naive_datetime_from_iso_days(iso_day_number, config) when is_integer(iso_day_number) do

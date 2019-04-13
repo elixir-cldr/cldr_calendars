@@ -93,7 +93,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       It is an integer from 1 to 53.
 
       """
-      @spec week_of_year(year, month, day) :: {year, Cldr.Calendar.week}
+      @spec week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
       @impl true
 
       def week_of_year(year, week, day) do
@@ -105,7 +105,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       It is an integer from 1 to 53.
 
       """
-      @spec iso_week_of_year(year, month, day) :: {year, Cldr.Calendar.week}
+      @spec iso_week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
       @impl true
 
       def iso_week_of_year(year, week, day) do

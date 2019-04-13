@@ -94,7 +94,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 53.
 
       """
-      @spec week_of_year(year, month, day) :: {year, Cldr.Calendar.week}
+      @spec week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
       @impl true
 
       def week_of_year(year, month, day) do
@@ -106,7 +106,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 53.
 
       """
-      @spec iso_week_of_year(year, month, day) :: {year, Cldr.Calendar.week}
+      @spec iso_week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
       @impl true
 
       def iso_week_of_year(year, month, day) do
@@ -242,8 +242,8 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       def plus(year, month, day, date_part, increment, options \\ [])
 
-      def plus(year, month, day, :quarters, months, options) do
-        Month.plus(year, month, day, __config__(), :quarters, months, options)
+      def plus(year, month, day, :quarters, quarters, options) do
+        Month.plus(year, month, day, __config__(), :quarters, quarters, options)
       end
 
       def plus(year, month, day, :months, months, options) do

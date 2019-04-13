@@ -148,8 +148,10 @@ defmodule Cldr.Calendar.Base.Week do
       |> Enum.take(months_prior_in_quarter)
       |> Enum.sum()
 
-    weeks_in_month = Enum.at(weeks_in_month, months_prior_in_quarter) +
-      long_year_inc(year, month, config)
+    weeks_in_month =
+      Enum.at(weeks_in_month, months_prior_in_quarter) +
+        long_year_inc(year, month, config)
+
     first_week = quarter_weeks_prior + weeks_prior_in_quarter + 1
     last_week = first_week + weeks_in_month - 1
 
@@ -169,17 +171,36 @@ defmodule Cldr.Calendar.Base.Week do
   def plus(year, week, day, config, :quarters, quarters, _options) do
     days = quarters * @weeks_in_quarter * days_in_week()
     iso_days = date_to_iso_days(year, week, day, config) + days
-    {year, month, day, _, _, _, _} = naive_datetime_from_iso_days({iso_days, {0, 6}}, config)
-    {year, month, day}
+    date_from_iso_days(iso_days, config)
   end
 
   def plus(year, week, day, %{weeks_in_month: weeks_in_month} = config, :months, months, _options) do
     {quarters, months_remaining} = Cldr.Math.div_mod(months, @months_in_quarter)
-    weeks_from_months = Enum.take(weeks_in_month, abs(months_remaining)) |> Enum.sum()
+    weeks_from_months = weeks_from_months(weeks_in_month, months_remaining)
     days = (quarters * @weeks_in_quarter + weeks_from_months) * days_in_week() * sign(months)
     iso_days = date_to_iso_days(year, week, day, config) + days
-    {year, month, day, _, _, _, _} = naive_datetime_from_iso_days({iso_days, {0, 6}}, config)
-    {year, month, day}
+    date_from_iso_days(iso_days, config)
+  end
+
+  defp weeks_from_months(_weeks_in_month, months) when months == 0 do
+    0
+  end
+
+  # When months is positive we just sum the first n members of the
+  # weeks_in_month list.
+  defp weeks_from_months(weeks_in_month, months) when months > 0 do
+    Enum.take(weeks_in_month, months) |> Enum.sum()
+  end
+
+  # When months is negative we need to get the weeks
+  # offset from the end of the list (ie we are counting
+  # backwards)
+  defp weeks_from_months(weeks_in_month, -1) do
+    Enum.at(weeks_in_month, 1)
+  end
+
+  defp weeks_from_months(weeks_in_month, -2) do
+    weeks_from_months(weeks_in_month, 2)
   end
 
   defp sign(number) when number < 0, do: -1
@@ -236,7 +257,7 @@ defmodule Cldr.Calendar.Base.Week do
 
   def date_from_iso_days(iso_day_number, config) do
     {year, week, day, _, _, _, _} = naive_datetime_from_iso_days({iso_day_number, {0, 6}}, config)
-    Date.new(year, week, day, config.calendar)
+    {year, week, day}
   end
 
   def date_to_string(year, week, day) do
