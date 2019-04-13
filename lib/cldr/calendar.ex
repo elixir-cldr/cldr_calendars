@@ -109,7 +109,7 @@ defmodule Cldr.Calendar do
               month :: Calendar.month() | Cldr.Calendar.week(),
               day :: Calendar.day()
             ) ::
-              {Calendar.year(), Calendar.week()}
+              {Calendar.year(), Calendar.week()} | {:error, :not_defined}
 
   @doc """
   Returns a tuple of `{year, week_in_year}` for a given `year`, `month` or `week`, and `day`
@@ -123,7 +123,7 @@ defmodule Cldr.Calendar do
               month :: Calendar.month(),
               day :: Calendar.day()
             ) ::
-              {Calendar.year(), Calendar.week()}
+              {Calendar.year(), Calendar.week()} | {:error, :not_defined}
 
   @doc """
   Returns the CLDR calendar type.
@@ -165,7 +165,7 @@ defmodule Cldr.Calendar do
   given week for a calendar year.
 
   """
-  @callback week(year :: Calendar.year(), week :: Cldr.Calendar.week()) :: Date.Range.t()
+  @callback week(year :: Calendar.year(), week :: Cldr.Calendar.week()) :: Date.Range.t() | {:error, :not_defined}
 
   @doc """
   Increments a `Date.t` or `Date.Range.t` by a specified positive
@@ -662,7 +662,10 @@ defmodule Cldr.Calendar do
   ## Returns
 
   * a the ISO week of the year as an
-    integer
+    integer or
+
+  * `{:error, :not_defined}` is the calendar
+    does not support the concept of weeks.
 
   ## Examples
 
@@ -675,6 +678,8 @@ defmodule Cldr.Calendar do
       {2020, 4}
       iex> Cldr.Calendar.iso_week_of_year ~d[2019-26-01]NRF
       {2019, 30}
+      iex> Cldr.Calendar.iso_week_of_year ~d[2019-12-01]Julian
+      {:error, :not_defined}
 
   """
   @spec iso_week_of_year(Date.t()) :: {Calendar.year(), week()}
@@ -695,7 +700,10 @@ defmodule Cldr.Calendar do
   ## Returns
 
   * a the week of the year as an
-    integer
+    integer or
+
+  * `{:error, :not_defined}` is the calendar
+    does not support the concept of weeks.
 
   ## Examples
 
@@ -708,6 +716,8 @@ defmodule Cldr.Calendar do
       {2019, 52}
       iex> Cldr.Calendar.week_of_year ~d[2019-26-01]NRF
       {2019, 26}
+      iex> Cldr.Calendar.week_of_year ~d[2019-12-01]Julian
+      {:error, :not_defined}
 
   """
   @spec week_of_year(Date.t()) :: {Calendar.year(), week()}
@@ -1060,7 +1070,10 @@ defmodule Cldr.Calendar do
   ## Returns
 
   * A `Date.Range.t()` representing the
-    the enumerable days in the `week`
+    the enumerable days in the `week` or
+
+  * `{:error, :not_defined} is the calendar
+    does not support the concept of weeks
 
   ## Examples
 
@@ -1072,6 +1085,9 @@ defmodule Cldr.Calendar do
 
       iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.ISOWeek
       #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 52, year: 2019}>
+
+      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.Julian
+      {:error, :not_defined}
 
   """
   @spec week(Calendar.year(), Cldr.Calendar.week(), calendar()) :: Date.Range.t()

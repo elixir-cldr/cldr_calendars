@@ -44,7 +44,7 @@ defmodule Cldr.Calendar.Sigils do
   end
 
   defp get_calendar(calendar) do
-    if Code.ensure_loaded?(calendar) and function_exported?(calendar, :__config__, 0) do
+    if Code.ensure_loaded?(calendar) and function_exported?(calendar, :cldr_calendar_type, 0) do
       {:ok, calendar}
     else
       nil

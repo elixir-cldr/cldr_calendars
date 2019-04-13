@@ -114,6 +114,7 @@ defmodule Cldr.Calendar.Julian do
   @impl true
 
   def week_of_year(_year, _month, _day) do
+    {:error, :not_defined}
   end
 
   @doc """
@@ -125,6 +126,7 @@ defmodule Cldr.Calendar.Julian do
   @impl true
 
   def iso_week_of_year(_year, _month, _day) do
+    {:error, :not_defined}
   end
 
   @doc """
@@ -278,6 +280,7 @@ defmodule Cldr.Calendar.Julian do
   @impl true
 
   def week(_year, _week) do
+    {:error, :not_defined}
   end
 
   @doc """
