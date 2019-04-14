@@ -1437,7 +1437,7 @@ defmodule Cldr.Calendar do
   end
 
   def localize(date, part, options) do
-    cldr_backend = date.calendar.__config__().cldr_backend
+    cldr_backend = backend_from_calendar(date.calendar)
     backend = Keyword.get(options, :backend, cldr_backend || Cldr.default_backend())
     backend = Module.concat(backend, Calendar)
     locale = Keyword.get(options, :locale, Cldr.get_locale())
@@ -1448,6 +1448,14 @@ defmodule Cldr.Calendar do
          {:ok, format} <- validate_format(format),
          {:ok, backend} <- validate_backend(backend) do
       localize(date, part, format, backend, locale)
+    end
+  end
+
+  defp backend_from_calendar(calendar) do
+    if function_exported?(calendar, :__config__, 0) do
+      calendar.__config__().cldr_backend
+    else
+      nil
     end
   end
 
