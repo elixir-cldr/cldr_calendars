@@ -425,7 +425,7 @@ defmodule Cldr.Calendar.Julian do
   end
 
   def date_to_string(year, month, day) when year < 0 do
-    Calendar.ISO.date_to_string(year, month, day) <> " B.C.E."
+    Calendar.ISO.date_to_string(abs(year), month, day) <> " B.C.E."
   end
 
   @doc false
