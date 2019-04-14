@@ -12,7 +12,7 @@ This is the changelog for Cldr v0.2.0 released on April 14th, 2019.  For older c
 
 ### Enhancements
 
-* Adds `Cldr.Calendar.Julian` implementing the Julian calendar. This implmentation does not implement `week/2`, `week_of_year/3` or `iso_week_of_year/3`.
+* Adds `Cldr.Calendar.Julian` implementing the Julian calendar. This calendar does not implement `week/2`, `week_of_year/3` or `iso_week_of_year/3`.
 
 ### Bug Fixes
 

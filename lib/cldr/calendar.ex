@@ -453,7 +453,7 @@ defmodule Cldr.Calendar do
   Returns the gregorian date of the first day of of a `year`
   for a `calendar`.
 
-  ## Arguements
+  ## Arguments
 
   * `year` is any integer year number
 
@@ -488,7 +488,7 @@ defmodule Cldr.Calendar do
   Returns the gregorian date of the first day of a `year`
   for a `calendar`.
 
-  ## Arguements
+  ## Arguments
 
   * `year` is any integer year number
 
@@ -702,7 +702,7 @@ defmodule Cldr.Calendar do
   * a the week of the year as an
     integer or
 
-  * `{:error, :not_defined}` is the calendar
+  * `{:error, :not_defined}` if the calendar
     does not support the concept of weeks.
 
   ## Examples
@@ -1072,7 +1072,7 @@ defmodule Cldr.Calendar do
   * A `Date.Range.t()` representing the
     the enumerable days in the `week` or
 
-  * `{:error, :not_defined} is the calendar
+  * `{:error, :not_defined}` if the calendar
     does not support the concept of weeks
 
   ## Examples
