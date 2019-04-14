@@ -192,15 +192,9 @@ defmodule Cldr.Calendar.Base.Week do
     Enum.take(weeks_in_month, months) |> Enum.sum()
   end
 
-  # When months is negative we need to get the weeks
-  # offset from the end of the list (ie we are counting
-  # backwards)
-  defp weeks_from_months(weeks_in_month, -1) do
-    Enum.at(weeks_in_month, 1)
-  end
-
-  defp weeks_from_months(weeks_in_month, -2) do
-    weeks_from_months(weeks_in_month, 2)
+  defp weeks_from_months(weeks_in_month, months) when months < 0 do
+    {_, weeks_in_month} = List.pop_at(weeks_in_month, -1)
+    Enum.take(weeks_in_month, months) |> Enum.sum()
   end
 
   defp sign(number) when number < 0, do: -1

@@ -10,11 +10,11 @@ This is the changelog for Cldr v0.2.0 released on April 14th, 2019.  For older c
 
 ### Enhancements
 
-* Adds `Cldr.Calendar.Julian` implementing the Julian calendar. This implmentation does not currently implement `week/2`, `week_of_year/3` or `iso_week_of_year/3`.
+* Adds `Cldr.Calendar.Julian` implementing the Julian calendar. This implmentation does not implement `week/2`, `week_of_year/3` or `iso_week_of_year/3`.
 
 ### Bug Fixes
 
-* Fixes calculating negative offsets for months in a week-based calendar.  Thanks to @brianglusman. Close #2.
+* Fixes calculating negative offsets for months in a week-based calendar.  Thanks to @bglusman. Closes #2.
 
 # Changelog for Cldr Calendars v0.1.1
 
