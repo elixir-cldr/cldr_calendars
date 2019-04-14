@@ -339,8 +339,8 @@ defmodule Cldr.Calendar.Julian do
 
     epoch() - 1 +
       365 * (year - 1) +
-      floor_div(year - 1, 4) +
-      floor_div(367 * month - 362, @months_in_year) +
+      Integer.floor_div(year - 1, 4) +
+      Integer.floor_div(367 * month - 362, @months_in_year) +
       adjustment +
       day
   end
@@ -359,11 +359,11 @@ defmodule Cldr.Calendar.Julian do
 
   """
   def date_from_iso_days(iso_days) do
-    approx = floor_div(4 * (iso_days - epoch()) + 1464, 1461)
+    approx = Integer.floor_div(4 * (iso_days - epoch()) + 1464, 1461)
     year = if approx <= 0, do: approx - 1, else: approx
     prior_days = iso_days - date_to_iso_days(year, 1, 1)
     correction = correction(iso_days, year)
-    month = floor_div(@months_in_year * (prior_days + correction) + 373, 367)
+    month = Integer.floor_div(@months_in_year * (prior_days + correction) + 373, 367)
     day = 1 + (iso_days - date_to_iso_days(year, month, 1))
 
     {year, month, day}
@@ -466,8 +466,4 @@ defmodule Cldr.Calendar.Julian do
   @doc false
   defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
 
-  defp floor_div(m, n) do
-    :math.floor(m / n)
-    |> trunc
-  end
 end
