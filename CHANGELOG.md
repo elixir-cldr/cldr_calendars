@@ -1,3 +1,38 @@
+# Changelog for Cldr Calendars v0.3.0
+
+This is the changelog for Cldr v0.3.0 released on April 16th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+
+### Enhancements
+
+* Adds `Cldr.Calendar.interval/3` which generates an enumerable list of dates with a specified precision of either `:years`, `:quarters`, `:months`, `:weeks` or `:days`.
+
+### Examples:
+```
+iex> import Cldr.Calendar.Sigils
+Cldr.Calendar.Sigils
+
+iex> d = ~d[2019-01-31]
+%Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019}
+
+iex> d2 = ~d[2019-05-31]
+%Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
+
+iex> Cldr.Calendar.interval d, 3, :months
+[
+  %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
+  %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019},
+  %Date{calendar: Cldr.Calendar.Gregorian, day: 30, month: 4, year: 2019}
+]
+
+iex> Cldr.Calendar.interval d, d2, :months
+[
+  %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019},
+  %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
+  %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019},
+  %Date{calendar: Cldr.Calendar.Gregorian, day: 30, month: 4, year: 2019},
+  %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
+]
+```
 # Changelog for Cldr Calendars v0.2.0
 
 This is the changelog for Cldr v0.2.0 released on April 14th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
