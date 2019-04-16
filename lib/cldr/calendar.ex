@@ -83,6 +83,11 @@ defmodule Cldr.Calendar do
   """
   @type day_of_week :: 1..7
 
+  @typedoc """
+  The precision for date intervals
+  """
+  @type precision :: :years | :quarters | :months | :weeks | :days
+
   @doc """
   Returns the `month` for a given `year`, `month` or `week`, and `day`
   for a a calendar.
@@ -188,6 +193,7 @@ defmodule Cldr.Calendar do
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
   @the_world :"001"
+  @valid_precision [:years, :quarters, :months, :weeks, :days]
 
   alias Cldr.LanguageTag
   alias Cldr.Calendar.Config
@@ -1606,10 +1612,10 @@ defmodule Cldr.Calendar do
     |> month
   end
 
-  def plus(date, :months, months, _options) do
+  def plus(date, :months, months, options) do
     %{year: year, month: month, day: day, calendar: calendar} = date
 
-    calendar.plus(year, month, day, :months, months)
+    calendar.plus(year, month, day, :months, months, options)
     |> date_from_tuple(calendar)
   end
 
@@ -1706,6 +1712,86 @@ defmodule Cldr.Calendar do
   """
   def minus(%{calendar: _calendar} = date, period, amount, options \\ []) do
     plus(date, period, -amount, options)
+  end
+
+  @doc """
+  Returns an `Enumerable` list of dates of a given precision
+  of either `:years`, `:quarters`, `:months`, `:weeks` or
+  `:days`
+
+  ## Arguements
+
+  * `date_from` is a any `Date.t` that is the start of the
+    sequence
+
+  * `date_to_or_count` is uper bound of the sequence
+    as a date or the number of dates in the
+    sequence to be generated
+
+  * `precision` is one of `:years`, `:quarters`,
+    `:months`, `:weeks` or `:days`
+
+  The sequence is generated starting with `date_from` until the next date
+  in the sequence would be after `date_to`.
+
+  ## Notes
+
+  The sequence can be in ascending or descending date order
+  based upon whether `date_from` is greater than `date_to`.
+
+  ## Returns
+
+  * A list of dates
+
+  ## Examples
+
+      iex> import Cldr.Calendar.Sigils
+      Cldr.Calendar.Sigils
+      iex> d = ~d[2019-01-31]
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019}
+      iex> d2 = ~d[2019-05-31]
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
+      iex> Cldr.Calendar.interval d, 3, :months
+      [
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 30, month: 4, year: 2019}
+      ]
+      iex> Cldr.Calendar.interval d, d2, :months
+      [
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 30, month: 4, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
+      ]
+
+  """
+  @spec interval(date_from :: Date.t, date_to_or_count :: Date.t | non_neg_integer, precision) ::
+    list(Date.t())
+
+  def interval(date_from, count, precision) when is_integer(count) and precision in @valid_precision do
+    for i <- 1..count do
+      plus(date_from, precision, i, coerce: true)
+    end
+  end
+
+  def interval(date_from, date_to, precision) when precision in @valid_precision do
+    if Date.compare(date_from, date_to) == :lt do
+      calculate_interval(date_from, date_from, date_to, precision, 1)
+    else
+      calculate_interval(date_to, date_to, date_from, precision, 1)
+      |> Enum.reverse
+    end
+  end
+
+  defp calculate_interval(date_origin, date_from, date_to, precision, iteration) do
+    if Date.compare(date_from, date_to) in [:lt, :eq] do
+      next_date = plus(date_origin, precision, iteration, coerce: true)
+      [date_from | calculate_interval(date_origin, next_date, date_to, precision, iteration + 1)]
+    else
+      []
+    end
   end
 
   @doc """

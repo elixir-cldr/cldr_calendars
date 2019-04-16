@@ -110,7 +110,7 @@ defmodule Cldr.Calendar.Julian do
   It is an integer from 1 to 53.
 
   """
-  @spec week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
+  @spec week_of_year(year, month, day) :: {:error, :not_defined}
   @impl true
 
   def week_of_year(_year, _month, _day) do
@@ -122,7 +122,7 @@ defmodule Cldr.Calendar.Julian do
   It is an integer from 1 to 53.
 
   """
-  @spec iso_week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
+  @spec iso_week_of_year(year, month, day) :: {:error, :not_defined}
   @impl true
 
   def iso_week_of_year(_year, _month, _day) do

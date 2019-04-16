@@ -167,7 +167,7 @@ defmodule Cldr.Calendar.Base.Month do
     new_year = year + year_increment
 
     new_day =
-      if Keyword.get(options, :coerce, false) do
+      if Keyword.get(options, :coerce, true) do
         max_new_day = days_in_month(new_year, new_month, config)
         min(day, max_new_day)
       else
