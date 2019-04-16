@@ -1724,8 +1724,8 @@ defmodule Cldr.Calendar do
   * `date_from` is a any `Date.t` that is the start of the
     sequence
 
-  * `date_to_or_count` is uper bound of the sequence
-    as a date or the number of dates in the
+  * `date_to_or_count` is upper bound of the sequence
+    as a `Date.t` or the number of dates in the
     sequence to be generated
 
   * `precision` is one of `:years`, `:quarters`,
