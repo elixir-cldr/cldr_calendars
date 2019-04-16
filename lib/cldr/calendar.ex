@@ -1719,7 +1719,7 @@ defmodule Cldr.Calendar do
   of either `:years`, `:quarters`, `:months`, `:weeks` or
   `:days`
 
-  ## Arguements
+  ## Arguments
 
   * `date_from` is a any `Date.t` that is the start of the
     sequence
