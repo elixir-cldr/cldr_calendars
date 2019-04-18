@@ -465,5 +465,4 @@ defmodule Cldr.Calendar.Julian do
 
   @doc false
   defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
-
 end

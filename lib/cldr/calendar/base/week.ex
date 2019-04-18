@@ -85,9 +85,14 @@ defmodule Cldr.Calendar.Base.Week do
     this_day - start_of_year + 1
   end
 
-  def day_of_week(_year, _week, day, config) do
+  def day_of_week(_year, _week, day, %{first_or_last: :first} = config) do
     first_day = config.day
-    Math.amod(first_day + day, days_in_week())
+    Math.amod(first_day + day - 1, days_in_week())
+  end
+
+  def day_of_week(_year, _week, day, %{first_or_last: :last} = config) do
+    last_day = config.day
+    Math.amod(last_day + day, days_in_week())
   end
 
   def months_in_year(year, _config) do

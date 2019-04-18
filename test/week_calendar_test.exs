@@ -1,55 +1,103 @@
 defmodule Cldr.Calendar.Week.Test do
   use ExUnit.Case
+  import Cldr.Calendar.Sigils
 
   defmodule Sunday do
     use Cldr.Calendar.Base.Week, day: 7, month: 4, weeks_in_month: [4, 4, 5], min_days: 7
   end
 
-  test "tuesday week calendar" do
-    defmodule Tuesday do
-      use Cldr.Calendar.Base.Week, day: 2, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
-    end
+  defmodule Saturday do
+    use Cldr.Calendar.Base.Week, day: 6, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+  end
 
+  defmodule Friday do
+    use Cldr.Calendar.Base.Week, day: 5, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+  end
+
+  defmodule Thursday do
+    use Cldr.Calendar.Base.Week, day: 4, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+  end
+
+  defmodule Wednesday do
+    use Cldr.Calendar.Base.Week, day: 3, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+  end
+
+  defmodule Tuesday do
+    use Cldr.Calendar.Base.Week, day: 2, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+  end
+
+  defmodule Monday do
+    use Cldr.Calendar.Base.Week, day: 1, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+  end
+
+  test "day of week for ISOWeek calendar is correct" do
+    assert Cldr.Calendar.day_of_week(~d[2019-01-01]ISOWeek) == 1
+  end
+
+  test "day of week for NRF calendar is correct" do
+    assert Cldr.Calendar.day_of_week(~d[2019-01-01]NRF) == 7
+  end
+
+  test "day of week for Sunday calendar is correct" do
+    {:ok, date} = Date.new(2019, 1, 1, Sunday)
+    assert Cldr.Calendar.day_of_week(date) == 7
+  end
+
+  test "day of week for Saturday calendar is correct" do
+    {:ok, date} = Date.new(2019, 1, 1, Saturday)
+    assert Cldr.Calendar.day_of_week(date) == 6
+  end
+
+  test "day of week for Friday calendar is correct" do
+    {:ok, date} = Date.new(2019, 1, 1, Friday)
+    assert Cldr.Calendar.day_of_week(date) == 5
+  end
+
+  test "day of week for Thursday calendar is correct" do
+    {:ok, date} = Date.new(2019, 1, 1, Thursday)
+    assert Cldr.Calendar.day_of_week(date) == 4
+  end
+
+  test "day of week for Wednesday calendar is correct" do
+    {:ok, date} = Date.new(2019, 1, 1, Wednesday)
+    assert Cldr.Calendar.day_of_week(date) == 3
+  end
+
+  test "day of week for Tuesday calendar is correct" do
+    {:ok, date} = Date.new(2019, 1, 1, Tuesday)
+    assert Cldr.Calendar.day_of_week(date) == 2
+  end
+
+  test "day of week for Monday calendar is correct" do
+    {:ok, date} = Date.new(2019, 1, 1, Monday)
+    assert Cldr.Calendar.day_of_week(date) == 1
+  end
+
+  test "tuesday week calendar" do
     {:ok, today} = Date.new(2019, 13, 4, Tuesday)
     last_year_day = Cldr.Calendar.previous(today, :year)
     assert last_year_day == %Date{calendar: Tuesday, day: 4, month: 13, year: 2018}
   end
 
   test "wednesday week calendar" do
-    defmodule Wednesday do
-      use Cldr.Calendar.Base.Week, day: 3, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
-    end
-
     {:ok, today} = Date.new(2019, 13, 4, Wednesday)
     last_year_day = Cldr.Calendar.previous(today, :year)
     assert last_year_day == %Date{calendar: Wednesday, day: 4, month: 13, year: 2018}
   end
 
   test "thursday week calendar" do
-    defmodule Thursday do
-      use Cldr.Calendar.Base.Week, day: 4, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
-    end
-
     {:ok, today} = Date.new(2019, 13, 4, Thursday)
     last_year_day = Cldr.Calendar.previous(today, :year)
     assert last_year_day == %Date{calendar: Thursday, day: 4, month: 13, year: 2018}
   end
 
   test "friday week calendar" do
-    defmodule Friday do
-      use Cldr.Calendar.Base.Week, day: 5, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
-    end
-
     {:ok, today} = Date.new(2019, 13, 4, Friday)
     last_year_day = Cldr.Calendar.previous(today, :year)
     assert last_year_day == %Date{calendar: Friday, day: 4, month: 13, year: 2018}
   end
 
   test "saturday week calendar" do
-    defmodule Saturday do
-      use Cldr.Calendar.Base.Week, day: 6, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
-    end
-
     {:ok, today} = Date.new(2019, 13, 4, Saturday)
     last_year_day = Cldr.Calendar.previous(today, :year)
     assert last_year_day == %Date{calendar: Saturday, day: 4, month: 13, year: 2018}
@@ -79,17 +127,12 @@ defmodule Cldr.Calendar.Week.Test do
   end
 
   test "previous month for a week calendar transitioning to prior quarter" do
-    defmodule Monday do
-      use Cldr.Calendar.Base.Week, day: 1, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
-    end
-
     {:ok, today} = Date.convert(~D[2019-04-11], Monday)
     prior_period_day = Cldr.Calendar.previous(today, :month, coerce: true)
     prior_period = Cldr.Calendar.month(prior_period_day)
 
     last_day_of_prior_period = prior_period.last
     {:ok, gregorian_prior_last} = Date.convert(last_day_of_prior_period, Cldr.Calendar.Gregorian)
-
 
     assert gregorian_prior_last == %Date{
              calendar: Cldr.Calendar.Gregorian,

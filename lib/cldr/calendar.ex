@@ -170,7 +170,8 @@ defmodule Cldr.Calendar do
   given week for a calendar year.
 
   """
-  @callback week(year :: Calendar.year(), week :: Cldr.Calendar.week()) :: Date.Range.t() | {:error, :not_defined}
+  @callback week(year :: Calendar.year(), week :: Cldr.Calendar.week()) ::
+              Date.Range.t() | {:error, :not_defined}
 
   @doc """
   Increments a `Date.t` or `Date.Range.t` by a specified positive
@@ -1377,8 +1378,8 @@ defmodule Cldr.Calendar do
 
   * `date_` is any `Date.t`
 
-  * `part` is one of `:era`, `:quarter`, `:month`
-    or `:day_of_week`
+  * `part` is one of `:era`, `:quarter`, `:month`,
+    `:day_of_week` or `:days_of_week
 
   * `options` is a keyword list of options
 
@@ -1398,6 +1399,10 @@ defmodule Cldr.Calendar do
 
   * A string representing the localized date part, or
 
+  * A list of strings representing the days of the week for
+  the part `:days_of_week`. The days are in week order for
+  the given date's calendar
+
   * `{error, {exception_module, message}}` if an error is detected
 
   ## Examples
@@ -1410,6 +1415,9 @@ defmodule Cldr.Calendar do
 
       iex> Cldr.Calendar.localize ~D[0001-01-01], :day_of_week
       "Mon"
+
+      iex> Cldr.Calendar.localize ~D[2019-01-01], :days_of_week
+      ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
       iex> Cldr.Calendar.localize ~D[2019-06-01], :era
       "AD"
@@ -1501,7 +1509,14 @@ defmodule Cldr.Calendar do
     |> get_in([:format, format, day])
   end
 
-  @valid_parts [:era, :quarter, :month, :day_of_week]
+  @doc false
+  def localize(date, :days_of_week, format, backend, locale) do
+    for date <- Cldr.Calendar.week(date) do
+      localize(date, :day_of_week, format, backend, locale)
+    end
+  end
+
+  @valid_parts [:era, :quarter, :month, :day_of_week, :days_of_week]
   defp validate_part(part) do
     if part in @valid_parts do
       {:ok, part}
@@ -1753,9 +1768,9 @@ defmodule Cldr.Calendar do
       %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
       iex> Cldr.Calendar.interval d, 3, :months
       [
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019},
         %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 30, month: 4, year: 2019}
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019}
       ]
       iex> Cldr.Calendar.interval d, d2, :months
       [
@@ -1767,11 +1782,12 @@ defmodule Cldr.Calendar do
       ]
 
   """
-  @spec interval(date_from :: Date.t, date_to_or_count :: Date.t | non_neg_integer, precision) ::
-    list(Date.t())
+  @spec interval(date_from :: Date.t(), date_to_or_count :: Date.t() | non_neg_integer, precision) ::
+          list(Date.t())
 
-  def interval(date_from, count, precision) when is_integer(count) and precision in @valid_precision do
-    for i <- 1..count do
+  def interval(date_from, count, precision)
+      when is_integer(count) and precision in @valid_precision do
+    for i <- 0..(count - 1) do
       plus(date_from, precision, i, coerce: true)
     end
   end
@@ -1781,7 +1797,7 @@ defmodule Cldr.Calendar do
       calculate_interval(date_from, date_from, date_to, precision, 1)
     else
       calculate_interval(date_to, date_to, date_from, precision, 1)
-      |> Enum.reverse
+      |> Enum.reverse()
     end
   end
 
@@ -1792,6 +1808,133 @@ defmodule Cldr.Calendar do
     else
       []
     end
+  end
+
+  @doc """
+  Returns an a `Stream` function than can be lazily
+  enumerated.
+
+  This function has the same arguments and provides
+  the same functionality as `interval/3` exept that
+  it is lazily evaluated.
+
+  ## Arguments
+
+  * `date_from` is a any `Date.t` that is the start of the
+    sequence
+
+  * `date_to_or_count` is upper bound of the sequence
+    as a `Date.t` or the number of dates in the
+    sequence to be generated
+
+  * `precision` is one of `:years`, `:quarters`,
+    `:months`, `:weeks` or `:days`
+
+  The sequence is generated starting with `date_from` until the next date
+  in the sequence would be after `date_to`.
+
+  ## Notes
+
+  The sequence can be in ascending or descending date order
+  based upon whether `date_from` is greater than `date_to`.
+
+  ## Returns
+
+  * A list of dates
+
+  ## Examples
+
+      iex> import Cldr.Calendar.Sigils
+      Cldr.Calendar.Sigils
+      iex> d = ~d[2019-01-31]
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019}
+      iex> d2 = ~d[2019-05-31]
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
+      iex> Cldr.Calendar.interval_stream(d, 3, :months) |> Enum.to_list
+      [
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019}
+      ]
+      iex> Cldr.Calendar.interval_stream(d, d2, :months) |> Enum.to_list
+      [
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 30, month: 4, year: 2019},
+        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
+      ]
+
+  """
+  @spec interval_stream(
+          date_from :: Date.t(),
+          date_to_or_count :: Date.t() | non_neg_integer,
+          precision
+        ) :: fun
+
+  def interval_stream(date_from, count, precision)
+      when is_integer(count) and precision in @valid_precision do
+    Stream.resource(
+      fn ->
+        {date_from, 0, count, precision}
+      end,
+      fn {date_from, iteration, count, precision} ->
+        if iteration == count do
+          {:halt, date_from}
+        else
+          next_date = plus(date_from, precision, iteration, coerce: true)
+          {[next_date], {date_from, iteration + 1, count, precision}}
+        end
+      end,
+      fn _ ->
+        :ok
+      end
+    )
+  end
+
+  def interval_stream(date_from, date_to, precision) do
+    if Date.compare(date_from, date_to) == :gt do
+      interval_stream_backward(date_from, date_to, precision)
+    else
+      interval_stream_forward(date_from, date_to, precision)
+    end
+  end
+
+  def interval_stream_forward(date_from, date_to, precision) when precision in @valid_precision do
+    Stream.resource(
+      fn ->
+        {date_from, date_to, precision, 0}
+      end,
+      fn {date_from, date_to, precision, iteration} ->
+        next_date = plus(date_from, precision, iteration, coerce: true)
+
+        if Date.compare(next_date, date_to) == :gt do
+          {:halt, next_date}
+        else
+          {[next_date], {date_from, date_to, precision, iteration + 1}}
+        end
+      end,
+      fn _ -> :ok end
+    )
+  end
+
+  def interval_stream_backward(date_from, date_to, precision)
+      when precision in @valid_precision do
+    Stream.resource(
+      fn ->
+        {date_from, date_to, precision, 0}
+      end,
+      fn {date_from, date_to, precision, iteration} ->
+        next_date = minus(date_from, precision, iteration, coerce: true)
+
+        if Date.compare(next_date, date_to) == :lt do
+          {:halt, next_date}
+        else
+          {[next_date], {date_from, date_to, precision, iteration + 1}}
+        end
+      end,
+      fn _ -> :ok end
+    )
   end
 
   @doc """
