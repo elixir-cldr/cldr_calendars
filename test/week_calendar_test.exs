@@ -30,6 +30,17 @@ defmodule Cldr.Calendar.Week.Test do
     use Cldr.Calendar.Base.Week, day: 1, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
   end
 
+  test "that days of the last month of a long year is 35 or 42" do
+    assert Cldr.Calendar.NRF.days_in_month(2012, 12) == 35
+    assert Cldr.Calendar.ISOWeek.days_in_month(2015,12) == 35
+
+    assert Cldr.Calendar.NRF.days_in_month(2013, 12) == 28
+    assert Cldr.Calendar.ISOWeek.days_in_month(2016,12) == 28
+
+    assert Sunday.days_in_month(2012,12) == 42
+    assert Sunday.days_in_month(2013,12) == 35
+  end
+
   test "day of week for ISOWeek calendar is correct" do
     assert Cldr.Calendar.day_of_week(~d[2019-01-01]ISOWeek) == 1
   end

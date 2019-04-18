@@ -24,6 +24,14 @@ defmodule Cldr.Calendar.Julian do
     :gregorian
   end
 
+  @doc """
+  Identifies that this calendar is month based.
+  """
+  @impl true
+  def calendar_base do
+    :month
+  end
+
   @epoch Cldr.Calendar.Gregorian.date_to_iso_days(0, 12, 30)
   def epoch do
     @epoch

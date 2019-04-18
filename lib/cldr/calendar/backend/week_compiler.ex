@@ -28,6 +28,14 @@ defmodule Cldr.Calendar.Compiler.Week do
       end
 
       @doc """
+      Identifies that the calendar is week based.
+      """
+      @impl true
+      def calendar_base do
+        :week
+      end
+
+      @doc """
       Defines the CLDR calendar type for this calendar.
 
       This type is used in support of `Cldr.Calendar.localize/3`.

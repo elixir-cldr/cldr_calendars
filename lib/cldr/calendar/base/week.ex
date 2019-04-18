@@ -111,6 +111,12 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
+  def days_in_month(year, @months_in_year, config) do
+    %Config{weeks_in_month: [_, _, weeks_in_last_month]} = config
+    weeks = if long_year?(year, config), do: weeks_in_last_month + 1, else: weeks_in_last_month
+    weeks * days_in_week()
+  end
+
   def days_in_month(_year, month, config) do
     %Config{weeks_in_month: weeks_in_month} = config
     month_in_quarter = Math.amod(rem(month, @months_in_quarter), @months_in_quarter)

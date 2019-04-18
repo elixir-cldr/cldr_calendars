@@ -139,6 +139,13 @@ defmodule Cldr.Calendar do
   @callback cldr_calendar_type() :: :gregorian | :persian | :coptic | :ethiopic
 
   @doc """
+  Returns the calendar basis.
+
+  Returns either :week or :month
+  """
+  @callback calendar_base() :: :week | :month
+
+  @doc """
   Returns the number of days in a year
 
   """
@@ -229,8 +236,6 @@ defmodule Cldr.Calendar do
     behaviours
 
   ## Configuration
-
-
 
   """
   @spec new(atom(), calendar_type(), Keyword.t()) :: {:ok, calendar()} | no_return()

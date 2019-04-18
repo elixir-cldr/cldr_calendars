@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v0.4.1
+
+This is the changelog for Cldr v0.4.1 released on April 19th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Correctly calculate `days_in_month` for the last month in long year of a week-based calendar
+
 # Changelog for Cldr Calendars v0.4.0
 
 This is the changelog for Cldr v0.4.0 released on April 19th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
@@ -7,6 +15,8 @@ This is the changelog for Cldr v0.4.0 released on April 19th, 2019.  For older c
 * Adds `Cldr.Calendar.interval_stream/3` which returns a stream function that when enumerated generates a list of dates with a specified precision of either `:years`, `:quarters`, `:months`, `:weeks` or `:days`. This function has the same arguments and generates the same results as `Cldr.Calendar.interval/3` except it generates the results lazily.
 
 * Adds `:days_of_week` option to `Cldr.Calendar.localize/3` which returns a list of the localized names of the days of the week in calendar order.
+
+* Adds `calendar_base/0` to identify whether the calendar is week or month based.
 
 ### Bug Fixes
 
