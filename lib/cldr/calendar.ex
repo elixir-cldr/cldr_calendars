@@ -1379,7 +1379,7 @@ defmodule Cldr.Calendar do
   * `date_` is any `Date.t`
 
   * `part` is one of `:era`, `:quarter`, `:month`,
-    `:day_of_week` or `:days_of_week
+    `:day_of_week` or `:days_of_week`
 
   * `options` is a keyword list of options
 
