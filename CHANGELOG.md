@@ -1,10 +1,18 @@
+# Changelog for Cldr Calendars v0.5.0
+
+This is the changelog for Cldr v0.5.0 released on April 21th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+
+### Breaking changes
+
+* `Cldr.Calendar.localize/3` for `:days_of_week` now returns a list of 2-tuples that are of the format `{day_of_week, day_name}`.
+
 # Changelog for Cldr Calendars v0.4.1
 
 This is the changelog for Cldr v0.4.1 released on April 19th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
 
 ### Bug Fixes
 
-* Correctly calculate `days_in_month` for the last month in long year of a week-based calendar
+* Fix calculation of `days_in_month` for the last month in long year of a week-based calendar
 
 # Changelog for Cldr Calendars v0.4.0
 

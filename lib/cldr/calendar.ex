@@ -1422,7 +1422,7 @@ defmodule Cldr.Calendar do
       "Mon"
 
       iex> Cldr.Calendar.localize ~D[2019-01-01], :days_of_week
-      ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      [{1, "Mon"}, {2, "Tue"}, {3, "Wed"}, {4, "Thu"}, {5, "Fri"}, {6, "Sat"}, {7, "Sun"}]
 
       iex> Cldr.Calendar.localize ~D[2019-06-01], :era
       "AD"
@@ -1517,7 +1517,13 @@ defmodule Cldr.Calendar do
   @doc false
   def localize(date, :days_of_week, format, backend, locale) do
     for date <- Cldr.Calendar.week(date) do
-      localize(date, :day_of_week, format, backend, locale)
+      day_of_week = day_of_week(date)
+
+      day_name =
+        locale
+        |> backend.days(date.calendar.cldr_calendar_type)
+        |> get_in([:format, format, day_of_week])
+      {day_of_week, day_name}
     end
   end
 
