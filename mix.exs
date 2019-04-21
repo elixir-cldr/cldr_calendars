@@ -61,7 +61,7 @@ defmodule Cldr.Calendar.MixProject do
 
   defp deps do
     [
-      {:ex_cldr, "~> 2.5"},
+      {:ex_cldr, "~> 2.6"},
       {:cldr_utils, "~> 2.2.0"},
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.18", only: [:release, :dev]},
