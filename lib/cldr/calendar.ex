@@ -1527,6 +1527,14 @@ defmodule Cldr.Calendar do
     end
   end
 
+  @doc false
+  def localize(number, part, format, calendar, backend, locale) when is_integer(number) do
+    backend = Module.concat(backend, Calendar)
+
+    apply(backend, part, [locale, calendar.cldr_calendar_type])
+    |> get_in([:format, format, number])
+  end
+
   @valid_parts [:era, :quarter, :month, :day_of_week, :days_of_week]
   defp validate_part(part) do
     if part in @valid_parts do

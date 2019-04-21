@@ -6,6 +6,10 @@ This is the changelog for Cldr v0.5.0 released on April 21th, 2019.  For older c
 
 * `Cldr.Calendar.localize/3` for `:days_of_week` now returns a list of 2-tuples that are of the format `{day_of_week, day_name}`.
 
+### Enhancements
+
+* Add `Cldr.Calendar.localize/6` which localises numbers as part of a date without parameter checking.  This is considered a private implementation for now.
+
 # Changelog for Cldr Calendars v0.4.1
 
 This is the changelog for Cldr v0.4.1 released on April 19th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
