@@ -1,8 +1,22 @@
 defmodule Cldr.Calendar.FiscalYear do
   @fiscal_year_data "./priv/fiscal_years_by_territory.csv"
-  @fiscal_year_by_territory @fiscal_year_data
-                            |> File.read!()
-                            |> NimbleCSV.RFC4180.parse_string()
+
+  [_headings | rows] = @fiscal_year_data
+                      |> File.read!()
+                      |> String.split("\r\n")
+
+  rows = Enum.map(rows, fn row ->
+    String.split(row, ~r/(,\"|\",)/)
+    |> Enum.flat_map(fn r ->
+      if String.contains?(r, "\"") do
+        ["dont_care"]
+      else
+        String.split(r, ",")
+      end
+    end)
+  end)
+
+  @fiscal_year_by_territory rows
                             |> Enum.map(fn
                               [_, "", _, _, _month, _day, _min_days, _] ->
                                 nil
