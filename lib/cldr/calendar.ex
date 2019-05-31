@@ -1919,7 +1919,7 @@ defmodule Cldr.Calendar do
     end
   end
 
-  def interval_stream_forward(date_from, date_to, precision) when precision in @valid_precision do
+  defp interval_stream_forward(date_from, date_to, precision) when precision in @valid_precision do
     Stream.resource(
       fn ->
         {date_from, date_to, precision, 0}
@@ -1937,7 +1937,7 @@ defmodule Cldr.Calendar do
     )
   end
 
-  def interval_stream_backward(date_from, date_to, precision)
+  defp interval_stream_backward(date_from, date_to, precision)
       when precision in @valid_precision do
     Stream.resource(
       fn ->
