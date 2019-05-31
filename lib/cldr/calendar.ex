@@ -2416,7 +2416,7 @@ defmodule Cldr.Calendar do
   end
 
   defp min_days_for_locale_error(min_days) do
-    ":min_days must be in the rnage 1..7. Found #{inspect(min_days)}."
+    ":min_days must be in the range 1..7. Found #{inspect(min_days)}."
   end
 
   defp first_or_last_error(first_or_last) do
