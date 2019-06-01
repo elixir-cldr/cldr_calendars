@@ -243,7 +243,7 @@ day_of_year/3
 ```
 ### Fiscal Calendars for Territories
 
-`Cldr Calendars` can create a fiscal year calendar for many territories (countries) based upon data from ____.  To create a fiscal year calendar for a territory use the `Cldr.Calendar.FiscalYear/1` function.
+`Cldr Calendars` can create a fiscal year calendar for many territories (countries) based upon data from [the CIA world fact book](https://www.cia.gov/library/publications/the-world-factbook/fields/228.html).  To create a fiscal year calendar for a territory use the `Cldr.Calendar.FiscalYear/1` function.
 
 ```
  iex> Cldr.Calendar.FiscalYear.calendar_for("IS")
