@@ -136,7 +136,7 @@ You'll see that for week-based calendars the date is actually stored as `year, w
 
 ## Month-based calendars
 
-The Gregorian calendar is the canonical example of a month-based calendar. It starts on January 1st and end on Deceber 31st each year.  But not all calendars start in January and end in December.
+The Gregorian calendar is the canonical example of a month-based calendar. It starts on January 1st and ends on December 31st each year.  But not all calendars start in January and end in December.
 
 * The United States fiscal year starts on October 1st and ends on September 30th
 * The United Kingdom fiscal year starts on April 1st and ends on March 31st

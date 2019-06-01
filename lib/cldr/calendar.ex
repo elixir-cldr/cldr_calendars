@@ -1919,7 +1919,7 @@ defmodule Cldr.Calendar do
     end
   end
 
-  def interval_stream_forward(date_from, date_to, precision) when precision in @valid_precision do
+  defp interval_stream_forward(date_from, date_to, precision) when precision in @valid_precision do
     Stream.resource(
       fn ->
         {date_from, date_to, precision, 0}
@@ -1937,7 +1937,7 @@ defmodule Cldr.Calendar do
     )
   end
 
-  def interval_stream_backward(date_from, date_to, precision)
+  defp interval_stream_backward(date_from, date_to, precision)
       when precision in @valid_precision do
     Stream.resource(
       fn ->
@@ -2416,7 +2416,7 @@ defmodule Cldr.Calendar do
   end
 
   defp min_days_for_locale_error(min_days) do
-    ":min_days must be in the rnage 1..7. Found #{inspect(min_days)}."
+    ":min_days must be in the range 1..7. Found #{inspect(min_days)}."
   end
 
   defp first_or_last_error(first_or_last) do
