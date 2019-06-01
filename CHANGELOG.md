@@ -1,6 +1,6 @@
-# Changelog for Cldr Calendars v0.6.0
+# Changelog for Cldr Calendars v0.7.0
 
-This is the changelog for Cldr v0.6.0 released on June 1st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.7.0 released on June 1st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
 
 ### Breaking Changes
 
@@ -11,6 +11,14 @@ This is the changelog for Cldr v0.6.0 released on June 1st, 2019.  For older cha
 * Adds `Cldr.Calendar.Interval.compare/2` to compare two intervals (date ranges) using [Allen's Interval Algebra]((https://en.wikipedia.org/wiki/Allen%27s_interval_algebra) definitions.
 
 * Defaults the calendar to `Cldr.Calendar.Gregorian` for `Cldr.Calendar.year/2`, `Cldr.Calendar.quarter/3`, `Cldr.Calendar.month/3`, `Cldr.Calendar.week/3` and `Cldr.Calendar.day/3`
+
+# Changelog for Cldr Calendars v0.6.0
+
+This is the changelog for Cldr v0.6.0 released on April 28th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+
+### Enhancements
+
+* Remove the need for [nimble_csv](https://hex.pm/nimble_csv) as a dependency
 
 # Changelog for Cldr Calendars v0.5.0
 
