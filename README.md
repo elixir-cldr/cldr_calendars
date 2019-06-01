@@ -144,7 +144,7 @@ The Gregorian calendar is the canonical example of a month-based calendar. It st
 
 `Cldr Calendars` allows month-based calendars to be defined based upon the first or last gregorian month of the year for that calendar.
 
-Of course sometimes we also want to refer to weeks within a year although this is less common than refering to days within months.  Nevertheless, a momth-based calendar can also take advantage of `:first_day` and `:min_days` to determine how to calculate weeks for month-based calendars too.
+Of course sometimes we also want to refer to weeks within a year although this is less common than refering to days within months.  Nevertheless, a month-based calendar can also take advantage of `:first_day` and `:min_days` to determine how to calculate weeks for month-based calendars too.
 
 Here's how we define each of the three example calendars above:
 
@@ -315,6 +315,62 @@ provides the required functionality. Some examples are:
       "السبت"
 ```
 
+## Calendar Intervals (date ranges)
+
+Intervals representing parts of a calendar can be created and compared. Since intervals are represented as a `Date.Range` they can also be enumerated with the `Map` and `Stream` functions.
+
+Intervals can be created for a year, quarter, month, week and day.  For example:
+
+```elixir
+  iex> Cldr.Calendar.Interval.year(2019)
+  #DateRange<%Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 1, year: 2019}, %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 12, year: 2019}>
+
+  iex> Cldr.Calendar.Interval.month(2019, 3)
+  #DateRange<%Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 3, year: 2019}, %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019}>
+
+  iex> Cldr.Calendar.Interval.month(2019, 3, Cldr.Calendar.NRF)
+  #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 10, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 13, year: 2019}>
+
+  iex> Cldr.Calendar.Interval.week(2019, 5, Cldr.Calendar.NRF)
+  #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 5, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 5, year: 2019}>
+
+  iex> Cldr.Calendar.Interval.quarter(2019, 3)
+  #DateRange<%Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 7, year: 2019}, %Date{calendar: Cldr.Calendar.Gregorian, day: 30, month: 9, year: 2019}>
+```
+
+### Comparing Calendar Intervals
+
+Intervals can also be compared to each other and using the taxonomy of [Allen's Interval Algebra](https://en.wikipedia.org/wiki/Allen%27s_interval_algebra) a comparison will return one of 13 different relationship types between two calendar intervals:
+
+  Relation	     | Converse
+  ----------     | --------------
+  :precedes	     | :preceded_by
+  :meets         | :met_by
+  :overlaps      | :overlapped_by
+  :finished_by   | :finishes
+  :contains      | :during
+  :starts        | :started_by
+  :equals        | :equals
+
+Some examples:
+
+```elixir
+  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-01]), Cldr.Calendar.Interval.day(~D[2019-01-02])
+  :meets
+
+  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-01]), Cldr.Calendar.Interval.day(~D[2019-01-03])
+  :precedes
+
+  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-03]), Cldr.Calendar.Interval.day(~D[2019-01-01])
+  :preceded_by
+
+  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-02]), Cldr.Calendar.Interval.day(~D[2019-01-01])
+  :met_by
+
+  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-02]), Cldr.Calendar.Interval.day(~D[2019-01-02])
+  :equals
+```
+
 ### Configuring a Cldr backend for localization
 
 In order to localize date parts a`backend` module must be defined. This
@@ -349,13 +405,12 @@ It is also possible to pass the name of a backend module to the `Cldr.Calendar.l
 
 ## Cldr Calendars Installation
 
-Add `ex_cldr_calendars` to your `deps` in `mix.exs`. `nimble_csv` is also required at build time (it is not requried at runtime).
+Add `ex_cldr_calendars` to your `deps` in `mix.exs`.
 
 ```elixir
 def deps do
   [
-    {:ex_cldr_calendars, "~> 0.1"},
-    {:nimble_csv, "~> 0.6", runtime: false}
+    {:ex_cldr_calendars, "~> 0.1"}
     ...
   ]
 end

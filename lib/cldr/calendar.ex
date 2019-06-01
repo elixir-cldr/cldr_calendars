@@ -32,6 +32,7 @@ defmodule Cldr.Calendar do
   """
 
   alias Cldr.Calendar.Config
+  alias Cldr.Calendar.Interval
 
   @typedoc """
   Specifies the type of a calendar.
@@ -87,6 +88,24 @@ defmodule Cldr.Calendar do
   The precision for date intervals
   """
   @type precision :: :years | :quarters | :months | :weeks | :days
+
+  @typedoc """
+  The types of relationship between two Date.Range intervals
+  """
+  @type interval_relation ::
+          :precedes
+          | :preceded_by
+          | :meets
+          | :met_by
+          | :overlaps
+          | :overlapped_by
+          | :finished_by
+          | :finishes
+          | :contains
+          | :during
+          | :starts
+          | :started_by
+          | :equals
 
   @doc """
   Returns the `month` for a given `year`, `month` or `week`, and `day`
@@ -938,237 +957,6 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns a `Date.Range.t` that represents
-  the `year`.
-
-  The range is enumerable.
-
-  ## Arguments
-
-  * `year` is any `year` for `calendar`
-
-  * `calendar` is any module that implements
-    the `Calendar` and `Cldr.Calendar`
-    behaviours
-
-  ## Returns
-
-  * A `Date.Range.t()` representing the
-    the enumerable days in the `year`
-
-  ## Examples
-
-      iex> Cldr.Calendar.year 2019, Cldr.Calendar.UK
-      #DateRange<%Date{calendar: Cldr.Calendar.UK, day: 1, month: 1, year: 2019}, %Date{calendar: Cldr.Calendar.UK, day: 31, month: 12, year: 2019}>
-
-      iex> Cldr.Calendar.year 2019, Cldr.Calendar.NRF
-      #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 1, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}>
-
-  """
-  @spec year(Calendar.year(), calendar()) :: Date.Range.t()
-  @spec year(Date.t()) :: Date.Range.t()
-
-  def year(date) do
-    year(date.year, date.calendar)
-  end
-
-  def year(year, calendar) do
-    calendar.year(year)
-  end
-
-  @doc """
-  Returns a `Date.Range.t` that represents
-  the `quarter`.
-
-  The range is enumerable.
-
-  ## Arguments
-
-  * `year` is any `year` for `calendar`
-
-  * `quarter` is any `quarter` in the
-  `  year` for `calendar`
-
-  * `calendar` is any module that implements
-    the `Calendar` and `Cldr.Calendar`
-    behaviours
-
-  ## Returns
-
-  * A `Date.Range.t()` representing the
-    the enumerable days in the `quarter`
-
-  ## Examples
-
-      iex> Cldr.Calendar.quarter 2019, 2, Cldr.Calendar.UK
-      #DateRange<%Date{calendar: Cldr.Calendar.UK, day: 1, month: 4, year: 2019}, %Date{calendar: Cldr.Calendar.UK, day: 30, month: 6, year: 2019}>
-
-      iex> Cldr.Calendar.quarter 2019, 2, Cldr.Calendar.ISOWeek
-      #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 14, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 26, year: 2019}>
-
-  """
-  @spec quarter(Calendar.year(), Cldr.Calendar.quarter(), calendar()) :: Date.Range.t()
-  @spec quarter(Date.t()) :: Date.Range.t()
-
-  def quarter(date) do
-    quarter = quarter_of_year(date)
-    quarter(date.year, quarter, date.calendar)
-  end
-
-  def quarter(year, quarter, calendar) do
-    calendar.quarter(year, quarter)
-  end
-
-  @doc """
-  Returns a `Date.Range.t` that represents
-  the `year`.
-
-  The range is enumerable.
-
-  ## Arguments
-
-  * `year` is any `year` for `calendar`
-
-  * `month` is any `month` in the `year`
-    for `calendar`
-
-  * `calendar` is any module that implements
-    the `Calendar` and `Cldr.Calendar`
-    behaviours
-
-  ## Returns
-
-  * A `Date.Range.t()` representing the
-    the enumerable days in the `month`
-
-  ## Examples
-
-      iex> Cldr.Calendar.month 2019, 3, Cldr.Calendar.UK
-      #DateRange<%Date{calendar: Cldr.Calendar.UK, day: 1, month: 3, year: 2019}, %Date{calendar: Cldr.Calendar.UK, day: 30, month: 3, year: 2019}>
-
-      iex> Cldr.Calendar.month 2019, 3, Cldr.Calendar.US
-      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 1, month: 3, year: 2019}, %Date{calendar: Cldr.Calendar.US, day: 31, month: 3, year: 2019}>
-
-  """
-  @spec month(Calendar.year(), Calendar.month(), calendar()) :: Date.Range.t()
-  @spec month(Date.t()) :: Date.Range.t()
-
-  def month(date) do
-    month = month_of_year(date)
-    month(date.year, month, date.calendar)
-  end
-
-  def month(year, month, calendar) do
-    calendar.month(year, month)
-  end
-
-  @doc """
-  Returns a `Date.Range.t` that represents
-  the `year`.
-
-  The range is enumerable.
-
-  ## Arguments
-
-  * `year` is any `year` for `calendar`
-
-  * `week` is any `week` in the `year`
-    for `calendar`
-
-  * `calendar` is any module that implements
-    the `Calendar` and `Cldr.Calendar`
-    behaviours
-
-  ## Returns
-
-  * A `Date.Range.t()` representing the
-    the enumerable days in the `week` or
-
-  * `{:error, :not_defined}` if the calendar
-    does not support the concept of weeks
-
-  ## Examples
-
-      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.US
-      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 22, month: 12, year: 2019}, %Date{calendar: Cldr.Calendar.US, day: 28, month: 12, year: 2019}>
-
-      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.NRF
-      #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}>
-
-      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.ISOWeek
-      #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 52, year: 2019}>
-
-      iex> Cldr.Calendar.week 2019, 52, Cldr.Calendar.Julian
-      {:error, :not_defined}
-
-  """
-  @spec week(Calendar.year(), Cldr.Calendar.week(), calendar()) :: Date.Range.t()
-  @spec week(Date.t()) :: Date.Range.t()
-
-  def week(date) do
-    {year, week} = week_of_year(date)
-    week(year, week, date.calendar)
-  end
-
-  def week(year, week, calendar) do
-    calendar.week(year, week)
-  end
-
-  @doc """
-  Returns a `Date.Range.t` that represents
-  the `day`.
-
-  The range is enumerable.
-
-  ## Arguments
-
-  * `year` is any `year` for `calendar`
-
-  * `day` is any `day` in the `year`
-    for `calendar`
-
-  * `calendar` is any module that implements
-    the `Calendar` and `Cldr.Calendar`
-    behaviours
-
-  ## Returns
-
-  * A `Date.Range.t()` representing the
-    the enumerable days in the `week`
-
-  ## Examples
-
-      iex> Cldr.Calendar.day 2019, 52, Cldr.Calendar.US
-      #DateRange<%Date{calendar: Cldr.Calendar.US, day: 21, month: 2, year: 2019}, %Date{calendar: Cldr.Calendar.US, day: 21, month: 2, year: 2019}>
-
-      iex(6)> Cldr.Calendar.day 2019, 92, Cldr.Calendar.NRF
-      #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 14, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 1, month: 14, year: 2019}>
-
-      Cldr.Calendar.day 2019, 8, Cldr.Calendar.ISOWeek
-      #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 2, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 2, year: 2019}>
-
-  """
-  @spec day(Calendar.year(), Calendar.day(), calendar()) :: Date.Range.t()
-  @spec day(Date.t()) :: Date.Range.t()
-
-  def day(date) do
-    Date.range(date, date)
-  end
-
-  def day(year, day, calendar) do
-    if day <= calendar.days_in_year(year) do
-      iso_days = calendar.first_gregorian_day_of_year(year) + day - 1
-
-      with {year, month, day} = calendar.date_from_iso_days(iso_days),
-           {:ok, date} <- Date.new(year, month, day, calendar) do
-        day(date)
-      end
-    else
-      {:error, :invalid_date}
-    end
-  end
-
-  @doc """
   Returns the current date or date range for
   a date period (year, quarter, month, week
   or day).
@@ -1192,7 +980,7 @@ defmodule Cldr.Calendar do
   """
   def current(%Date.Range{first: date}, :year) do
     current(date, :year)
-    |> year
+    |> Interval.year
   end
 
   def current(date, :year) do
@@ -1201,7 +989,7 @@ defmodule Cldr.Calendar do
 
   def current(%Date.Range{first: date}, :quarter) do
     current(date, :quarter)
-    |> quarter
+    |> Interval.quarter
   end
 
   def current(date, :quarter) do
@@ -1210,7 +998,7 @@ defmodule Cldr.Calendar do
 
   def current(%Date.Range{first: date}, :month) do
     current(date, :month)
-    |> month
+    |> Interval.month
   end
 
   def current(date, :month) do
@@ -1219,7 +1007,7 @@ defmodule Cldr.Calendar do
 
   def current(%Date.Range{first: date}, :week) do
     current(date, :week)
-    |> week
+    |> Interval.week
   end
 
   def current(date, :week) do
@@ -1228,7 +1016,7 @@ defmodule Cldr.Calendar do
 
   def current(%Date.Range{first: date}, :day) do
     current(date, :day)
-    |> day
+    |> Interval.day
   end
 
   def current(date, :day) do
@@ -1236,7 +1024,7 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns the nexy date or date range for
+  Returns the next date or date range for
   a date period (year, quarter, month, week
   or day).
 
@@ -1261,7 +1049,7 @@ defmodule Cldr.Calendar do
 
   def next(%Date.Range{last: date}, :year, options) do
     next(date, :year, options)
-    |> year
+    |> Interval.year
   end
 
   def next(date, :year, options) do
@@ -1270,7 +1058,7 @@ defmodule Cldr.Calendar do
 
   def next(%Date.Range{last: date}, :quarter, options) do
     next(date, :quarter, options)
-    |> quarter
+    |> Interval.quarter
   end
 
   def next(date, :quarter, options) do
@@ -1279,7 +1067,7 @@ defmodule Cldr.Calendar do
 
   def next(%Date.Range{last: date}, :month, options) do
     next(date, :month, options)
-    |> month
+    |> Interval.month
   end
 
   def next(date, :month, options) do
@@ -1288,7 +1076,7 @@ defmodule Cldr.Calendar do
 
   def next(%Date.Range{last: date}, :week, options) do
     next(date, :week, options)
-    |> week
+    |> Interval.week
   end
 
   def next(date, :week, options) do
@@ -1297,7 +1085,7 @@ defmodule Cldr.Calendar do
 
   def next(%Date.Range{last: date}, :day, options) do
     next(date, :day, options)
-    |> day
+    |> Interval.day
   end
 
   def next(date, :day, options) do
@@ -1333,7 +1121,7 @@ defmodule Cldr.Calendar do
 
   def previous(%Date.Range{first: date}, :year, options) do
     previous(date, :year, options)
-    |> year
+    |> Interval.year
   end
 
   def previous(date, :year, options) do
@@ -1342,7 +1130,7 @@ defmodule Cldr.Calendar do
 
   def previous(%Date.Range{first: date}, :quarter, options) do
     previous(date, :quarter, options)
-    |> quarter
+    |> Interval.quarter
   end
 
   def previous(date, :quarter, options) do
@@ -1351,7 +1139,7 @@ defmodule Cldr.Calendar do
 
   def previous(%Date.Range{first: date}, :month, options) do
     previous(date, :month, options)
-    |> month
+    |> Interval.month
   end
 
   def previous(date, :month, options) do
@@ -1360,7 +1148,7 @@ defmodule Cldr.Calendar do
 
   def previous(%Date.Range{first: date}, :week, options) do
     previous(date, :week, options)
-    |> week
+    |> Interval.week
   end
 
   def previous(date, :week, options) do
@@ -1516,13 +1304,14 @@ defmodule Cldr.Calendar do
 
   @doc false
   def localize(date, :days_of_week, format, backend, locale) do
-    for date <- Cldr.Calendar.week(date) do
+    for date <- Interval.week(date) do
       day_of_week = day_of_week(date)
 
       day_name =
         locale
         |> backend.days(date.calendar.cldr_calendar_type)
         |> get_in([:format, format, day_of_week])
+
       {day_of_week, day_name}
     end
   end
@@ -1614,7 +1403,7 @@ defmodule Cldr.Calendar do
 
   def plus(%Date.Range{last: date}, :years, years, options) do
     plus(date, :years, years, options)
-    |> year
+    |> Interval.year
   end
 
   def plus(date, :years, years, options) do
@@ -1631,7 +1420,7 @@ defmodule Cldr.Calendar do
 
   def plus(%Date.Range{last: date}, :quarters, quarters, _options) do
     plus(date, :quarters, quarters)
-    |> quarter
+    |> Interval.quarter
   end
 
   def plus(date, :quarters, quarters, _options) do
@@ -1643,7 +1432,7 @@ defmodule Cldr.Calendar do
 
   def plus(%Date.Range{last: date}, :months, months, _options) do
     plus(date, :months, months)
-    |> month
+    |> Interval.month
   end
 
   def plus(date, :months, months, options) do
@@ -1655,7 +1444,7 @@ defmodule Cldr.Calendar do
 
   def plus(%Date.Range{last: date}, :weeks, weeks, _options) do
     plus(date, :weeks, weeks)
-    |> week
+    |> Interval.week
   end
 
   def plus(%{calendar: calendar} = date, :weeks, weeks, _options) do
@@ -1667,7 +1456,7 @@ defmodule Cldr.Calendar do
 
   def plus(%Date.Range{last: date}, :days, days, _options) do
     plus(date, :days, days)
-    |> day
+    |> Interval.day
   end
 
   def plus(%{calendar: calendar} = date, :days, days, _options) do
@@ -1919,7 +1708,8 @@ defmodule Cldr.Calendar do
     end
   end
 
-  defp interval_stream_forward(date_from, date_to, precision) when precision in @valid_precision do
+  defp interval_stream_forward(date_from, date_to, precision)
+       when precision in @valid_precision do
     Stream.resource(
       fn ->
         {date_from, date_to, precision, 0}
@@ -1938,7 +1728,7 @@ defmodule Cldr.Calendar do
   end
 
   defp interval_stream_backward(date_from, date_to, precision)
-      when precision in @valid_precision do
+       when precision in @valid_precision do
     Stream.resource(
       fn ->
         {date_from, date_to, precision, 0}

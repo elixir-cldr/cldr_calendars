@@ -1,5 +1,5 @@
 defmodule Cldr.Calendar.NRF.Test do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   test "correct NRF start and end dates for several years" do
     nrf_years = %{

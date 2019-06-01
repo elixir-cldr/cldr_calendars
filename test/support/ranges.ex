@@ -11,15 +11,15 @@ defmodule Cldr.Calendar.Range do
 
   def daterange_periods(calendar \\ Cldr.Calendar.Range.Feb) do
     {:ok, today} = Date.convert(Date.utc_today(), calendar)
-    this_week = Cldr.Calendar.week(today)
-    this_month = Cldr.Calendar.month(today)
-    this_year = Cldr.Calendar.year(today)
+    this_week = Cldr.Calendar.Interval.week(today)
+    this_month = Cldr.Calendar.Interval.month(today)
+    this_year = Cldr.Calendar.Interval.year(today)
     last_week_day = Cldr.Calendar.previous(today, :week)
     last_month_day = Cldr.Calendar.previous(today, :month)
     last_year_day = Cldr.Calendar.previous(today, :year)
-    last_week = Cldr.Calendar.week(last_week_day)
-    last_month = Cldr.Calendar.month(last_month_day)
-    last_year = Cldr.Calendar.year(last_year_day)
+    last_week = Cldr.Calendar.Interval.week(last_week_day)
+    last_month = Cldr.Calendar.Interval.month(last_month_day)
+    last_year = Cldr.Calendar.Interval.year(last_year_day)
 
     %{
       "This week" => [this_week.first, this_week.last],
