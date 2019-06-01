@@ -7,9 +7,9 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 `Cldr Calendars` builds on Elixir's standard `Calendar` module to provide additional calendars and calendar functionality intended to be of practical use.  In particular `Cdlr Calendars`:
 
-* Provides support for configurable month-based and week-based calendars that are in common use as "Fiscal Year" calendars for countries and organizations around the world. See `Cldr.Calendar.new/3`
+* Provides support for configurable month-based and week-based calendars that are in common use as [Fiscal Year](https://en.wikipedia.org/wiki/Fiscal_year) calendars for countries and organizations around the world. See `Cldr.Calendar.new/3`
 
-* Supports localisation of common calendar terms such as "day of the week" and "month of the year" using the [CLDR](https://cldr.unicode.org) data that is available for over 500 locales. See `Cldr.Calendar.localize/3`
+* Supports localisation of common calendar terms such as *day of the week* and *month of the year* using the [CLDR](https://cldr.unicode.org) data that is available for over 500 locales. See `Cldr.Calendar.localize/3`
 
 * Supports locale-specific knowledge of what is a weekend or a workday. See `Cldr.Calendar.weekend/1`, `Cldr.Calendar.weekend?/2`, `Cldr.Calendar.weekdays/1` and `Cldr.Calendar.weekday?/2`.
 
