@@ -8,7 +8,7 @@ This is the changelog for Cldr v0.7.0 released on June 1st, 2019.  For older cha
 
 ### Enhancements
 
-* Adds `Cldr.Calendar.Interval.compare/2` to compare two intervals (date ranges) using [Allen's Interval Algebra]((https://en.wikipedia.org/wiki/Allen%27s_interval_algebra) definitions.
+* Adds `Cldr.Calendar.Interval.compare/2` to compare two intervals (date ranges) using [Allen's Interval Algebra](https://en.wikipedia.org/wiki/Allen%27s_interval_algebra) definitions.
 
 * Defaults the calendar to `Cldr.Calendar.Gregorian` for `Cldr.Calendar.year/2`, `Cldr.Calendar.quarter/3`, `Cldr.Calendar.month/3`, `Cldr.Calendar.week/3` and `Cldr.Calendar.day/3`
 
