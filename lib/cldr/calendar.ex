@@ -1259,7 +1259,6 @@ defmodule Cldr.Calendar do
   def localize(date, part, options) do
     cldr_backend = backend_from_calendar(date.calendar)
     backend = Keyword.get(options, :backend, cldr_backend || Cldr.default_backend())
-    backend = Module.concat(backend, Calendar)
     locale = Keyword.get(options, :locale, Cldr.get_locale())
     type = Keyword.get(options, :type, :format)
     format = Keyword.get(options, :format, :abbreviated)
