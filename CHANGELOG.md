@@ -1,3 +1,17 @@
+# Changelog for Cldr Calendars v0.8.0
+
+This is the changelog for Cldr v0.8.0 released on June 8th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+
+## Enhancements
+
+* Adds option `:type` to `Cldr.Calendar.localize/3`. This determines the format type to be localized. The valid types are `:format` (the default) or `:stand_alone`.
+
+* Add `Cldr.Calendar.day_periods/2` to support localization of the day periods of a time
+
+* Add `Cldr.Calendar.default_calendar/0`. Returns `Cldr.Calendar.Gregorian`
+
+* Add `Cldr.Calendar.default_cldr_calendar/0`. Returns `:gregorian`
+
 # Changelog for Cldr Calendars v0.7.0
 
 This is the changelog for Cldr v0.7.0 released on June 1st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
