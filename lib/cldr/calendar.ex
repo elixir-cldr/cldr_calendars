@@ -239,6 +239,7 @@ defmodule Cldr.Calendar do
     @default_calendar
   end
 
+  @doc false
   def default_cldr_calendar do
     default_calendar().cldr_calendar_type()
   end
