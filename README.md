@@ -1,4 +1,7 @@
 # Cldr Calendars
+![Build Status](http://sweatbox.noexpectations.com.au:8080/buildStatus/icon?job=cldr_calendars)
+[![Hex pm](http://img.shields.io/hexpm/v/ex_cldr_dates_times.svg?style=flat)](https://hex.pm/packages/ex_cldr_calendars)
+[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/kipcole9/cldr_calendars/blob/master/LICENSE)
 
 > My wife's jealousy is getting ridiculous. The other day she looked at my calendar and wanted to know who May was.
 > -- Rodney Dangerfield
