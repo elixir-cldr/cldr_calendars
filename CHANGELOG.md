@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v0.10.0
+
+This is the changelog for Cldr v0.10.0 released on June 10th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+
+## Enhancements
+
+* Adds `Cldr.Calendar.week_of_month/1` and `Cldr.Calendar` callback `week_of_month/4` to return the week of a month. The weeks are calculated on the basis of the calendar configuration. As a result, the week of the month, like the week of the year, may be in a different year to the Gregorian date.
+
 # Changelog for Cldr Calendars v0.9.0
 
 This is the changelog for Cldr v0.9.0 released on June 9th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)

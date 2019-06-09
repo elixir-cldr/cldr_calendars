@@ -77,7 +77,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       It is an integer from 1 to 4.
 
       """
-      @spec quarter_of_year(year, month, day) :: 1..4
+      @spec quarter_of_year(year, Cldr.Calendar.week(), day) :: 1..4
       @impl true
 
       def quarter_of_year(year, week, day) do
@@ -89,7 +89,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       It is an integer from 1 to 12.
 
       """
-      @spec month_of_year(year, month, day) :: month
+      @spec month_of_year(year, Cldr.Calendar.week(), day) :: month
       @impl true
 
       def month_of_year(year, week, day) do
@@ -101,7 +101,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       It is an integer from 1 to 53.
 
       """
-      @spec week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
+      @spec week_of_year(year, Cldr.Calendar.week(), day) :: {year, Cldr.Calendar.week()}
       @impl true
 
       def week_of_year(year, week, day) do
@@ -113,11 +113,23 @@ defmodule Cldr.Calendar.Compiler.Week do
       It is an integer from 1 to 53.
 
       """
-      @spec iso_week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
+      @spec iso_week_of_year(year, Cldr.Calendar.week(), day) :: {year, Cldr.Calendar.week()}
       @impl true
 
       def iso_week_of_year(year, week, day) do
         Week.iso_week_of_year(year, week, day, __config__())
+      end
+
+      @doc """
+      Calculates the week of the month from the given `year`, `month`, and `day`.
+      It is an integer from 1 to 5.
+
+      """
+      @spec week_of_month(year, Cldr.Calendar.week(), day) :: {month, Cldr.Calendar.week()}
+      @impl true
+
+      def week_of_month(year, week, day) do
+        Week.week_of_month(year, week, day, __config__())
       end
 
       @doc """

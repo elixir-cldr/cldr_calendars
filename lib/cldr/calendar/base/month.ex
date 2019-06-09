@@ -10,6 +10,7 @@ defmodule Cldr.Calendar.Base.Month do
   @quarters_in_year 4
   @months_in_quarter 3
   @iso_week_first_day 1
+  @months_in_year 12
   @iso_week_min_days 4
   @january 1
 
@@ -67,6 +68,31 @@ defmodule Cldr.Calendar.Base.Month do
       min_days: @iso_week_min_days,
       month: @january
     })
+  end
+
+  def week_of_month(year, month, day, config) do
+    {y1, week_of_year} = week_of_year(year, month, day, config)
+    {y2, first_week_of_month} = week_of_year(year, month, 1, config)
+
+    cond do
+      y1 == year ->
+        week_of_month = week_of_year - first_week_of_month + 1
+        {month, week_of_month}
+
+      # First of the month is in the last week
+      # of the prior year
+      y2 < year ->
+        {_, first_week_of_month} = week_of_year(year, @months_in_year, 1, config)
+        week_of_month = week_of_year - first_week_of_month + 1
+        {@months_in_year, week_of_month}
+
+      # The date is in the next year
+      y1 > year ->
+        {@january, week_of_year}
+
+      true ->
+        IO.puts "y1: #{y1}; y2: #{y2}; year: #{year}"
+    end
   end
 
   def day_of_era(year, month, day, config) do

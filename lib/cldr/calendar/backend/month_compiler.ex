@@ -122,6 +122,18 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
+      Calculates the week of the month from the given `year`, `month`, and `day`.
+      It is an integer from 1 to 5.
+
+      """
+      @spec week_of_month(year, Cldr.Calendar.week, day) :: {month, Cldr.Calendar.week()}
+      @impl true
+
+      def week_of_month(year, week, day) do
+        Month.week_of_month(year, week, day, __config__())
+      end
+
+      @doc """
       Calculates the day and era from the given `year`, `month`, and `day`.
 
       """

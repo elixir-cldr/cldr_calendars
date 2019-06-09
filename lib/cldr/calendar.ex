@@ -150,6 +150,16 @@ defmodule Cldr.Calendar do
               {Calendar.year(), Calendar.week()} | {:error, :not_defined}
 
   @doc """
+  Returns a tuple of `{month, week_in_month}` for a given `year`, `month` or `week`, and `day`
+  for a a calendar.
+
+  The `week_in_month` is calculated based upon the calendar configuration.
+
+  """
+  @callback week_of_month(Calendar.year(), Cldr.Calendar.week(), Calendar.day()) ::
+    {Cldr.Calendar.month(), Cldr.Calendar.week()}
+
+  @doc """
   Returns the CLDR calendar type.
 
   Only algorithmic calendars are considered
@@ -697,6 +707,44 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Returns the `{year, week_number}`
+  for a `date`.
+
+  ## Arguments
+
+  * `date` is any `Date.t()`
+
+  ## Returns
+
+  * a the week of the year as an
+    integer or
+
+  * `{:error, :not_defined}` if the calendar
+    does not support the concept of weeks.
+
+  ## Examples
+
+      iex> import Cldr.Calendar.Sigils
+      iex> Cldr.Calendar.week_of_year ~d[2019-01-01]
+      {2019, 1}
+      iex> Cldr.Calendar.week_of_year ~d[2019-12-01]
+      {2019, 48}
+      iex> Cldr.Calendar.week_of_year ~d[2019-52-01]NRF
+      {2019, 52}
+      iex> Cldr.Calendar.week_of_year ~d[2019-26-01]NRF
+      {2019, 26}
+      iex> Cldr.Calendar.week_of_year ~d[2019-12-01]Julian
+      {:error, :not_defined}
+
+  """
+  @spec week_of_year(Date.t()) :: {Calendar.year(), week()}
+
+  def week_of_year(date) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.week_of_year(year, month, day)
+  end
+
+  @doc """
   Returns the `ISO week` number for
   a `date`.
 
@@ -735,7 +783,7 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns the `{year, week_number}`
+  Returns the `{month, week_number}`
   for a `date`.
 
   ## Arguments
@@ -744,7 +792,7 @@ defmodule Cldr.Calendar do
 
   ## Returns
 
-  * a the week of the year as an
+  * a the week of the month as an
     integer or
 
   * `{:error, :not_defined}` if the calendar
@@ -752,24 +800,10 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
-      iex> Cldr.Calendar.week_of_year ~d[2019-01-01]
-      {2019, 1}
-      iex> Cldr.Calendar.week_of_year ~d[2019-12-01]
-      {2019, 48}
-      iex> Cldr.Calendar.week_of_year ~d[2019-52-01]NRF
-      {2019, 52}
-      iex> Cldr.Calendar.week_of_year ~d[2019-26-01]NRF
-      {2019, 26}
-      iex> Cldr.Calendar.week_of_year ~d[2019-12-01]Julian
-      {:error, :not_defined}
-
   """
-  @spec week_of_year(Date.t()) :: {Calendar.year(), week()}
-
-  def week_of_year(date) do
+  def week_of_month(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
-    calendar.week_of_year(year, month, day)
+    calendar.week_of_month(year, month, day)
   end
 
   @doc """

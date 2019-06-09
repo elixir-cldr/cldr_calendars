@@ -138,6 +138,18 @@ defmodule Cldr.Calendar.Julian do
   end
 
   @doc """
+  Calculates the week of the year from the given `year`, `month`, and `day`.
+  It is an integer from 1 to 53.
+
+  """
+  @spec week_of_month(year, month, day) :: {:error, :not_defined}
+  @impl true
+
+  def week_of_month(_year, _month, _day) do
+    {:error, :not_defined}
+  end
+
+  @doc """
   Calculates the day and era from the given `year`, `month`, and `day`.
 
   """

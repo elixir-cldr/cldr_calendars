@@ -72,6 +72,12 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
+  def week_of_month(year, week, day, %Config{calendar: calendar} = config) do
+    month = month_of_year(year, week, day, config)
+    %Date.Range{first: first} = calendar.month(year, month)
+    {month, week - first.month + 1}
+  end
+
   def day_of_era(year, week, day, config) do
     with {:ok, date} <- Date.new(year, week, day, config.calendar) do
       {:ok, %{year: year, month: month, day: day}} = Date.convert(date, Calendar.ISO)
