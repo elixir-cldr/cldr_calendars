@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v0.9.0
+
+This is the changelog for Cldr v0.9.0 released on June 9th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+
+## Breaking changes
+
+* Depends on Elixir 1.8 and above since it requires recent `Calendar` functionality.
+
 # Changelog for Cldr Calendars v0.8.0
 
 This is the changelog for Cldr v0.8.0 released on June 8th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
