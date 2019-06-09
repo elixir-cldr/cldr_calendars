@@ -1,20 +1,22 @@
 defmodule Cldr.Calendar.FiscalYear do
   @fiscal_year_data "./priv/fiscal_years_by_territory.csv"
 
-  [_headings | rows] = @fiscal_year_data
-                      |> File.read!()
-                      |> String.split("\r\n")
+  [_headings | rows] =
+    @fiscal_year_data
+    |> File.read!()
+    |> String.split("\r\n")
 
-  rows = Enum.map(rows, fn row ->
-    String.split(row, ~r/(,\"|\",)/)
-    |> Enum.flat_map(fn r ->
-      if String.contains?(r, "\"") do
-        ["dont_care"]
-      else
-        String.split(r, ",")
-      end
+  rows =
+    Enum.map(rows, fn row ->
+      String.split(row, ~r/(,\"|\",)/)
+      |> Enum.flat_map(fn r ->
+        if String.contains?(r, "\"") do
+          ["dont_care"]
+        else
+          String.split(r, ",")
+        end
+      end)
     end)
-  end)
 
   @fiscal_year_by_territory rows
                             |> Enum.map(fn

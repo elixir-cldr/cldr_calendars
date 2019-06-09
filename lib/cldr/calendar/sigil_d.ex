@@ -7,11 +7,32 @@ defmodule Cldr.Calendar.Sigils do
     end
   end
 
-  def sigil_d(date, calendar) do
-    [year, month, day] =
-      date
-      |> String.split("-")
-      |> Enum.map(&String.to_integer/1)
+  def sigil_d(<< year :: bytes-4, "-", month :: bytes-2, "-", day :: bytes-2 >>, calendar) do
+    to_date(year, month, day, calendar)
+  end
+
+  def sigil_d(<< "-", year :: bytes-4, "-", month :: bytes-2, "-", day :: bytes-2 >>, calendar) do
+    to_date("-" <> year, month, day, calendar)
+  end
+
+  def sigil_d(<< year :: bytes-4, "-", month :: bytes-2, "-", day :: bytes-2, " C.E." >>, calendar) do
+    to_date(year, month, day, calendar)
+  end
+
+  def sigil_d(<< year :: bytes-4, "-", month :: bytes-2, "-", day :: bytes-2, " B.C.E." >>, calendar) do
+    to_date("-" <> year, month, day, calendar)
+  end
+
+  def sigil_d(<< year :: bytes-4, "-W", month :: bytes-2, "-", day :: bytes-2 >>, calendar) do
+    to_date(year, month, day, calendar)
+  end
+
+  def sigil_d(<< year :: bytes-4, "-W", month :: bytes-2, "-", day :: bytes-1 >>, calendar) do
+    to_date(year, month, day, calendar)
+  end
+
+  defp to_date(year, month, day, calendar) do
+    [year, month, day] = Enum.map([year, month, day], &String.to_integer/1)
 
     with {:ok, calendar} <- calendar_from_charlist(calendar),
          {:ok, date} <- Date.new(year, month, day, calendar) do

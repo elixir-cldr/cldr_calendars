@@ -91,7 +91,7 @@ defmodule Cldr.Calendar.Base.Month do
         {@january, week_of_year}
 
       true ->
-        IO.puts "y1: #{y1}; y2: #{y2}; year: #{year}"
+        IO.puts("y1: #{y1}; y2: #{y2}; year: #{year}")
     end
   end
 

@@ -78,7 +78,8 @@ defmodule Cldr.Calendar.Interval do
       #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 14, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 26, year: 2019}>
 
   """
-  @spec quarter(Calendar.year(), Cldr.Calendar.quarter(), Cldr.Calendar.calendar()) :: Date.Range.t()
+  @spec quarter(Calendar.year(), Cldr.Calendar.quarter(), Cldr.Calendar.calendar()) ::
+          Date.Range.t()
   @spec quarter(Date.t()) :: Date.Range.t()
 
   def quarter(date) do
@@ -284,7 +285,7 @@ defmodule Cldr.Calendar.Interval do
 
   """
   @spec compare(range_1 :: Date.Range.t(), range_2 :: Date.Range.t()) ::
-          Cldr.Calendar.interval_relation
+          Cldr.Calendar.interval_relation()
 
   def compare(
         %Date.Range{first_in_iso_days: first, last_in_iso_days: last},
@@ -325,12 +326,11 @@ defmodule Cldr.Calendar.Interval do
       r1.first_in_iso_days > r2.first_in_iso_days && r1.last_in_iso_days < r2.last_in_iso_days ->
         :during
 
-      r2.first_in_iso_days == r1.first_in_iso_days && r1.last_in_iso_days > r2.last_in_iso_days->
+      r2.first_in_iso_days == r1.first_in_iso_days && r1.last_in_iso_days > r2.last_in_iso_days ->
         :started_by
 
       r2.last_in_iso_days > r1.first_in_iso_days && r2.last_in_iso_days < r1.last_in_iso_days ->
         :overlapped_by
     end
   end
-
 end

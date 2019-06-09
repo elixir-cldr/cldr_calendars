@@ -126,7 +126,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 5.
 
       """
-      @spec week_of_month(year, Cldr.Calendar.week, day) :: {month, Cldr.Calendar.week()}
+      @spec week_of_month(year, Cldr.Calendar.week(), day) :: {month, Cldr.Calendar.week()}
       @impl true
 
       def week_of_month(year, week, day) do
