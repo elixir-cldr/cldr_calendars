@@ -7,7 +7,7 @@ defmodule Cldr.Calendar.MixProject do
     [
       app: :ex_cldr_calendars,
       version: @version,
-      elixir: "~> 1.5",
+      elixir: "~> 1.8",
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
       name: "Cldr Calendars",

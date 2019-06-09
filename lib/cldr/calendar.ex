@@ -111,7 +111,7 @@ defmodule Cldr.Calendar do
   Returns the `month` for a given `year`, `month` or `week`, and `day`
   for a a calendar.
 
-  The `month_in_year` is calculated based upon the calendar configuration.
+  The `month_of_year` is calculated based upon the calendar configuration.
 
   """
   @callback month_of_year(
