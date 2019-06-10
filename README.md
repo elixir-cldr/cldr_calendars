@@ -3,6 +3,18 @@
 [![Hex pm](http://img.shields.io/hexpm/v/ex_cldr_dates_times.svg?style=flat)](https://hex.pm/packages/ex_cldr_calendars)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/kipcole9/cldr_calendars/blob/master/LICENSE)
 
+# Roadmap to version 1.0
+
+Although functionally complete for the planned 1.0 version, there remain some final steps:
+
+* [ ] Tests for `Cldr.Calendar.week_of_month/1`
+* [ ] Tests for `Cldr.Calendar.weeks_in_year/1`
+* [ ] Revisit calendar configuration. The terms and structure aren't very intuitive
+* [ ] Review all documentation
+* [ ] Dialyzer
+
+# Introduction
+
 > My wife's jealousy is getting ridiculous. The other day she looked at my calendar and wanted to know who May was.
 > -- Rodney Dangerfield
 
@@ -385,7 +397,9 @@ For a simple configuration the following steps may be used:
 1. Create a backend module.
 ```
 defmodule MyApp.Cldr do
-  use Cldr, locales: ["en", "fr", "jp", "ar"]
+  use Cldr,
+    locales: ["en", "fr", "jp", "ar"],
+    providers: [Cldr.Number]
 end
 ```
 
