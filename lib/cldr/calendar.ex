@@ -512,6 +512,9 @@ defmodule Cldr.Calendar do
 
   * `year` is any integer year number
 
+  * `calendar` is any module that implements the `Calendar` and
+    `Cldr.Calendar` behaviours or `Calendar.ISO`
+
   ## Examples
 
       iex> Cldr.Calendar.first_gregorian_day_of_year 2019, Cldr.Calendar.Gregorian
@@ -520,12 +523,16 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.first_gregorian_day_of_year 2019, Cldr.Calendar.NRF
       %Date{calendar: Cldr.Calendar.Gregorian, day: 3, month: 2, year: 2019}
 
+      iex> Cldr.Calendar.first_gregorian_day_of_year ~D[2019-12-01]
+      ~D[2019-01-01]
+
   """
   @spec first_gregorian_day_of_year(Calendar.year(), calendar()) ::
           {:ok, Date.t()} | {:error, :invalid_date}
 
   def first_gregorian_day_of_year(year, Calendar.ISO) do
-    first_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
+    day = first_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
+    %{day | calendar: Calendar.ISO}
   end
 
   def first_gregorian_day_of_year(year, calendar) do
@@ -539,6 +546,10 @@ defmodule Cldr.Calendar do
     end
   end
 
+  def first_gregorian_day_of_year(%{year: year, calendar: calendar}) do
+    first_gregorian_day_of_year(year, calendar)
+  end
+
   @doc """
   Returns the gregorian date of the first day of a `year`
   for a `calendar`.
@@ -546,6 +557,9 @@ defmodule Cldr.Calendar do
   ## Arguments
 
   * `year` is any integer year number
+
+  * `calendar` is any module that implements the `Calendar` and
+    `Cldr.Calendar` behaviours or `Calendar.ISO`
 
   ## Examples
 
@@ -555,12 +569,16 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.last_gregorian_day_of_year 2019, Cldr.Calendar.NRF
       %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2020}
 
+      iex> Cldr.Calendar.last_gregorian_day_of_year ~D[2019-12-01]
+      ~D[2019-12-31]
+
   """
   @spec last_gregorian_day_of_year(Calendar.year(), calendar()) ::
           {:ok, Date.t()} | {:error, :invalid_date}
 
   def last_gregorian_day_of_year(year, Calendar.ISO) do
-    last_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
+    day = last_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
+    %{day | calendar: Calendar.ISO}
   end
 
   def last_gregorian_day_of_year(year, calendar) do
@@ -701,6 +719,11 @@ defmodule Cldr.Calendar do
   """
   @spec month_of_year(Date.t()) :: Calendar.month()
 
+  def month_of_year(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> month_of_year
+  end
+
   def month_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.month_of_year(year, month, day)
@@ -738,6 +761,11 @@ defmodule Cldr.Calendar do
 
   """
   @spec week_of_year(Date.t()) :: {Calendar.year(), week()}
+
+  def week_of_year(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> week_of_year
+  end
 
   def week_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
@@ -777,6 +805,11 @@ defmodule Cldr.Calendar do
   """
   @spec iso_week_of_year(Date.t()) :: {Calendar.year(), week()}
 
+  def iso_week_of_year(%{calendar: Calendar.ISO } = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> iso_week_of_year
+  end
+
   def iso_week_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.iso_week_of_year(year, month, day)
@@ -801,6 +834,13 @@ defmodule Cldr.Calendar do
   ## Examples
 
   """
+  @spec week_of_month(Date.t()) :: {Calendar.month(), week()}
+
+  def week_of_month(%{calendar: Calendar.ISO } = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> week_of_month
+  end
+
   def week_of_month(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.week_of_month(year, month, day)

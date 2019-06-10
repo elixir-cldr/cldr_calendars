@@ -39,6 +39,11 @@ defmodule Cldr.Calendar.Interval do
   @spec year(Calendar.year(), Cldr.Calendar.calendar()) :: Date.Range.t()
   @spec year(Date.t()) :: Date.Range.t()
 
+  def year(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> year
+  end
+
   def year(%{year: _, month: _, day: _} = date) do
     year(date.year, date.calendar)
   end
@@ -82,6 +87,11 @@ defmodule Cldr.Calendar.Interval do
           Date.Range.t()
   @spec quarter(Date.t()) :: Date.Range.t()
 
+  def quarter(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> quarter
+  end
+
   def quarter(date) do
     quarter = Cldr.Calendar.quarter_of_year(date)
     quarter(date.year, quarter, date.calendar)
@@ -124,6 +134,11 @@ defmodule Cldr.Calendar.Interval do
   """
   @spec month(Calendar.year(), Calendar.month(), Cldr.Calendar.calendar()) :: Date.Range.t()
   @spec month(Date.t()) :: Date.Range.t()
+
+  def month(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> month
+  end
 
   def month(date) do
     month = Cldr.Calendar.month_of_year(date)
@@ -177,6 +192,11 @@ defmodule Cldr.Calendar.Interval do
   @spec week(Calendar.year(), Cldr.Calendar.week(), Cldr.Calendar.calendar()) :: Date.Range.t()
   @spec week(Date.t()) :: Date.Range.t()
 
+  def week(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> week
+  end
+
   def week(date) do
     {year, week} = Cldr.Calendar.week_of_year(date)
     week(year, week, date.calendar)
@@ -222,6 +242,11 @@ defmodule Cldr.Calendar.Interval do
   """
   @spec day(Calendar.year(), Calendar.day(), Cldr.Calendar.calendar()) :: Date.Range.t()
   @spec day(Date.t()) :: Date.Range.t()
+
+  def day(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> day
+  end
 
   def day(date) do
     Date.range(date, date)
