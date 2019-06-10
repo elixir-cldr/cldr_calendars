@@ -175,6 +175,20 @@ defmodule Cldr.Calendar do
   @callback calendar_base() :: :week | :month
 
   @doc """
+  Returns the number of periods (which are
+  months in a month calendar and weeks in a
+  week calendar) in a year
+
+  """
+  @callback periods_in_year(year :: Calendar.year()) :: week() | Calendar.month()
+
+  @doc """
+  Returns the number of weeks in a year
+
+  """
+  @callback weeks_in_year(year :: Calendar.year()) :: week()
+
+  @doc """
   Returns the number of days in a year
 
   """
@@ -206,7 +220,7 @@ defmodule Cldr.Calendar do
   given week for a calendar year.
 
   """
-  @callback week(year :: Calendar.year(), week :: Cldr.Calendar.week()) ::
+  @callback week(year :: Calendar.year(), week :: week()) ::
               Date.Range.t() | {:error, :not_defined}
 
   @doc """
@@ -220,7 +234,7 @@ defmodule Cldr.Calendar do
   """
   @callback plus(
               year :: Calendar.year(),
-              month :: Calendar.month() | Cldr.Calendar.week(),
+              month :: Calendar.month() | week(),
               day :: Calendar.day(),
               months_or_quarters :: :months | :quarters,
               increment :: integer,
@@ -879,6 +893,16 @@ defmodule Cldr.Calendar do
   def day_of_year(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date
     calendar.day_of_year(year, month, day)
+  end
+
+  @spec weeks_in_year(Date.t) :: Cldr.Calendar.week()
+  def weeks_in_year(%{year: year, calendar: calendar}) do
+    weeks_in_year(year, calendar)
+  end
+
+  @spec weeks_in_year(Calendar.year(), calendar) :: Cldr.Calendar.week()
+  def weeks_in_year(year, calendar) do
+    calendar.weeks_in_year(year)
   end
 
   @doc """
@@ -2332,8 +2356,8 @@ defmodule Cldr.Calendar do
   @valid_year [:majority, :beginning, :ending]
 
   @doc false
-  def validate_config(config, :week) do
-    with :ok <- assert(config.day in 1..7, day_error(config.day)),
+  def validate_config(config, calendar_type) do
+    with :ok <- validate_day(config, calendar_type),
          :ok <- assert(config.month in 1..12, month_error(config.month)),
          :ok <- assert(config.year in @valid_year, year_error(config.year)),
          :ok <- assert(config.min_days in 1..7, min_days_for_locale_error(config.min_days)),
@@ -2357,16 +2381,19 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def validate_config(config, :month) do
-    validate_config(config, :week)
-  end
-
-  @doc false
   def validate_config!(config, calendar_type) do
     case validate_config(config, calendar_type) do
       {:ok, config} -> config
       {:error, message} -> raise ArgumentError, message
     end
+  end
+
+  defp validate_day(config, :week) do
+    assert(config.day in 1..7, day_error(config.day))
+  end
+
+  defp validate_day(config, :month) do
+    assert(config.day in 1..7 or config.day == :first, day_error(config.day))
   end
 
   defp assert(true, _) do

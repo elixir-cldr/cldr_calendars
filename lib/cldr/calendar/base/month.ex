@@ -43,6 +43,13 @@ defmodule Cldr.Calendar.Base.Month do
     month
   end
 
+  def week_of_year(year, month, day, %Config{day: :first} = config) do
+    this_day = date_to_iso_days(year, month, day, config)
+    first_day = date_to_iso_days(year, 1, 1, config)
+    week = div(this_day - first_day, @days_in_week) + 1
+    {year, week}
+  end
+
   def week_of_year(year, month, day, config) do
     iso_days = date_to_iso_days(year, month, day, config)
     first_gregorian_day_of_year = Base.Week.first_gregorian_day_of_year(year, config)
@@ -67,6 +74,13 @@ defmodule Cldr.Calendar.Base.Month do
       min_days: @iso_week_min_days,
       month: @january
     })
+  end
+
+  def week_of_month(year, month, day, %Config{day: :first} = config) do
+    this_day = date_to_iso_days(year, month, day, config)
+    first_day = date_to_iso_days(year, month, 1, config)
+    week = div(this_day - first_day, @days_in_week) + 1
+    {year, week}
   end
 
   def week_of_month(year, month, day, config) do
@@ -96,6 +110,21 @@ defmodule Cldr.Calendar.Base.Month do
 
   def months_in_year(year, _config) do
     Calendar.ISO.months_in_year(year)
+  end
+
+  def weeks_in_year(year, %Config{day: :first} = config) do
+    first_day = first_gregorian_day_of_year(year, config)
+    last_day = last_gregorian_day_of_year(year, config)
+
+    Float.ceil((last_day - first_day) / @days_in_week) |> trunc
+  end
+
+  def weeks_in_year(year, config) do
+    if Base.Week.long_year?(year, config) do
+      Base.Week.weeks_in_long_year()
+    else
+      Base.Week.weeks_in_normal_year()
+    end
   end
 
   def days_in_year(year, config) do
@@ -148,6 +177,22 @@ defmodule Cldr.Calendar.Base.Month do
          {:ok, end_date} <- Date.new(year, month, ending_day, config.calendar) do
       Date.range(start_date, end_date)
     end
+  end
+
+  def week(year, week, %{day: :first} = config) do
+    first_day = first_gregorian_day_of_year(year, config)
+    last_day = last_gregorian_day_of_year(year, config)
+
+    start_day = first_day + ((week - 1) * @days_in_week)
+    end_day = min(start_day + @days_in_week - 1, last_day)
+
+    {year, month, day} = date_from_iso_days(start_day, config)
+    {:ok, start_date} = Date.new(year, month, day, config.calendar)
+
+    {year, month, day} = date_from_iso_days(end_day, config)
+    {:ok, end_date} = Date.new(year, month, day, config.calendar)
+
+    Date.range(start_date, end_date)
   end
 
   def week(year, week, config) do

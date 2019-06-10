@@ -172,6 +172,9 @@ defmodule Cldr.Calendar.Compiler.Week do
       a week in week-based calendars..
 
       """
+      @spec periods_in_year(year) :: Calendar.week()
+      @impl true
+
       def periods_in_year(year) do
         weeks_in_year(year)
       end
@@ -180,6 +183,9 @@ defmodule Cldr.Calendar.Compiler.Week do
       Returns the number weeks in a given year.
 
       """
+      @spec weeks_in_year(year) :: Calendar.week()
+      @impl true
+
       def weeks_in_year(year) do
         Week.weeks_in_year(year, __config__())
       end
@@ -188,6 +194,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       Returns the number days in a given year.
 
       """
+      @spec days_in_year(year) :: Calendar.day()
       @impl true
 
       def days_in_year(year) do
@@ -198,7 +205,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       Returns how many days there are in the given year-month.
 
       """
-      @spec days_in_month(year, month) :: 28..31
+      @spec days_in_month(year, month) :: Calendar.day()
       @impl true
 
       def days_in_month(year, month) do

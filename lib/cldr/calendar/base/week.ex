@@ -106,7 +106,15 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def weeks_in_year(year, config) do
-    if long_year?(year, config), do: @weeks_in_long_year, else: @weeks_in_normal_year
+    if long_year?(year, config), do: weeks_in_long_year(), else: weeks_in_normal_year()
+  end
+
+  def weeks_in_long_year do
+    @weeks_in_long_year
+  end
+
+  def weeks_in_normal_year do
+    @weeks_in_normal_year
   end
 
   def days_in_year(year, config) do

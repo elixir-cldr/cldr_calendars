@@ -196,8 +196,14 @@ defmodule Cldr.Calendar.Julian do
   a week in week-based calendars..
 
   """
+  @impl true
   def periods_in_year(_year) do
     @months_in_year
+  end
+
+  @impl true
+  def weeks_in_year(_year) do
+    {:error, :not_defined}
   end
 
   @doc """
@@ -205,7 +211,6 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @impl true
-
   def days_in_year(year) do
     if leap_year?(year), do: 366, else: 365
   end

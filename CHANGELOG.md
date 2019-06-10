@@ -6,6 +6,8 @@ This is the changelog for Cldr v0.10.0 released on June 10th, 2019.  For older c
 
 * Adds `Cldr.Calendar.week_of_month/1` and `Cldr.Calendar` callback `week_of_month/4` to return the week of a month. The weeks are calculated on the basis of the calendar configuration. As a result, the week of the month, like the week of the year, may be in a different Gregorian year to the Gregorian date.
 
+* Adds a calendar configuration where weeks start on the first day of the year. This configuration is valid only for `:month` based calendars.  The configuration option `day: :first` triggers this behaviour. This configuration can result in the last week of the year being less than 7 days.
+
 * Adds `Cldr.Calendar.inspect/2` that can be used as an `:inspect_fun` option in `Inspect.Opts` for Elixir version 1.9 and later.  It can be configured in `IEx` by:
 
 ```elixir
