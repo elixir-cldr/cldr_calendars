@@ -72,9 +72,9 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  def week_of_month(year, week, day, %Config{calendar: calendar} = config) do
+  def week_of_month(year, week, day, config) do
     month = month_of_year(year, week, day, config)
-    %Date.Range{first: first} = calendar.month(year, month)
+    %Date.Range{first: first} = month(year, month, config)
     {month, week - first.month + 1}
   end
 

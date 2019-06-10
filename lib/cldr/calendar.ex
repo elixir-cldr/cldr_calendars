@@ -805,7 +805,7 @@ defmodule Cldr.Calendar do
   """
   @spec iso_week_of_year(Date.t()) :: {Calendar.year(), week()}
 
-  def iso_week_of_year(%{calendar: Calendar.ISO } = date) do
+  def iso_week_of_year(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
     |> iso_week_of_year
   end
@@ -836,7 +836,7 @@ defmodule Cldr.Calendar do
   """
   @spec week_of_month(Date.t()) :: {Calendar.month(), week()}
 
-  def week_of_month(%{calendar: Calendar.ISO } = date) do
+  def week_of_month(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
     |> week_of_month
   end

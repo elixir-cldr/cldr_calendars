@@ -358,4 +358,9 @@ defmodule Cldr.Calendar.Interval do
         :overlapped_by
     end
   end
+
+  @doc false
+  def to_iso(%Date.Range{first: first, last: last}) do
+    Date.range(Date.convert!(first, Calendar.ISO), Date.convert!(last, Calendar.ISO))
+  end
 end
