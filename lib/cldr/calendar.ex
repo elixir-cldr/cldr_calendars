@@ -725,9 +725,9 @@ defmodule Cldr.Calendar do
       1
       iex> Cldr.Calendar.month_of_year ~d[2019-12-01]
       12
-      iex> Cldr.Calendar.month_of_year ~d[2019-52-01]NRF
+      iex> Cldr.Calendar.month_of_year ~d[2019-52-01 NRF]
       12
-      iex> Cldr.Calendar.month_of_year ~d[2019-26-01]NRF
+      iex> Cldr.Calendar.month_of_year ~d[2019-26-01 NRF]
       6
 
   """
@@ -766,11 +766,11 @@ defmodule Cldr.Calendar do
       {2019, 1}
       iex> Cldr.Calendar.week_of_year ~d[2019-12-01]
       {2019, 48}
-      iex> Cldr.Calendar.week_of_year ~d[2019-52-01]NRF
+      iex> Cldr.Calendar.week_of_year ~d[2019-52-01 NRF]
       {2019, 52}
-      iex> Cldr.Calendar.week_of_year ~d[2019-26-01]NRF
+      iex> Cldr.Calendar.week_of_year ~d[2019-26-01 NRF]
       {2019, 26}
-      iex> Cldr.Calendar.week_of_year ~d[2019-12-01]Julian
+      iex> Cldr.Calendar.week_of_year ~d[2019-12-01 C.E. Julian]
       {:error, :not_defined}
 
   """
@@ -809,11 +809,11 @@ defmodule Cldr.Calendar do
       {2019, 1}
       iex> Cldr.Calendar.iso_week_of_year ~d[2019-02-01]
       {2019, 5}
-      iex> Cldr.Calendar.iso_week_of_year ~d[2019-52-01]NRF
+      iex> Cldr.Calendar.iso_week_of_year ~d[2019-52-01 NRF]
       {2020, 4}
-      iex> Cldr.Calendar.iso_week_of_year ~d[2019-26-01]NRF
+      iex> Cldr.Calendar.iso_week_of_year ~d[2019-26-01 NRF]
       {2019, 30}
-      iex> Cldr.Calendar.iso_week_of_year ~d[2019-12-01]Julian
+      iex> Cldr.Calendar.iso_week_of_year ~d[2019-12-01 C.E. Julian]
       {:error, :not_defined}
 
   """
@@ -882,9 +882,9 @@ defmodule Cldr.Calendar do
       366
       iex> Cldr.Calendar.day_of_year ~d[2019-12-31]
       365
-      iex> Cldr.Calendar.day_of_year ~d[2019-52-07]NRF
+      iex> Cldr.Calendar.day_of_year ~d[2019-52-07 NRF]
       365
-      iex> Cldr.Calendar.day_of_year ~d[2012-53-07]NRF
+      iex> Cldr.Calendar.day_of_year ~d[2012-53-07 NRF]
       372
 
   """
@@ -895,7 +895,7 @@ defmodule Cldr.Calendar do
     calendar.day_of_year(year, month, day)
   end
 
-  @spec weeks_in_year(Date.t) :: Cldr.Calendar.week()
+  @spec weeks_in_year(Date.t()) :: Cldr.Calendar.week()
   def weeks_in_year(%{year: year, calendar: calendar}) do
     weeks_in_year(year, calendar)
   end
@@ -1230,9 +1230,9 @@ defmodule Cldr.Calendar do
 
       iex> import Cldr.Calendar.Sigils
       iex> Cldr.Calendar.date_to_string ~d[2019-12-04]
-      "2019-12-04"
-      iex> Cldr.Calendar.date_to_string ~d[2019-23-04]NRF
-      "2019-W23-4"
+      "2019-12-04 Gregorian"
+      iex> Cldr.Calendar.date_to_string ~d[2019-23-04 NRF]
+      "2019-W23-4 NRF"
 
   """
   @spec date_to_string(Date.t()) :: String.t()
@@ -1256,12 +1256,12 @@ defmodule Cldr.Calendar do
 
       iex> import Cldr.Calendar.Sigils
       Cldr.Calendar.Sigils
-      iex> inspect ~d[2019-01-01]ISOWeek, inspect_fun: &Cldr.Calendar.inspect/2
-      "~d[2019-W01-1]ISOWeek"
-      iex> inspect ~d[2019-01-01]Gregorian, inspect_fun: &Cldr.Calendar.inspect/2
-      "~d[2019-01-01]Gregorian"
-      iex> inspect ~d[2019-01-01]Julian, inspect_fun: &Cldr.Calendar.inspect/2
-      "~d[2019-01-01 C.E.]Julian"
+      iex> inspect ~d[2019-01-01 ISOWeek], inspect_fun: &Cldr.Calendar.inspect/2
+      "~d[2019-W01-1 ISOWeek]"
+      iex> inspect ~d[2019-01-01 Gregorian], inspect_fun: &Cldr.Calendar.inspect/2
+      "~d[2019-01-01 Gregorian]"
+      iex> inspect ~d[2019-01-01 Julian], inspect_fun: &Cldr.Calendar.inspect/2
+      "~d[2019-01-01 C.E. Julian]"
 
   """
   @spec inspect(term, Inspect.Opts.t()) :: Inspect.Algebra.t()
@@ -1269,20 +1269,12 @@ defmodule Cldr.Calendar do
     Inspect.inspect(date, opts)
   end
 
-  def inspect(%Date{calendar: calendar} = date, _opts) do
-    "~d[" <> to_string(date) <> "]" <> name(inspect(calendar))
+  def inspect(%Date{calendar: calendar, year: year, month: month, day: day}, opts) do
+    calendar.inspect_date(year, month, day, opts)
   end
 
   def inspect(term, opts) do
     Inspect.inspect(term, opts)
-  end
-
-  defp name("Cldr.Calendar." <> calendar_name) do
-    calendar_name
-  end
-
-  defp name(calendar_name) do
-    calendar_name
   end
 
   @doc """
@@ -2469,6 +2461,14 @@ defmodule Cldr.Calendar do
 
   def zero_pad(val, count) do
     "-" <> zero_pad(-val, count)
+  end
+
+  @doc false
+  def calendar_name(module) when is_atom(module) do
+    case Kernel.inspect(module) do
+      "Cldr.Calendar." <> calendar -> calendar
+      calendar -> calendar
+    end
   end
 
   defdelegate day_of_week(date), to: Date

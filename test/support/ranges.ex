@@ -1,3 +1,5 @@
+require Cldr.Calendar.Compiler.Month
+
 defmodule Cldr.Calendar.Range do
   defmodule Feb do
     use Cldr.Calendar.Base.Month,

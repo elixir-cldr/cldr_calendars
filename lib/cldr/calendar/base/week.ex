@@ -333,6 +333,20 @@ defmodule Cldr.Calendar.Base.Week do
       Cldr.Calendar.zone_to_string(utc_offset, std_offset, zone_abbr, time_zone)
   end
 
+  def naive_datetime_to_string(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        microsecond
+      ) do
+    date_to_string(year, month, day) <>
+      " " <>
+      Calendar.ISO.time_to_string(hour, minute, second, microsecond)
+  end
+
   defp lpad(week) when week < 10 do
     "0#{week}"
   end

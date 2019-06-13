@@ -42,6 +42,7 @@ defmodule Cldr.Calendar.Interval do
   def year(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
     |> year
+    |> coerce_iso_calendar
   end
 
   def year(%{year: _, month: _, day: _} = date) do
@@ -90,6 +91,7 @@ defmodule Cldr.Calendar.Interval do
   def quarter(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
     |> quarter
+    |> coerce_iso_calendar
   end
 
   def quarter(date) do
@@ -138,6 +140,7 @@ defmodule Cldr.Calendar.Interval do
   def month(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
     |> month
+    |> coerce_iso_calendar
   end
 
   def month(date) do
@@ -195,6 +198,7 @@ defmodule Cldr.Calendar.Interval do
   def week(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
     |> week
+    |> coerce_iso_calendar
   end
 
   def week(date) do
@@ -246,6 +250,7 @@ defmodule Cldr.Calendar.Interval do
   def day(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
     |> day
+    |> coerce_iso_calendar
   end
 
   def day(date) do
@@ -293,19 +298,24 @@ defmodule Cldr.Calendar.Interval do
 
   ## Examples
 
-      iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-01]), Cldr.Calendar.Interval.day(~D[2019-01-02])
+      iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-01]),
+      ...> Cldr.Calendar.Interval.day(~D[2019-01-02])
       :meets
 
-      iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-01]), Cldr.Calendar.Interval.day(~D[2019-01-03])
+      iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-01]),
+      ...> Cldr.Calendar.Interval.day(~D[2019-01-03])
       :precedes
 
-      iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-03]), Cldr.Calendar.Interval.day(~D[2019-01-01])
+      iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-03]),
+      ...> Cldr.Calendar.Interval.day(~D[2019-01-01])
       :preceded_by
 
-      iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-02]), Cldr.Calendar.Interval.day(~D[2019-01-01])
+      iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-02]),
+      ...> Cldr.Calendar.Interval.day(~D[2019-01-01])
       :met_by
 
-      iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-02]), Cldr.Calendar.Interval.day(~D[2019-01-02])
+      iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-02]),
+      ...> Cldr.Calendar.Interval.day(~D[2019-01-02])
       :equals
 
   """
@@ -360,7 +370,14 @@ defmodule Cldr.Calendar.Interval do
   end
 
   @doc false
-  def to_iso(%Date.Range{first: first, last: last}) do
+  def to_iso_calendar(%Date.Range{first: first, last: last}) do
     Date.range(Date.convert!(first, Calendar.ISO), Date.convert!(last, Calendar.ISO))
+  end
+
+  @doc false
+  def coerce_iso_calendar(%Date.Range{first: first, last: last}) do
+    first = %{first | calendar: Calendar.ISO}
+    last = %{last | calendar: Calendar.ISO}
+    Date.range(first, last)
   end
 end

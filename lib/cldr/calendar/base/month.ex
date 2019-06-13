@@ -183,7 +183,7 @@ defmodule Cldr.Calendar.Base.Month do
     first_day = first_gregorian_day_of_year(year, config)
     last_day = last_gregorian_day_of_year(year, config)
 
-    start_day = first_day + ((week - 1) * @days_in_week)
+    start_day = first_day + (week - 1) * @days_in_week
     end_day = min(start_day + @days_in_week - 1, last_day)
 
     {year, month, day} = date_from_iso_days(start_day, config)
