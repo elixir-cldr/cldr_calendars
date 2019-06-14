@@ -199,27 +199,38 @@ defmodule Cldr.Calendar.Base.Week do
     date_from_iso_days(iso_days, config)
   end
 
-  def plus(year, week, day, %{weeks_in_month: weeks_in_month} = config, :months, months, _options) do
+  def plus(year, week, day, config, :months, months, _options) do
     {quarters, months_remaining} = Cldr.Math.div_mod(months, @months_in_quarter)
-    weeks_from_months = weeks_from_months(weeks_in_month, months_remaining)
+    weeks_from_months = weeks_from_months(months_remaining, config)
     days = (quarters * @weeks_in_quarter + weeks_from_months) * days_in_week() * sign(months)
     iso_days = date_to_iso_days(year, week, day, config) + days
     date_from_iso_days(iso_days, config)
   end
 
-  defp weeks_from_months(_weeks_in_month, months) when months == 0 do
+  def weeks_from_months(months, _config) when months == 0 do
     0
   end
 
   # When months is positive we just sum the first n members of the
   # weeks_in_month list.
-  defp weeks_from_months(weeks_in_month, months) when months > 0 do
+  def weeks_from_months(months, %{weeks_in_month: weeks_in_month}) when months > 0 do
+    weeks_in_month
+    |> Enum.take(months)
+    |> Enum.sum()
+  end
+
+  def weeks_from_months(months, %{weeks_in_month: weeks_in_month}) when months < 0 do
+    {_, weeks_in_month} = List.pop_at(weeks_in_month, -1)
     Enum.take(weeks_in_month, months) |> Enum.sum()
   end
 
-  defp weeks_from_months(weeks_in_month, months) when months < 0 do
-    {_, weeks_in_month} = List.pop_at(weeks_in_month, -1)
-    Enum.take(weeks_in_month, months) |> Enum.sum()
+  # For weeks <= 13
+  def month_from_weeks(weeks, %Config{weeks_in_month: [m1, m2 ,m3]}) do
+    cond do
+      weeks <= m1 ->  1
+      weeks <= m1 + m2 -> 2
+      weeks <= m1 + m2 + m3 -> 3
+    end
   end
 
   defp sign(number) when number < 0, do: -1

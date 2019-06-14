@@ -4,9 +4,7 @@ This is the changelog for Cldr v0.10.0 released on June 10th, 2019.  For older c
 
 ## Breaking changes
 
-* The format produced by inspecting a Date (or DateTime or NaiveDateTime) has changed. The parsing of dates in `sigil_d` (the `~d` sigil) has also changed in order to facilitate roundtrip conversions.
-
-Previously a date would inspect as (using the NRF calendar) `~d[2019-W01-1]NRF`. It now inspects as `~d[2019-W01-1 NRF]`.  The same approach is used for all calendars.  See the examples in `Cldr.Calendar.Sigils`
+* The format produced by inspecting a Date (or DateTime or NaiveDateTime) has changed. The parsing of dates in `sigil_d` (the `~d` sigil) has also changed in order to facilitate roundtrip conversions. Previously a date would inspect as (using the NRF calendar) `~d[2019-W01-1]NRF`. It now inspects as `~d[2019-W01-1 NRF]`.  The same approach is used for all calendars.  See the examples in `Cldr.Calendar.Sigils`
 
 ## Enhancements
 
@@ -18,7 +16,7 @@ Previously a date would inspect as (using the NRF calendar) `~d[2019-W01-1]NRF`.
 
 * Adds a calendar configuration where weeks start on the first day of the year. This configuration is valid only for `:month` based calendars.  The configuration option `day: :first` triggers this behaviour. This configuration can result in the last week of the year being less than 7 days.
 
-* Adds `Cldr.Calendar.inspect/2` that can be used as an `:inspect_fun` option in `Inspect.Opts` for Elixir version 1.9.  It will not be required for Elixir 1.10 and later. It can be configured in `IEx` by:
+* Adds `Cldr.Calendar.inspect/2` that can be used as an `:inspect_fun` option in `Inspect.Opts` for Elixir version 1.9.  It will not be required for Elixir 1.10 and later since [this commit](https://github.com/elixir-lang/elixir/commit/23a68035be96717ca5f8fd20355bdb7bc5ed38f8) introduces `inspect_*` callbacks for `Date`, `Time`, `DateTime` and `NaiveDateTime`. An `:inspect_fun` can be configured in `IEx` by:
 
 ```elixir
 iex> IEx.configure(inspect: [inspect_fun: &Cldr.Calendar.inspect/2])

@@ -9,6 +9,7 @@ defmodule Cldr.Calendar.Base.Month do
   @days_in_week 7
   @quarters_in_year 4
   @months_in_quarter 3
+  @weeks_in_quarter 13
   @iso_week_first_day 1
   @iso_week_min_days 4
   @january 1
@@ -80,16 +81,18 @@ defmodule Cldr.Calendar.Base.Month do
     this_day = date_to_iso_days(year, month, day, config)
     first_day = date_to_iso_days(year, month, 1, config)
     week = div(this_day - first_day, @days_in_week) + 1
-    {year, week}
+    {month, week}
   end
 
   def week_of_month(year, month, day, config) do
-    {year, week, day} =
-      year
-      |> date_to_iso_days(month, day, config)
-      |> Base.Week.date_from_iso_days(config)
+    {_year, week} = week_of_year(year, month, day, config)
+    {quarters, weeks_remaining_in_quarter} = Math.div_amod(week, @weeks_in_quarter)
+    month_in_quarter = Base.Week.month_from_weeks(weeks_remaining_in_quarter, config)
 
-    Base.Week.week_of_month(year, week, day, config)
+    month = (quarters * @months_in_quarter) + month_in_quarter
+    week = weeks_remaining_in_quarter - Base.Week.weeks_from_months(month_in_quarter - 1, config)
+
+    {month, week}
   end
 
   def day_of_era(year, month, day, config) do
