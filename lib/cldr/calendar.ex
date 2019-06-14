@@ -833,19 +833,37 @@ defmodule Cldr.Calendar do
   Returns the `{month, week_number}`
   for a `date`.
 
+  The nature of a week depends on the
+  calendar configuration and therefore
+  some results may be surprising.  For example
+  the date of December 31st 2018 is actually
+  in month one of the ISO Week calendar of
+  2019.
+
   ## Arguments
 
   * `date` is any `Date.t()`
 
   ## Returns
 
-  * a the week of the month as an
-    integer or
+  * a tuple of the form `{month, week}` or
 
   * `{:error, :not_defined}` if the calendar
     does not support the concept of weeks.
 
   ## Examples
+
+      iex> import Cldr.Calendar.Sigils
+      iex> Cldr.Calendar.week_of_month(~D[2019-01-01])
+      {1, 1}
+      iex> Cldr.Calendar.week_of_month(~D[2018-12-31])
+      {1, 1}
+      iex> Cldr.Calendar.week_of_month(~d[2019-01-01 BasicWeek])
+      {1, 1}
+      iex> Cldr.Calendar.week_of_month(~d[2018-12-31 BasicWeek])
+      {12, 5}
+      iex> Cldr.Calendar.week_of_month(~d[2018-12-31 Julian])
+      {:error, :not_defined}
 
   """
   @spec week_of_month(Date.t()) :: {Calendar.month(), week()}
@@ -895,12 +913,46 @@ defmodule Cldr.Calendar do
     calendar.day_of_year(year, month, day)
   end
 
+  @doc """
+  Returns the number of weeks
+  in a year.
+
+  ## Arguments
+
+  * Either a `Date.t()` or
+    an integer year a calendar name
+
+  ## Returns
+
+  * In integer number of weeks in a year
+
+  ## Examples
+
+      iex> import Cldr.Calendar.Sigils
+      iex> Cldr.Calendar.weeks_in_year ~d[2026-W01-01 ISOWeek]
+      53
+      iex> Cldr.Calendar.weeks_in_year ~d[2019-01-01]
+      52
+      iex> Cldr.Calendar.weeks_in_year ~d[2020-01-01]
+      53
+      iex> Cldr.Calendar.weeks_in_year 2020, Cldr.Calendar.ISOWeek
+      53
+
+  """
   @spec weeks_in_year(Date.t()) :: Cldr.Calendar.week()
+  def weeks_in_year(%{year: year, calendar: Calendar.ISO}) do
+    weeks_in_year(year, Cldr.Calendar.Gregorian)
+  end
+
   def weeks_in_year(%{year: year, calendar: calendar}) do
     weeks_in_year(year, calendar)
   end
 
   @spec weeks_in_year(Calendar.year(), calendar) :: Cldr.Calendar.week()
+  def weeks_in_year(year, Calendar.ISO) do
+    Cldr.Calendar.Gregorian.weeks_in_year(year)
+  end
+
   def weeks_in_year(year, calendar) do
     calendar.weeks_in_year(year)
   end

@@ -7,8 +7,6 @@
 
 Although functionally complete for the planned 1.0 version, there remain some final steps:
 
-* [ ] Tests for `Cldr.Calendar.week_of_month/1`
-* [ ] Tests for `Cldr.Calendar.weeks_in_year/1`
 * [ ] Revisit calendar configuration. The terms and structure aren't very intuitive
 * [ ] Review all documentation
 * [ ] Dialyzer
