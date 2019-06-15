@@ -225,9 +225,9 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   # For weeks <= 13
-  def month_from_weeks(weeks, %Config{weeks_in_month: [m1, m2 ,m3]}) do
+  def month_from_weeks(weeks, %Config{weeks_in_month: [m1, m2, m3]}) do
     cond do
-      weeks <= m1 ->  1
+      weeks <= m1 -> 1
       weeks <= m1 + m2 -> 2
       weeks <= m1 + m2 + m3 -> 3
     end

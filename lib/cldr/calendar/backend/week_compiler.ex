@@ -21,6 +21,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       @type week :: 1..53
       @type day :: 1..7
 
+      import Cldr.Macros
       alias Cldr.Calendar.Base.Week
 
       def __config__ do
@@ -374,7 +375,6 @@ defmodule Cldr.Calendar.Compiler.Week do
               Calendar.microsecond()
             }
       @impl true
-
       def naive_datetime_from_iso_days({days, day_fraction}) do
         Week.naive_datetime_from_iso_days({days, day_fraction}, __config__())
       end
@@ -382,7 +382,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       @doc """
       Implements the `Inspect` protocol for `Date` in this calendar
       """
-      @impl true
+      calendar_impl()
       @spec inspect_date(Calendar.year(), Calendar.month(), Calendar.day(), Inspect.Opts.t()) ::
               Inspect.Algebra.t()
       def inspect_date(year, month, day, _) do
@@ -392,7 +392,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       @doc """
       Implements the `Inspect` protocol for `DateTime` in this calendar
       """
-      @impl true
+      calendar_impl()
       @spec inspect_datetime(
               Calendar.year(),
               Calendar.month(),
@@ -447,7 +447,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       @doc """
       Implements the `Inspect` protocol for `NaiveDateTime` in this calendar
       """
-      @impl true
+      calendar_impl()
       @spec inspect_naive_datetime(
               Calendar.year(),
               Calendar.month(),
@@ -468,7 +468,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       @doc """
       Implements the `Inspect` protocol for `Time` in this calendar
       """
-      @impl true
+      calendar_impl()
       @spec inspect_time(
               Calendar.hour(),
               Calendar.minute(),
@@ -477,7 +477,8 @@ defmodule Cldr.Calendar.Compiler.Week do
               Inspect.Opts.t()
             ) :: Inspect.Algebra.t()
       def inspect_time(hour, minute, second, microsecond, opts) do
-        Calendar.ISO.inspect_time(hour, minute, second, microsecond, opts)
+        formatted = time_to_string(hour, minute, second, microsecond)
+        "~t[" <> formatted <> "]"
       end
 
       @doc false

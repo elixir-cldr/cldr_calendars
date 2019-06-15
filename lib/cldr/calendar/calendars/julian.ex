@@ -2,6 +2,8 @@ defmodule Cldr.Calendar.Julian do
   @behaviour Calendar
   @behaviour Cldr.Calendar
 
+  import Cldr.Macros
+
   @type year :: -9999..-1 | 1..9999
   @type month :: 1..12
   @type day :: 1..31
@@ -489,107 +491,104 @@ defmodule Cldr.Calendar.Julian do
       " " <> time_to_string(hour, minute, second, microsecond)
   end
 
-  if Version.compare(System.version(), "1.10.0-dev") in [:eq, :gt] do
-    @doc """
-    Implements the `Inspect` protocol for `Date` in this calendar
-    """
-    @impl true
-    @spec inspect_date(Calendar.year(), Calendar.month(), Calendar.day(), Inspect.Opts.t()) ::
-            Inspect.Algebra.t()
-    def inspect_date(year, month, day, _) do
-      "~d[" <> date_to_string(year, month, day) <> "]"
+  @doc """
+  Implements the `Inspect` protocol for `Date` in this calendar
+  """
+  calendar_impl()
+  @spec inspect_date(Calendar.year(), Calendar.month(), Calendar.day(), Inspect.Opts.t()) ::
+          Inspect.Algebra.t()
+  def inspect_date(year, month, day, _) do
+    "~d[" <> date_to_string(year, month, day) <> "]"
+  end
+
+  @doc """
+  Implements the `Inspect` protocol for `DateTime` in this calendar
+  """
+  calendar_impl()
+  @spec inspect_datetime(
+          Calendar.year(),
+          Calendar.month(),
+          Calendar.day(),
+          Calendar.hour(),
+          Calendar.minute(),
+          Calendar.second(),
+          Calendar.microsecond(),
+          Calendar.time_zone(),
+          Calendar.zone_abbr(),
+          Calendar.utc_offset(),
+          Calendar.std_offset(),
+          Inspect.Opts.t()
+        ) ::
+          Inspect.Algebra.t()
+  def inspect_datetime(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        microsecond,
+        time_zone,
+        zone_abbr,
+        utc_offset,
+        std_offset,
+        _opts
+      ) do
+    formatted =
+      datetime_to_string(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        microsecond,
+        time_zone,
+        zone_abbr,
+        utc_offset,
+        std_offset
+      )
+
+    if utc_offset == 0 && std_offset == 0 && time_zone == "Etc/UTC" do
+      "~u[" <> formatted <> "]"
+    else
+      "#DateTime<" <> formatted <> ">"
     end
+  end
 
-    @doc """
-    Implements the `Inspect` protocol for `DateTime` in this calendar
-    """
-    @impl true
-    @spec inspect_datetime(
-            Calendar.year(),
-            Calendar.month(),
-            Calendar.day(),
-            Calendar.hour(),
-            Calendar.minute(),
-            Calendar.second(),
-            Calendar.microsecond(),
-            Calendar.time_zone(),
-            Calendar.zone_abbr(),
-            Calendar.utc_offset(),
-            Calendar.std_offset(),
-            Inspect.Opts.t()
-          ) ::
-            Inspect.Algebra.t()
-    def inspect_datetime(
-          year,
-          month,
-          day,
-          hour,
-          minute,
-          second,
-          microsecond,
-          time_zone,
-          zone_abbr,
-          utc_offset,
-          std_offset,
-          _opts
-        ) do
-      formatted =
-        datetime_to_string(
-          year,
-          month,
-          day,
-          hour,
-          minute,
-          second,
-          microsecond,
-          time_zone,
-          zone_abbr,
-          utc_offset,
-          std_offset
-        )
+  @doc """
+  Implements the `Inspect` protocol for `NaiveDateTime` in this calendar
+  """
+  calendar_impl()
+  @spec inspect_naive_datetime(
+          Calendar.year(),
+          Calendar.month(),
+          Calendar.day(),
+          Calendar.hour(),
+          Calendar.minute(),
+          Calendar.second(),
+          Calendar.microsecond(),
+          Inspect.Opts.t()
+        ) ::
+          Inspect.Algebra.t()
+  def inspect_naive_datetime(year, month, day, hour, minute, second, microsecond, _opts) do
+    formatted = naive_datetime_to_string(year, month, day, hour, minute, second, microsecond)
+    "~n[" <> formatted <> "]"
+  end
 
-      if utc_offset == 0 && std_offset == 0 && time_zone == "Etc/UTC" do
-        "~u[" <> formatted <> "]"
-      else
-        "#DateTime<" <> formatted <> ">"
-      end
-    end
-
-    @doc """
-    Implements the `Inspect` protocol for `NaiveDateTime` in this calendar
-    """
-    @impl true
-    @spec inspect_naive_datetime(
-            Calendar.year(),
-            Calendar.month(),
-            Calendar.day(),
-            Calendar.hour(),
-            Calendar.minute(),
-            Calendar.second(),
-            Calendar.microsecond(),
-            Inspect.Opts.t()
-          ) ::
-            Inspect.Algebra.t()
-    def inspect_naive_datetime(year, month, day, hour, minute, second, microsecond, _opts) do
-      formatted = naive_datetime_to_string(year, month, day, hour, minute, second, microsecond)
-
-      "~n[" <> formatted <> "]"
-    end
-
-    @doc """
-    Implements the `Inspect` protocol for `Time` in this calendar
-    """
-    @impl true
-    @spec inspect_time(
-            Calendar.hour(),
-            Calendar.minute(),
-            Calendar.second(),
-            Calendar.microsecond(),
-            Inspect.Opts.t()
-          ) :: Inspect.Algebra.t()
-    def inspect_time(hour, minute, second, microsecond, opts) do
-      Calendar.ISO.inspect_time(hour, minute, second, microsecond, opts)
-    end
+  @doc """
+  Implements the `Inspect` protocol for `Time` in this calendar
+  """
+  calendar_impl()
+  @spec inspect_time(
+          Calendar.hour(),
+          Calendar.minute(),
+          Calendar.second(),
+          Calendar.microsecond(),
+          Inspect.Opts.t()
+        ) :: Inspect.Algebra.t()
+  def inspect_time(hour, minute, second, microsecond, _opts) do
+    "~t[" <> time_to_string(hour, minute, second, microsecond) <> "]"
   end
 
   @doc false

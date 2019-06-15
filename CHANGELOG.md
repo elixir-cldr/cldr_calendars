@@ -1,14 +1,14 @@
 # Changelog for Cldr Calendars v0.10.0
 
-This is the changelog for Cldr v0.10.0 released on June 10th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.10.0 released on June 15th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
 
 ## Breaking changes
 
-* The format produced by inspecting a Date (or DateTime or NaiveDateTime) has changed. The parsing of dates in `sigil_d` (the `~d` sigil) has also changed in order to facilitate roundtrip conversions. Previously a date would inspect as (using the NRF calendar) `~d[2019-W01-1]NRF`. It now inspects as `~d[2019-W01-1 NRF]`.  The same approach is used for all calendars.  See the examples in `Cldr.Calendar.Sigils`
+* The format produced by inspecting a Date (or DateTime or NaiveDateTime) has changed. The parsing of dates in `sigil_d` (the `~d` sigil) has also changed in order to facilitate roundtrip conversions. Previously a date would inspect as (using the NRF calendar) `~d[2019-W01-1]NRF`. It now inspects as `~d[2019-W01-1 NRF]`.  The same approach is used for all calendars.  See the examples in `Cldr.Calendar.Sigils`. This change is applicable to Elixir 1.10 and later.
 
 ## Enhancements
 
-* Implements `inspect_date/4`, `inspect_datetime/11`, `inspect_naive_datetime/8` and `inspect_time/5` for all `Cldr.Calendar` calendars.  This implementation supports the revised `Inspect` protocol implementation for `Date`, `Time`, `DateTime` and `NaiveDateTime` structs.  The purpose of that change is to allow customer calendars to be inspected.
+* Implements `inspect_date/4`, `inspect_datetime/11`, `inspect_naive_datetime/8` and `inspect_time/5` for all `Cldr.Calendar` calendars.  This implementation supports the revised `Inspect` protocol implementation for `Date`, `Time`, `DateTime` and `NaiveDateTime` structs.  The purpose of that change is to allow customer calendars to be inspected. This change is applicable to Elixir 1.10 and later.
 
 * Adds `Cldr.Calendar.week_of_month/1` and `Cldr.Calendar` callback `week_of_month/4` to return the week of a month. The weeks are calculated on the basis of the calendar configuration. As a result, the week of the month, like the week of the year, may be in a different Gregorian year and month compared to the specified date.
 

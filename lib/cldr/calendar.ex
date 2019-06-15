@@ -33,6 +33,7 @@ defmodule Cldr.Calendar do
 
   alias Cldr.Calendar.Config
   alias Cldr.Calendar.Interval
+  import Kernel, except: [inspect: 1, inspect: 2]
 
   @typedoc """
   Specifies the type of a calendar.
@@ -240,6 +241,59 @@ defmodule Cldr.Calendar do
               increment :: integer,
               options :: Keyword.t()
             ) :: {Calendar.year(), Calendar.month(), Calendar.day()}
+
+
+  # @doc """
+  # Implements inspect for a date.
+  # """
+  # @callback inspect_date(Calendar.year(), Calendar.month(), Calendar.day(), Inspect.Opts.t()) ::
+  #             Inspect.Algebra.t()
+  #
+  # @doc """
+  # Implements inspect for a time.
+  # """
+  # @callback inspect_time(
+  #             Calendar.hour(),
+  #             Calendar.minute(),
+  #             Calendar.second(),
+  #             Calendar.microsecond(),
+  #             Inspect.Opts.t()
+  #           ) ::
+  #             Inspect.Algebra.t()
+  #
+  # @doc """
+  # Implements inspect for a naive datetime.
+  # """
+  # @callback inspect_naive_datetime(
+  #             Calendar.year(),
+  #             Calendar.month(),
+  #             Calendar.day(),
+  #             Calendar.hour(),
+  #             Calendar.minute(),
+  #             Calendar.second(),
+  #             Calendar.microsecond(),
+  #             Inspect.Opts.t()
+  #           ) ::
+  #             Inspect.Algebra.t()
+  #
+  # @doc """
+  # Implements inspect for a datetime.
+  # """
+  # @callback inspect_datetime(
+  #             Calendar.year(),
+  #             Calendar.month(),
+  #             Calendar.day(),
+  #             Calendar.hour(),
+  #             Calendar.minute(),
+  #             Calendar.second(),
+  #             Calendar.microsecond(),
+  #             Calendar.time_zone(),
+  #             Calendar.one_abbr,
+  #             Calendar.utc_offset(),
+  #             Calendar.std_offset(),
+  #             Inspect.Opts.t()
+  #           ) :: Inspect.Algebra.t()
+
 
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
@@ -1304,29 +1358,25 @@ defmodule Cldr.Calendar do
       IEx.configure(inspect: [inspect_fun: &Cldr.Calendar.inspect/2])
       :ok
 
-  ## Examples
-
-      iex> import Cldr.Calendar.Sigils
-      Cldr.Calendar.Sigils
-      iex> inspect ~d[2019-01-01 ISOWeek], inspect_fun: &Cldr.Calendar.inspect/2
-      "~d[2019-W01-1 ISOWeek]"
-      iex> inspect ~d[2019-01-01 Gregorian], inspect_fun: &Cldr.Calendar.inspect/2
-      "~d[2019-01-01 Gregorian]"
-      iex> inspect ~d[2019-01-01 Julian], inspect_fun: &Cldr.Calendar.inspect/2
-      "~d[2019-01-01 C.E. Julian]"
-
   """
   @spec inspect(term, Inspect.Opts.t()) :: Inspect.Algebra.t()
+  def inspect(term, opts \\ [])
+
   def inspect(%Date{calendar: Calendar.ISO} = date, opts) do
-    Inspect.inspect(date, opts)
+    Kernel.inspect(date, opts)
   end
 
   def inspect(%Date{calendar: calendar, year: year, month: month, day: day}, opts) do
     calendar.inspect_date(year, month, day, opts)
   end
 
+  def inspect(%Date.Range{first: first, last: last}, _opts) do
+    calendar = first.calendar
+    "#<DateRange<" <> calendar.inspect_date(first) <> ", " <> calendar.inspect_date(last) <> ">"
+  end
+
   def inspect(term, opts) do
-    Inspect.inspect(term, opts)
+    Kernel.inspect(term, opts)
   end
 
   @doc """
@@ -2526,4 +2576,6 @@ defmodule Cldr.Calendar do
   defdelegate day_of_week(date), to: Date
   defdelegate days_in_month(date), to: Date
   defdelegate months_in_year(date), to: Date
+
 end
+

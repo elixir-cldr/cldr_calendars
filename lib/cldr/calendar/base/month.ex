@@ -89,7 +89,7 @@ defmodule Cldr.Calendar.Base.Month do
     {quarters, weeks_remaining_in_quarter} = Math.div_amod(week, @weeks_in_quarter)
     month_in_quarter = Base.Week.month_from_weeks(weeks_remaining_in_quarter, config)
 
-    month = (quarters * @months_in_quarter) + month_in_quarter
+    month = quarters * @months_in_quarter + month_in_quarter
     week = weeks_remaining_in_quarter - Base.Week.weeks_from_months(month_in_quarter - 1, config)
 
     {month, week}
