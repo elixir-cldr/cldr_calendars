@@ -383,6 +383,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       Implements the `Inspect` protocol for `Date` in this calendar
       """
       calendar_impl()
+
       @spec inspect_date(Calendar.year(), Calendar.month(), Calendar.day(), Inspect.Opts.t()) ::
               Inspect.Algebra.t()
       def inspect_date(year, month, day, _) do
@@ -393,6 +394,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       Implements the `Inspect` protocol for `DateTime` in this calendar
       """
       calendar_impl()
+
       @spec inspect_datetime(
               Calendar.year(),
               Calendar.month(),
@@ -448,6 +450,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       Implements the `Inspect` protocol for `NaiveDateTime` in this calendar
       """
       calendar_impl()
+
       @spec inspect_naive_datetime(
               Calendar.year(),
               Calendar.month(),
@@ -468,6 +471,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       Implements the `Inspect` protocol for `Time` in this calendar
       """
       calendar_impl()
+
       @spec inspect_time(
               Calendar.hour(),
               Calendar.minute(),

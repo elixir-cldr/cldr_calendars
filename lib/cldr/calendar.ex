@@ -242,7 +242,6 @@ defmodule Cldr.Calendar do
               options :: Keyword.t()
             ) :: {Calendar.year(), Calendar.month(), Calendar.day()}
 
-
   # @doc """
   # Implements inspect for a date.
   # """
@@ -293,7 +292,6 @@ defmodule Cldr.Calendar do
   #             Calendar.std_offset(),
   #             Inspect.Opts.t()
   #           ) :: Inspect.Algebra.t()
-
 
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
@@ -2576,6 +2574,4 @@ defmodule Cldr.Calendar do
   defdelegate day_of_week(date), to: Date
   defdelegate days_in_month(date), to: Date
   defdelegate months_in_year(date), to: Date
-
 end
-
