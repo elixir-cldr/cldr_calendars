@@ -158,7 +158,7 @@ defmodule Cldr.Calendar do
 
   """
   @callback week_of_month(Calendar.year(), Cldr.Calendar.week(), Calendar.day()) ::
-              {Cldr.Calendar.month(), Cldr.Calendar.week()}
+              {Calendar.month(), Cldr.Calendar.week()} | {:error, :not_defined}
 
   @doc """
   Returns the CLDR calendar type.
@@ -187,7 +187,7 @@ defmodule Cldr.Calendar do
   Returns the number of weeks in a year
 
   """
-  @callback weeks_in_year(year :: Calendar.year()) :: week()
+  @callback weeks_in_year(year :: Calendar.year()) :: week() | {:error, :not_defined}
 
   @doc """
   Returns the number of days in a year
@@ -296,7 +296,7 @@ defmodule Cldr.Calendar do
   ## Configuration
 
   """
-  @spec new(atom(), calendar_type(), Keyword.t()) :: {:ok, calendar()} | no_return()
+  @spec new(module(), calendar_type(), Keyword.t()) :: {:ok, calendar()} | {:already_exists, module()}
 
   def new(calendar_module, calendar_type, config)
       when is_atom(calendar_module) and calendar_type in [:week, :month] do
@@ -543,7 +543,7 @@ defmodule Cldr.Calendar do
 
   """
   @spec first_gregorian_day_of_year(Calendar.year(), calendar()) ::
-          {:ok, Date.t()} | {:error, :invalid_date}
+          Date.t() | {:error, :invalid_date}
 
   def first_gregorian_day_of_year(year, Calendar.ISO) do
     day = first_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
@@ -589,10 +589,10 @@ defmodule Cldr.Calendar do
 
   """
   @spec last_gregorian_day_of_year(Calendar.year(), calendar()) ::
-          {:ok, Date.t()} | {:error, :invalid_date}
+          Date.t() | {:error, :invalid_date}
 
   def last_gregorian_day_of_year(year, Calendar.ISO) do
-    day = last_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
+    day =last_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
     %{day | calendar: Calendar.ISO}
   end
 
@@ -1306,7 +1306,7 @@ defmodule Cldr.Calendar do
       :ok
 
   """
-  @spec inspect(term, Inspect.Opts.t()) :: Inspect.Algebra.t()
+  @spec inspect(term, list()) :: Inspect.Algebra.t()
   def inspect(term, opts \\ [])
 
   def inspect(%Date{calendar: Calendar.ISO} = date, opts) do

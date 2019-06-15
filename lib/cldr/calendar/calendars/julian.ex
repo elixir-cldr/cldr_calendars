@@ -144,7 +144,7 @@ defmodule Cldr.Calendar.Julian do
   It is an integer from 1 to 53.
 
   """
-  @spec week_of_month(year, month, day) :: {:error, :not_defined}
+  @spec week_of_month(year, month, day) ::  {pos_integer(), pos_integer()} | {:error, :not_defined}
   @impl true
 
   def week_of_month(_year, _month, _day) do

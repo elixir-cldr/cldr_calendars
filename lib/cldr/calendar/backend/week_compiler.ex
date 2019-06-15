@@ -66,7 +66,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       era "0".
 
       """
-      @spec year_of_era(year) :: {year, era :: integer}
+      @spec year_of_era(year) :: {year, era :: non_neg_integer}
       @impl true
 
       def year_of_era(year) do

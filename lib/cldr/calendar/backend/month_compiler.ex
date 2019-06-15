@@ -67,7 +67,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       era "0".
 
       """
-      @spec year_of_era(year) :: {year, era :: integer}
+      @spec year_of_era(year) :: {year, era :: non_neg_integer}
       @impl true
 
       def year_of_era(year) do
@@ -138,7 +138,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       Calculates the day and era from the given `year`, `month`, and `day`.
 
       """
-      @spec day_of_era(year, month, day) :: {day :: pos_integer(), era :: integer}
+      @spec day_of_era(year, month, day) :: {day :: non_neg_integer(), era :: non_neg_integer}
       @impl true
 
       def day_of_era(year, month, day) do
