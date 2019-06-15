@@ -242,57 +242,6 @@ defmodule Cldr.Calendar do
               options :: Keyword.t()
             ) :: {Calendar.year(), Calendar.month(), Calendar.day()}
 
-  # @doc """
-  # Implements inspect for a date.
-  # """
-  # @callback inspect_date(Calendar.year(), Calendar.month(), Calendar.day(), Inspect.Opts.t()) ::
-  #             Inspect.Algebra.t()
-  #
-  # @doc """
-  # Implements inspect for a time.
-  # """
-  # @callback inspect_time(
-  #             Calendar.hour(),
-  #             Calendar.minute(),
-  #             Calendar.second(),
-  #             Calendar.microsecond(),
-  #             Inspect.Opts.t()
-  #           ) ::
-  #             Inspect.Algebra.t()
-  #
-  # @doc """
-  # Implements inspect for a naive datetime.
-  # """
-  # @callback inspect_naive_datetime(
-  #             Calendar.year(),
-  #             Calendar.month(),
-  #             Calendar.day(),
-  #             Calendar.hour(),
-  #             Calendar.minute(),
-  #             Calendar.second(),
-  #             Calendar.microsecond(),
-  #             Inspect.Opts.t()
-  #           ) ::
-  #             Inspect.Algebra.t()
-  #
-  # @doc """
-  # Implements inspect for a datetime.
-  # """
-  # @callback inspect_datetime(
-  #             Calendar.year(),
-  #             Calendar.month(),
-  #             Calendar.day(),
-  #             Calendar.hour(),
-  #             Calendar.minute(),
-  #             Calendar.second(),
-  #             Calendar.microsecond(),
-  #             Calendar.time_zone(),
-  #             Calendar.one_abbr,
-  #             Calendar.utc_offset(),
-  #             Calendar.std_offset(),
-  #             Inspect.Opts.t()
-  #           ) :: Inspect.Algebra.t()
-
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
   @the_world :"001"
@@ -1370,7 +1319,7 @@ defmodule Cldr.Calendar do
 
   def inspect(%Date.Range{first: first, last: last}, _opts) do
     calendar = first.calendar
-    "#<DateRange<" <> calendar.inspect_date(first) <> ", " <> calendar.inspect_date(last) <> ">"
+    "#<DateRange<" <> calendar.inspect_date(first) <> ".." <> calendar.inspect_date(last) <> ">"
   end
 
   def inspect(term, opts) do

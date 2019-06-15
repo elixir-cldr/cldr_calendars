@@ -7,7 +7,6 @@
 
 Although functionally complete for the planned 1.0 version, there remain some final steps:
 
-* [ ] Implement ~t, ~u, ~n sigils
 * [ ] Revisit calendar configuration. The terms and structure aren't very intuitive
 * [ ] Review all documentation
 * [ ] Dialyzer

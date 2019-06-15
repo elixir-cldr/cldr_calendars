@@ -439,11 +439,7 @@ defmodule Cldr.Calendar.Compiler.Month do
             std_offset
           )
 
-        if utc_offset == 0 && std_offset == 0 && time_zone == "Etc/UTC" do
-          "~u[" <> formatted <> "]"
-        else
-          "#DateTime<" <> formatted <> ">"
-        end
+        "#DateTime<" <> formatted <> ">"
       end
 
       @doc """
@@ -464,7 +460,7 @@ defmodule Cldr.Calendar.Compiler.Month do
               Inspect.Algebra.t()
       def inspect_naive_datetime(year, month, day, hour, minute, second, microsecond, _opts) do
         formatted = naive_datetime_to_string(year, month, day, hour, minute, second, microsecond)
-        "~n[" <> formatted <> "]"
+        "#NaiveDateTime<" <> formatted <> ">"
       end
 
       @doc """
@@ -481,7 +477,7 @@ defmodule Cldr.Calendar.Compiler.Month do
             ) :: Inspect.Algebra.t()
       def inspect_time(hour, minute, second, microsecond, opts) do
         formatted = time_to_string(hour, minute, second, microsecond)
-        "~t[" <> formatted <> "]"
+        "#Time<" <> formatted <> ">"
       end
 
       @doc false
