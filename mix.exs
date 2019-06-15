@@ -31,7 +31,7 @@ defmodule Cldr.Calendar.MixProject do
 
   defp description do
     """
-    Localized month and week-based calendars and calendar functions
+    Localized month- and week-based calendars and calendar functions
     based upon CLDR data.
     """
   end
