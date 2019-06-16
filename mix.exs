@@ -11,7 +11,7 @@ defmodule Cldr.Calendar.MixProject do
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
       name: "Cldr Calendars",
-      source_url: "https://github.com/kipcole9/cldr_calendars",
+      source_url: "https://github.com/elixir-cldr/cldr_calendars",
       docs: docs(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -72,9 +72,9 @@ defmodule Cldr.Calendar.MixProject do
 
   def links do
     %{
-      "GitHub" => "https://github.com/kipcole9/cldr_calendars",
-      "Readme" => "https://github.com/kipcole9/cldr_calendars/blob/v#{@version}/README.md",
-      "Changelog" => "https://github.com/kipcole9/cldr_calendars/blob/v#{@version}/CHANGELOG.md"
+      "GitHub" => "https://github.com/elixir-cldr/cldr_calendars",
+      "Readme" => "https://github.com/elixir-cldr/cldr_calendars/blob/v#{@version}/README.md",
+      "Changelog" => "https://github.com/elixir-cldr/cldr_calendars/blob/v#{@version}/CHANGELOG.md"
     }
   end
 
