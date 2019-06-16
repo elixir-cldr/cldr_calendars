@@ -53,6 +53,10 @@ defmodule Cldr.Calendar.Sigils do
     to_date(year, month, day, Cldr.Calendar.ISOWeek)
   end
 
+  def sigil_d(<<year::bytes-4, "-W", month::bytes-2, "-", day::bytes-1>>, _) do
+    to_date(year, month, day, Cldr.Calendar.ISOWeek)
+  end
+
   def sigil_d(
         <<year::bytes-4, "-W", month::bytes-2, "-", day::bytes-2, " ", calendar::binary>>,
         _

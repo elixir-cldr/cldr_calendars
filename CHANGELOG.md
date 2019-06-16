@@ -35,6 +35,8 @@ iex> IEx.configure(inspect: [inspect_fun: &Cldr.Calendar.inspect/2])
 
 * Fix `Cldr.Calendar.plus/4` for `:months` when the month wraps into the previous year(s)
 
+* Fix `sigil_d` to correctly parse ISO Week dates that have only a single digit day
+
 # Changelog for Cldr Calendars v0.9.0
 
 This is the changelog for Cldr v0.9.0 released on June 9th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
