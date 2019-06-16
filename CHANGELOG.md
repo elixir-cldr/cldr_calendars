@@ -1,6 +1,6 @@
 # Changelog for Cldr Calendars v1.0.0
 
-This is the changelog for Cldr v1.0.0 released on June 16th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v1.0.0 released on June 16th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ## Breaking changes
 
@@ -39,7 +39,7 @@ iex> IEx.configure(inspect: [inspect_fun: &Cldr.Calendar.inspect/2])
 
 # Changelog for Cldr Calendars v0.9.0
 
-This is the changelog for Cldr v0.9.0 released on June 9th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.9.0 released on June 9th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ## Breaking changes
 
@@ -47,7 +47,7 @@ This is the changelog for Cldr v0.9.0 released on June 9th, 2019.  For older cha
 
 # Changelog for Cldr Calendars v0.8.0
 
-This is the changelog for Cldr v0.8.0 released on June 8th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.8.0 released on June 8th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ## Enhancements
 
@@ -61,7 +61,7 @@ This is the changelog for Cldr v0.8.0 released on June 8th, 2019.  For older cha
 
 # Changelog for Cldr Calendars v0.7.0
 
-This is the changelog for Cldr v0.7.0 released on June 1st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.7.0 released on June 1st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Breaking Changes
 
@@ -75,7 +75,7 @@ This is the changelog for Cldr v0.7.0 released on June 1st, 2019.  For older cha
 
 # Changelog for Cldr Calendars v0.6.0
 
-This is the changelog for Cldr v0.6.0 released on April 28th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.6.0 released on April 28th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Enhancements
 
@@ -83,7 +83,7 @@ This is the changelog for Cldr v0.6.0 released on April 28th, 2019.  For older c
 
 # Changelog for Cldr Calendars v0.5.0
 
-This is the changelog for Cldr v0.5.0 released on April 21th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.5.0 released on April 21th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Breaking changes
 
@@ -95,7 +95,7 @@ This is the changelog for Cldr v0.5.0 released on April 21th, 2019.  For older c
 
 # Changelog for Cldr Calendars v0.4.1
 
-This is the changelog for Cldr v0.4.1 released on April 19th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.4.1 released on April 19th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Bug Fixes
 
@@ -103,7 +103,7 @@ This is the changelog for Cldr v0.4.1 released on April 19th, 2019.  For older c
 
 # Changelog for Cldr Calendars v0.4.0
 
-This is the changelog for Cldr v0.4.0 released on April 19th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.4.0 released on April 19th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Enhancements
 
@@ -119,7 +119,7 @@ This is the changelog for Cldr v0.4.0 released on April 19th, 2019.  For older c
 
 # Changelog for Cldr Calendars v0.3.0
 
-This is the changelog for Cldr v0.3.0 released on April 16th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.3.0 released on April 16th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Enhancements
 
@@ -154,7 +154,7 @@ iex> Cldr.Calendar.interval d, d2, :months
 ```
 # Changelog for Cldr Calendars v0.2.0
 
-This is the changelog for Cldr v0.2.0 released on April 14th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.2.0 released on April 14th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Breaking Changes
 
@@ -174,7 +174,7 @@ This is the changelog for Cldr v0.2.0 released on April 14th, 2019.  For older c
 
 # Changelog for Cldr Calendars v0.1.0
 
-This is the changelog for Cldr v0.1.0 released on April 5th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
+This is the changelog for Cldr v0.1.0 released on April 5th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Enhancements
 
