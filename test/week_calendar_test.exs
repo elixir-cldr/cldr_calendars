@@ -5,7 +5,7 @@ defmodule Cldr.Calendar.Week.Test do
 
   defmodule Sunday do
     use Cldr.Calendar.Base.Week,
-      day_of_year: 7,
+      day_of_week: 7,
       month_of_year: 4,
       weeks_in_month: [4, 4, 5],
       min_days_in_first_week: 7
@@ -13,7 +13,7 @@ defmodule Cldr.Calendar.Week.Test do
 
   defmodule Saturday do
     use Cldr.Calendar.Base.Week,
-      day_of_year: 6,
+      day_of_week: 6,
       month_of_year: 1,
       weeks_in_month: [5, 4, 4],
       min_days_in_first_week: 7
@@ -21,7 +21,7 @@ defmodule Cldr.Calendar.Week.Test do
 
   defmodule Friday do
     use Cldr.Calendar.Base.Week,
-      day_of_year: 5,
+      day_of_week: 5,
       month_of_year: 1,
       weeks_in_month: [5, 4, 4],
       min_days_in_first_week: 7
@@ -29,7 +29,7 @@ defmodule Cldr.Calendar.Week.Test do
 
   defmodule Thursday do
     use Cldr.Calendar.Base.Week,
-      day_of_year: 4,
+      day_of_week: 4,
       month_of_year: 1,
       weeks_in_month: [5, 4, 4],
       min_days_in_first_week: 7
@@ -37,7 +37,7 @@ defmodule Cldr.Calendar.Week.Test do
 
   defmodule Wednesday do
     use Cldr.Calendar.Base.Week,
-      day_of_year: 3,
+      day_of_week: 3,
       month_of_year: 1,
       weeks_in_month: [5, 4, 4],
       min_days_in_first_week: 7
@@ -45,7 +45,7 @@ defmodule Cldr.Calendar.Week.Test do
 
   defmodule Tuesday do
     use Cldr.Calendar.Base.Week,
-      day_of_year: 2,
+      day_of_week: 2,
       month_of_year: 1,
       weeks_in_month: [5, 4, 4],
       min_days_in_first_week: 7
@@ -53,7 +53,7 @@ defmodule Cldr.Calendar.Week.Test do
 
   defmodule Monday do
     use Cldr.Calendar.Base.Week,
-      day_of_year: 1,
+      day_of_week: 1,
       month_of_year: 1,
       weeks_in_month: [5, 4, 4],
       min_days_in_first_week: 7

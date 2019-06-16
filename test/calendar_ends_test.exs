@@ -38,11 +38,11 @@ defmodule Cldr.Calendar.Ends.Test do
       min_days_in_first_week: 7,
       year: :beginning,
       month_of_year: 7,
-      day_of_year: 6
+      day_of_week: 6
     }
 
     for {expected_date, day_of_week} <- days do
-      config = Map.put(config, :day_of_year, day_of_week)
+      config = Map.put(config, :day_of_week, day_of_week)
       {year, _, _} = expected_date
       last_day = Cldr.Calendar.Base.Week.last_gregorian_day_of_year(year, config)
       calculated_date = Calendar.ISO.date_from_iso_days(last_day)
@@ -73,7 +73,7 @@ defmodule Cldr.Calendar.Ends.Test do
 
     config = %Cldr.Calendar.Config{
       first_or_last: :last,
-      day_of_year: 6,
+      day_of_week: 6,
       min_days_in_first_week: 7,
       month_of_year: 8
     }
@@ -94,7 +94,7 @@ defmodule Cldr.Calendar.Ends.Test do
 
     config = %Cldr.Calendar.Config{
       first_or_last: :last,
-      day_of_year: 6,
+      day_of_week: 6,
       min_days_in_first_week: 7,
       month_of_year: 7,
       year: :beginning

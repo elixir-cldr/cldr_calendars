@@ -37,11 +37,11 @@ defmodule Cldr.Calendar.Starts.Test do
       first_or_last: :first,
       min_days_in_first_week: 7,
       month_of_year: 2,
-      day_of_year: 6
+      day_of_week: 6
     }
 
     for {expected_date, day_of_week} <- days do
-      config = Map.put(config, :day_of_year, day_of_week)
+      config = Map.put(config, :day_of_week, day_of_week)
       {year, _, _} = expected_date
       last_day = Cldr.Calendar.Base.Week.first_gregorian_day_of_year(year, config)
       calculated_date = Calendar.ISO.date_from_iso_days(last_day)

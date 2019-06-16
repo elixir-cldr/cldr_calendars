@@ -34,7 +34,7 @@ defmodule Cldr.Calendar.Config do
             # first day of the year occurs
             # The functions `Cldr.Calendar.monday()`
             # etc can be used
-            day_of_year: 1,
+            day_of_week: 1,
 
             # Year begins in this Gregorian month
             month_of_year: 1,
@@ -60,7 +60,7 @@ defmodule Cldr.Calendar.Config do
           weeks_in_month: list(pos_integer()),
           begins_or_ends: :begins | :ends,
           first_or_last: :first | :last,
-          day_of_year: Cldr.Calendar.day_of_week(),
+          day_of_week: Cldr.Calendar.day_of_week(),
           month_of_year: pos_integer(),
           year: :majority | :starts | :ends,
           min_days_in_first_week: 1..7
@@ -82,7 +82,7 @@ defmodule Cldr.Calendar.Config do
 
     %__MODULE__{
       min_days_in_first_week: min_days,
-      day_of_year: day,
+      day_of_week: day,
       month_of_year: month,
       year: year,
       cldr_backend: backend,
@@ -95,7 +95,7 @@ defmodule Cldr.Calendar.Config do
 
   defp min_and_first_days(_locale, options) do
     min_days = Keyword.get(options, :min_days_in_first_week, 7)
-    first_day = Keyword.get(options, :day_of_year, 1)
+    first_day = Keyword.get(options, :day_of_week, 1)
     {min_days, first_day}
   end
 
@@ -144,7 +144,7 @@ defmodule Cldr.Calendar.Config do
 
   defp invalidate_old_options!(options) do
     if options[:day],
-      do: raise(ArgumentError, "Option :day is replaced with :day_of_year")
+      do: raise(ArgumentError, "Option :day is replaced with :day_of_week")
 
     if options[:month],
       do: raise(ArgumentError, "Option :month is replaced with :month_of_year")
@@ -171,13 +171,13 @@ defmodule Cldr.Calendar.Config do
   end
 
   defp validate_day(config, :week) do
-    assert(config.day_of_year in 1..7, day_error(config.day_of_year))
+    assert(config.day_of_week in 1..7, day_error(config.day_of_week))
   end
 
   defp validate_day(config, :month) do
     assert(
-      config.day_of_year in 1..7 or config.day_of_year == :first,
-      day_error(config.day_of_year)
+      config.day_of_week in 1..7 or config.day_of_week == :first,
+      day_error(config.day_of_week)
     )
   end
 
@@ -190,7 +190,7 @@ defmodule Cldr.Calendar.Config do
   end
 
   defp day_error(day) do
-    ":day_of_year must be in the range 1..7. Found #{inspect(day)}."
+    ":day_of_week must be in the range 1..7. Found #{inspect(day)}."
   end
 
   defp month_error(month) do

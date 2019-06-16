@@ -3,17 +3,10 @@
 [![Hex pm](http://img.shields.io/hexpm/v/ex_cldr_dates_times.svg?style=flat)](https://hex.pm/packages/ex_cldr_calendars)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/kipcole9/cldr_calendars/blob/master/LICENSE)
 
-# Roadmap to version 1.0
-
-Although functionally complete for the planned 1.0 version, there remain some final steps:
-
-* [ ] Revisit calendar configuration. The terms and structure aren't very intuitive
-* [ ] Review all documentation
-
-# Introduction
-
 > My wife's jealousy is getting ridiculous. The other day she looked at my calendar and wanted to know who May was.
 > -- Rodney Dangerfield
+
+# Introduction
 
 Calendars are curious things. For centuries people from all cultures have sought to impose human order on the astronomical movements of the earth and moon. Today, despite much of the world converting on the Gregorian calendar, there remain many derivative and alternative ways for humans to organize the passage of time.
 
@@ -33,7 +26,7 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 * Includes functions to find the first, last, nearest and `nth` days of the week from a date. For example, find the `2nd Tuesday in November`.
 
-**See the documentation for `Cldr.Calendar` for the main public API and the functions contained therein.**
+**See the documentation for `Cldr.Calendar` for the main public API.**
 
 ## Getting Started
 
@@ -65,7 +58,7 @@ There we have it, a calendar that is based upon the definition of "ends on the l
 You might be wondering, how to we represent dates in a customised calendar like this? Thanks to the flexibility of Elixir's standard `Calendar` module, we can leverage existing functions to build a date.  Lets build a date which is the first day of Cisco's financial year for 2019.
 ```
 {:ok, date} = Date.new(2019, 1, 1, Cldr.Calendar.CSCO)
-{:ok, %Date{calendar: Cldr.Calendar.CSCO, day: 1, month: 1, year: 2019}}
+{:ok, ~d[2019-W01-1 CSCO]}
 ```
 That was easy.  All dates are specified *in the context of the specific calendar*.  We don't need to know what the equivalent Gregorian calendar date is.  But we can find out if we want to:
 ```
@@ -77,7 +70,7 @@ Which you will see is July 29th, 2018 - a Sunday.  Since we specified that the `
 This would also mean that the last day of Fiscal Year 2018 must be July 28th, 2018.  Lets check:
 ```
 iex> Cldr.Calendar.last_gregorian_day_of_year(2018, Cldr.Calendar.CSCO)
-{:ok, %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 7, year: 2018}}
+~d[2018-07-28 Gregorian]
 ```
 Which you will see is the last Saturday in July for 2018.
 
@@ -87,8 +80,8 @@ A common activity with calendars is selecting data in certain date ranges or ite
 
 Want to know what is the first quarter of Cisco's financial year in 2019?
 ```
- iex> range = Cldr.Calendar.quarter 2019, 1, Cldr.Calendar.CSCO
- #DateRange<%Date{calendar: Cldr.Calendar.CSCO, day: 1, month: 1, year: 2019}, %Date{calendar: Cldr.Calendar.CSCO, day: 7, month: 13, year: 2019}>
+ iex> range = Cldr.Calendar.Interval.quarter 2019, 1, Cldr.Calendar.CSCO
+ #DateRange<~d[2019-W01-1 CSCO], ~d[2019-W13-7 CSCO]>
 ```
 A `Date.Range.t` is returned which can be enumerated with any of Elixir's [Enum](https://hexdocs.pm/elixir/Enum.html) or [Stream](https://hexdocs.pm/elixir/Stream.html) functions. The same applies for `year`, `month`, `week` and `day`.
 
@@ -112,23 +105,23 @@ If you look carefully at where we asked for the date range for Cisco's first qua
 
 ## Week-based calendars
 
-Cisco's calendar is an example of a "week-based" calendar. Such week-based calendars are examples of [fiscal year calendars](https://en.wikipedia.org/wiki/Fiscal_year). In `Cldr Calendar`, any calendar that is defined in terms of "[first | last] [day] of [month]" is a week-based calendar.  These calendars have a year of 52 weeks duration except in "leap years" that have 53 weeks.
+Cisco's calendar is an example of a "week-based" calendar. Such week-based calendars are examples of [fiscal year calendars](https://en.wikipedia.org/wiki/Fiscal_year). In `Cldr Calendar`, any calendar that is defined in terms of "[first | last] [day_of_week] of [month_of_year_]" is a week-based calendar.  These calendars have a year of 52 weeks duration except in "leap years" that have 53 weeks.
 
 The most well-known week-based calendar may be the [ISO Week Calendar](https://en.wikipedia.org/wiki/ISO_week_date). How would we define that calendar in `Cldr Calendars`? Easy!
 ```
 defmodule Cldr.Calendar.ISOWeek do
   use Cldr.Calendar.Base.Week,
     day: 1,
-    min_days: 4
+    min_days_in_first_week: 4
 end
 ```
 This says that the calendar starts on the first Monday in January. How do we know that?  It's because
-`:month` defaults to `1` (January) and `:first_or_last` defaults to `:first`.
+`:month_of_year` defaults to `1` (January) and `:first_or_last` defaults to `:first`.
 
 Lets see what the first day of 2019 is in the `ISOWeek` calendar.
 ```
 iex> date = Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.ISOWeek)
-%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 1, year: 2019}
+~d[2019-W01-1 ISOWeek]
 ```
 As expected, the date is expressed in terms of the calendar `Cldr.Calendar.ISOWeek`. What's the equivalent Gregorian day?
 ```
@@ -137,12 +130,12 @@ iex> Date.convert(date, Calendar.ISO)
 ```
 That's interesting.  The first day of the 2019 year in the ISO Week calendar is actually December 31st, 2018. Why is that?
 
-Week-based calendars can start or end on a given day of the week in a given month.  But there is a third option: the given day of the week *nearest* to the start or end of the given month.  This is indicated by the configuration parameter `:min_days`.  For the `ISO Week` calendar we have `min_days: 4`.  That means that at least `4` days of the first or last week have to be in the specified `:month` and then we select the nearest day of the week.  Hence it is possible and even common for the gregorian start of the year for a week-based calendar to be up to 6 days before or after the Gregorian start of the year.
+Week-based calendars can start or end on a given day of the week in a given month.  But there is a third option: the given day of the week *nearest* to the start or end of the given month.  This is indicated by the configuration parameter `:min_days_in_first_week`.  For the `ISO Week` calendar we have `min_days_in_first_week: 4`.  That means that at least `4` days of the first or last week have to be in the specified `:month_of_year` and then we select the nearest day of the week.  Hence it is possible and even common for the gregorian start of the year for a week-based calendar to be up to 6 days before or after the Gregorian start of the year.
 
 Whats the last week of 2019 in the `ISO Week` calendar?
 ```
- iex> date = Cldr.Calendar.week(2019, 52, Cldr.Calendar.ISOWeek)
- #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 52, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 7, month: 52, year: 2019}>
+ iex> date = Cldr.Calendar.Interval.week(2019, 52, Cldr.Calendar.ISOWeek)
+ #DateRange<~d[2019-W52-1 ISOWeek], ~d[2019-W52-7 ISOWeek]>
 ```
 You'll see that for week-based calendars the date is actually stored as `year, week, day` where the `:month` field of the `Date.t` is actually the week in the year and `:day` is the day in the week.
 
@@ -163,23 +156,23 @@ Here's how we define each of the three example calendars above:
 ```
 defmodule Cldr.Calendar.US do
   use Cldr.Calendar.Base.Month,
-    month: 10,
-    min_days: 4,   # The first week of the year is that with at least 4 days of October in it
-    first_day: 7   # When referring to weeks, Sunday is the first day
+    month_of_year: 10,          # The year starts in October
+    min_days_in_first_week: 4,  # The first week of the year is that with at least 4 days of October in it
+    day_of_year: 7              # When referring to weeks, Sunday is the first day
 end
 
 defmodule Cldr.Calendar.UK do
   use Cldr.Calendar.Base.Month,
-    month: 4       # The fiscal year starts in April
+    month_of_year: 4            # The fiscal year starts in April
 end
 
 defmodule Cldr.Calendar.AU do
   use Cldr.Calendar.Base.Month,
-    month: 7,      # The fiscal year starts in July
-    year: :ending  # A year refers to the ending Gregorian year.
-                   # In this example, the Australian fiscal
-                   # year 2017 is the year that starts in July
-                   # 2016 and ends in June 2017
+    month_of_year: 7,           # The fiscal year starts in July
+    year: :ending               # A year refers to the ending Gregorian year.
+                                # In this example, the Australian fiscal
+                                # year 2017 is the year that starts in July
+                                # 2016 and ends in June 2017
 end
 ```
 
@@ -227,17 +220,17 @@ From the diagram above we can define the following rules:
 
 * For `:starts` calendars, we can say that the *starting* gregorian year is is the same as the *fiscal year* if the starting month is January through June inclusive. If the starting month is July through to December then the starting Gregorian year is the year *prior* to the *fiscal year*. Similarly, the *ending* Gregorian year is the *next* year for calendars that start in February through June and it's the *fiscal year* for calendars that start in July through December. Years that start in January end in January of the same year.
 
-* For ":ends" calendars .....
+* For ":ends" calendars the rules are the opposite.
 
 ## Calendar Creation
 
 Since calendars defined in `Cldr.Calendar` are intended to be compatible and converible to other Calendars supporting Elixir's `Calendar` behaviour, the configuration of calendars needs to be encapsulated.
 
-The simplest way to is to define a module that uses either `Cldr.Calendar.Base.Week` or `Cldr.Calendar.Base.Month`. This is how we have been defining calendar modules in the examples so far.
+The simplest way to is to define a module that `use`s either `Cldr.Calendar.Base.Week` or `Cldr.Calendar.Base.Month`. This is how we have been defining calendar modules in the examples so far.
 
 A calendar module can also be created at run time.  It is semantically identical to defining a static module but the module is built at run time rather than compile time. New calendars are created with the function `Cldr.Calendar.new/3`. For example:
 ```
-iex> Cldr.Calendar.new :my_new_calendar, :week, first_or_last: :first, first_day: 1, min_days: 7
+iex> Cldr.Calendar.new :my_new_calendar, :week, first_or_last: :first, day_of_year: 1, min_days_in_first_week: 7
 {:ok, :my_new_calendar}
 ```
 Calendar functions are now available on the module `:my_new_calendar`.
@@ -253,6 +246,9 @@ day_of_week/3
 day_of_year/3
 ...
 ```
+
+**CAUTION** Since the runtime creation of new calendars creates a new module and therefore a new atom, this function has the potential to surface an attack vector that could exhaust the atom table and crash the BEAM.  It is strongly recommended calendars be defined statically where possible. Never trust unfiltered user input to create a calendar.
+
 ### Fiscal Calendars for Territories
 
 `Cldr Calendars` can create a fiscal year calendar for many territories (countries) based upon data from [the CIA world fact book](https://www.cia.gov/library/publications/the-world-factbook/fields/228.html).  To create a fiscal year calendar for a territory use the `Cldr.Calendar.FiscalYear/1` function.
@@ -276,17 +272,17 @@ day_of_year/3
 
  # Create a date in the default Cldr.Calendar.Gregorian
  iex> ~d[2019-01-01]
- %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 1, year: 2019}
+ ~d[2019-01-01 Gregorian]
 
  # Inbuilt calendars can be referred to by their shortened form
- iex> ~d[2019-01-01]NRF
- %Date{calendar: Cldr.Calendar.NRF, day: 1, month: 1, year: 2019}
+ iex> ~d[2019-01-01 NRF]
+ ~d[2019-W01-1 NRF]
 
  # Create a calendar and define a date in it
- iex> Cldr.Calendar.new FiscalAU, :month, month: 7
+ iex> Cldr.Calendar.new FiscalAU, :month, month_of_year: 7
  {:ok, FiscalAU}
- iex> iex(21)> ~d[2019-01-01]FiscalAU
- %Date{calendar: FiscalAU, day: 1, month: 1, year: 2019}
+ iex> ~d[2019-01-01 FiscalAU]
+ ~d[2019-01-01 FiscalAU]
  ```
 
 ## Date localization
@@ -335,19 +331,19 @@ Intervals can be created for a year, quarter, month, week and day.  For example:
 
 ```elixir
   iex> Cldr.Calendar.Interval.year(2019)
-  #DateRange<%Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 1, year: 2019}, %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 12, year: 2019}>
+  #DateRange<~d[2019-01-01 Gregorian], ~d[2019-12-31 Gregorian]>
 
   iex> Cldr.Calendar.Interval.month(2019, 3)
-  #DateRange<%Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 3, year: 2019}, %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019}>
+  #DateRange<~d[2019-03-01 Gregorian], ~d[2019-03-31 Gregorian]>
 
   iex> Cldr.Calendar.Interval.month(2019, 3, Cldr.Calendar.NRF)
-  #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 10, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 13, year: 2019}>
+  #DateRange<~d[2019-W10-1 NRF], ~d[2019-W13-7 NRF]>
 
   iex> Cldr.Calendar.Interval.week(2019, 5, Cldr.Calendar.NRF)
-  #DateRange<%Date{calendar: Cldr.Calendar.NRF, day: 1, month: 5, year: 2019}, %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 5, year: 2019}>
+  #DateRange<~d[2019-W05-1 NRF], ~d[2019-W05-7 NRF]>
 
   iex> Cldr.Calendar.Interval.quarter(2019, 3)
-  #DateRange<%Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 7, year: 2019}, %Date{calendar: Cldr.Calendar.Gregorian, day: 30, month: 9, year: 2019}>
+  #DateRange<~d[2019-07-01 Gregorian], ~d[2019-09-30 Gregorian]>
 ```
 
 ### Comparing Calendar Intervals
@@ -410,7 +406,7 @@ config :ex_cldr,
 ```
 defmodule MyCalendar do
   use Cldr.Calendar.Base.Month,
-    month: 4,
+    month_of_year: 4,
     cldr_backend: MyApp.Cldr
 end
 ```
@@ -424,16 +420,11 @@ Add `ex_cldr_calendars` to your `deps` in `mix.exs`.
 ```elixir
 def deps do
   [
-    {:ex_cldr_calendars, "~> 0.1"}
+    {:ex_cldr_calendars, "~> 0.10"}
     ...
   ]
 end
 ```
 
-### To Do
-
-* [ ] Implement hybrid base calendar. This is a week-based calendar that presents dates in a monthly format.  Symmetry454 is an example.
-
-* [ ] Add `week_of_month` to callbacks calendars
 
 

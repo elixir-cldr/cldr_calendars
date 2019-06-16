@@ -2,9 +2,15 @@
 
 This is the changelog for Cldr v0.10.0 released on June 15th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
 
+This is expected to be the last release before version 1.0.
+
 ## Breaking changes
 
 * The format produced by inspecting a Date (or DateTime or NaiveDateTime) has changed. The parsing of dates in `sigil_d` (the `~d` sigil) has also changed in order to facilitate roundtrip conversions. Previously a date would inspect as (using the NRF calendar) `~d[2019-W01-1]NRF`. It now inspects as `~d[2019-W01-1 NRF]`.  The same approach is used for all calendars.  See the examples in `Cldr.Calendar.Sigils`. This change is applicable to Elixir 1.10 and later.
+
+* The calendar configuration option `:min_days` has been renamed `:min_days_in_first_week`. The configuration option `:day` has been renamed to `:day_of_week` and the option `:month` has been renamed to `:month_of_year`. An exception will be raised if existing calendars are not updated.
+
+* An exception will be raised if a calendar is configured with an unknown option.
 
 ## Enhancements
 
