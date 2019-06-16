@@ -2304,12 +2304,12 @@ defmodule Cldr.Calendar do
 
   ## January starts end the same year, December ends starts the same year
   @doc false
-  def start_end_gregorian_years(year, %Config{first_or_last: :first, first_month_of_year: 1}) do
+  def start_end_gregorian_years(year, %Config{first_or_last: :first, month_of_year: 1}) do
     {year, year}
   end
 
   @doc false
-  def start_end_gregorian_years(year, %Config{first_or_last: :last, first_month_of_year: 12}) do
+  def start_end_gregorian_years(year, %Config{first_or_last: :last, month_of_year: 12}) do
     {year, year}
   end
 
@@ -2318,7 +2318,7 @@ defmodule Cldr.Calendar do
   def start_end_gregorian_years(year, %Config{
         first_or_last: :first,
         year: :majority,
-        first_month_of_year: month
+        month_of_year: month
       })
       when month <= 6 do
     {year, year + 1}
@@ -2328,7 +2328,7 @@ defmodule Cldr.Calendar do
   def start_end_gregorian_years(year, %Config{
         first_or_last: :first,
         year: :majority,
-        first_month_of_year: month
+        month_of_year: month
       })
       when month > 6 do
     {year - 1, year}
@@ -2338,7 +2338,7 @@ defmodule Cldr.Calendar do
   def start_end_gregorian_years(year, %Config{
         first_or_last: :last,
         year: :majority,
-        first_month_of_year: month
+        month_of_year: month
       })
       when month > 6 do
     {year - 1, year}
@@ -2348,7 +2348,7 @@ defmodule Cldr.Calendar do
   def start_end_gregorian_years(year, %Config{
         first_or_last: :last,
         year: :majority,
-        first_month_of_year: month
+        month_of_year: month
       })
       when month <= 6 do
     {year, year + 1}

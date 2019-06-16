@@ -34,10 +34,10 @@ defmodule Cldr.Calendar.Config do
             # first day of the year occurs
             # The functions `Cldr.Calendar.monday()`
             # etc can be used
-            first_day_of_year: 1,
+            day_of_year: 1,
 
             # Year begins in this Gregorian month
-            first_month_of_year: 1,
+            month_of_year: 1,
 
             # The year of the last_day or first_day
             # is either the year with the :majority
@@ -60,8 +60,8 @@ defmodule Cldr.Calendar.Config do
           weeks_in_month: list(pos_integer()),
           begins_or_ends: :begins | :ends,
           first_or_last: :first | :last,
-          first_day_of_year: Cldr.Calendar.day_of_week(),
-          first_month_of_year: pos_integer(),
+          day_of_year: Cldr.Calendar.day_of_week(),
+          month_of_year: pos_integer(),
           year: :majority | :starts | :ends,
           min_days_in_first_week: 1..7
         }
@@ -77,13 +77,13 @@ defmodule Cldr.Calendar.Config do
     begins_or_ends = Keyword.get(options, :begins_or_ends, :begins)
     weeks_in_month = Keyword.get(options, :weeks_in_month, [4, 5, 4])
     year = Keyword.get(options, :year, :majority)
-    month = Keyword.get(options, :first_month_of_year, 1)
+    month = Keyword.get(options, :month_of_year, 1)
     {min_days, day} = min_and_first_days(locale, options)
 
     %__MODULE__{
       min_days_in_first_week: min_days,
-      first_day_of_year: day,
-      first_month_of_year: month,
+      day_of_year: day,
+      month_of_year: month,
       year: year,
       cldr_backend: backend,
       calendar: calendar,
@@ -95,7 +95,7 @@ defmodule Cldr.Calendar.Config do
 
   defp min_and_first_days(_locale, options) do
     min_days = Keyword.get(options, :min_days_in_first_week, 7)
-    first_day = Keyword.get(options, :first_day_of_year, 1)
+    first_day = Keyword.get(options, :day_of_year, 1)
     {min_days, first_day}
   end
 
@@ -107,7 +107,7 @@ defmodule Cldr.Calendar.Config do
     with :ok <-
            validate_day(config, calendar_type),
          :ok <-
-           assert(config.first_month_of_year in 1..12, month_error(config.first_month_of_year)),
+           assert(config.month_of_year in 1..12, month_error(config.month_of_year)),
          :ok <-
            assert(config.year in @valid_year, year_error(config.year)),
          :ok <-
@@ -144,10 +144,10 @@ defmodule Cldr.Calendar.Config do
 
   defp invalidate_old_options!(options) do
     if options[:day],
-      do: raise(ArgumentError, "Option :day is replaced with :first_day_of_year")
+      do: raise(ArgumentError, "Option :day is replaced with :day_of_year")
 
     if options[:month],
-      do: raise(ArgumentError, "Option :month is replaced with :first_month_of_year")
+      do: raise(ArgumentError, "Option :month is replaced with :month_of_year")
 
     if options[:min_days],
       do: raise(ArgumentError, "Option :min_days is replaced with :min_days_in_first_week")
@@ -171,13 +171,13 @@ defmodule Cldr.Calendar.Config do
   end
 
   defp validate_day(config, :week) do
-    assert(config.first_day_of_year in 1..7, day_error(config.first_day_of_year))
+    assert(config.day_of_year in 1..7, day_error(config.day_of_year))
   end
 
   defp validate_day(config, :month) do
     assert(
-      config.first_day_of_year in 1..7 or config.first_day_of_year == :first,
-      day_error(config.first_day_of_year)
+      config.day_of_year in 1..7 or config.day_of_year == :first,
+      day_error(config.day_of_year)
     )
   end
 
@@ -190,11 +190,11 @@ defmodule Cldr.Calendar.Config do
   end
 
   defp day_error(day) do
-    ":first_day_of_year must be in the range 1..7. Found #{inspect(day)}."
+    ":day_of_year must be in the range 1..7. Found #{inspect(day)}."
   end
 
   defp month_error(month) do
-    ":first_month_of_year must be in the range 1..12. Found #{inspect(month)}."
+    ":month_of_year must be in the range 1..12. Found #{inspect(month)}."
   end
 
   defp year_error(year) do

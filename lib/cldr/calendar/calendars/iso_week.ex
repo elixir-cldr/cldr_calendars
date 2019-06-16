@@ -10,6 +10,6 @@ defmodule Cldr.Calendar.ISOWeek do
 
   """
   use Cldr.Calendar.Base.Week,
-    first_day_of_year: 1,
+    day_of_year: 1,
     min_days_in_first_week: 4
 end

@@ -92,12 +92,12 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def day_of_week(_year, _week, day, %{first_or_last: :first} = config) do
-    first_day = config.first_day_of_year
+    first_day = config.day_of_year
     Math.amod(first_day + day - 1, days_in_week())
   end
 
   def day_of_week(_year, _week, day, %{first_or_last: :last} = config) do
-    last_day = config.first_day_of_year
+    last_day = config.day_of_year
     Math.amod(last_day + day, days_in_week())
   end
 
@@ -240,8 +240,8 @@ defmodule Cldr.Calendar.Base.Week do
     {year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)
 
     %{
-      first_month_of_year: first_month,
-      first_day_of_year: first_day,
+      month_of_year: first_month,
+      day_of_year: first_day,
       min_days_in_first_week: min_days
     } = config
 
@@ -269,8 +269,8 @@ defmodule Cldr.Calendar.Base.Week do
     {_, year} = Cldr.Calendar.start_end_gregorian_years(year, config)
 
     %{
-      first_month_of_year: last_month,
-      first_day_of_year: last_day,
+      month_of_year: last_month,
+      day_of_year: last_day,
       min_days_in_first_week: min_days
     } = config
 

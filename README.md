@@ -48,15 +48,15 @@ Each calendar is defined as a module that implements both the `Calendar` and `Cl
 defmodule Cldr.Calendar.CSCO do
   use Cldr.Calendar.Base.Week,
     first_or_last: :last,
-    day: 6,
-    month: 7
+    day_of_year_: 6,
+    month_of_year_: 7
 end
 ```
 This configuration says that the calendar is defined as `first_or_last: :last` which means we are defining a calendar in terms of when it ends (you can of course also define a calendar in terms of when it starts by setting this to `:first`).
 
-The `:last` day is Saturday, which is in `Calendar` speak, the sixth day of the week.  Days of the week are numbered from `1` for Monday to `7` to Sunday.
+The `:day_of_year` day is Saturday, which is in `Calendar` speak, the sixth day of the week.  Days of the week are numbered from `1` for Monday to `7` to Sunday.
 
-The `:month` is July.  Months are numbered from January being `1` to December being `12`.
+The `:month_of_year` is July.  Months are numbered from January being `1` to December being `12`.
 
 There we have it, a calendar that is based upon the definition of "ends on the last Saturday of July".
 
