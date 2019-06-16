@@ -44,7 +44,6 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @impl true
-
       def cldr_calendar_type do
         :gregorian
       end
@@ -54,7 +53,6 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @impl true
-
       def valid_date?(year, month, day) do
         Month.valid_date?(year, month, day, __config__())
       end
@@ -69,7 +67,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec year_of_era(year) :: {year, era :: non_neg_integer}
       @impl true
-
       def year_of_era(year) do
         Month.year_of_era(year, __config__())
       end
@@ -81,7 +78,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec quarter_of_year(year, month, day) :: 1..4
       @impl true
-
       def quarter_of_year(year, month, day) do
         Month.quarter_of_year(year, month, day, __config__())
       end
@@ -93,7 +89,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec month_of_year(year, month, day) :: month
       @impl true
-
       def month_of_year(year, month, day) do
         Month.month_of_year(year, month, day, __config__())
       end
@@ -105,7 +100,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
       @impl true
-
       def week_of_year(year, month, day) do
         Month.week_of_year(year, month, day, __config__())
       end
@@ -117,7 +111,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec iso_week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
       @impl true
-
       def iso_week_of_year(year, month, day) do
         Month.iso_week_of_year(year, month, day)
       end
@@ -129,7 +122,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec week_of_month(year, Cldr.Calendar.week(), day) :: {month, Cldr.Calendar.week()}
       @impl true
-
       def week_of_month(year, week, day) do
         Month.week_of_month(year, week, day, __config__())
       end
@@ -140,7 +132,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec day_of_era(year, month, day) :: {day :: non_neg_integer(), era :: non_neg_integer}
       @impl true
-
       def day_of_era(year, month, day) do
         Month.day_of_era(year, month, day, __config__())
       end
@@ -151,7 +142,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec day_of_year(year, month, day) :: 1..366
       @impl true
-
       def day_of_year(year, month, day) do
         Month.day_of_year(year, month, day, __config__())
       end
@@ -163,7 +153,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec day_of_week(year, month, day) :: 1..7
       @impl true
-
       def day_of_week(year, month, day) do
         Month.day_of_week(year, month, day, __config__())
       end
@@ -185,7 +174,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec days_in_year(year) :: Calendar.day()
       @impl true
-
       def days_in_year(year) do
         Month.days_in_year(year, __config__())
       end
@@ -196,7 +184,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec weeks_in_year(year) :: Calendar.week()
       @impl true
-
       def weeks_in_year(year) do
         Month.weeks_in_year(year, __config__())
       end
@@ -207,7 +194,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec days_in_month(year, month) :: Calendar.day()
       @impl true
-
       def days_in_month(year, month) do
         Month.days_in_month(year, month, __config__())
       end
@@ -226,7 +212,6 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @impl true
-
       def year(year) do
         Month.year(year, __config__())
       end
@@ -248,7 +233,6 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @impl true
-
       def month(year, month) do
         Month.month(year, month, __config__())
       end
@@ -259,7 +243,6 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @impl true
-
       def week(year, week) do
         Month.week(year, week, __config__())
       end
@@ -273,7 +256,6 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @impl true
-
       def plus(year, month, day, date_part, increment, options \\ [])
 
       def plus(year, month, day, :quarters, quarters, options) do
@@ -383,7 +365,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       Implements the `Inspect` protocol for `Date` in this calendar
       """
       calendar_impl()
-
       @spec inspect_date(Calendar.year(), Calendar.month(), Calendar.day(), Inspect.Opts.t()) ::
               Inspect.Algebra.t()
       def inspect_date(year, month, day, _) do
@@ -446,7 +427,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       Implements the `Inspect` protocol for `NaiveDateTime` in this calendar
       """
       calendar_impl()
-
       @spec inspect_naive_datetime(
               Calendar.year(),
               Calendar.month(),
@@ -467,7 +447,6 @@ defmodule Cldr.Calendar.Compiler.Month do
       Implements the `Inspect` protocol for `Time` in this calendar
       """
       calendar_impl()
-
       @spec inspect_time(
               Calendar.hour(),
               Calendar.minute(),
