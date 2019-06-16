@@ -1,8 +1,6 @@
-# Changelog for Cldr Calendars v0.10.0
+# Changelog for Cldr Calendars v1.0.0
 
-This is the changelog for Cldr v0.10.0 released on June 16th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
-
-This is expected to be the last release before version 1.0.
+This is the changelog for Cldr v1.0.0 released on June 16th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr_calendars/tags)
 
 ## Breaking changes
 

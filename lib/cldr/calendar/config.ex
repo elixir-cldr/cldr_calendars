@@ -154,11 +154,13 @@ defmodule Cldr.Calendar.Config do
   end
 
   def valid_options do
-    Map.keys(%__MODULE__{})
+    %__MODULE__{}
+    |> Map.delete(:__struct__)
+    |> Map.keys
   end
 
   def detect_invalid_options!(options) do
-    case Enum.filter(options, &(&1 in valid_options())) do
+    case Enum.filter(options, fn {key, _} -> key not in valid_options() end) do
       [] ->
         options
 
