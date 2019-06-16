@@ -363,19 +363,24 @@ Intervals can also be compared to each other and using the taxonomy of [Allen's 
 Some examples:
 
 ```elixir
-  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-01]), Cldr.Calendar.Interval.day(~D[2019-01-02])
+  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-01]),
+  ...> Cldr.Calendar.Interval.day(~D[2019-01-02])
   :meets
 
-  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-01]), Cldr.Calendar.Interval.day(~D[2019-01-03])
+  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-01]),
+  ...> Cldr.Calendar.Interval.day(~D[2019-01-03])
   :precedes
 
-  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-03]), Cldr.Calendar.Interval.day(~D[2019-01-01])
+  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-03]),
+  ...> Cldr.Calendar.Interval.day(~D[2019-01-01])
   :preceded_by
 
-  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-02]), Cldr.Calendar.Interval.day(~D[2019-01-01])
+  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-02]),
+  ...> Cldr.Calendar.Interval.day(~D[2019-01-01])
   :met_by
 
-  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-02]), Cldr.Calendar.Interval.day(~D[2019-01-02])
+  iex> Cldr.Calendar.Interval.compare Cldr.Calendar.Interval.day(~D[2019-01-02]),
+  ...> Cldr.Calendar.Interval.day(~D[2019-01-02])
   :equals
 ```
 
