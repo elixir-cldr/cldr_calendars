@@ -291,9 +291,112 @@ defmodule Cldr.Calendar do
 
   * `{:ok, module}` where `module` is the new calendar
     module that conforms to the `Calendar` and `Cldr.Calendar`
-    behaviours
+    behaviours or
 
-  ## Configuration
+  * `{already_exists, module}` if a module of the given
+    calendar name already exists. It is not guaranteed
+    that the module is in fact a calendar module in this case.
+
+  ## Configuration options
+
+  The following options can be provided to create
+  a new calendar.
+
+  * `:locale`  can be any configured locale. If
+    provided it will be used to determine the
+    `:day_of_year` and `:days_in_first_week`
+    option values. The default value is `nil`
+
+  * `:cldr_backend` defines a default
+    backend module to be used for this calendar.
+    The default is `nil`.
+
+  * `:weeks_in_month` defines the layout of
+    weeks in a quarter for a week- or month-
+    based calendar. The value must be one of
+    `[4, 4, 5]`, `[4,5,4]` or `[5,4,4]`.
+    The default is `[4,4,5]`. This option
+    is ignored for `:month` based calendars
+    that have the parameter `day_of_year: :first`.
+
+  * `:begins_or_ends` determines whether the calendar
+    year begins or ends on the given `:day_of_week` and
+    `:month_of_year`. The default is `:begins`.
+
+  * `:first_or_last` determines whether the calendar
+    year starts (or ends) on the first, last or nearest
+    `:day-of_week` and `:month_of_year`. The default
+    is `:first`
+
+  * `:day_of_week` determines the day
+    of the week on which this calendar begins
+    or ends. It may be a number in the range
+    `1..7` representing Monday to Sunday.
+    It may also be `:first` indicating the
+    the weeks are calculated from the first
+    day of the calendar day irrespective of
+    the day of the week. In this case the last
+    week of the year may be less than 7 days
+    in length. The default is `1`.
+
+  * `:month_of_year` determines the Gregorian
+    month of year in which this calendar begins
+    or ends. The default is `1`.
+
+  * `:year` is used to determine which calendar
+    Greogian year is applicable for a given
+    calendar date. The valid options are `:first`,
+    `:last` and `majority`.  The default is
+    `:majority`.
+
+  * `:min_days_in_first_week` is used to determine
+    how many days of the Gregorian year must be in
+    the first week of a calendar year. This is used
+    when determining when the year starts for week-based
+    years.  The default is `4` which is consistent with
+    the [ISO Week calendar](https://en.wikipedia.org/wiki/ISO_week_date)
+
+  ## Examples
+
+  Each calendar has a function `__config__/0` generated within
+  it and therefore the configuraiton of the included calendars
+  in `ex_cldr_calendars` provide insight into the behaviour
+  of the configuration parameters.
+
+  As an example here we define the [ISO Week calendar](https://en.wikipedia.org/wiki/ISO_week_date)
+  calendar in full:
+
+  ```
+  defmodule ISOWeek do
+    use Cldr.Calendar.Base.Week,
+      day_of_week: 1,              # Weeks begin or end on Monday
+      month_of_year: 1,            # Years begin or end in January
+      min_days_in_first_week, 4,   # 4 Gregorian days of the year must be in the first week
+      begins_or_ends: :begins,     # The year *begins* on the `day_of_week` and `month_of_year`
+      first_or_last: :first,       # They year *begins* on the *first* `day_of_week` and `month_of_year`
+      weeks_in_month: [4, 5, 4],   # The weeks are laid out as *months* in a `[4,5,4]` pattern
+      year: :majority,             # Any given year is that in which the majority of Gregorian months fall
+      cldr_backend: nil,           # No default `cldr_backend` is configured.
+      locale: nil                  # No `locale` is used to aid configuration
+  end
+  ```
+
+  This can be generated at runtime by:
+  ```
+      iex> Cldr.Calendar.new ISOWeek, :week,
+      ...>   day_of_week: 1,
+      ...>   month_of_year: 1,
+      ...>   min_days_in_first_week: 4,
+      ...>   begins_or_ends: :begins,
+      ...>   first_or_last: :first,
+      ...>   weeks_in_month: [4, 5, 4],
+      ...>   year: :majority,
+      ...>   cldr_backend: nil,
+      ...>   locale: nil
+      {:ok, ISOWeek}
+  ```
+  Note that `Cldr.Calendar.ISOWeek` is included as part of this
+  library.
 
   """
   @spec new(module(), calendar_type(), Keyword.t()) ::
@@ -1348,6 +1451,9 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
+      iex> Cldr.Calendar.current ~D[2019-01-01], :day
+      ~D[2019-01-01]
+
   """
   def current(%Date.Range{first: date}, :year) do
     current(date, :year)
@@ -1414,6 +1520,15 @@ defmodule Cldr.Calendar do
   a `Date.Range.t` is returned.
 
   ## Examples
+
+      iex> Cldr.Calendar.next ~D[2019-01-01], :day
+      ~D[2019-01-02]
+      iex> Cldr.Calendar.next ~D[2019-01-01], :month
+      ~D[2019-02-01]
+      iex> Cldr.Calendar.next ~D[2019-01-01], :quarter
+      ~D[2019-04-01]
+      iex> Cldr.Calendar.next ~D[2019-01-01], :year
+      ~D[2020-01-01]
 
   """
   def next(date_or_date_range, date_part, options \\ [])
@@ -1486,6 +1601,13 @@ defmodule Cldr.Calendar do
   a `Date.Range.t` is returned.
 
   ## Examples
+
+      iex> Cldr.Calendar.previous ~D[2019-01-01], :day
+      ~D[2018-12-31]
+      iex> Cldr.Calendar.previous ~D[2019-01-01], :month
+      ~D[2018-12-01]
+      iex> Cldr.Calendar.previous ~D[2019-01-01], :year
+      ~D[2018-01-01]
 
   """
   def previous(date_or_date_range, date_part, options \\ [])
@@ -1801,6 +1923,23 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
+      iex> import Cldr.Calendar.Sigils
+      Cldr.Calendar.Sigils
+      iex> Cldr.Calendar.plus ~d[2016-02-29], :days, 1
+      ~d[2016-03-01 Gregorian]
+      iex> Cldr.Calendar.plus ~d[2019-03-01], :months, 1
+      ~d[2019-04-01 Gregorian]
+      iex> Cldr.Calendar.plus ~d[2016-02-29], :days, 1
+      ~d[2016-03-01 Gregorian]
+      iex> Cldr.Calendar.plus ~d[2019-02-28], :days, 1
+      ~d[2019-03-01 Gregorian]
+      iex> Cldr.Calendar.plus ~d[2019-03-01], :months, 1
+      ~d[2019-04-01 Gregorian]
+      iex> Cldr.Calendar.plus ~d[2019-03-01], :quarters, 1
+      ~d[2019-06-01 Gregorian]
+      iex> Cldr.Calendar.plus ~d[2019-03-01], :years, 1
+      ~d[2020-03-01 Gregorian]
+
   """
   def plus(value, increment) when is_integer(value) and is_integer(increment) do
     value + increment
@@ -1810,6 +1949,18 @@ defmodule Cldr.Calendar do
   @spec plus(Date.Range.t(), atom(), integer(), Keyword.t()) :: Date.Range.t()
 
   def plus(date, period, increment, options \\ [])
+
+  def plus(%Date.Range{first: %{calendar: Calendar.ISO} = first}, period, increment, options) do
+    %{first | calendar: Cldr.Calendar.Gregorian}
+    |> plus(period, increment, options)
+    |> Interval.coerce_iso_calendar
+  end
+
+  def plus(%{calendar: Calendar.ISO} = date, period, increment, options) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> plus(period, increment, options)
+    |> coerce_iso_calendar
+  end
 
   def plus(%Date.Range{last: date}, :years, years, options) do
     plus(date, :years, years, options)
@@ -1927,20 +2078,21 @@ defmodule Cldr.Calendar do
   ## Examples
 
       iex> import Cldr.Calendar.Sigils
+      Cldr.Calendar.Sigils
       iex> Cldr.Calendar.minus ~d[2016-03-01], :days, 1
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 29, month: 2, year: 2016}
+      ~d[2016-02-29 Gregorian]
       iex> Cldr.Calendar.minus ~d[2019-03-01], :months, 1
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2019}
+      ~d[2019-02-01 Gregorian]
       iex> Cldr.Calendar.minus ~d[2016-03-01], :days, 1
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 29, month: 2, year: 2016}
+      ~d[2016-02-29 Gregorian]
       iex> Cldr.Calendar.minus ~d[2019-03-01], :days, 1
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019}
+      ~d[2019-02-28 Gregorian]
       iex> Cldr.Calendar.minus ~d[2019-03-01], :months, 1
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2019}
+      ~d[2019-02-01 Gregorian]
       iex> Cldr.Calendar.minus ~d[2019-03-01], :quarters, 1
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 12, year: 2018}
+      ~d[2018-12-01 Gregorian]
       iex> Cldr.Calendar.minus ~d[2019-03-01], :years, 1
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 3, year: 2018}
+      ~d[2018-03-01 Gregorian]
 
   """
   def minus(%{calendar: _calendar} = date, period, amount, options \\ []) do
@@ -1981,23 +2133,14 @@ defmodule Cldr.Calendar do
       iex> import Cldr.Calendar.Sigils
       Cldr.Calendar.Sigils
       iex> d = ~d[2019-01-31]
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019}
+      ~d[2019-01-31 Gregorian]
       iex> d2 = ~d[2019-05-31]
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
+      ~d[2019-05-31 Gregorian]
       iex> Cldr.Calendar.interval d, 3, :months
-      [
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019}
-      ]
+      [~d[2019-01-31 Gregorian], ~d[2019-02-28 Gregorian], ~d[2019-03-31 Gregorian]]
       iex> Cldr.Calendar.interval d, d2, :months
-      [
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 30, month: 4, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
-      ]
+      [~d[2019-01-31 Gregorian], ~d[2019-02-28 Gregorian], ~d[2019-03-31 Gregorian],
+       ~d[2019-04-30 Gregorian], ~d[2019-05-31 Gregorian]]
 
   """
   @spec interval(date_from :: Date.t(), date_to_or_count :: Date.t() | non_neg_integer, precision) ::
@@ -2065,23 +2208,14 @@ defmodule Cldr.Calendar do
       iex> import Cldr.Calendar.Sigils
       Cldr.Calendar.Sigils
       iex> d = ~d[2019-01-31]
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019}
+      ~d[2019-01-31 Gregorian]
       iex> d2 = ~d[2019-05-31]
-      %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
+      ~d[2019-05-31 Gregorian]
       iex> Cldr.Calendar.interval_stream(d, 3, :months) |> Enum.to_list
-      [
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019}
-      ]
+      [~d[2019-01-31 Gregorian], ~d[2019-02-28 Gregorian], ~d[2019-03-31 Gregorian]]
       iex> Cldr.Calendar.interval_stream(d, d2, :months) |> Enum.to_list
-      [
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 1, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 28, month: 2, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 3, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 30, month: 4, year: 2019},
-        %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
-      ]
+      [~d[2019-01-31 Gregorian], ~d[2019-02-28 Gregorian], ~d[2019-03-31 Gregorian],
+       ~d[2019-04-30 Gregorian], ~d[2019-05-31 Gregorian]]
 
   """
   @spec interval_stream(
@@ -2408,6 +2542,15 @@ defmodule Cldr.Calendar do
 
   def zero_pad(val, count) do
     "-" <> zero_pad(-val, count)
+  end
+
+  @doc false
+  def coerce_iso_calendar({:error, :invalid_date}) do
+    {:error, :invalid_date}
+  end
+
+  def coerce_iso_calendar(date) do
+    %{date | calendar: Calendar.ISO}
   end
 
   @doc false

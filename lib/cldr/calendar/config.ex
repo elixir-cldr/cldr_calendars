@@ -2,11 +2,13 @@ defmodule Cldr.Calendar.Config do
   @moduledoc """
   Defines the configuration for a calendar.
 
+  See `Cldr.Calendar.new/3` for usage details.
+
   """
   defstruct calendar: nil,
 
             # Locale can be used to derive
-            # the :first_day and :min_days
+            # the :day_of_year and :min_days_in_first_weeek
             locale: nil,
 
             # A default backend for this
@@ -153,13 +155,13 @@ defmodule Cldr.Calendar.Config do
       do: raise(ArgumentError, "Option :min_days is replaced with :min_days_in_first_week")
   end
 
-  def valid_options do
+  defp valid_options do
     %__MODULE__{}
     |> Map.delete(:__struct__)
     |> Map.keys
   end
 
-  def detect_invalid_options!(options) do
+  defp detect_invalid_options!(options) do
     case Enum.filter(options, fn {key, _} -> key not in valid_options() end) do
       [] ->
         options
