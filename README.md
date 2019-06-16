@@ -158,7 +158,7 @@ defmodule Cldr.Calendar.US do
   use Cldr.Calendar.Base.Month,
     month_of_year: 10,          # The year starts in October
     min_days_in_first_week: 4,  # The first week of the year is that with at least 4 days of October in it
-    day_of_year: 7              # When referring to weeks, Sunday is the first day
+    day_of_week: 7              # When referring to weeks, Sunday is the first day
 end
 
 defmodule Cldr.Calendar.UK do
@@ -230,7 +230,7 @@ The simplest way to is to define a module that `use`s either `Cldr.Calendar.Base
 
 A calendar module can also be created at run time.  It is semantically identical to defining a static module but the module is built at run time rather than compile time. New calendars are created with the function `Cldr.Calendar.new/3`. For example:
 ```
-iex> Cldr.Calendar.new :my_new_calendar, :week, first_or_last: :first, day_of_year: 1, min_days_in_first_week: 7
+iex> Cldr.Calendar.new :my_new_calendar, :week, first_or_last: :first, day_of_week: 1, min_days_in_first_week: 7
 {:ok, :my_new_calendar}
 ```
 Calendar functions are now available on the module `:my_new_calendar`.
