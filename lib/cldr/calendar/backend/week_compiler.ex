@@ -5,8 +5,8 @@ defmodule Cldr.Calendar.Compiler.Week do
     config =
       Module.get_attribute(env.module, :options)
       |> Keyword.put(:calendar, env.module)
-      |> Cldr.Calendar.extract_options()
-      |> Cldr.Calendar.validate_config!(:week)
+      |> Cldr.Calendar.Config.extract_options()
+      |> Cldr.Calendar.Config.validate_config!(:week)
 
     Module.put_attribute(env.module, :calendar_config, config)
 

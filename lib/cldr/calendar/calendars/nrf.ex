@@ -15,8 +15,8 @@ defmodule Cldr.Calendar.NRF do
 
   """
   use Cldr.Calendar.Base.Week,
-    min_days: 4,
+    min_days_in_first_week: 4,
     first_or_last: :last,
-    day: 6,
-    month: 1
+    first_day_of_year: 6,
+    first_month_of_year: 1
 end

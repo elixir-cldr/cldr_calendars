@@ -3,12 +3,12 @@ require Cldr.Calendar.Compiler.Month
 defmodule Cldr.Calendar.Range do
   defmodule Feb do
     use Cldr.Calendar.Base.Month,
-      month: 2
+      first_month_of_year: 2
   end
 
   defmodule Jan do
     use Cldr.Calendar.Base.Month,
-      month: 1
+      first_month_of_year: 1
   end
 
   def daterange_periods(calendar \\ Cldr.Calendar.Range.Feb) do

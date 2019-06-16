@@ -4,31 +4,59 @@ defmodule Cldr.Calendar.Week.Test do
   import Cldr.Calendar.Sigils
 
   defmodule Sunday do
-    use Cldr.Calendar.Base.Week, day: 7, month: 4, weeks_in_month: [4, 4, 5], min_days: 7
+    use Cldr.Calendar.Base.Week,
+      first_day_of_year: 7,
+      first_month_of_year: 4,
+      weeks_in_month: [4, 4, 5],
+      min_days_in_first_week: 7
   end
 
   defmodule Saturday do
-    use Cldr.Calendar.Base.Week, day: 6, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+    use Cldr.Calendar.Base.Week,
+      first_day_of_year: 6,
+      first_month_of_year: 1,
+      weeks_in_month: [5, 4, 4],
+      min_days_in_first_week: 7
   end
 
   defmodule Friday do
-    use Cldr.Calendar.Base.Week, day: 5, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+    use Cldr.Calendar.Base.Week,
+      first_day_of_year: 5,
+      first_month_of_year: 1,
+      weeks_in_month: [5, 4, 4],
+      min_days_in_first_week: 7
   end
 
   defmodule Thursday do
-    use Cldr.Calendar.Base.Week, day: 4, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+    use Cldr.Calendar.Base.Week,
+      first_day_of_year: 4,
+      first_month_of_year: 1,
+      weeks_in_month: [5, 4, 4],
+      min_days_in_first_week: 7
   end
 
   defmodule Wednesday do
-    use Cldr.Calendar.Base.Week, day: 3, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+    use Cldr.Calendar.Base.Week,
+      first_day_of_year: 3,
+      first_month_of_year: 1,
+      weeks_in_month: [5, 4, 4],
+      min_days_in_first_week: 7
   end
 
   defmodule Tuesday do
-    use Cldr.Calendar.Base.Week, day: 2, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+    use Cldr.Calendar.Base.Week,
+      first_day_of_year: 2,
+      first_month_of_year: 1,
+      weeks_in_month: [5, 4, 4],
+      min_days_in_first_week: 7
   end
 
   defmodule Monday do
-    use Cldr.Calendar.Base.Week, day: 1, month: 1, weeks_in_month: [5, 4, 4], min_days: 7
+    use Cldr.Calendar.Base.Week,
+      first_day_of_year: 1,
+      first_month_of_year: 1,
+      weeks_in_month: [5, 4, 4],
+      min_days_in_first_week: 7
   end
 
   test "that days of the last month of a long year is 35 or 42" do

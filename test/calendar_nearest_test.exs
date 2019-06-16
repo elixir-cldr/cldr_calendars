@@ -27,9 +27,9 @@ defmodule Cldr.Calendar.Nearest.Test do
 
     config = %Cldr.Calendar.Config{
       first_or_last: :last,
-      day: 6,
-      min_days: 4,
-      month: 8
+      first_day_of_year: 6,
+      min_days_in_first_week: 4,
+      first_month_of_year: 8
     }
 
     for {date} <- days do

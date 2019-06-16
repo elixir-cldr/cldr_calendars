@@ -9,7 +9,6 @@ Although functionally complete for the planned 1.0 version, there remain some fi
 
 * [ ] Revisit calendar configuration. The terms and structure aren't very intuitive
 * [ ] Review all documentation
-* [ ] Dialyzer
 
 # Introduction
 

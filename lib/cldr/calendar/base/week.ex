@@ -92,12 +92,12 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def day_of_week(_year, _week, day, %{first_or_last: :first} = config) do
-    first_day = config.day
+    first_day = config.first_day_of_year
     Math.amod(first_day + day - 1, days_in_week())
   end
 
   def day_of_week(_year, _week, day, %{first_or_last: :last} = config) do
-    last_day = config.day
+    last_day = config.first_day_of_year
     Math.amod(last_day + day, days_in_week())
   end
 
@@ -238,7 +238,13 @@ defmodule Cldr.Calendar.Base.Week do
 
   def first_gregorian_day_of_year(year, %Config{first_or_last: :first} = config) do
     {year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)
-    %{month: first_month, day: first_day, min_days: min_days} = config
+
+    %{
+      first_month_of_year: first_month,
+      first_day_of_year: first_day,
+      min_days_in_first_week: min_days
+    } = config
+
     iso_days = ISO.date_to_iso_days(year, first_month, min_days)
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)
 
@@ -261,7 +267,13 @@ defmodule Cldr.Calendar.Base.Week do
 
   def last_gregorian_day_of_year(year, %Config{first_or_last: :last} = config) do
     {_, year} = Cldr.Calendar.start_end_gregorian_years(year, config)
-    %{month: last_month, day: last_day, min_days: min_days} = config
+
+    %{
+      first_month_of_year: last_month,
+      first_day_of_year: last_day,
+      min_days_in_first_week: min_days
+    } = config
+
     days_in_last_month = ISO.days_in_month(year, last_month)
     iso_days = ISO.date_to_iso_days(year, last_month, days_in_last_month - min_days)
     day_of_week = Cldr.Calendar.iso_days_to_day_of_week(iso_days)

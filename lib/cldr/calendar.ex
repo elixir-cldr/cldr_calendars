@@ -296,7 +296,8 @@ defmodule Cldr.Calendar do
   ## Configuration
 
   """
-  @spec new(module(), calendar_type(), Keyword.t()) :: {:ok, calendar()} | {:already_exists, module()}
+  @spec new(module(), calendar_type(), Keyword.t()) ::
+          {:ok, calendar()} | {:already_exists, module()}
 
   def new(calendar_module, calendar_type, config)
       when is_atom(calendar_module) and calendar_type in [:week, :month] do
@@ -308,9 +309,9 @@ defmodule Cldr.Calendar do
   end
 
   defp create_calendar(calendar_module, calendar_type, config) do
-    structured_config = extract_options(config)
+    structured_config = Config.extract_options(config)
 
-    with {:ok, _} <- validate_config(structured_config, calendar_type) do
+    with {:ok, _} <- Config.validate_config(structured_config, calendar_type) do
       calendar_type =
         calendar_type
         |> to_string
@@ -592,7 +593,7 @@ defmodule Cldr.Calendar do
           Date.t() | {:error, :invalid_date}
 
   def last_gregorian_day_of_year(year, Calendar.ISO) do
-    day =last_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
+    day = last_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
     %{day | calendar: Calendar.ISO}
   end
 
@@ -2303,12 +2304,12 @@ defmodule Cldr.Calendar do
 
   ## January starts end the same year, December ends starts the same year
   @doc false
-  def start_end_gregorian_years(year, %Config{first_or_last: :first, month: 1}) do
+  def start_end_gregorian_years(year, %Config{first_or_last: :first, first_month_of_year: 1}) do
     {year, year}
   end
 
   @doc false
-  def start_end_gregorian_years(year, %Config{first_or_last: :last, month: 12}) do
+  def start_end_gregorian_years(year, %Config{first_or_last: :last, first_month_of_year: 12}) do
     {year, year}
   end
 
@@ -2317,7 +2318,7 @@ defmodule Cldr.Calendar do
   def start_end_gregorian_years(year, %Config{
         first_or_last: :first,
         year: :majority,
-        month: month
+        first_month_of_year: month
       })
       when month <= 6 do
     {year, year + 1}
@@ -2327,20 +2328,28 @@ defmodule Cldr.Calendar do
   def start_end_gregorian_years(year, %Config{
         first_or_last: :first,
         year: :majority,
-        month: month
+        first_month_of_year: month
       })
       when month > 6 do
     {year - 1, year}
   end
 
   @doc false
-  def start_end_gregorian_years(year, %Config{first_or_last: :last, year: :majority, month: month})
+  def start_end_gregorian_years(year, %Config{
+        first_or_last: :last,
+        year: :majority,
+        first_month_of_year: month
+      })
       when month > 6 do
     {year - 1, year}
   end
 
   @doc false
-  def start_end_gregorian_years(year, %Config{first_or_last: :last, year: :majority, month: month})
+  def start_end_gregorian_years(year, %Config{
+        first_or_last: :last,
+        year: :majority,
+        first_month_of_year: month
+      })
       when month <= 6 do
     {year, year + 1}
   end
@@ -2360,117 +2369,6 @@ defmodule Cldr.Calendar do
   @doc false
   def calendar_error(calendar_name) do
     {Cldr.UnknownCalendarError, "The calendar #{inspect(calendar_name)} is not known."}
-  end
-
-  @doc false
-  def extract_options(options) do
-    backend = Keyword.get(options, :backend)
-    locale = Keyword.get(options, :locale, Cldr.get_locale())
-    calendar = Keyword.get(options, :calendar)
-    first_or_last = Keyword.get(options, :first_or_last, :first)
-    begins_or_ends = Keyword.get(options, :begins_or_ends, :begins)
-    weeks_in_month = Keyword.get(options, :weeks_in_month, [4, 5, 4])
-    year = Keyword.get(options, :year, :majority)
-    month = Keyword.get(options, :month, 1)
-    {min_days, day} = min_and_first_days(locale, options)
-
-    %Config{
-      min_days: min_days,
-      day: day,
-      month: month,
-      year: year,
-      cldr_backend: backend,
-      calendar: calendar,
-      first_or_last: first_or_last,
-      begins_or_ends: begins_or_ends,
-      weeks_in_month: weeks_in_month
-    }
-  end
-
-  defp min_and_first_days(_locale, options) do
-    min_days = Keyword.get(options, :min_days, 7)
-    first_day = Keyword.get(options, :day, 1)
-    {min_days, first_day}
-  end
-
-  @valid_weeks_in_month [[4, 4, 5], [4, 5, 4], [5, 4, 4]]
-  @valid_year [:majority, :beginning, :ending]
-
-  @doc false
-  def validate_config(config, calendar_type) do
-    with :ok <- validate_day(config, calendar_type),
-         :ok <- assert(config.month in 1..12, month_error(config.month)),
-         :ok <- assert(config.year in @valid_year, year_error(config.year)),
-         :ok <- assert(config.min_days in 1..7, min_days_for_locale_error(config.min_days)),
-         :ok <-
-           assert(
-             config.first_or_last in [:first, :last],
-             first_or_last_error(config.first_or_last)
-           ),
-         :ok <-
-           assert(
-             config.begins_or_ends in [:begins, :ends],
-             begins_or_ends_error(config.begins_or_ends)
-           ),
-         :ok <-
-           assert(
-             config.weeks_in_month in @valid_weeks_in_month,
-             weeks_in_month_error(config.weeks_in_month)
-           ) do
-      {:ok, config}
-    end
-  end
-
-  @doc false
-  def validate_config!(config, calendar_type) do
-    case validate_config(config, calendar_type) do
-      {:ok, config} -> config
-      {:error, message} -> raise ArgumentError, message
-    end
-  end
-
-  defp validate_day(config, :week) do
-    assert(config.day in 1..7, day_error(config.day))
-  end
-
-  defp validate_day(config, :month) do
-    assert(config.day in 1..7 or config.day == :first, day_error(config.day))
-  end
-
-  defp assert(true, _) do
-    :ok
-  end
-
-  defp assert(false, message) do
-    {:error, message}
-  end
-
-  defp day_error(day) do
-    ":day must be in the range 1..7. Found #{inspect(day)}."
-  end
-
-  defp month_error(month) do
-    ":month must be in the range 1..12. Found #{inspect(month)}."
-  end
-
-  defp year_error(year) do
-    ":year must be either :beginning, :ending or :majority. Found #{inspect(year)}."
-  end
-
-  defp min_days_for_locale_error(min_days) do
-    ":min_days must be in the range 1..7. Found #{inspect(min_days)}."
-  end
-
-  defp first_or_last_error(first_or_last) do
-    ":first_or_last must be :first or :last. Found #{inspect(first_or_last)}."
-  end
-
-  defp begins_or_ends_error(begins_or_ends) do
-    ":begins_or_ends must be :begins or :ends. Found #{inspect(begins_or_ends)}."
-  end
-
-  defp weeks_in_month_error(weeks_in_month) do
-    ":weeks_in_month must be [4,4,5], [4,5,4] or [5,4,4]. Found #{inspect(weeks_in_month)}"
   end
 
   @doc false
