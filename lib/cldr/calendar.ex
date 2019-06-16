@@ -1604,6 +1604,8 @@ defmodule Cldr.Calendar do
 
       iex> Cldr.Calendar.previous ~D[2019-01-01], :day
       ~D[2018-12-31]
+      iex> Cldr.Calendar.previous ~D[2019-01-01], :quarter
+      ~D[2018-10-01]
       iex> Cldr.Calendar.previous ~D[2019-01-01], :month
       ~D[2018-12-01]
       iex> Cldr.Calendar.previous ~D[2019-01-01], :year
