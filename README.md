@@ -413,6 +413,21 @@ end
 
 It is also possible to pass the name of a backend module to the `Cldr.Calendar.localize/3` function by specifying the `:backend` option with a `backend` module name.
 
+## Inspecting calendar dates
+
+The examples in this readme reflect inspecting dates as they will be in Elixir 1.10. Until that time if you wish to inspect dates in the same manner, add this code to your project:
+
+```elixir
+if Version.compare(System.version(), "1.10.0-dev") == :lt do
+  defimpl Inspect, for: Date do
+    def inspect(date, opts) do
+      Cldr.Calendar.inspect(date, opts)
+    end
+  end
+end
+```
+You will get a warning indicating that the existing implementation is being overwritten. This is expected.
+
 ## Cldr Calendars Installation
 
 Add `ex_cldr_calendars` to your `deps` in `mix.exs`.
