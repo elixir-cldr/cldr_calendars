@@ -1955,7 +1955,7 @@ defmodule Cldr.Calendar do
   def plus(%Date.Range{first: %{calendar: Calendar.ISO} = first}, period, increment, options) do
     %{first | calendar: Cldr.Calendar.Gregorian}
     |> plus(period, increment, options)
-    |> Interval.coerce_iso_calendar
+    |> coerce_iso_calendar
   end
 
   def plus(%{calendar: Calendar.ISO} = date, period, increment, options) do
@@ -2551,6 +2551,10 @@ defmodule Cldr.Calendar do
     {:error, :invalid_date}
   end
 
+  def coerce_iso_calendar(%Date.Range{} = range) do
+    Date.range coerce_iso_calendar(range.first), coerce_iso_calendar(range.last)
+  end
+  
   def coerce_iso_calendar(date) do
     %{date | calendar: Calendar.ISO}
   end
