@@ -1,6 +1,6 @@
 defmodule Cldr.Calendar.Sigils do
   @moduledoc """
-  Implements the `~d`, `~u` and `~n` sigils to produce
+  Implements the `~d` sigils to produce
   dates, datetimes and naive datetimes.
 
   """
