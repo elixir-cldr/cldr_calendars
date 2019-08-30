@@ -2434,6 +2434,8 @@ defmodule Cldr.Calendar do
     Integer.mod(iso_day_number + 5, 7) + 1
   end
 
+  defdelegate duration(date_from, date_to), to: Cldr.Calendar.Duration
+
   #
   # Helpers
   #
