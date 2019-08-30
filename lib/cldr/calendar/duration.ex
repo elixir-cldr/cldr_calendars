@@ -22,7 +22,7 @@ defmodule Cldr.Calendar.Duration do
 
     day_diff =
       if day2 > day1 do
-        day2 - day1 + 1
+        day2 - day1
       else
         calendar.days_in_month(year1, month1) - day1 + day2
       end
