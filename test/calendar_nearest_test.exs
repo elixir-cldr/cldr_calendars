@@ -34,7 +34,7 @@ defmodule Cldr.Calendar.Nearest.Test do
 
     for {date} <- days do
       {year, _, _} = date
-      last_day = Cldr.Calendar.Base.Week.last_day_of_year(year, config)
+      last_day = Cldr.Calendar.Base.Week.last_gregorian_day_of_year(year, config)
       last_date = Calendar.ISO.date_from_iso_days(last_day)
       assert last_date == date
     end
