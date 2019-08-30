@@ -268,6 +268,22 @@ defmodule Cldr.Calendar.Compiler.Week do
       end
 
       @doc """
+      Adds a :year, :month, :day or time increments
+
+      These functions support CalendarInterval
+
+      """
+      def add(naive_datetime, :year, step) do
+        %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :years, step)
+        %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
+      end
+
+      def add(naive_datetime, :month, step) do
+        %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :months, step)
+        %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
+      end
+
+      @doc """
       Returns if the given year is a leap year.
 
       """

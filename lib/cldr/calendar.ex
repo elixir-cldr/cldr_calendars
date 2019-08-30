@@ -1387,9 +1387,9 @@ defmodule Cldr.Calendar do
 
       iex> import Cldr.Calendar.Sigils
       iex> Cldr.Calendar.date_to_string ~d[2019-12-04]
-      "2019-12-04 Gregorian"
+      "2019-12-04 Cldr.Calendar.Gregorian"
       iex> Cldr.Calendar.date_to_string ~d[2019-23-04 NRF]
-      "2019-W23-4 NRF"
+      "2019-W23-4 Cldr.Calendar.NRF"
 
   """
   @spec date_to_string(Date.t()) :: String.t()
@@ -2554,17 +2554,14 @@ defmodule Cldr.Calendar do
   def coerce_iso_calendar(%Date.Range{} = range) do
     Date.range coerce_iso_calendar(range.first), coerce_iso_calendar(range.last)
   end
-  
+
   def coerce_iso_calendar(date) do
     %{date | calendar: Calendar.ISO}
   end
 
   @doc false
   def calendar_name(module) when is_atom(module) do
-    case Kernel.inspect(module) do
-      "Cldr.Calendar." <> calendar -> calendar
-      calendar -> calendar
-    end
+    Kernel.inspect(module)
   end
 
   defdelegate day_of_week(date), to: Date

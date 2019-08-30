@@ -1,3 +1,13 @@
+# Changelog for Cldr Calendars v1.1.0
+
+This is the changelog for Cldr Calendars v1.1.0 released on August 30th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Enhancements
+
+* Adds `<calendar>.add/3` to add `:year` or `:month` to a naive datetime.  This function supports the library [calendar_interval](https://hex.pm/packages/calendar_interval) allowing intervals to be used with `ex_cldr_calendars`[https://hex.pm/packages/ex_cldr_calendars]. The mid-term objective is to add `add/3` to the `Calendar` behaviour and thereby also simplify the interface to `CalendarInterval`.
+
+* Changes the output of `to_string/1` to consistently use the full name of the calendar module, not an appreviated name.
+
 # Changelog for Cldr Calendars v1.0.0
 
 This is the changelog for Cldr Calendars v1.0.0 released on June 16th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

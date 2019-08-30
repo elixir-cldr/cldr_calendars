@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.MixProject do
   use Mix.Project
 
-  @version "1.0.0"
+  @version "1.1.0"
 
   def project do
     [
@@ -96,7 +96,7 @@ defmodule Cldr.Calendar.MixProject do
     []
   end
 
-  defp elixirc_paths(:test), do: ["lib", "mix", "src", "test"]
-  defp elixirc_paths(:dev), do: ["lib", "mix", "src", "bench"]
-  defp elixirc_paths(_), do: ["lib", "src"]
+  defp elixirc_paths(:test), do: ["lib", "mix", "test"]
+  defp elixirc_paths(:dev), do: ["lib", "mix", "bench"]
+  defp elixirc_paths(_), do: ["lib"]
 end
