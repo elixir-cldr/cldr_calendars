@@ -1,17 +1,43 @@
 defmodule Cldr.Calendar.Duration do
-  defstruct [:year, :month, :day, :hour, :minute, :second, :microsecond]
+  @struct_list [year: 0, month: 0, day: 0, hour: 0, minute: 0, second: 0, microsecond: 0]
+  @keys Keyword.keys(@struct_list)
+  defstruct @struct_list
 
-  @microseconds_in_second 1000000
-  @microseconds_in_day 86400000000
+  @microseconds_in_second 1_000_000
+  @microseconds_in_day 86_400_000_000
+
+  defimpl String.Chars do
+    def to_string(duration) do
+      Cldr.Calendar.Duration.to_string(duration)
+    end
+  end
+
+  if Code.ensure_loaded?(Cldr.Unit) do
+    def to_string(%__MODULE__{} = duration, options \\ []) do
+      {except, options} = Keyword.pop(options, :except, [])
+      for key <- @keys, value = Map.get(duration, key), value != 0 && key not in except do
+        Cldr.Unit.new(key, value)
+      end
+      |> Cldr.Unit.to_string(options)
+    end
+  else
+    def to_string(%__MODULE__{} = duration, options \\ []) do
+      except = Keyword.get(options, :except, [])
+      for key <- @keys, value = Map.get(duration, key), value != 0 && key not in except do
+        if value > 1, do: "#{value} #{key}s", else: "#{value} #{key}"
+      end
+      |> Enum.join(", ")
+    end
+  end
 
   def duration(%{calendar: calendar} = from, %{calendar: calendar} = to) do
     time_diff = time_duration(from, to)
     date_diff = date_duration(from, to)
 
     if time_diff < 0 do
-      back_one_day(date_diff, calendar) |> add(@microseconds_in_day + time_diff)
+      back_one_day(date_diff, calendar) |> merge(@microseconds_in_day + time_diff)
     else
-      date_diff |> add(time_diff)
+      date_diff |> merge(time_diff)
     end
   end
 
@@ -20,8 +46,13 @@ defmodule Cldr.Calendar.Duration do
     Time.diff(to, from, :microsecond)
   end
 
-  def time_duration(to, from) do
+  def time_duration(_to, _from) do
     0
+  end
+
+  def date_duration(%{year: year, month: month, day: day, calendar: calendar},
+        %{year: year, month: month, day: day, calendar: calendar}) do
+    %__MODULE__{}
   end
 
   def date_duration(%{calendar: calendar} = from, %{calendar: calendar} = to) do
@@ -62,27 +93,27 @@ defmodule Cldr.Calendar.Duration do
     |> back_one_day(:month, calendar)
   end
 
-  def back_one_day(%{year: year, month: month, day: day} = date_diff, :month, calendar) when day < 1 do
+  def back_one_day(%{month: month, day: day} = date_diff, :month, calendar) when day < 1 do
     %{date_diff | month: month - 1}
     |> back_one_day(:year, calendar)
   end
 
-  def back_one_day(%{year: year, month: month, day: day} = date_diff, :month, calendar) do
+  def back_one_day(%{year: _, month: _, day: _} = date_diff, :month, _calendar) do
     date_diff
   end
 
-  def back_one_day(%{year: year, month: month, day: day} = date_diff, :year, calendar) when month < 1 do
+  def back_one_day(%{year: year, month: month} = date_diff, :year, calendar) when month < 1 do
     diff = %{date_diff | year: year - 1}
     diff = if diff.month < 1, do: %{diff | month: calendar.months_in_year(year)}, else: diff
     diff = if diff.day < 1, do: %{diff | day: calendar.days_in_month(year, diff.month)}, else: diff
     diff
   end
 
-  def back_one_day(%{year: year, month: month, day: day} = date_diff, :year, calendar) do
+  def back_one_day(%{year: _, month: _, day: _} = date_diff, :year, _calendar) do
     date_diff
   end
 
-  def add(duration, microseconds) do
+  def merge(duration, microseconds) do
     {seconds, microseconds} = Cldr.Math.div_mod(microseconds, @microseconds_in_second)
     {hours, minutes, seconds} = :calendar.seconds_to_time(seconds)
 
