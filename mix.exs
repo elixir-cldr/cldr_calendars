@@ -63,6 +63,7 @@ defmodule Cldr.Calendar.MixProject do
     [
       {:ex_cldr, "~> 2.8"},
       {:ex_cldr_units, "~> 2.0", optional: true},
+      {:ex_cldr_lists, "~> 2.4", optional: true},
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.18", only: [:release, :dev]},
       {:benchee, "~> 0.14", optional: true, only: [:dev, :test]},
@@ -74,7 +75,8 @@ defmodule Cldr.Calendar.MixProject do
     %{
       "GitHub" => "https://github.com/elixir-cldr/cldr_calendars",
       "Readme" => "https://github.com/elixir-cldr/cldr_calendars/blob/v#{@version}/README.md",
-      "Changelog" => "https://github.com/elixir-cldr/cldr_calendars/blob/v#{@version}/CHANGELOG.md"
+      "Changelog" =>
+        "https://github.com/elixir-cldr/cldr_calendars/blob/v#{@version}/CHANGELOG.md"
     }
   end
 

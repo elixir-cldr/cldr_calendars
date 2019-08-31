@@ -2434,8 +2434,6 @@ defmodule Cldr.Calendar do
     Integer.mod(iso_day_number + 5, 7) + 1
   end
 
-  defdelegate duration(date_from, date_to), to: Cldr.Calendar.Duration
-
   #
   # Helpers
   #
@@ -2554,7 +2552,7 @@ defmodule Cldr.Calendar do
   end
 
   def coerce_iso_calendar(%Date.Range{} = range) do
-    Date.range coerce_iso_calendar(range.first), coerce_iso_calendar(range.last)
+    Date.range(coerce_iso_calendar(range.first), coerce_iso_calendar(range.last))
   end
 
   def coerce_iso_calendar(date) do

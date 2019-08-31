@@ -15,6 +15,7 @@ defmodule Cldr.Calendar.Duration do
   if Code.ensure_loaded?(Cldr.Unit) do
     def to_string(%__MODULE__{} = duration, options \\ []) do
       {except, options} = Keyword.pop(options, :except, [])
+
       for key <- @keys, value = Map.get(duration, key), value != 0 && key not in except do
         Cldr.Unit.new(key, value)
       end
@@ -23,6 +24,7 @@ defmodule Cldr.Calendar.Duration do
   else
     def to_string(%__MODULE__{} = duration, options \\ []) do
       except = Keyword.get(options, :except, [])
+
       for key <- @keys, value = Map.get(duration, key), value != 0 && key not in except do
         if value > 1, do: "#{value} #{key}s", else: "#{value} #{key}"
       end
@@ -30,32 +32,45 @@ defmodule Cldr.Calendar.Duration do
     end
   end
 
-  def duration(%{calendar: calendar} = from, %{calendar: calendar} = to) do
+  def new(%{calendar: calendar} = from, %{calendar: calendar} = to) do
     time_diff = time_duration(from, to)
     date_diff = date_duration(from, to)
 
-    if time_diff < 0 do
-      back_one_day(date_diff, calendar) |> merge(@microseconds_in_day + time_diff)
-    else
-      date_diff |> merge(time_diff)
-    end
+    duration =
+      if time_diff < 0 do
+        back_one_day(date_diff, calendar) |> merge(@microseconds_in_day + time_diff)
+      else
+        date_diff |> merge(time_diff)
+      end
+
+    {:ok, duration}
   end
 
-  def time_duration(%{hour: _, minute: _, second: _, microsecond: _, calendar: calendar} = from,
-      %{hour: _, minute: _, second: _, microsecond: _, calendar: calendar} = to) do
+  def new(%{calendar: _calendar1} = from, %{calendar: _calendar2} = to) do
+    {:error,
+     {Cldr.IncompatibleCalendarError,
+      "The two dates must be in the same calendar. Found #{inspect(from)} and #{inspect(to)}"}}
+  end
+
+  defp time_duration(
+         %{hour: _, minute: _, second: _, microsecond: _, calendar: calendar} = from,
+         %{hour: _, minute: _, second: _, microsecond: _, calendar: calendar} = to
+       ) do
     Time.diff(to, from, :microsecond)
   end
 
-  def time_duration(_to, _from) do
+  defp time_duration(_to, _from) do
     0
   end
 
-  def date_duration(%{year: year, month: month, day: day, calendar: calendar},
-        %{year: year, month: month, day: day, calendar: calendar}) do
+  defp date_duration(
+         %{year: year, month: month, day: day, calendar: calendar},
+         %{year: year, month: month, day: day, calendar: calendar}
+       ) do
     %__MODULE__{}
   end
 
-  def date_duration(%{calendar: calendar} = from, %{calendar: calendar} = to) do
+  defp date_duration(%{calendar: calendar} = from, %{calendar: calendar} = to) do
     if Date.compare(from, to) in [:gt] do
       raise ArgumentError, "`from` date must be before or equal to `to` date"
     end
@@ -64,8 +79,7 @@ defmodule Cldr.Calendar.Duration do
     %{year: year2, month: month2, day: day2} = to
 
     # Doesnt account for era in calendars like Japanese
-    year_diff =
-      year2 - year1 - possible_adjustment(month2, month1, day2, day1)
+    year_diff = year2 - year1 - possible_adjustment(month2, month1, day2, day1)
 
     month_diff =
       if month2 > month1 do
@@ -84,36 +98,39 @@ defmodule Cldr.Calendar.Duration do
     %__MODULE__{year: year_diff, month: month_diff, day: day_diff}
   end
 
-  def back_one_day(date_diff, calendar) do
+  defp back_one_day(date_diff, calendar) do
     back_one_day(date_diff, :day, calendar)
   end
 
-  def back_one_day(%{day: day} = date_diff, :day, calendar) do
+  defp back_one_day(%{day: day} = date_diff, :day, calendar) do
     %{date_diff | day: day - 1}
     |> back_one_day(:month, calendar)
   end
 
-  def back_one_day(%{month: month, day: day} = date_diff, :month, calendar) when day < 1 do
+  defp back_one_day(%{month: month, day: day} = date_diff, :month, calendar) when day < 1 do
     %{date_diff | month: month - 1}
     |> back_one_day(:year, calendar)
   end
 
-  def back_one_day(%{year: _, month: _, day: _} = date_diff, :month, _calendar) do
+  defp back_one_day(%{year: _, month: _, day: _} = date_diff, :month, _calendar) do
     date_diff
   end
 
-  def back_one_day(%{year: year, month: month} = date_diff, :year, calendar) when month < 1 do
+  defp back_one_day(%{year: year, month: month} = date_diff, :year, calendar) when month < 1 do
     diff = %{date_diff | year: year - 1}
     diff = if diff.month < 1, do: %{diff | month: calendar.months_in_year(year)}, else: diff
-    diff = if diff.day < 1, do: %{diff | day: calendar.days_in_month(year, diff.month)}, else: diff
+
+    diff =
+      if diff.day < 1, do: %{diff | day: calendar.days_in_month(year, diff.month)}, else: diff
+
     diff
   end
 
-  def back_one_day(%{year: _, month: _, day: _} = date_diff, :year, _calendar) do
+  defp back_one_day(%{year: _, month: _, day: _} = date_diff, :year, _calendar) do
     date_diff
   end
 
-  def merge(duration, microseconds) do
+  defp merge(duration, microseconds) do
     {seconds, microseconds} = Cldr.Math.div_mod(microseconds, @microseconds_in_second)
     {hours, minutes, seconds} = :calendar.seconds_to_time(seconds)
 
@@ -127,11 +144,10 @@ defmodule Cldr.Calendar.Duration do
   # The difference in years is adjusted if the
   # month of the `to` year is less than the
   # month of the `from` year
-  def possible_adjustment(m2, m1, _d2, _d1) when m2 < m1, do: 1
-  def possible_adjustment(m2, m2, d2, d1) when d2 < d1, do: 1
-  def possible_adjustment(_m2, _m1, _d2, _d1), do: 0
+  defp possible_adjustment(m2, m1, _d2, _d1) when m2 < m1, do: 1
+  defp possible_adjustment(m2, m2, d2, d1) when d2 < d1, do: 1
+  defp possible_adjustment(_m2, _m1, _d2, _d1), do: 0
 
-  def possible_adjustment(m2, m1) when m2 < m1, do: 1
-  def possible_adjustment(_m2, _m1), do: 0
-
+  defp possible_adjustment(m2, m1) when m2 < m1, do: 1
+  defp possible_adjustment(_m2, _m1), do: 0
 end

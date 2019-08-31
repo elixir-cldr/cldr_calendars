@@ -158,7 +158,7 @@ defmodule Cldr.Calendar.Config do
   defp valid_options do
     %__MODULE__{}
     |> Map.delete(:__struct__)
-    |> Map.keys
+    |> Map.keys()
   end
 
   defp detect_invalid_options!(options) do

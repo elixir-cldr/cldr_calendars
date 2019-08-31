@@ -220,10 +220,12 @@ defmodule Cldr.Calendar.Base.Month do
 
   def plus(year, month, day, config, :months, months, options) do
     months_in_year = months_in_year(year, config)
+
     {year_increment, new_month} =
       case Cldr.Math.div_amod(month + months, months_in_year) do
         {year_increment, new_month} when new_month > 0 ->
           {year_increment, new_month}
+
         {year_increment, new_month} ->
           {year_increment - 1, months_in_year + new_month}
       end
