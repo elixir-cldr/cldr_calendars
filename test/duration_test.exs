@@ -80,13 +80,13 @@ defmodule Cldr.Calendar.Duration.Test do
              "11 months and 30 days"
 
     assert Cldr.Calendar.Duration.to_string(duration, style: :narrow) ==
-             "11m and 30d"
+             {:ok, "11m and 30d"}
 
     assert Cldr.Calendar.Duration.to_string(duration,
              style: :narrow,
              list_options: [style: :unit_narrow]
            ) ==
-             "11m 30d"
+             {:ok, "11m 30d"}
   end
 
   test "incompatible calendars" do
