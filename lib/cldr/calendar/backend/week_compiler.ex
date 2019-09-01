@@ -273,13 +273,18 @@ defmodule Cldr.Calendar.Compiler.Week do
       These functions support CalendarInterval
 
       """
-      def add(naive_datetime, :year, step) do
-        %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :years, step)
+      def add(naive_datetime, :quarter, step) do
+        %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :quarters, step)
         %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
       end
 
       def add(naive_datetime, :month, step) do
         %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :months, step)
+        %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
+      end
+
+      def add(naive_datetime, :week, step) do
+        %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :weeks, step)
         %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
       end
 

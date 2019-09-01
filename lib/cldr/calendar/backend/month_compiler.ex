@@ -267,7 +267,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Adds a :year, :month, :day or time increments
+      Adds :year, :quarter, :month, :week, :day increments
 
       These functions support CalendarInterval
 
@@ -277,8 +277,18 @@ defmodule Cldr.Calendar.Compiler.Month do
         %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
       end
 
+      def add(naive_datetime, :quarter, step) do
+        %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :quarters, step)
+        %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
+      end
+
       def add(naive_datetime, :month, step) do
         %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :months, step)
+        %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
+      end
+
+      def add(naive_datetime, :week, step) do
+        %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :weeks, step)
         %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
       end
 

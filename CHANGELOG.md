@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.3.0
+
+This is the changelog for Cldr Calendars v1.3.0 released on September 1st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Enhancements
+
+Adds `<calendar>.add/3` to add `:quarter` or `:week` to a naive datetime. This adds to the existing support for `:year` and `:month`.
+
 # Changelog for Cldr Calendars v1.2.0
 
 This is the changelog for Cldr Calendars v1.2.0 released on August 31st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
