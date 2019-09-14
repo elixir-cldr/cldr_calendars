@@ -1,10 +1,29 @@
-# Changelog for Cldr Calendars v1.2.0
+# Changelog for Cldr Calendars v1.4.0
 
-This is the changelog for Cldr Calendars v1.2.0 released on September 14th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+This is the changelog for Cldr Calendars v1.4.0 released on September 14th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ## Enhancements
 
 * Adjusts `<calendar>.add/3` to `<calendar>.add/5` so that it takes individual date and time elements and not formal structs.  This is consistent with other calendar behaviours.
+
+# Changelog for Cldr Calendars v1.3.0
+
+This is the changelog for Cldr Calendars v1.3.0 released on September 1st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Enhancements
+
+Adds `<calendar>.add/3` to add `:quarter` or `:week` to a naive datetime. This adds to the existing support for `:year` and `:month`.
+
+# Changelog for Cldr Calendars v1.2.0
+
+This is the changelog for Cldr Calendars v1.2.0 released on August 31st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Enhancements
+
+* Adds `Cldr.Calendar.Duration` to create a duration struct defining the difference between two dates, times or date_times as a calendar difference in years, months, days, hours, minutes, seconds and microseconds. See `Cldr.Calendar.Duration.new/2` and `Cldr.Calendar.Duration.to_string/1`.
+
+* Changes `sigil_d/2` from a function to a macro so that dates are created at compile time
+>>>>>>> d367978351f7ba16fe2e001463b8b7091ebc1151
 
 # Changelog for Cldr Calendars v1.1.0
 

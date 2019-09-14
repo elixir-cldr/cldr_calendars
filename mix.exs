@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.MixProject do
   use Mix.Project
 
-  @version "1.2.0"
+  @version "1.4.0"
 
   def project do
     [
@@ -23,7 +23,7 @@ defmodule Cldr.Calendar.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       dialyzer: [
         ignore_warnings: ".dialyzer_ignore_warnings",
-        plt_add_apps: ~w(inets jason mix)a
+        plt_add_apps: ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists ex_cldr_numbers)a
       ],
       compilers: Mix.compilers()
     ]
@@ -61,8 +61,9 @@ defmodule Cldr.Calendar.MixProject do
 
   defp deps do
     [
-      {:ex_cldr, "~> 2.7"},
-      {:cldr_utils, "~> 2.3"},
+      {:ex_cldr, "~> 2.8"},
+      {:ex_cldr_units, "~> 2.0", optional: true},
+      {:ex_cldr_lists, "~> 2.4", optional: true},
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.18", only: [:release, :dev]},
       {:benchee, "~> 0.14", optional: true, only: [:dev, :test]},
@@ -74,7 +75,8 @@ defmodule Cldr.Calendar.MixProject do
     %{
       "GitHub" => "https://github.com/elixir-cldr/cldr_calendars",
       "Readme" => "https://github.com/elixir-cldr/cldr_calendars/blob/v#{@version}/README.md",
-      "Changelog" => "https://github.com/elixir-cldr/cldr_calendars/blob/v#{@version}/CHANGELOG.md"
+      "Changelog" =>
+        "https://github.com/elixir-cldr/cldr_calendars/blob/v#{@version}/CHANGELOG.md"
     }
   end
 

@@ -271,7 +271,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Adds a :year, :month, :day or time increments
+      Adds :year, :quarter, :month, :week, :day increments
 
       These functions support CalendarInterval
 
@@ -281,8 +281,18 @@ defmodule Cldr.Calendar.Compiler.Month do
         {year, month, day, hour, minute, second, microsecond}
       end
 
+      def add(year, month, day, hour, minute, second, microsecond, :quarter, step) do
+        {year, month, day} = plus(year, month, day, :quarters, step)
+        {year, month, day, hour, minute, second, microsecond}
+      end
+
       def add(year, month, day, hour, minute, second, microsecond, :month, step) do
         {year, month, day} = plus(year, month, day, :months, step)
+        {year, month, day, hour, minute, second, microsecond}
+      end
+
+      def add(year, month, day, hour, minute, second, microsecond, :week, step) do
+        {year, month, day} = plus(year, month, day, :weeks, step)
         {year, month, day, hour, minute, second, microsecond}
       end
 
@@ -385,6 +395,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       Implements the `Inspect` protocol for `Date` in this calendar
       """
       calendar_impl()
+
       @spec inspect_date(Calendar.year(), Calendar.month(), Calendar.day(), Inspect.Opts.t()) ::
               Inspect.Algebra.t()
       def inspect_date(year, month, day, _) do
@@ -447,6 +458,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       Implements the `Inspect` protocol for `NaiveDateTime` in this calendar
       """
       calendar_impl()
+
       @spec inspect_naive_datetime(
               Calendar.year(),
               Calendar.month(),
@@ -467,6 +479,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       Implements the `Inspect` protocol for `Time` in this calendar
       """
       calendar_impl()
+
       @spec inspect_time(
               Calendar.hour(),
               Calendar.minute(),

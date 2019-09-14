@@ -26,45 +26,50 @@ defmodule Cldr.Calendar.Sigils do
       ~d[2019-W01-1 ISOWeek]
 
   """
-  def sigil_d(<<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2>>, _) do
+  defmacro sigil_d({:<<>>, _, [string]}, modifiers) do
+    do_sigil_d(string, modifiers)
+    |> Macro.escape
+  end
+
+  def do_sigil_d(<<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2>>, _) do
     to_date(year, month, day, Cldr.Calendar.Gregorian)
   end
 
-  def sigil_d(<<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2, " C.E. Julian">>, _) do
+  def do_sigil_d(<<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2, " C.E. Julian">>, _) do
     to_date(year, month, day, Cldr.Calendar.Julian)
   end
 
-  def sigil_d(<<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2, " B.C.E. Julian">>, _) do
+  def do_sigil_d(<<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2, " B.C.E. Julian">>, _) do
     to_date("-" <> year, month, day, Calendar.Julian)
   end
 
-  def sigil_d(<<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2, " ", calendar::binary>>, _) do
+  def do_sigil_d(<<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2, " ", calendar::binary>>, _) do
     to_date(year, month, day, calendar)
   end
 
-  def sigil_d(
+  def do_sigil_d(
         <<"-", year::bytes-4, "-", month::bytes-2, "-", day::bytes-2, " ", calendar::binary>>,
         _
       ) do
     to_date("-" <> year, month, day, calendar)
   end
 
-  def sigil_d(<<year::bytes-4, "-W", month::bytes-2, "-", day::bytes-2>>, _) do
+  def do_sigil_d(<<year::bytes-4, "-W", month::bytes-2, "-", day::bytes-2>>, _) do
     to_date(year, month, day, Cldr.Calendar.ISOWeek)
   end
 
-  def sigil_d(<<year::bytes-4, "-W", month::bytes-2, "-", day::bytes-1>>, _) do
+  def do_sigil_d(<<year::bytes-4, "-W", month::bytes-2, "-", day::bytes-1>>, _) do
     to_date(year, month, day, Cldr.Calendar.ISOWeek)
   end
 
-  def sigil_d(
+  def do_sigil_d(
         <<year::bytes-4, "-W", month::bytes-2, "-", day::bytes-2, " ", calendar::binary>>,
         _
       ) do
     to_date(year, month, day, calendar)
   end
 
-  def sigil_d(
+  def do_sigil_d(
         <<year::bytes-4, "-W", month::bytes-2, "-", day::bytes-1, " ", calendar::binary>>,
         _
       ) do
@@ -103,7 +108,7 @@ defmodule Cldr.Calendar.Sigils do
   end
 
   defp get_calendar(calendar) do
-    if Code.ensure_loaded?(calendar) and function_exported?(calendar, :cldr_calendar_type, 0) do
+    if Code.ensure_compiled?(calendar) and function_exported?(calendar, :cldr_calendar_type, 0) do
       {:ok, calendar}
     else
       nil

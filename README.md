@@ -1,7 +1,8 @@
 # Cldr Calendars
 ![Build Status](http://sweatbox.noexpectations.com.au:8080/buildStatus/icon?job=cldr_calendars)
-[![Hex pm](http://img.shields.io/hexpm/v/ex_cldr_dates_times.svg?style=flat)](https://hex.pm/packages/ex_cldr_calendars)
-[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/kipcole9/cldr_calendars/blob/master/LICENSE)
+[![Hex.pm](https://img.shields.io/hexpm/v/ex_cldr_calendars.svg)](https://hex.pm/packages/ex_cldr_calendars)
+[![Hex.pm](https://img.shields.io/hexpm/dw/ex_cldr_calendars.svg?)](https://hex.pm/packages/ex_cldr_calendars)
+[![Hex.pm](https://img.shields.io/hexpm/l/ex_cldr_calendars.svg)](https://hex.pm/packages/ex_cldr_calendars)
 
 > My wife's jealousy is getting ridiculous. The other day she looked at my calendar and wanted to know who May was.
 > -- Rodney Dangerfield
@@ -384,6 +385,33 @@ Some examples:
   :equals
 ```
 
+### Durations
+
+A duration is calculated as the difference in time in calendar units: years, months, days, hours, minutes, seconds and microseconds.
+
+This is useful to support formatting a string for users in easy-to-understand terms. For example `11 months, 3 days and 4 minutes` is a lot easier to understand than `28771440` seconds.
+
+The package [ex_cldr_units](https://hex.pm/packages/ex_cldr_units) can be optionally configured to provide localized formatting of durations.
+
+If configured, the following providers must be configured in the appropriate CLDR backend module. For example:
+
+```elixir
+defmodule MyApp.Cldr do
+  use Cldr,
+    locales: ["en", "ja"],
+    providers: [Cldr.Calendar, Cldr.Number, Cldr.Unit, Cldr.List]
+end
+```
+
+To create a duration, use `Cldr.Calendar.Duration.new/2` providing two dates, times or datetimes. The first date must occur before the second date.  To format a duration into a string use `Cldr.Calendar.Duration.to_string/2`.
+
+An example is:
+```elixir
+iex> {:ok, duration} = Duration.new(~D[2019-01-01], ~D[2019-12-31])
+iex> Cldr.Calendar.Duration.to_string(duration)
+"11 months and 30 days"
+```
+
 ### Configuring a Cldr backend for localization
 
 In order to localize date parts a`backend` module must be defined. This
@@ -397,7 +425,7 @@ For a simple configuration the following steps may be used:
 defmodule MyApp.Cldr do
   use Cldr,
     locales: ["en", "fr", "jp", "ar"],
-    providers: [Cldr.Number]
+    providers: [Cldr.Calendar, Cldr.Number]
 end
 ```
 
@@ -440,7 +468,7 @@ Add `ex_cldr_calendars` to your `deps` in `mix.exs`.
 ```elixir
 def deps do
   [
-    {:ex_cldr_calendars, "~> 0.10"}
+    {:ex_cldr_calendars, "~> 2.6"}
     ...
   ]
 end
