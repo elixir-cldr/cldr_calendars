@@ -2029,11 +2029,12 @@ defmodule Cldr.Calendar do
     |> date_from_iso_days(calendar)
   end
 
-  defp month_day(_year, month, day, _calendar, false) do
+  @doc false
+  def month_day(_year, month, day, _calendar, false) do
     {month, day}
   end
 
-  defp month_day(year, month, day, calendar, true) do
+  def month_day(year, month, day, calendar, true) do
     new_month =
       year
       |> calendar.periods_in_year

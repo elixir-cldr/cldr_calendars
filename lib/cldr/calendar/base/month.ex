@@ -213,6 +213,13 @@ defmodule Cldr.Calendar.Base.Month do
     end
   end
 
+  def plus(year, month, day, config, :years, years, options) do
+    new_year = year + years
+    coerce? = Keyword.get(options, :coerce, false)
+    {new_month, new_day} = Cldr.Calendar.month_day(new_year, month, day, config.calendar, coerce?)
+    {new_year, new_month, new_day}
+  end
+
   def plus(year, month, day, config, :quarters, quarters, options) do
     months = quarters * @months_in_quarter
     plus(year, month, day, config, :months, months, options)

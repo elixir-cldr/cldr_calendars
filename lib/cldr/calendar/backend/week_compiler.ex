@@ -252,12 +252,16 @@ defmodule Cldr.Calendar.Compiler.Week do
       Adds an `increment` number of `date_part`s
       to a `year-month-day`.
 
-      `date_part` can be `:quarters` or
+      `date_part` can be `:years`, `:quarters` or
       `:months`.
 
       """
       @impl true
       def plus(year, month, day, date_part, increment, options \\ [])
+
+      def plus(year, month, day, :years, quarters, options) do
+        Week.plus(year, month, day, __config__(), :years, quarters, options)
+      end
 
       def plus(year, week, day, :quarters, quarters, options) do
         Week.plus(year, week, day, __config__(), :quarters, quarters, options)
@@ -273,14 +277,14 @@ defmodule Cldr.Calendar.Compiler.Week do
       These functions support CalendarInterval
 
       """
-      def add(naive_datetime, :year, step) do
-        %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :years, step)
-        %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
+      def add(year, month, day, hour, minute, second, microsecond, :year, step) do
+        {year, month, day} = plus(year, month, day, :years, step)
+        {year, month, day, hour, minute, second, microsecond}
       end
 
-      def add(naive_datetime, :month, step) do
-        %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :months, step)
-        %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
+      def add(year, month, day, hour, minute, second, microsecond, :month, step) do
+        {year, month, day} = plus(year, month, day, :months, step)
+        {year, month, day, hour, minute, second, microsecond}
       end
 
       @doc """

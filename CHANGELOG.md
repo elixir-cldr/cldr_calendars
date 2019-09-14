@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.2.0
+
+This is the changelog for Cldr Calendars v1.2.0 released on September 14th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Enhancements
+
+* Adjusts `<calendar>.add/3` to `<calendar>.add/5` so that it takes individual date and time elements and not formal structs.  This is consistent with other calendar behaviours.
+
 # Changelog for Cldr Calendars v1.1.0
 
 This is the changelog for Cldr Calendars v1.1.0 released on August 30th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

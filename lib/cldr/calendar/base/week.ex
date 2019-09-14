@@ -193,6 +193,13 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
+  def plus(year, week, day, config, :years, years, options) do
+    new_year = year + years
+    coerce? = Keyword.get(options, :coerce, false)
+    {new_week, new_day} = Cldr.Calendar.month_day(new_year, week, day, config.calendar, coerce?)
+    {new_year, new_week, new_day}
+  end
+
   def plus(year, week, day, config, :quarters, quarters, _options) do
     days = quarters * @weeks_in_quarter * days_in_week()
     iso_days = date_to_iso_days(year, week, day, config) + days
