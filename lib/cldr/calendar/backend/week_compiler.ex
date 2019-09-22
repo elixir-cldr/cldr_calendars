@@ -252,8 +252,8 @@ defmodule Cldr.Calendar.Compiler.Week do
       Adds an `increment` number of `date_part`s
       to a `year-month-day`.
 
-      `date_part` can be `:years`, `:quarters` or
-      `:months`.
+      `date_part` can be `:years`, `:quarters`,
+      or `:months`
 
       """
       @impl true
@@ -289,11 +289,6 @@ defmodule Cldr.Calendar.Compiler.Week do
 
       def add(year, month, day, hour, minute, second, microsecond, :month, step) do
         {year, month, day} = plus(year, month, day, :months, step)
-        {year, month, day, hour, minute, second, microsecond}
-      end
-
-      def add(year, month, day, hour, minute, second, microsecond, :week, step) do
-        {year, month, day} = plus(year, month, day, :weeks, step)
         {year, month, day, hour, minute, second, microsecond}
       end
 

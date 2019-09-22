@@ -35,17 +35,18 @@ defmodule Cldr.Calendar.Duration do
 
   @typedoc "Measure a duration in calendar units"
   @type t :: %__MODULE__{
-    year: non_neg_integer(),
-    month: non_neg_integer(),
-    day: non_neg_integer(),
-    hour: non_neg_integer(),
-    minute: non_neg_integer(),
-    second: non_neg_integer(),
-    microsecond: non_neg_integer(),
-  }
+          year: non_neg_integer(),
+          month: non_neg_integer(),
+          day: non_neg_integer(),
+          hour: non_neg_integer(),
+          minute: non_neg_integer(),
+          second: non_neg_integer(),
+          microsecond: non_neg_integer()
+        }
 
   @typedoc "A date, time or datetime"
-  @type date_or_datetime :: Calendar.date() | Calendar.time() | Calendar.datetime()
+  @type date_or_datetime ::
+          Calendar.date() | Calendar.time() | Calendar.datetime() | Calendar.naive_datetime()
 
   @microseconds_in_second 1_000_000
   @microseconds_in_day 86_400_000_000
@@ -182,7 +183,7 @@ defmodule Cldr.Calendar.Duration do
   """
 
   @spec to_string!(t(), Keyword.t()) :: String.t() | no_return
-  def to_string!(duration, options \\ []) do
+  def to_string!(%__MODULE__{} = duration, options \\ []) do
     case to_string(duration, options) do
       {:ok, string} -> string
       {:error, {exception, reason}} -> raise exception, reason
@@ -231,7 +232,7 @@ defmodule Cldr.Calendar.Duration do
   """
 
   @spec new(from :: date_or_datetime(), to :: date_or_datetime()) ::
-    {:ok, t()} | {:error, {module(), String.t()}}
+          {:ok, t()} | {:error, {module(), String.t()}}
 
   def new(%{calendar: calendar} = from, %{calendar: calendar} = to) do
     time_diff = time_duration(from, to)
@@ -294,7 +295,7 @@ defmodule Cldr.Calendar.Duration do
   """
 
   @spec new!(from :: date_or_datetime(), to :: date_or_datetime()) ::
-    t() | no_return()
+          t() | no_return()
 
   def new!(from, to) do
     case new(from, to) do

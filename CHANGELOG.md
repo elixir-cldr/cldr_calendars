@@ -23,7 +23,6 @@ This is the changelog for Cldr Calendars v1.2.0 released on August 31st, 2019.  
 * Adds `Cldr.Calendar.Duration` to create a duration struct defining the difference between two dates, times or date_times as a calendar difference in years, months, days, hours, minutes, seconds and microseconds. See `Cldr.Calendar.Duration.new/2` and `Cldr.Calendar.Duration.to_string/1`.
 
 * Changes `sigil_d/2` from a function to a macro so that dates are created at compile time
->>>>>>> d367978351f7ba16fe2e001463b8b7091ebc1151
 
 # Changelog for Cldr Calendars v1.1.0
 

@@ -28,7 +28,7 @@ defmodule Cldr.Calendar.Sigils do
   """
   defmacro sigil_d({:<<>>, _, [string]}, modifiers) do
     do_sigil_d(string, modifiers)
-    |> Macro.escape
+    |> Macro.escape()
   end
 
   def do_sigil_d(<<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2>>, _) do
@@ -43,7 +43,10 @@ defmodule Cldr.Calendar.Sigils do
     to_date("-" <> year, month, day, Calendar.Julian)
   end
 
-  def do_sigil_d(<<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2, " ", calendar::binary>>, _) do
+  def do_sigil_d(
+        <<year::bytes-4, "-", month::bytes-2, "-", day::bytes-2, " ", calendar::binary>>,
+        _
+      ) do
     to_date(year, month, day, calendar)
   end
 

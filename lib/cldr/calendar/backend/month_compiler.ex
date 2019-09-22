@@ -271,7 +271,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Adds :year, :quarter, :month, :week, :day increments
+      Adds :year, :quarter, :month, :week increments
 
       These functions support CalendarInterval
 
@@ -288,11 +288,6 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       def add(year, month, day, hour, minute, second, microsecond, :month, step) do
         {year, month, day} = plus(year, month, day, :months, step)
-        {year, month, day, hour, minute, second, microsecond}
-      end
-
-      def add(year, month, day, hour, minute, second, microsecond, :week, step) do
-        {year, month, day} = plus(year, month, day, :weeks, step)
         {year, month, day, hour, minute, second, microsecond}
       end
 
