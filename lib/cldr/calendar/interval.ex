@@ -6,6 +6,18 @@ defmodule Cldr.Calendar.Interval do
   In particular it provides functions which return an
   interval (as a `Date.Range.t`) for years, quarters,
   months, weeks and days.
+
+  In general, the intervals created with the packaage
+  [calendar_interval](https://hex.pm/packages/calendar_interval)
+  are to be preferred since they can used over different
+  time precisions whereas the functions in this module are
+  all intervals of a day. In order to be used with `ex_cldr_calendars`,
+  version "~> 0.2" of [calendar_interval](https://hex.pm/packages/calendar_interval)
+  is required.
+
+  Note however that as of release `0.2`, [calendar_interval](https://hex.pm/packages/calendar_interval) does
+  not support intervals of `quarters` or `weeks`.
+
   """
 
   @doc """
