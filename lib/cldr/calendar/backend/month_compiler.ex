@@ -386,112 +386,10 @@ defmodule Cldr.Calendar.Compiler.Month do
         Month.naive_datetime_from_iso_days({days, day_fraction}, __config__())
       end
 
-      @doc """
-      Implements the `Inspect` protocol for `Date` in this calendar
-      """
-      calendar_impl()
-
-      @spec inspect_date(Calendar.year(), Calendar.month(), Calendar.day(), Inspect.Opts.t()) ::
-              Inspect.Algebra.t()
-      def inspect_date(year, month, day, _) do
-        "~d[" <> date_to_string(year, month, day) <> "]"
-      end
-
-      @doc """
-      Implements the `Inspect` protocol for `DateTime` in this calendar
-      """
-      calendar_impl()
-
-      @spec inspect_datetime(
-              Calendar.year(),
-              Calendar.month(),
-              Calendar.day(),
-              Calendar.hour(),
-              Calendar.minute(),
-              Calendar.second(),
-              Calendar.microsecond(),
-              Calendar.time_zone(),
-              Calendar.zone_abbr(),
-              Calendar.utc_offset(),
-              Calendar.std_offset(),
-              Inspect.Opts.t()
-            ) ::
-              Inspect.Algebra.t()
-      def inspect_datetime(
-            year,
-            month,
-            day,
-            hour,
-            minute,
-            second,
-            microsecond,
-            time_zone,
-            zone_abbr,
-            utc_offset,
-            std_offset,
-            _opts
-          ) do
-        formatted =
-          datetime_to_string(
-            year,
-            month,
-            day,
-            hour,
-            minute,
-            second,
-            microsecond,
-            time_zone,
-            zone_abbr,
-            utc_offset,
-            std_offset
-          )
-
-        "#DateTime<" <> formatted <> ">"
-      end
-
-      @doc """
-      Implements the `Inspect` protocol for `NaiveDateTime` in this calendar
-      """
-      calendar_impl()
-
-      @spec inspect_naive_datetime(
-              Calendar.year(),
-              Calendar.month(),
-              Calendar.day(),
-              Calendar.hour(),
-              Calendar.minute(),
-              Calendar.second(),
-              Calendar.microsecond(),
-              Inspect.Opts.t()
-            ) ::
-              Inspect.Algebra.t()
-      def inspect_naive_datetime(year, month, day, hour, minute, second, microsecond, _opts) do
-        formatted = naive_datetime_to_string(year, month, day, hour, minute, second, microsecond)
-        "#NaiveDateTime<" <> formatted <> ">"
-      end
-
-      @doc """
-      Implements the `Inspect` protocol for `Time` in this calendar
-      """
-      calendar_impl()
-
-      @spec inspect_time(
-              Calendar.hour(),
-              Calendar.minute(),
-              Calendar.second(),
-              Calendar.microsecond(),
-              Inspect.Opts.t()
-            ) :: Inspect.Algebra.t()
-      def inspect_time(hour, minute, second, microsecond, opts) do
-        formatted = time_to_string(hour, minute, second, microsecond)
-        "#Time<" <> formatted <> ">"
-      end
-
       @doc false
       @impl true
       def date_to_string(year, month, day) do
-        Calendar.ISO.date_to_string(year, month, day) <>
-          " " <> Cldr.Calendar.calendar_name(__MODULE__)
+        Calendar.ISO.date_to_string(year, month, day)
       end
 
       @doc false
@@ -521,14 +419,36 @@ defmodule Cldr.Calendar.Compiler.Month do
           zone_abbr,
           utc_offset,
           std_offset
-        ) <> " " <> Cldr.Calendar.calendar_name(__MODULE__)
+        )
       end
 
       @doc false
       @impl true
       def naive_datetime_to_string(year, month, day, hour, minute, second, microsecond) do
-        Calendar.ISO.naive_datetime_to_string(year, month, day, hour, minute, second, microsecond) <>
-          " " <> Cldr.Calendar.calendar_name(__MODULE__)
+        Calendar.ISO.naive_datetime_to_string(year, month, day, hour, minute, second, microsecond)
+      end
+
+      @doc false
+      calendar_impl()
+      def parse_date(string) do
+        Cldr.Calendar.Parse.parse_date(string, __MODULE__)
+      end
+
+      @doc false
+      calendar_impl()
+      def parse_utc_datetime(string) do
+        Cldr.Calendar.Parse.parse_utc_datetime(string, __MODULE__)
+      end
+
+      @doc false
+      calendar_impl()
+      def parse_naive_datetime(string) do
+        Cldr.Calendar.Parse.parse_naive_datetime(string, __MODULE__)
+      end
+
+      if Version.match?(System.version(), ">= 1.10.0-dev") do
+        @doc false
+        defdelegate parse_time(string), to: Calendar.ISO
       end
 
       @doc false

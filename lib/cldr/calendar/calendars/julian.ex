@@ -2,8 +2,6 @@ defmodule Cldr.Calendar.Julian do
   @behaviour Calendar
   @behaviour Cldr.Calendar
 
-  import Cldr.Macros
-
   @type year :: -9999..-1 | 1..9999
   @type month :: 1..12
   @type day :: 1..31
@@ -21,7 +19,6 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @impl true
-
   def cldr_calendar_type do
     :gregorian
   end
@@ -44,7 +41,6 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @impl true
-
   def valid_date?(0, _month, _day) do
     false
   end
@@ -81,7 +77,6 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec year_of_era(year) :: {year, era :: 0..1}
   @impl true
-
   def year_of_era(year) when year > 0 do
     {year, 1}
   end
@@ -97,7 +92,6 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec quarter_of_year(year, month, day) :: 1..4
   @impl true
-
   def quarter_of_year(_year, month, _day) do
     Float.ceil(month / @months_in_quarter)
     |> trunc
@@ -110,7 +104,6 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec month_of_year(year, month, day) :: month
   @impl true
-
   def month_of_year(_year, month, _day) do
     month
   end
@@ -122,7 +115,6 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec week_of_year(year, month, day) :: {:error, :not_defined}
   @impl true
-
   def week_of_year(_year, _month, _day) do
     {:error, :not_defined}
   end
@@ -134,7 +126,6 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec iso_week_of_year(year, month, day) :: {:error, :not_defined}
   @impl true
-
   def iso_week_of_year(_year, _month, _day) do
     {:error, :not_defined}
   end
@@ -146,7 +137,6 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec week_of_month(year, month, day) :: {pos_integer(), pos_integer()} | {:error, :not_defined}
   @impl true
-
   def week_of_month(_year, _month, _day) do
     {:error, :not_defined}
   end
@@ -157,7 +147,6 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec day_of_era(year, month, day) :: {day :: pos_integer(), era :: 0..1}
   @impl true
-
   def day_of_era(year, month, day) do
     {_, era} = year_of_era(year)
     days = date_to_iso_days(year, month, day)
@@ -170,7 +159,6 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec day_of_year(year, month, day) :: 1..366
   @impl true
-
   def day_of_year(year, month, day) do
     first_day = date_to_iso_days(year, 1, 1)
     this_day = date_to_iso_days(year, month, day)
@@ -184,7 +172,6 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec day_of_week(year, month, day) :: 1..7
   @impl true
-
   @epoch_day_of_week 6
   def day_of_week(year, month, day) do
     days = date_to_iso_days(year, month, day)
@@ -250,7 +237,6 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @impl true
-
   def year(year) do
     last_month = months_in_year(year)
     days_in_last_month = days_in_month(year, last_month)
@@ -267,7 +253,6 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @impl true
-
   def quarter(year, quarter) do
     months_in_quarter = div(months_in_year(year), @quarters_in_year)
     starting_month = months_in_quarter * (quarter - 1) + 1
@@ -288,7 +273,6 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @impl true
-
   def month(year, month) do
     starting_day = 1
     ending_day = days_in_month(year, month)
@@ -305,7 +289,6 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @impl true
-
   def week(_year, _week) do
     {:error, :not_defined}
   end
@@ -319,7 +302,6 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @impl true
-
   def plus(year, month, day, date_part, increment, options \\ [])
 
   def plus(year, month, day, :quarters, quarters, options) do
@@ -349,7 +331,6 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec leap_year?(year) :: boolean()
   @impl true
-
   def leap_year?(year) do
     Cldr.Math.mod(year, 4) == if year > 0, do: 0, else: 3
   end
@@ -437,162 +418,10 @@ defmodule Cldr.Calendar.Julian do
           Calendar.microsecond()
         }
   @impl true
-
   def naive_datetime_from_iso_days({days, day_fraction}) do
     {year, month, day} = date_from_iso_days(days)
     {hour, minute, second, microsecond} = time_from_day_fraction(day_fraction)
     {year, month, day, hour, minute, second, microsecond}
-  end
-
-  @doc false
-  @impl true
-  def date_to_string(year, month, day) when year > 0 do
-    Calendar.ISO.date_to_string(year, month, day) <> " C.E. Julian"
-  end
-
-  def date_to_string(year, month, day) when year < 0 do
-    Calendar.ISO.date_to_string(abs(year), month, day) <> " B.C.E. Julian"
-  end
-
-  @doc false
-  @impl true
-  def datetime_to_string(
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        microsecond,
-        time_zone,
-        zone_abbr,
-        utc_offset,
-        std_offset
-      ) do
-    date_to_string(year, month, day) <>
-      " " <>
-      time_to_string(hour, minute, second, microsecond) <>
-      Cldr.Calendar.offset_to_string(utc_offset, std_offset, time_zone) <>
-      Cldr.Calendar.zone_to_string(utc_offset, std_offset, zone_abbr, time_zone)
-  end
-
-  @doc false
-  @impl true
-  def naive_datetime_to_string(
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        microsecond
-      ) do
-    date_to_string(year, month, day) <>
-      " " <> time_to_string(hour, minute, second, microsecond)
-  end
-
-  @doc """
-  Implements the `Inspect` protocol for `Date` in this calendar
-  """
-  calendar_impl()
-
-  @spec inspect_date(Calendar.year(), Calendar.month(), Calendar.day(), Inspect.Opts.t()) ::
-          Inspect.Algebra.t()
-  def inspect_date(year, month, day, _) do
-    "~d[" <> date_to_string(year, month, day) <> "]"
-  end
-
-  @doc """
-  Implements the `Inspect` protocol for `DateTime` in this calendar
-  """
-  calendar_impl()
-
-  @spec inspect_datetime(
-          Calendar.year(),
-          Calendar.month(),
-          Calendar.day(),
-          Calendar.hour(),
-          Calendar.minute(),
-          Calendar.second(),
-          Calendar.microsecond(),
-          Calendar.time_zone(),
-          Calendar.zone_abbr(),
-          Calendar.utc_offset(),
-          Calendar.std_offset(),
-          Inspect.Opts.t()
-        ) ::
-          Inspect.Algebra.t()
-  def inspect_datetime(
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        microsecond,
-        time_zone,
-        zone_abbr,
-        utc_offset,
-        std_offset,
-        _opts
-      ) do
-    formatted =
-      datetime_to_string(
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        microsecond,
-        time_zone,
-        zone_abbr,
-        utc_offset,
-        std_offset
-      )
-
-    if utc_offset == 0 && std_offset == 0 && time_zone == "Etc/UTC" do
-      "~u[" <> formatted <> "]"
-    else
-      "#DateTime<" <> formatted <> ">"
-    end
-  end
-
-  @doc """
-  Implements the `Inspect` protocol for `NaiveDateTime` in this calendar
-  """
-  calendar_impl()
-
-  @spec inspect_naive_datetime(
-          Calendar.year(),
-          Calendar.month(),
-          Calendar.day(),
-          Calendar.hour(),
-          Calendar.minute(),
-          Calendar.second(),
-          Calendar.microsecond(),
-          Inspect.Opts.t()
-        ) ::
-          Inspect.Algebra.t()
-  def inspect_naive_datetime(year, month, day, hour, minute, second, microsecond, _opts) do
-    formatted = naive_datetime_to_string(year, month, day, hour, minute, second, microsecond)
-    "~n[" <> formatted <> "]"
-  end
-
-  @doc """
-  Implements the `Inspect` protocol for `Time` in this calendar
-  """
-  calendar_impl()
-
-  @spec inspect_time(
-          Calendar.hour(),
-          Calendar.minute(),
-          Calendar.second(),
-          Calendar.microsecond(),
-          Inspect.Opts.t()
-        ) :: Inspect.Algebra.t()
-  def inspect_time(hour, minute, second, microsecond, _opts) do
-    "~t[" <> time_to_string(hour, minute, second, microsecond) <> "]"
   end
 
   @doc false
@@ -606,6 +435,50 @@ defmodule Cldr.Calendar.Julian do
 
   @doc false
   defdelegate time_to_day_fraction(hour, minute, second, microsecond), to: Calendar.ISO
+
+  # Calendar callbacks that appear in Elixir 1.10
+  if Version.match?(System.version(), ">= 1.10.0-dev") do
+    @doc false
+    defdelegate parse_date(date_string), to: Calendar.ISO
+
+    @doc false
+    defdelegate parse_time(time_string), to: Calendar.ISO
+
+    @doc false
+    defdelegate parse_utc_datetime(dt_string), to: Calendar.ISO
+
+    @doc false
+    defdelegate parse_naive_datetime(dt_string), to: Calendar.ISO
+  end
+
+  @doc false
+  defdelegate date_to_string(year, month, day), to: Calendar.ISO
+
+  @doc false
+  defdelegate datetime_to_string(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        microsecond,
+        time_zone,
+        zone_abbr,
+        utc_offset,
+        std_offset
+      ), to: Calendar.ISO
+
+  @doc false
+  defdelegate naive_datetime_to_string(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        microsecond
+      ), to: Calendar.ISO
 
   @doc false
   defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO
