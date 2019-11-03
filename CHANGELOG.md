@@ -1,10 +1,6 @@
-# Changelog for Cldr Calendars v2.0.0
+# Changelog for Cldr Calendars v1.5.0
 
-This is the changelog for Cldr Calendars v2.0.0 released on November 3rd, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
-
-## Breaking Changes
-
-* Removes the `~d` sigil in favour of the revised `~D` sigil in the upcoming release of Elixir 1.10 that permits specification of a calendar module.
+This is the changelog for Cldr Calendars v1.5.0 released on November 3rd, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ## Enhancements
 
