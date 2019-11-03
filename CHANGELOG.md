@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.5.0
+
+This is the changelog for Cldr Calendars v1.5.0 released on November 3rd, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Enhancements
+
+* Adds `MyApp.Cldr.Calendar.strftime_options!/2` to return a keyword list of options that can be applied to `NimbleStrftime.format/3`
+
 # Changelog for Cldr Calendars v1.4.0
 
 This is the changelog for Cldr Calendars v1.4.0 released on September 14th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
