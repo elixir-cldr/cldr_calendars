@@ -1,8 +1,6 @@
 defmodule Cldr.Calendar.Range.Relationship.Test do
   use ExUnit.Case, async: true
 
-  doctest Cldr.Calendar.Interval
-
   test "that a range precedes" do
     r1 = Cldr.Calendar.Interval.month(2019, 1)
     r2 = Cldr.Calendar.Interval.month(2019, 3)

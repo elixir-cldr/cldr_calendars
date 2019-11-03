@@ -68,7 +68,8 @@ defmodule Cldr.Calendar.MixProject do
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.18", only: [:release, :dev]},
       {:benchee, "~> 0.14", optional: true, only: [:dev, :test]},
-      {:dialyxir, "~> 1.0.0-rc", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0.0-rc", only: [:dev], runtime: false},
+      {:nimble_strftime, "~> 0.1", only: :test}
     ]
   end
 

@@ -42,10 +42,10 @@ defmodule Cldr.Calendar.Interval do
   ## Examples
 
       iex> Cldr.Calendar.Interval.year 2019, Cldr.Calendar.UK
-      #DateRange<~d[2019-01-01 Cldr.Calendar.UK], ~d[2019-12-31 Cldr.Calendar.UK]>
+      #DateRange<~D[2019-01-01 Cldr.Calendar.UK], ~D[2019-12-31 Cldr.Calendar.UK]>
 
       iex> Cldr.Calendar.Interval.year 2019, Cldr.Calendar.NRF
-      #DateRange<~d[2019-W01-1 Cldr.Calendar.NRF], ~d[2019-W52-7 Cldr.Calendar.NRF]>
+      #DateRange<~D[2019-W01-1 Cldr.Calendar.NRF], ~D[2019-W52-7 Cldr.Calendar.NRF]>
 
   """
   @spec year(Calendar.year(), Cldr.Calendar.calendar()) :: Date.Range.t()
@@ -90,10 +90,10 @@ defmodule Cldr.Calendar.Interval do
   ## Examples
 
       iex> Cldr.Calendar.Interval.quarter 2019, 2, Cldr.Calendar.UK
-      #DateRange<~d[2019-04-01 Cldr.Calendar.UK], ~d[2019-06-30 Cldr.Calendar.UK]>
+      #DateRange<~D[2019-04-01 Cldr.Calendar.UK], ~D[2019-06-30 Cldr.Calendar.UK]>
 
       iex> Cldr.Calendar.Interval.quarter 2019, 2, Cldr.Calendar.ISOWeek
-      #DateRange<~d[2019-W14-1 Cldr.Calendar.ISOWeek], ~d[2019-W26-7 Cldr.Calendar.ISOWeek]>
+      #DateRange<~D[2019-W14-1 Cldr.Calendar.ISOWeek], ~D[2019-W26-7 Cldr.Calendar.ISOWeek]>
 
   """
   @spec quarter(Calendar.year(), Cldr.Calendar.quarter(), Cldr.Calendar.calendar()) ::
@@ -140,10 +140,10 @@ defmodule Cldr.Calendar.Interval do
   ## Examples
 
       iex> Cldr.Calendar.Interval.month 2019, 3, Cldr.Calendar.UK
-      #DateRange<~d[2019-03-01 Cldr.Calendar.UK], ~d[2019-03-30 Cldr.Calendar.UK]>
+      #DateRange<~D[2019-03-01 Cldr.Calendar.UK], ~D[2019-03-30 Cldr.Calendar.UK]>
 
       iex> Cldr.Calendar.Interval.month 2019, 3, Cldr.Calendar.US
-      #DateRange<~d[2019-03-01 Cldr.Calendar.US], ~d[2019-03-31 Cldr.Calendar.US]>
+      #DateRange<~D[2019-03-01 Cldr.Calendar.US], ~D[2019-03-31 Cldr.Calendar.US]>
 
   """
   @spec month(Calendar.year(), Calendar.month(), Cldr.Calendar.calendar()) :: Date.Range.t()
@@ -192,13 +192,13 @@ defmodule Cldr.Calendar.Interval do
   ## Examples
 
       iex> Cldr.Calendar.Interval.week 2019, 52, Cldr.Calendar.US
-      #DateRange<~d[2019-12-22 Cldr.Calendar.US], ~d[2019-12-28 Cldr.Calendar.US]>
+      #DateRange<~D[2019-12-22 Cldr.Calendar.US], ~D[2019-12-28 Cldr.Calendar.US]>
 
       iex> Cldr.Calendar.Interval.week 2019, 52, Cldr.Calendar.NRF
-      #DateRange<~d[2019-W52-1 Cldr.Calendar.NRF], ~d[2019-W52-7 Cldr.Calendar.NRF]>
+      #DateRange<~D[2019-W52-1 Cldr.Calendar.NRF], ~D[2019-W52-7 Cldr.Calendar.NRF]>
 
       iex> Cldr.Calendar.Interval.week 2019, 52, Cldr.Calendar.ISOWeek
-      #DateRange<~d[2019-W52-1 Cldr.Calendar.ISOWeek], ~d[2019-W52-7 Cldr.Calendar.ISOWeek]>
+      #DateRange<~D[2019-W52-1 Cldr.Calendar.ISOWeek], ~D[2019-W52-7 Cldr.Calendar.ISOWeek]>
 
       iex> Cldr.Calendar.Interval.week 2019, 52, Cldr.Calendar.Julian
       {:error, :not_defined}
@@ -247,10 +247,10 @@ defmodule Cldr.Calendar.Interval do
   ## Examples
 
       iex> Cldr.Calendar.Interval.day 2019, 52, Cldr.Calendar.US
-      #DateRange<~d[2019-02-21 Cldr.Calendar.US], ~d[2019-02-21 Cldr.Calendar.US]>
+      #DateRange<~D[2019-02-21 Cldr.Calendar.US], ~D[2019-02-21 Cldr.Calendar.US]>
 
       iex> Cldr.Calendar.Interval.day 2019, 92, Cldr.Calendar.NRF
-      #DateRange<~d[2019-W14-1 Cldr.Calendar.NRF], ~d[2019-W14-1 Cldr.Calendar.NRF]>
+      #DateRange<~D[2019-W14-1 Cldr.Calendar.NRF], ~D[2019-W14-1 Cldr.Calendar.NRF]>
 
       Cldr.Calendar.Interval.day 2019, 8, Cldr.Calendar.ISOWeek
       #DateRange<%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 2, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 2, year: 2019}>

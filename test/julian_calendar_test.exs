@@ -1,9 +1,8 @@
 defmodule Cldr.Calendar.Julian.Test do
   use ExUnit.Case, async: true
+  import Cldr.Calendar.Helper
 
   test "that we can localize a julian date" do
-    import Cldr.Calendar.Sigils
-
-    assert Cldr.Calendar.localize(~d[2019-03-01 Julian], :era) == "AD"
+    assert Cldr.Calendar.localize(date(2019, 03, 01, Cldr.Calendar.Julian), :era) == "AD"
   end
 end

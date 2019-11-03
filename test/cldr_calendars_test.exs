@@ -1,9 +1,12 @@
 defmodule Cldr.Calendar.Test do
   use ExUnit.Case, asynch: true
-  doctest Cldr.Calendar
-  doctest Cldr.Calendar.Duration
-  doctest Cldr.Calendar.Interval
-  doctest Cldr.Calendar.Kday
+
+  if Version.compare(System.version(), "1.10.0-dev") in [:gt, :eq] do
+    doctest Cldr.Calendar
+    doctest Cldr.Calendar.Duration
+    doctest Cldr.Calendar.Interval
+    doctest Cldr.Calendar.Kday
+  end
 
   # :calendar module doesn't work with year 0 or negative years
   test "that iso week of year is same as erlang" do

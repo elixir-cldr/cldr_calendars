@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.Duration.Test do
   use ExUnit.Case, async: true
   alias Cldr.Calendar.Duration
-  import Cldr.Calendar.Sigils
+  import Cldr.Calendar.Helper
 
   test "durations" do
     assert Duration.new(~D[2019-01-01], ~D[2019-12-31]) ==
@@ -56,7 +56,7 @@ defmodule Cldr.Calendar.Duration.Test do
                 second: 0
               }}
 
-    assert Duration.new(~d[2000-12-01 Gregorian], ~d[2019-01-31 Gregorian]) ==
+    assert Duration.new(date(2000, 12, 01, Cldr.Calendar.Gregorian), date(2019, 01, 31, Cldr.Calendar.Gregorian)) ==
              {:ok,
               %Duration{
                 year: 18,
@@ -68,7 +68,7 @@ defmodule Cldr.Calendar.Duration.Test do
                 second: 0
               }}
 
-    assert Duration.new(~d[2000-12-01 CSCO], ~d[2019-01-07 CSCO]) ==
+    assert Duration.new(date(2000, 12, 01, Cldr.Calendar.CSCO), date(2019, 01, 07, Cldr.Calendar.CSCO)) ==
              {:ok,
               %Duration{year: 18, month: 1, day: 6, hour: 0, microsecond: 0, minute: 0, second: 0}}
   end

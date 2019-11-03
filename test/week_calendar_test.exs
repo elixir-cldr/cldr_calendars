@@ -1,7 +1,6 @@
 defmodule Cldr.Calendar.Week.Test do
   use ExUnit.Case, async: true
-
-  import Cldr.Calendar.Sigils
+  import Cldr.Calendar.Helper
 
   defmodule Sunday do
     use Cldr.Calendar.Base.Week,
@@ -71,11 +70,11 @@ defmodule Cldr.Calendar.Week.Test do
   end
 
   test "day of week for ISOWeek calendar is correct" do
-    assert Cldr.Calendar.day_of_week(~d[2019-01-01 ISOWeek]) == 1
+    assert Cldr.Calendar.day_of_week(date(2019, 01, 01, Cldr.Calendar.ISOWeek)) == 1
   end
 
   test "day of week for NRF calendar is correct" do
-    assert Cldr.Calendar.day_of_week(~d[2019-01-01 NRF]) == 7
+    assert Cldr.Calendar.day_of_week(date(2019, 01, 01, Cldr.Calendar.NRF)) == 7
   end
 
   test "day of week for Sunday calendar is correct" do

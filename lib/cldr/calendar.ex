@@ -4,7 +4,7 @@ defmodule Cldr.Calendar do
   Elixir's `Calendar` behaviour.
 
   `Cldr.Calendar` supports the creation of calendars
-  that are variations on the proleptic Gregorian
+  that are variations on the proleptic Cldr.Calendar.Gregorian
   calendar. It also adds additional functions, defined
   by the `Cldr.Calendar` behaviour, to support these
   derived calendars.
@@ -16,13 +16,13 @@ defmodule Cldr.Calendar do
   There are two general types of calendars supported:
 
   * `month` calendars that mirror the monthly structure
-    of the proleptic Gregorian calendar but which are
+    of the proleptic Cldr.Calendar.Gregorian calendar but which are
     deemed to start the year in a month other than January.
 
   * `week` calendars that are defined to have a 52 week
     structure (53 weeks in a long year). These calendars
     can be configured to start or end on the first, last or
-    nearest day to the beginning or end of a Gregorian
+    nearest day to the beginning or end of a Cldr.Calendar.Gregorian
     month.  The main intent behind this structure is to
     have each year start and end on the same day of the
     week with a consistent 13-week quarterly structure than
@@ -339,7 +339,7 @@ defmodule Cldr.Calendar do
     week of the year may be less than 7 days
     in length. The default is `1`.
 
-  * `:month_of_year` determines the Gregorian
+  * `:month_of_year` determines the Cldr.Calendar.Gregorian
     month of year in which this calendar begins
     or ends. The default is `1`.
 
@@ -350,7 +350,7 @@ defmodule Cldr.Calendar do
     `:majority`.
 
   * `:min_days_in_first_week` is used to determine
-    how many days of the Gregorian year must be in
+    how many days of the Cldr.Calendar.Gregorian year must be in
     the first week of a calendar year. This is used
     when determining when the year starts for week-based
     years.  The default is `4` which is consistent with
@@ -371,11 +371,11 @@ defmodule Cldr.Calendar do
     use Cldr.Calendar.Base.Week,
       day_of_week: 1,              # Weeks begin or end on Monday
       month_of_year: 1,            # Years begin or end in January
-      min_days_in_first_week, 4,   # 4 Gregorian days of the year must be in the first week
+      min_days_in_first_week, 4,   # 4 Cldr.Calendar.Gregorian days of the year must be in the first week
       begins_or_ends: :begins,     # The year *begins* on the `day_of_week` and `month_of_year`
       first_or_last: :first,       # They year *begins* on the *first* `day_of_week` and `month_of_year`
       weeks_in_month: [4, 5, 4],   # The weeks are laid out as *months* in a `[4,5,4]` pattern
-      year: :majority,             # Any given year is that in which the majority of Gregorian months fall
+      year: :majority,             # Any given year is that in which the majority of Cldr.Calendar.Gregorian months fall
       cldr_backend: nil,           # No default `cldr_backend` is configured.
       locale: nil                  # No `locale` is used to aid configuration
   end
@@ -825,14 +825,13 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
-      iex> Cldr.Calendar.month_of_year ~d[2019-01-01]
+      iex> Cldr.Calendar.month_of_year ~D[2019-01-01]
       1
-      iex> Cldr.Calendar.month_of_year ~d[2019-12-01]
+      iex> Cldr.Calendar.month_of_year ~D[2019-12-01]
       12
-      iex> Cldr.Calendar.month_of_year ~d[2019-52-01 NRF]
+      iex> Cldr.Calendar.month_of_year ~D[2019-52-01 Cldr.Calendar.NRF]
       12
-      iex> Cldr.Calendar.month_of_year ~d[2019-26-01 NRF]
+      iex> Cldr.Calendar.month_of_year ~D[2019-26-01 Cldr.Calendar.NRF]
       6
 
   """
@@ -866,16 +865,15 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
-      iex> Cldr.Calendar.week_of_year ~d[2019-01-01]
+      iex> Cldr.Calendar.week_of_year ~D[2019-01-01]
       {2019, 1}
-      iex> Cldr.Calendar.week_of_year ~d[2019-12-01]
+      iex> Cldr.Calendar.week_of_year ~D[2019-12-01]
       {2019, 48}
-      iex> Cldr.Calendar.week_of_year ~d[2019-52-01 NRF]
+      iex> Cldr.Calendar.week_of_year ~D[2019-52-01 Cldr.Calendar.NRF]
       {2019, 52}
-      iex> Cldr.Calendar.week_of_year ~d[2019-26-01 NRF]
+      iex> Cldr.Calendar.week_of_year ~D[2019-26-01 Cldr.Calendar.NRF]
       {2019, 26}
-      iex> Cldr.Calendar.week_of_year ~d[2019-12-01 C.E. Julian]
+      iex> Cldr.Calendar.week_of_year ~D[2019-12-01 Cldr.Calendar.Julian]
       {:error, :not_defined}
 
   """
@@ -909,16 +907,15 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
-      iex> Cldr.Calendar.iso_week_of_year ~d[2019-01-01]
+      iex> Cldr.Calendar.iso_week_of_year ~D[2019-01-01]
       {2019, 1}
-      iex> Cldr.Calendar.iso_week_of_year ~d[2019-02-01]
+      iex> Cldr.Calendar.iso_week_of_year ~D[2019-02-01]
       {2019, 5}
-      iex> Cldr.Calendar.iso_week_of_year ~d[2019-52-01 NRF]
+      iex> Cldr.Calendar.iso_week_of_year ~D[2019-52-01 Cldr.Calendar.NRF]
       {2020, 4}
-      iex> Cldr.Calendar.iso_week_of_year ~d[2019-26-01 NRF]
+      iex> Cldr.Calendar.iso_week_of_year ~D[2019-26-01 Cldr.Calendar.NRF]
       {2019, 30}
-      iex> Cldr.Calendar.iso_week_of_year ~d[2019-12-01 C.E. Julian]
+      iex> Cldr.Calendar.iso_week_of_year ~D[2019-12-01 Cldr.Calendar.Julian]
       {:error, :not_defined}
 
   """
@@ -958,16 +955,15 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
       iex> Cldr.Calendar.week_of_month(~D[2019-01-01])
       {1, 1}
       iex> Cldr.Calendar.week_of_month(~D[2018-12-31])
       {1, 1}
-      iex> Cldr.Calendar.week_of_month(~d[2019-01-01 BasicWeek])
+      iex> Cldr.Calendar.week_of_month(~D[2019-01-01 Cldr.Calendar.BasicWeek])
       {1, 1}
-      iex> Cldr.Calendar.week_of_month(~d[2018-12-31 BasicWeek])
+      iex> Cldr.Calendar.week_of_month(~D[2018-12-31 Cldr.Calendar.BasicWeek])
       {12, 5}
-      iex> Cldr.Calendar.week_of_month(~d[2018-12-31 Julian])
+      iex> Cldr.Calendar.week_of_month(~D[2018-12-31 Cldr.Calendar.Julian])
       {:error, :not_defined}
 
   """
@@ -998,16 +994,15 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
-      iex> Cldr.Calendar.day_of_year ~d[2019-01-01]
+      iex> Cldr.Calendar.day_of_year ~D[2019-01-01]
       1
-      iex> Cldr.Calendar.day_of_year ~d[2016-12-31]
+      iex> Cldr.Calendar.day_of_year ~D[2016-12-31]
       366
-      iex> Cldr.Calendar.day_of_year ~d[2019-12-31]
+      iex> Cldr.Calendar.day_of_year ~D[2019-12-31]
       365
-      iex> Cldr.Calendar.day_of_year ~d[2019-52-07 NRF]
+      iex> Cldr.Calendar.day_of_year ~D[2019-52-07 Cldr.Calendar.NRF]
       365
-      iex> Cldr.Calendar.day_of_year ~d[2012-53-07 NRF]
+      iex> Cldr.Calendar.day_of_year ~D[2012-53-07 Cldr.Calendar.NRF]
       372
 
   """
@@ -1033,12 +1028,11 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
-      iex> Cldr.Calendar.weeks_in_year ~d[2026-W01-01 ISOWeek]
+      iex> Cldr.Calendar.weeks_in_year ~D[2026-W01-1 Cldr.Calendar.ISOWeek]
       53
-      iex> Cldr.Calendar.weeks_in_year ~d[2019-01-01]
+      iex> Cldr.Calendar.weeks_in_year ~D[2019-01-01]
       52
-      iex> Cldr.Calendar.weeks_in_year ~d[2020-01-01]
+      iex> Cldr.Calendar.weeks_in_year ~D[2020-01-01]
       53
       iex> Cldr.Calendar.weeks_in_year 2020, Cldr.Calendar.ISOWeek
       53
@@ -1383,13 +1377,15 @@ defmodule Cldr.Calendar do
   @doc """
   Formats a date into a string representation
 
+  Note that the output is not decorated with
+  the calendar module name.
+
   ## Example
 
-      iex> import Cldr.Calendar.Sigils
-      iex> Cldr.Calendar.date_to_string ~d[2019-12-04]
-      "2019-12-04 Cldr.Calendar.Gregorian"
-      iex> Cldr.Calendar.date_to_string ~d[2019-23-04 NRF]
-      "2019-W23-4 Cldr.Calendar.NRF"
+      iex> Cldr.Calendar.date_to_string ~D[2019-12-04]
+      "2019-12-04"
+      iex> Cldr.Calendar.date_to_string ~D[2019-23-04 Cldr.Calendar.NRF]
+      "2019-W23-4"
 
   """
   @spec date_to_string(Date.t()) :: String.t()
@@ -1925,22 +1921,20 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
-      Cldr.Calendar.Sigils
-      iex> Cldr.Calendar.plus ~d[2016-02-29], :days, 1
-      ~d[2016-03-01 Gregorian]
-      iex> Cldr.Calendar.plus ~d[2019-03-01], :months, 1
-      ~d[2019-04-01 Gregorian]
-      iex> Cldr.Calendar.plus ~d[2016-02-29], :days, 1
-      ~d[2016-03-01 Gregorian]
-      iex> Cldr.Calendar.plus ~d[2019-02-28], :days, 1
-      ~d[2019-03-01 Gregorian]
-      iex> Cldr.Calendar.plus ~d[2019-03-01], :months, 1
-      ~d[2019-04-01 Gregorian]
-      iex> Cldr.Calendar.plus ~d[2019-03-01], :quarters, 1
-      ~d[2019-06-01 Gregorian]
-      iex> Cldr.Calendar.plus ~d[2019-03-01], :years, 1
-      ~d[2020-03-01 Gregorian]
+      iex> Cldr.Calendar.plus ~D[2016-02-29], :days, 1
+      ~D[2016-03-01]
+      iex> Cldr.Calendar.plus ~D[2019-03-01], :months, 1
+      ~D[2019-04-01]
+      iex> Cldr.Calendar.plus ~D[2016-02-29], :days, 1
+      ~D[2016-03-01]
+      iex> Cldr.Calendar.plus ~D[2019-02-28], :days, 1
+      ~D[2019-03-01]
+      iex> Cldr.Calendar.plus ~D[2019-03-01], :months, 1
+      ~D[2019-04-01]
+      iex> Cldr.Calendar.plus ~D[2019-03-01], :quarters, 1
+      ~D[2019-06-01]
+      iex> Cldr.Calendar.plus ~D[2019-03-01], :years, 1
+      ~D[2020-03-01]
 
   """
   def plus(value, increment) when is_integer(value) and is_integer(increment) do
@@ -2080,22 +2074,20 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
-      Cldr.Calendar.Sigils
-      iex> Cldr.Calendar.minus ~d[2016-03-01], :days, 1
-      ~d[2016-02-29 Gregorian]
-      iex> Cldr.Calendar.minus ~d[2019-03-01], :months, 1
-      ~d[2019-02-01 Gregorian]
-      iex> Cldr.Calendar.minus ~d[2016-03-01], :days, 1
-      ~d[2016-02-29 Gregorian]
-      iex> Cldr.Calendar.minus ~d[2019-03-01], :days, 1
-      ~d[2019-02-28 Gregorian]
-      iex> Cldr.Calendar.minus ~d[2019-03-01], :months, 1
-      ~d[2019-02-01 Gregorian]
-      iex> Cldr.Calendar.minus ~d[2019-03-01], :quarters, 1
-      ~d[2018-12-01 Gregorian]
-      iex> Cldr.Calendar.minus ~d[2019-03-01], :years, 1
-      ~d[2018-03-01 Gregorian]
+      iex> Cldr.Calendar.minus ~D[2016-03-01], :days, 1
+      ~D[2016-02-29]
+      iex> Cldr.Calendar.minus ~D[2019-03-01], :months, 1
+      ~D[2019-02-01]
+      iex> Cldr.Calendar.minus ~D[2016-03-01], :days, 1
+      ~D[2016-02-29]
+      iex> Cldr.Calendar.minus ~D[2019-03-01], :days, 1
+      ~D[2019-02-28]
+      iex> Cldr.Calendar.minus ~D[2019-03-01], :months, 1
+      ~D[2019-02-01]
+      iex> Cldr.Calendar.minus ~D[2019-03-01], :quarters, 1
+      ~D[2018-12-01]
+      iex> Cldr.Calendar.minus ~D[2019-03-01], :years, 1
+      ~D[2018-03-01]
 
   """
   def minus(%{calendar: _calendar} = date, period, amount, options \\ []) do
@@ -2133,17 +2125,15 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
-      Cldr.Calendar.Sigils
-      iex> d = ~d[2019-01-31]
-      ~d[2019-01-31 Gregorian]
-      iex> d2 = ~d[2019-05-31]
-      ~d[2019-05-31 Gregorian]
+      iex> d = ~D[2019-01-31]
+      ~D[2019-01-31]
+      iex> d2 = ~D[2019-05-31]
+      ~D[2019-05-31]
       iex> Cldr.Calendar.interval d, 3, :months
-      [~d[2019-01-31 Gregorian], ~d[2019-02-28 Gregorian], ~d[2019-03-31 Gregorian]]
+      [~D[2019-01-31], ~D[2019-02-28], ~D[2019-03-31]]
       iex> Cldr.Calendar.interval d, d2, :months
-      [~d[2019-01-31 Gregorian], ~d[2019-02-28 Gregorian], ~d[2019-03-31 Gregorian],
-       ~d[2019-04-30 Gregorian], ~d[2019-05-31 Gregorian]]
+      [~D[2019-01-31], ~D[2019-02-28], ~D[2019-03-31],
+       ~D[2019-04-30], ~D[2019-05-31]]
 
   """
   @spec interval(date_from :: Date.t(), date_to_or_count :: Date.t() | non_neg_integer, precision) ::
@@ -2208,17 +2198,15 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      iex> import Cldr.Calendar.Sigils
-      Cldr.Calendar.Sigils
-      iex> d = ~d[2019-01-31]
-      ~d[2019-01-31 Gregorian]
-      iex> d2 = ~d[2019-05-31]
-      ~d[2019-05-31 Gregorian]
+      iex> d = ~D[2019-01-31]
+      ~D[2019-01-31]
+      iex> d2 = ~D[2019-05-31]
+      ~D[2019-05-31]
       iex> Cldr.Calendar.interval_stream(d, 3, :months) |> Enum.to_list
-      [~d[2019-01-31 Gregorian], ~d[2019-02-28 Gregorian], ~d[2019-03-31 Gregorian]]
+      [~D[2019-01-31], ~D[2019-02-28], ~D[2019-03-31]]
       iex> Cldr.Calendar.interval_stream(d, d2, :months) |> Enum.to_list
-      [~d[2019-01-31 Gregorian], ~d[2019-02-28 Gregorian], ~d[2019-03-31 Gregorian],
-       ~d[2019-04-30 Gregorian], ~d[2019-05-31 Gregorian]]
+      [~D[2019-01-31], ~D[2019-02-28], ~D[2019-03-31],
+       ~D[2019-04-30], ~D[2019-05-31]]
 
   """
   @spec interval_stream(
