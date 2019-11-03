@@ -49,10 +49,12 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
     assert NimbleStrftime.format(~D[2019-11-03], "%A, %B %d %Y", MyApp.Cldr.Calendar.strftime_options!("he")) ==
           "יום ראשון, נובמבר 03 2019"
 
-    assert NimbleStrftime.format(~U[2019-08-26 13:52:06.0Z], "%y-%m-%d %I:%M:%S %p", MyApp.Cldr.Calendar.strftime_options!("fr")) ==
+    {:ok, dt} = NaiveDateTime.new(2019, 8, 26, 13, 52, 06, 0)
+
+    assert NimbleStrftime.format(dt, "%y-%m-%d %I:%M:%S %p", MyApp.Cldr.Calendar.strftime_options!("fr")) ==
     "19-08-26 01:52:06 PM"
 
-    assert NimbleStrftime.format(~U[2019-08-26 13:52:06.0Z], "%y-%m-%d %I:%M:%S %p", MyApp.Cldr.Calendar.strftime_options!("he")) ==
+    assert NimbleStrftime.format(dt, "%y-%m-%d %I:%M:%S %p", MyApp.Cldr.Calendar.strftime_options!("he")) ==
     "19-08-26 01:52:06 אחה״צ"
   end
 end
