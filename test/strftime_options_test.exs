@@ -35,4 +35,24 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
     assert MyApp.Cldr.Calendar.strftime_options!("he")[:abbreviated_month_names].(1) == "ינו׳"
     assert MyApp.Cldr.Calendar.strftime_options!("he")[:abbreviated_month_names].(12) == "דצמ׳"
   end
+
+  test "strftime with options" do
+    assert NimbleStrftime.format(~D[2019-11-03], "%a, %B %d %Y", MyApp.Cldr.Calendar.strftime_options!()) ==
+    "Sun, November 03 2019"
+
+    assert NimbleStrftime.format(~D[2019-11-03], "%A, %b %d %Y", MyApp.Cldr.Calendar.strftime_options!()) ==
+    "Sunday, Nov 03 2019"
+
+    assert NimbleStrftime.format(~D[2019-11-03], "%A, %b %d %Y", MyApp.Cldr.Calendar.strftime_options!("fr")) ==
+    "dimanche, nov. 03 2019"
+
+    assert NimbleStrftime.format(~D[2019-11-03], "%A, %B %d %Y", MyApp.Cldr.Calendar.strftime_options!("he")) ==
+          "יום ראשון, נובמבר 03 2019"
+
+    assert NimbleStrftime.format(~U[2019-08-26 13:52:06.0Z], "%y-%m-%d %I:%M:%S %p", MyApp.Cldr.Calendar.strftime_options!("fr")) ==
+    "19-08-26 01:52:06 PM"
+
+    assert NimbleStrftime.format(~U[2019-08-26 13:52:06.0Z], "%y-%m-%d %I:%M:%S %p", MyApp.Cldr.Calendar.strftime_options!("he")) ==
+    "19-08-26 01:52:06 אחה״צ"
+  end
 end
