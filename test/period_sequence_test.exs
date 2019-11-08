@@ -35,6 +35,7 @@ defmodule Cldr.Calendar.PeriodSequenceTest do
     m = Cldr.Calendar.Interval.month(d)
     Enum.reduce 1..1000, m, fn _i, m ->
       m2 = Cldr.Calendar.previous(m, :month)
+      IO.puts("Month: #{inspect m}; Previous: #{inspect m2}"
       assert Cldr.Calendar.date_to_iso_days(m2.last) + 1 == Cldr.Calendar.date_to_iso_days(m.first)
       m2
     end
