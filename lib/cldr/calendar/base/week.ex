@@ -12,6 +12,7 @@ defmodule Cldr.Calendar.Base.Week do
   @months_in_year 12
   @weeks_in_long_year 53
   @weeks_in_normal_year 52
+  @quarters_in_year 4
 
   defmacro __using__(options \\ []) do
     quote bind_quoted: [options: options] do
@@ -117,6 +118,14 @@ defmodule Cldr.Calendar.Base.Week do
     @weeks_in_normal_year
   end
 
+  def weeks_in_quarter(year, quarter, config) do
+    if quarter == @quarters_in_year && long_year?(year, config) do
+      @weeks_in_quarter + 1
+    else
+      @weeks_in_quarter
+    end
+  end
+
   def days_in_year(year, config) do
     if long_year?(year, config) do
       @weeks_in_long_year * @days_in_week
@@ -155,7 +164,7 @@ defmodule Cldr.Calendar.Base.Week do
 
   def quarter(year, quarter, config) do
     starting_week = (quarter - 1) * @weeks_in_quarter + 1
-    ending_week = starting_week + @weeks_in_quarter - 1
+    ending_week = starting_week + weeks_in_quarter(year, quarter, config) - 1
 
     with {:ok, first_day} <- Date.new(year, starting_week, 1, config.calendar),
          {:ok, last_day} <- Date.new(year, ending_week, days_in_week(), config.calendar) do
@@ -175,7 +184,7 @@ defmodule Cldr.Calendar.Base.Week do
 
     weeks_in_month =
       Enum.at(weeks_in_month, months_prior_in_quarter) +
-        long_year_inc(year, month, config)
+        maybe_extra_week_for_long_year(year, month, config)
 
     first_week = quarter_weeks_prior + weeks_prior_in_quarter + 1
     last_week = first_week + weeks_in_month - 1
@@ -200,10 +209,8 @@ defmodule Cldr.Calendar.Base.Week do
     {new_year, new_week, new_day}
   end
 
-  def plus(year, week, day, config, :quarters, quarters, _options) do
-    days = quarters * @weeks_in_quarter * days_in_week()
-    iso_days = date_to_iso_days(year, week, day, config) + days
-    date_from_iso_days(iso_days, config)
+  def plus(year, week, day, config, :quarters, quarters, options) do
+    plus(year, week, day, config, :months, quarters * @months_in_quarter, options)
   end
 
   def plus(year, week, day, _config, :months, 0, _options) do
@@ -265,15 +272,24 @@ defmodule Cldr.Calendar.Base.Week do
   # Accounting for long years is complex. So for now adding and
   # subtracting months is done one month at a time. Therefore
   # performance for large additions/subsctractions will be poor.
-  def plus(year, week, day, config, :months, months, options) when months > 1 do
-    Enum.reduce 1..months, {year, week, day}, fn _i, {year, week, day} ->
-      plus(year, week, day, config, :months, 1, options)
-    end
-  end
+  def plus(year, week, day, config, :months, months, _options) when abs(months) > 1 do
+    increment = if months > 0, do: 1, else: -1
+    original_day_of_month = day_of_month(year, week, day, config)
+    {year, week, day} =
+      Enum.reduce 1..abs(months), {year, week, day}, fn _i, {year, week, day} ->
+        plus(year, week, day, config, :months, increment, coerce: true)
+      end
 
-  def plus(year, week, day, config, :months, months, options) when months < -1 do
-    Enum.reduce 1..months, {year, week, day}, fn _i, {year, week, day} ->
-      plus(year, week, day, config, :months, -1, options)
+    # Now reconcile the original date of the month with the
+    # previously calculated day of the month.
+    proposed_day_of_month = day_of_month(year, week, day, config)
+    days_difference = original_day_of_month - proposed_day_of_month
+    month = month_of_year(year, week, day, config)
+
+    if days_difference != 0 && original_day_of_month <= days_in_month(year, month, config) do
+      add_days(year, month, day, days_difference, config)
+    else
+      {year, week, day}
     end
   end
 
@@ -308,10 +324,6 @@ defmodule Cldr.Calendar.Base.Week do
 
     iso_days = date_to_iso_days(year, week, day, config) + days_to_add
     date_from_iso_days(iso_days, config)
-  end
-
-  def maybe_extra_week_for_long_year(year, month, config) do
-    if long_year?(year, config) && month == 12, do: 1, else: 0
   end
 
   def slice_weeks(from, n, %{weeks_in_month: weeks_in_month}) do
@@ -526,11 +538,11 @@ defmodule Cldr.Calendar.Base.Week do
     (week - 1) * days_in_week()
   end
 
-  defp long_year_inc(year, @months_in_year, config) do
+  defp maybe_extra_week_for_long_year(year, @months_in_year, config) do
     if long_year?(year, config), do: 1, else: 0
   end
 
-  defp long_year_inc(_year, _month, _config) do
+  defp maybe_extra_week_for_long_year(_year, _month, _config) do
     0
   end
 end

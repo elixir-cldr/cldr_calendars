@@ -20,6 +20,16 @@ defmodule Cldr.Calendar.PeriodSequenceTest do
   end
 
   for calendar <- [C454, C544] do
+    test "an ascending sequence of quarters in #{inspect calendar} follow each other" do
+      {:ok, d} = Date.new(1900, 1, 1, unquote(calendar))
+      m = Cldr.Calendar.Interval.quarter(d)
+      Enum.reduce 1..5000, m, fn _i, m ->
+        m2 = Cldr.Calendar.next(m, :quarter, coerce: true)
+        assert Cldr.Calendar.date_to_iso_days(m.last) + 1 == Cldr.Calendar.date_to_iso_days(m2.first)
+        m2
+      end
+    end
+
     test "an ascending sequence of months in #{inspect calendar} follow each other" do
       {:ok, d} = Date.new(1900, 1, 1, unquote(calendar))
       m = Cldr.Calendar.Interval.month(d)
@@ -36,6 +46,16 @@ defmodule Cldr.Calendar.PeriodSequenceTest do
       Enum.reduce 1..5000, m, fn _i, m ->
         m2 = Cldr.Calendar.next(m, :week, coerce: true)
         assert Cldr.Calendar.date_to_iso_days(m.last) + 1 == Cldr.Calendar.date_to_iso_days(m2.first)
+        m2
+      end
+    end
+
+    test "a descending sequence of quarters in #{inspect calendar} follow each other" do
+      {:ok, d} = Date.new(2050, 1, 1, unquote(calendar))
+      m = Cldr.Calendar.Interval.quarter(d)
+      Enum.reduce 1..5000, m, fn _i, m ->
+        m2 = Cldr.Calendar.previous(m, :quarter, coerce: true)
+        assert Cldr.Calendar.date_to_iso_days(m2.last) + 1 == Cldr.Calendar.date_to_iso_days(m.first)
         m2
       end
     end
