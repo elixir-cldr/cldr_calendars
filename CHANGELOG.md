@@ -4,7 +4,7 @@ This is the changelog for Cldr Calendars v1.5.1 released on November 10th, 2019.
 
 ## Bug Fixes
 
-* Fix `Cldr.Calendar.next/3` and `Cldr.Calendar.previous/3` for months with week-based calendars. Thanks to @bglusman for the report. Closes #3.
+* Fix `Cldr.Calendar.next/3` and `Cldr.Calendar.previous/3` for months with week-based calendars. Thanks to @bglusman for the report. Closes #3. Note that the use of the `:coerce` option is recommended in most cases.
 
 # Changelog for Cldr Calendars v1.5.0
 
