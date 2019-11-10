@@ -206,12 +206,75 @@ defmodule Cldr.Calendar.Base.Week do
     date_from_iso_days(iso_days, config)
   end
 
-  def plus(year, week, day, config, :months, months, _options) do
-    {quarters, months_remaining} = Cldr.Math.div_mod(months, @months_in_quarter)
-    weeks_from_months = weeks_from_months(months_remaining, config)
-    days = (quarters * @weeks_in_quarter + weeks_from_months) * days_in_week() * sign(months)
-    iso_days = date_to_iso_days(year, week, day, config) + days
-    date_from_iso_days(iso_days, config)
+  def plus(year, week, day, _config, :months, 0, _options) do
+    {year, week, day}
+  end
+
+  # When adding a month the process is
+  # 1. Capture the day of the month
+  # 2. Get the first day of that month
+  # 3. Add the number of days in that month leaving us
+  #    with the first day of the next month
+  # 4. Add back the day of the month, potentially
+  #    coercing the last day of the month
+  def plus(year, week, day, config, :months, 1 = n, options) do
+    day_of_month = day_of_month(year, week, day, config)
+    {year, week, day} = first_day_of_month(year, week, day, config)
+
+    month_of_year = month_of_year(year, week, day, config)
+    month_in_quarter = month_in_quarter(week, config)
+
+    weeks_to_add =
+      slice_weeks(month_in_quarter - 1, n, config) +
+      maybe_extra_week_for_long_year(year, month_of_year, config)
+
+    {year_increment, week} = Cldr.Math.div_mod(week + weeks_to_add, weeks_in_year(year, config))
+    add_days(year + year_increment, week, day, day_of_month - 1, config, options)
+  end
+
+  # WHen substracting a month the process is
+  # 1. Work out the day of the month of the provided date
+  # 2. Get the last day of the month
+  # 3. Subtract the number of days in the month, leaving us with
+  #    the last day of the previous month
+  # 4. Get the first day of the previous month
+  # 5. Add back the day of the month capture earlier - potentialy coercing
+  #    the last day of the month
+  def plus(year, week, day, config, :months, -1 = n, options) do
+    day_of_month = day_of_month(year, week, day, config)
+    {year, week, day} = last_day_of_month(year, week, day, config)
+    month_of_year = month_of_year(year, week, day, config)
+    month_in_quarter = month_in_quarter(week, config)
+
+    weeks_to_sub =
+      slice_weeks(month_in_quarter - 1, abs(n), config) +
+      maybe_extra_week_for_long_year(year, month_of_year, config)
+
+    week =  week - weeks_to_sub
+    {year, week} =
+      if week < 1 do
+        {year - 1, weeks_in_year(year - 1, config) - week}
+      else
+        {year, week}
+      end
+
+    {year, week, day} = first_day_of_month(year, week, day, config)
+    add_days(year, week, day, day_of_month - 1, config, options)
+  end
+
+  # Accounting for long years is complex. So for now adding and
+  # subtracting months is done one month at a time. Therefore
+  # performance for large additions/subsctractions will be poor.
+  def plus(year, week, day, config, :months, months, options) when months > 1 do
+    Enum.reduce 1..months, {year, week, day}, fn _i, {year, week, day} ->
+      plus(year, week, day, config, :months, 1, options)
+    end
+  end
+
+  def plus(year, week, day, config, :months, months, options) when months < -1 do
+    Enum.reduce 1..months, {year, week, day}, fn _i, {year, week, day} ->
+      plus(year, week, day, config, :months, -1, options)
+    end
   end
 
   def add(naive_datetime, :year, step) do
@@ -219,7 +282,70 @@ defmodule Cldr.Calendar.Base.Week do
     %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
   end
 
-  def weeks_from_months(months, _config) when months == 0 do
+  def day_of_month(year, week, day, config) do
+    first_day = first_day_of_month(year, week, day, config)
+    date_diff({year, week, day}, first_day, config) + 1
+  end
+
+  def date_diff({y2, w2, d2}, {y1, w1, d1}, config) do
+    date_to_iso_days(y2, w2, d2, config) - date_to_iso_days(y1, w1, d1, config)
+  end
+
+  def add_days(year, week, day, days, config, options \\ [])
+
+  def add_days(year, week, day, 0, _config, _options) do
+    {year, week, day}
+  end
+
+  def add_days(year, week, day, days, config, options) do
+    days_to_add =
+      if Keyword.get(options, :coerce) do
+        month = month_of_year(year, week, day, config)
+        min(days_in_month(year, month, config) - 1, days)
+      else
+        days
+      end
+
+    iso_days = date_to_iso_days(year, week, day, config) + days_to_add
+    date_from_iso_days(iso_days, config)
+  end
+
+  def maybe_extra_week_for_long_year(year, month, config) do
+    if long_year?(year, config) && month == 12, do: 1, else: 0
+  end
+
+  def slice_weeks(from, n, %{weeks_in_month: weeks_in_month}) do
+    {_, weeks} = Enum.split(weeks_in_month, from)
+
+    weeks
+    |> Enum.take(n)
+    |> Enum.sum
+  end
+
+  def first_day_of_month(year, week, day, config) do
+    quarters = quarter_of_year(year, week, day, config) - 1
+    month_in_quarter = month_in_quarter(week, config) - 1
+    week = (quarters * @weeks_in_quarter) + weeks_from_months(month_in_quarter, config) + 1
+    {year, week, 1}
+  end
+
+  def last_day_of_month(year, week, day, config) do
+    {year, week, day} = first_day_of_month(year, week, day, config)
+    month_of_year = month_of_year(year, week, day, config)
+    days_in_month = days_in_month(year, month_of_year, config)
+    add_days(year, week, day, days_in_month - 1, config)
+  end
+
+  def month_in_quarter(week, _config) when week == @weeks_in_long_year do
+    @months_in_quarter
+  end
+
+  def month_in_quarter(week, config) do
+    week_in_quarter = Cldr.Math.amod(week, @weeks_in_quarter)
+    month_from_weeks(week_in_quarter, config)
+  end
+
+  def weeks_from_months(0, _config) do
     0
   end
 
@@ -231,13 +357,19 @@ defmodule Cldr.Calendar.Base.Week do
     |> Enum.sum()
   end
 
+  # When months is negative
+  # TODO May not be correct
   def weeks_from_months(months, %{weeks_in_month: weeks_in_month}) when months < 0 do
     {_, weeks_in_month} = List.pop_at(weeks_in_month, -1)
-    Enum.take(weeks_in_month, months) |> Enum.sum()
+
+    weeks_in_month
+    |> Enum.take(months)
+    |> Enum.sum()
   end
 
   # For weeks <= 13
-  def month_from_weeks(weeks, %Config{weeks_in_month: [m1, m2, m3]}) do
+  def month_from_weeks(weeks, %Config{weeks_in_month: [m1, m2, m3]})
+      when weeks <= @weeks_in_quarter do
     cond do
       weeks <= m1 -> 1
       weeks <= m1 + m2 -> 2
@@ -245,8 +377,8 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
-  defp sign(number) when number < 0, do: -1
-  defp sign(_number), do: +1
+  def sign(number) when number < 0, do: -1
+  def sign(_number), do: +1
 
   def first_gregorian_day_of_year(year, %Config{first_or_last: :first} = config) do
     {year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)

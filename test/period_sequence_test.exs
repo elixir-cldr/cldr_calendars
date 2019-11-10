@@ -21,40 +21,40 @@ defmodule Cldr.Calendar.PeriodSequenceTest do
 
   for calendar <- [C454, C544] do
     test "an ascending sequence of months in #{inspect calendar} follow each other" do
-      {:ok, d} = Date.new(1980, 1, 1, unquote(calendar))
+      {:ok, d} = Date.new(1900, 1, 1, unquote(calendar))
       m = Cldr.Calendar.Interval.month(d)
-      Enum.reduce 1..1000, m, fn _i, m ->
-        m2 = Cldr.Calendar.next(m, :month)
+      Enum.reduce 1..5000, m, fn _i, m ->
+        m2 = Cldr.Calendar.next(m, :month, coerce: true)
         assert Cldr.Calendar.date_to_iso_days(m.last) + 1 == Cldr.Calendar.date_to_iso_days(m2.first)
         m2
       end
     end
 
     test "an ascending sequence of weeks in #{inspect calendar} follow each other" do
-      {:ok, d} = Date.new(1980, 1, 1, unquote(calendar))
+      {:ok, d} = Date.new(1900, 1, 1, unquote(calendar))
       m = Cldr.Calendar.Interval.week(d)
-      Enum.reduce 1..1000, m, fn _i, m ->
-        m2 = Cldr.Calendar.next(m, :week)
+      Enum.reduce 1..5000, m, fn _i, m ->
+        m2 = Cldr.Calendar.next(m, :week, coerce: true)
         assert Cldr.Calendar.date_to_iso_days(m.last) + 1 == Cldr.Calendar.date_to_iso_days(m2.first)
         m2
       end
     end
 
     test "a descending sequence of months in #{inspect calendar} follow each other" do
-      {:ok, d} = Date.new(2030, 1, 1, unquote(calendar))
+      {:ok, d} = Date.new(2050, 1, 1, unquote(calendar))
       m = Cldr.Calendar.Interval.month(d)
-      Enum.reduce 1..1000, m, fn _i, m ->
-        m2 = Cldr.Calendar.previous(m, :month)
+      Enum.reduce 1..5000, m, fn _i, m ->
+        m2 = Cldr.Calendar.previous(m, :month, coerce: true)
         assert Cldr.Calendar.date_to_iso_days(m2.last) + 1 == Cldr.Calendar.date_to_iso_days(m.first)
         m2
       end
     end
 
     test "a descending sequence of weeks in #{inspect calendar} follow each other" do
-      {:ok, d} = Date.new(2030, 1, 1, unquote(calendar))
+      {:ok, d} = Date.new(2050, 1, 1, unquote(calendar))
       m = Cldr.Calendar.Interval.week(d)
-      Enum.reduce 1..1000, m, fn _i, m ->
-        m2 = Cldr.Calendar.previous(m, :week)
+      Enum.reduce 1..5000, m, fn _i, m ->
+        m2 = Cldr.Calendar.previous(m, :week, coerce: true)
         assert Cldr.Calendar.date_to_iso_days(m2.last) + 1 == Cldr.Calendar.date_to_iso_days(m.first)
         m2
       end

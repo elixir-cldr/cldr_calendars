@@ -156,11 +156,11 @@ defmodule Cldr.Calendar.Week.Test do
     {:ok, today} = Date.convert(today, Sunday)
     this_period = Cldr.Calendar.Interval.month(today)
 
-    previous = Cldr.Calendar.previous(this_period, :month)
+    previous = Cldr.Calendar.previous(this_period, :month, coerce: true)
     assert previous.first == %Date{calendar: Sunday, day: 1, month: 44, year: 2018}
     assert previous.last == %Date{calendar: Sunday, day: 7, month: 47, year: 2018}
 
-    next = Cldr.Calendar.next(this_period, :month)
+    next = Cldr.Calendar.next(this_period, :month, coerce: true)
     assert next.first == %Date{calendar: Sunday, day: 1, month: 1, year: 2019}
     assert next.last == %Date{calendar: Sunday, day: 7, month: 4, year: 2019}
   end

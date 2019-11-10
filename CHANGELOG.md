@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.5.1
+
+This is the changelog for Cldr Calendars v1.5.0 released on November 10th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Bug Fixes
+
+* Fix `Cldr.Calendar.next/3` and `Cldr.Calendar.previous/3` for week-based calendars. Thanks to @bglusman for the report. Closes #3.
+
 # Changelog for Cldr Calendars v1.5.0
 
 This is the changelog for Cldr Calendars v1.5.0 released on November 3rd, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
