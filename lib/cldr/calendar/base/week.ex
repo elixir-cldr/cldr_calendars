@@ -248,8 +248,6 @@ defmodule Cldr.Calendar.Base.Week do
   # 5. Add back the day of the month capture earlier - potentialy coercing
   #    the last day of the month
   def plus(year, week, day, config, :months, -1 = n, options) do
-    # IO.puts "Original date: #{year}-#{week}-#{day}"
-
     day_of_month = day_of_month(year, week, day, config)
     {year, week, day} = last_day_of_month(year, week, day, config)
     month_of_year = month_of_year(year, week, day, config)
@@ -259,15 +257,7 @@ defmodule Cldr.Calendar.Base.Week do
       slice_weeks(month_in_quarter - 1, abs(n), config) +
         maybe_extra_week_for_long_year(year, month_of_year, config)
 
-    # IO.puts "  Day of month: #{day_of_month}"
-    # IO.puts "  Weeks in Month: #{slice_weeks(month_in_quarter - 1, abs(n), config)}"
-    # IO.puts ""
-    # IO.puts "  Last day of month: #{year}-#{week}-#{day}"
-    # IO.puts "  Month of year: #{month_of_year}"
-    # IO.puts "  Month in quarter: #{month_in_quarter}"
-    # IO.puts "  Weeks to substract: #{weeks_to_sub}"
-
-    week = week - weeks_to_sub
+   week = week - weeks_to_sub
     # IO.puts "  Proposed week of previous month: #{week}"
     {year, week} =
       if week < 1 do
@@ -277,7 +267,6 @@ defmodule Cldr.Calendar.Base.Week do
       end
 
     {year, week, day} = first_day_of_month(year, week, day, config)
-    # IO.puts "First day of previous month: #{year}-#{week}-#{day}"
     add_days(year, week, day, day_of_month - 1, config, options)
   end
 
