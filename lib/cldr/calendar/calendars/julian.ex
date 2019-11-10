@@ -456,29 +456,31 @@ defmodule Cldr.Calendar.Julian do
 
   @doc false
   defdelegate datetime_to_string(
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        microsecond,
-        time_zone,
-        zone_abbr,
-        utc_offset,
-        std_offset
-      ), to: Calendar.ISO
+                year,
+                month,
+                day,
+                hour,
+                minute,
+                second,
+                microsecond,
+                time_zone,
+                zone_abbr,
+                utc_offset,
+                std_offset
+              ),
+              to: Calendar.ISO
 
   @doc false
   defdelegate naive_datetime_to_string(
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        microsecond
-      ), to: Calendar.ISO
+                year,
+                month,
+                day,
+                hour,
+                minute,
+                second,
+                microsecond
+              ),
+              to: Calendar.ISO
 
   @doc false
   defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO

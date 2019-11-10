@@ -233,7 +233,7 @@ defmodule Cldr.Calendar.Base.Week do
 
     weeks_to_add =
       slice_weeks(month_in_quarter - 1, n, config) +
-      maybe_extra_week_for_long_year(year, month_of_year, config)
+        maybe_extra_week_for_long_year(year, month_of_year, config)
 
     {year_increment, week} = Cldr.Math.div_mod(week + weeks_to_add, weeks_in_year(year, config))
     add_days(year + year_increment, week, day, day_of_month - 1, config, options)
@@ -257,7 +257,7 @@ defmodule Cldr.Calendar.Base.Week do
 
     weeks_to_sub =
       slice_weeks(month_in_quarter - 1, abs(n), config) +
-      maybe_extra_week_for_long_year(year, month_of_year, config)
+        maybe_extra_week_for_long_year(year, month_of_year, config)
 
     # IO.puts "  Day of month: #{day_of_month}"
     # IO.puts "  Weeks in Month: #{slice_weeks(month_in_quarter - 1, abs(n), config)}"
@@ -267,7 +267,7 @@ defmodule Cldr.Calendar.Base.Week do
     # IO.puts "  Month in quarter: #{month_in_quarter}"
     # IO.puts "  Weeks to substract: #{weeks_to_sub}"
 
-    week =  week - weeks_to_sub
+    week = week - weeks_to_sub
     # IO.puts "  Proposed week of previous month: #{week}"
     {year, week} =
       if week < 1 do
@@ -287,10 +287,11 @@ defmodule Cldr.Calendar.Base.Week do
   def plus(year, week, day, config, :months, months, options) when abs(months) > 1 do
     increment = if months > 0, do: 1, else: -1
     original_day_of_month = day_of_month(year, week, day, config)
+
     {year, week, day} =
-      Enum.reduce 1..abs(months), {year, week, day}, fn _i, {year, week, day} ->
+      Enum.reduce(1..abs(months), {year, week, day}, fn _i, {year, week, day} ->
         plus(year, week, day, config, :months, increment, coerce: true)
-      end
+      end)
 
     # Now reconcile the original date of the month with the
     # previously calculated day of the month.
@@ -343,13 +344,13 @@ defmodule Cldr.Calendar.Base.Week do
 
     weeks
     |> Enum.take(n)
-    |> Enum.sum
+    |> Enum.sum()
   end
 
   def first_day_of_month(year, week, day, config) do
     quarters = quarter_of_year(year, week, day, config) - 1
     month_in_quarter = month_in_quarter(week, config) - 1
-    week = (quarters * @weeks_in_quarter) + weeks_from_months(month_in_quarter, config) + 1
+    week = quarters * @weeks_in_quarter + weeks_from_months(month_in_quarter, config) + 1
     {year, week, 1}
   end
 

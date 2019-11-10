@@ -77,22 +77,18 @@ defmodule Cldr.Calendar.Backend do
                 day_periods(locale, calendar)
                 |> get_in([:format, :abbreviated, am_pm])
               end,
-
               month_names: fn month ->
                 months(locale, calendar)
                 |> get_in([:format, :wide, month])
               end,
-
               abbreviated_month_names: fn month ->
                 months(locale, calendar)
                 |> get_in([:format, :abbreviated, month])
               end,
-
               day_of_week_names: fn day ->
                 days(locale, calendar)
                 |> get_in([:format, :wide, day])
               end,
-
               abbreviated_day_of_week_names: fn day ->
                 days(locale, calendar)
                 |> get_in([:format, :abbreviated, day])
@@ -183,7 +179,6 @@ defmodule Cldr.Calendar.Backend do
 
           def day_periods(unquote(locale_name), calendar),
             do: {:error, Calendar.calendar_error(calendar)}
-
         end
 
         def eras(locale, _calendar), do: {:error, Locale.locale_error(locale)}

@@ -56,7 +56,10 @@ defmodule Cldr.Calendar.Duration.Test do
                 second: 0
               }}
 
-    assert Duration.new(date(2000, 12, 01, Cldr.Calendar.Gregorian), date(2019, 01, 31, Cldr.Calendar.Gregorian)) ==
+    assert Duration.new(
+             date(2000, 12, 01, Cldr.Calendar.Gregorian),
+             date(2019, 01, 31, Cldr.Calendar.Gregorian)
+           ) ==
              {:ok,
               %Duration{
                 year: 18,
@@ -68,7 +71,10 @@ defmodule Cldr.Calendar.Duration.Test do
                 second: 0
               }}
 
-    assert Duration.new(date(2000, 12, 01, Cldr.Calendar.CSCO), date(2019, 01, 07, Cldr.Calendar.CSCO)) ==
+    assert Duration.new(
+             date(2000, 12, 01, Cldr.Calendar.CSCO),
+             date(2019, 01, 07, Cldr.Calendar.CSCO)
+           ) ==
              {:ok,
               %Duration{year: 18, month: 1, day: 6, hour: 0, microsecond: 0, minute: 0, second: 0}}
   end

@@ -70,6 +70,7 @@ defmodule Cldr.Calendar.Parse do
              {:ok, {hour, minute, second, microsecond}} <- calendar.parse_time(time) do
           {:ok, {year, month, day, hour, minute, second, microsecond}}
         end
+
       _ ->
         {:error, :invalid_format}
     end
@@ -84,6 +85,7 @@ defmodule Cldr.Calendar.Parse do
              {offset, ""} <- parse_offset(rest),
              {:ok, {year, month, day}} <- calendar.parse_date(date) do
           {hour, minute, second} = unquote(read_time)
+
           cond do
             not calendar.valid_time?(hour, minute, second, microsecond) ->
               {:error, :invalid_time}
@@ -104,12 +106,15 @@ defmodule Cldr.Calendar.Parse do
 
                   {extra_days, day_fraction} ->
                     base_days = calendar.date_to_iso_days(year, month, day)
-                    {calendar.date_from_iso_days(base_days + extra_days), time_from_day_fraction(day_fraction)}
+
+                    {calendar.date_from_iso_days(base_days + extra_days),
+                     time_from_day_fraction(day_fraction)}
                 end
 
-            {:ok, {year, month, day, hour, minute, second, microsecond}, offset}
+              {:ok, {year, month, day, hour, minute, second, microsecond}, offset}
           end
         end
+
       _ ->
         {:error, :invalid_format}
     end

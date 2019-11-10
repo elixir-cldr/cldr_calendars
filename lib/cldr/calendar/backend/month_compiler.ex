@@ -430,18 +430,21 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       @doc false
       calendar_impl()
+
       def parse_date(string) do
         Cldr.Calendar.Parse.parse_date(string, __MODULE__)
       end
 
       @doc false
       calendar_impl()
+
       def parse_utc_datetime(string) do
         Cldr.Calendar.Parse.parse_utc_datetime(string, __MODULE__)
       end
 
       @doc false
       calendar_impl()
+
       def parse_naive_datetime(string) do
         Cldr.Calendar.Parse.parse_naive_datetime(string, __MODULE__)
       end
