@@ -20,4 +20,5 @@
   "nimble_csv": {:hex, :nimble_csv, "0.6.0", "a3673f26d41f986774fe6060e309615343d3cb83a6d435754d8b1fdbd5764879", [:mix], [], "hexpm"},
   "nimble_parsec": {:hex, :nimble_parsec, "0.5.1", "c90796ecee0289dbb5ad16d3ad06f957b0cd1199769641c961cfe0b97db190e0", [:mix], [], "hexpm"},
   "nimble_strftime": {:hex, :nimble_strftime, "0.1.1", "b988184d1bd945bc139b2c27dd00a6c0774ec94f6b0b580083abd62d5d07818b", [:mix], [], "hexpm"},
+  "stream_data": {:hex, :stream_data, "0.4.3", "62aafd870caff0849a5057a7ec270fad0eb86889f4d433b937d996de99e3db25", [:mix], [], "hexpm"},
 }

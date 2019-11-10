@@ -1538,7 +1538,7 @@ defmodule Cldr.Calendar do
     plus(date, :years, 1, options)
   end
 
-  def next(%Date.Range{last: date}, :quarter, options) do
+  def next(%Date.Range{first: date}, :quarter, options) do
     next(date, :quarter, options)
     |> Interval.quarter()
   end
@@ -1619,7 +1619,7 @@ defmodule Cldr.Calendar do
     plus(date, :years, -1, options)
   end
 
-  def previous(%Date.Range{first: date}, :quarter, options) do
+  def previous(%Date.Range{last: date}, :quarter, options) do
     previous(date, :quarter, options)
     |> Interval.quarter()
   end

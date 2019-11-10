@@ -69,7 +69,8 @@ defmodule Cldr.Calendar.MixProject do
       {:ex_doc, "~> 0.18", only: [:release, :dev]},
       {:benchee, "~> 0.14", optional: true, only: [:dev, :test]},
       {:dialyxir, "~> 1.0.0-rc", only: [:dev], runtime: false},
-      {:nimble_strftime, "~> 0.1", only: :test}
+      {:nimble_strftime, "~> 0.1", only: :test},
+      {:stream_data, "~> 0.4", only: :test}
     ]
   end
 
@@ -100,7 +101,7 @@ defmodule Cldr.Calendar.MixProject do
     []
   end
 
-  defp elixirc_paths(:test), do: ["lib", "mix", "test"]
+  defp elixirc_paths(:test), do: ["lib", "mix", "test", "test/support"]
   defp elixirc_paths(:dev), do: ["lib", "mix", "bench"]
   defp elixirc_paths(_), do: ["lib"]
 end

@@ -248,6 +248,8 @@ defmodule Cldr.Calendar.Base.Week do
   # 5. Add back the day of the month capture earlier - potentialy coercing
   #    the last day of the month
   def plus(year, week, day, config, :months, -1 = n, options) do
+    # IO.puts "Original date: #{year}-#{week}-#{day}"
+
     day_of_month = day_of_month(year, week, day, config)
     {year, week, day} = last_day_of_month(year, week, day, config)
     month_of_year = month_of_year(year, week, day, config)
@@ -257,7 +259,16 @@ defmodule Cldr.Calendar.Base.Week do
       slice_weeks(month_in_quarter - 1, abs(n), config) +
       maybe_extra_week_for_long_year(year, month_of_year, config)
 
+    # IO.puts "  Day of month: #{day_of_month}"
+    # IO.puts "  Weeks in Month: #{slice_weeks(month_in_quarter - 1, abs(n), config)}"
+    # IO.puts ""
+    # IO.puts "  Last day of month: #{year}-#{week}-#{day}"
+    # IO.puts "  Month of year: #{month_of_year}"
+    # IO.puts "  Month in quarter: #{month_in_quarter}"
+    # IO.puts "  Weeks to substract: #{weeks_to_sub}"
+
     week =  week - weeks_to_sub
+    # IO.puts "  Proposed week of previous month: #{week}"
     {year, week} =
       if week < 1 do
         {year - 1, weeks_in_year(year - 1, config) - week}
@@ -266,13 +277,14 @@ defmodule Cldr.Calendar.Base.Week do
       end
 
     {year, week, day} = first_day_of_month(year, week, day, config)
+    # IO.puts "First day of previous month: #{year}-#{week}-#{day}"
     add_days(year, week, day, day_of_month - 1, config, options)
   end
 
   # Accounting for long years is complex. So for now adding and
   # subtracting months is done one month at a time. Therefore
   # performance for large additions/subsctractions will be poor.
-  def plus(year, week, day, config, :months, months, _options) when abs(months) > 1 do
+  def plus(year, week, day, config, :months, months, options) when abs(months) > 1 do
     increment = if months > 0, do: 1, else: -1
     original_day_of_month = day_of_month(year, week, day, config)
     {year, week, day} =
@@ -286,8 +298,8 @@ defmodule Cldr.Calendar.Base.Week do
     days_difference = original_day_of_month - proposed_day_of_month
     month = month_of_year(year, week, day, config)
 
-    if days_difference != 0 && original_day_of_month <= days_in_month(year, month, config) do
-      add_days(year, month, day, days_difference, config)
+    if days_difference < 0 && original_day_of_month <= days_in_month(year, month, config) do
+      add_days(year, month, day, days_difference, config, options)
     else
       {year, week, day}
     end
