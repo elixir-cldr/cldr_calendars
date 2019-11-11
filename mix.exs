@@ -7,7 +7,6 @@ defmodule Cldr.Calendar.MixProject do
     [
       app: :ex_cldr_calendars,
       version: @version,
-      licenses: ["Apache-2.0"],
       elixir: "~> 1.8",
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
