@@ -15,8 +15,10 @@ defmodule Cldr.Calendar.Backend do
           `Cldr` defines formats for several calendars, the names of which
           are returned by `Cldr.known_calendars/0`.
 
-          Currently this implementation only supports the `:gregorian`
-          calendar which aligns with the proleptic Gregorian calendar
+          Currently this implementation only supports the `:gregorian`,
+          `:persian`, `:coptic` and `ethiopic` calendars.
+
+          The `:gregorian` calendar aligns with the proleptic Gregorian calendar
           defined by Elixir, `Calendar.ISO`.
 
           """
@@ -27,6 +29,7 @@ defmodule Cldr.Calendar.Backend do
         alias Cldr.LanguageTag
 
         @default_calendar :gregorian
+        @acceptable_calendars [:gregorian, :persian, :coptic, :ethiopic]
 
         @doc """
         Returns a keyword list of options than can be applied to
@@ -136,11 +139,13 @@ defmodule Cldr.Calendar.Backend do
             |> Map.get(:dates)
 
           # Should be Cldr.known_calendars() but
-          # for now just :gregorian
+          # for now just calendars where we have
+          # implemenations.
+
           calendars =
             date_data
             |> Map.get(:calendars)
-            |> Map.take([@default_calendar])
+            |> Map.take(@acceptable_calendars)
             |> Map.keys()
 
           for calendar <- calendars do

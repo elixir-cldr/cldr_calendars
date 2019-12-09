@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.6.0
+
+This is the changelog for Cldr Calendars v1.6.0 released on December 9th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Enhancements
+
+* Adds support for localizing Persian, Coptic and Ethiopic calendar localization. These calendars are published separately but they rely upon localization support from this package.
+
 # Changelog for Cldr Calendars v1.5.1
 
 This is the changelog for Cldr Calendars v1.5.1 released on November 10th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

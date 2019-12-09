@@ -4,7 +4,7 @@ require Cldr.Calendar.Backend.Compiler
 defmodule MyApp.Cldr do
   use Cldr,
     providers: [Cldr.Calendar, Cldr.Number, Cldr.Unit, Cldr.List],
-    locales: ["en", "fr", "en-GB", "en-AU", "en-CA", "ar", "he"],
+    locales: ["en", "fr", "en-GB", "en-AU", "en-CA", "ar", "he", "fa"],
     default_locale: "en"
 end
 

@@ -83,6 +83,12 @@ defmodule Cldr.Calendar.Test do
     end
   end
 
+  test "that persian, coptic and ethopic calendar date exists" do
+    assert !is_nil(MyApp.Cldr.Calendar.eras(:persian))
+    assert !is_nil(MyApp.Cldr.Calendar.eras(:coptic))
+    assert !is_nil(MyApp.Cldr.Calendar.eras(:ethopic))
+  end
+
   if function_exported?(Code, :fetch_docs, 1) do
     test "that no module docs are generated for a backend" do
       assert {:docs_v1, _, :elixir, _, :hidden, %{}, _} = Code.fetch_docs(NoDocs.Cldr.Calendar)
