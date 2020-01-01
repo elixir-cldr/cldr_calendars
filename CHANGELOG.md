@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.7.0
+
+This is the changelog for Cldr Calendars v1.7.0 released on January 2nd, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Enhancements
+
+* Remove call to deprecated `Code.ensure_compiled?/1` in Elixir 1.10
+
 # Changelog for Cldr Calendars v1.6.0
 
 This is the changelog for Cldr Calendars v1.6.0 released on December 9th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

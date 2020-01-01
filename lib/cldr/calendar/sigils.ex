@@ -5,6 +5,8 @@ defmodule Cldr.Calendar.Sigils do
 
   """
 
+  alias Cldr.Config
+
   @doc """
   Implements a ~d sigil for expressing dates.
 
@@ -111,7 +113,7 @@ defmodule Cldr.Calendar.Sigils do
   end
 
   defp get_calendar(calendar) do
-    if Code.ensure_compiled?(calendar) and function_exported?(calendar, :cldr_calendar_type, 0) do
+    if Config.ensure_compiled?(calendar) and function_exported?(calendar, :cldr_calendar_type, 0) do
       {:ok, calendar}
     else
       nil
