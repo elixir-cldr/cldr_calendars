@@ -44,7 +44,7 @@ defmodule Cldr.Calendar.Backend do
 
         ## Arguments
 
-        * `locale` is any locale returned by `MyApp.Cldr.known_locales/0`. The
+        * `locale` is any locale returned by `MyApp.Cldr.known_locale_names/0`. The
           default is `MyApp.Cldr.get_locale/0`
 
         * `options` is a set of keyword options. The default is `[]`
