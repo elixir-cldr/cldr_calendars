@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.7.1
+
+This is the changelog for Cldr Calendars v1.7.1 released on January 26th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Bug Fixes
+
+* Fix doc link in `MyApp.Cldr.Calendar.strftime_options!/2`
+
 # Changelog for Cldr Calendars v1.7.0
 
 This is the changelog for Cldr Calendars v1.7.0 released on January 2nd, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
