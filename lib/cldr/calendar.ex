@@ -1741,11 +1741,11 @@ defmodule Cldr.Calendar do
     type = Keyword.get(options, :type, :format)
     format = Keyword.get(options, :format, :abbreviated)
 
-    with {:ok, locale} <- Cldr.validate_locale(locale),
+    with {:ok, backend} <- validate_backend(backend),
+         {:ok, locale} <- backend.validate_locale(locale),
          {:ok, part} <- validate_part(part),
          {:ok, type} <- validate_type(type),
-         {:ok, format} <- validate_format(format),
-         {:ok, backend} <- validate_backend(backend) do
+         {:ok, format} <- validate_format(format) do
       localize(date, part, type, format, backend, locale)
     end
   end
