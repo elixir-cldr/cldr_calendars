@@ -54,4 +54,5 @@ defmodule Cldr.Test.Calendars do
       weeks_in_month: [5, 4, 4],
       min_days_in_first_week: 7
   end
+
 end

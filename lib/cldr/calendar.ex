@@ -293,7 +293,7 @@ defmodule Cldr.Calendar do
     module that conforms to the `Calendar` and `Cldr.Calendar`
     behaviours or
 
-  * `{already_exists, module}` if a module of the given
+  * `{:module_already_exists, module}` if a module of the given
     calendar name already exists. It is not guaranteed
     that the module is in fact a calendar module in this case.
 
@@ -301,11 +301,6 @@ defmodule Cldr.Calendar do
 
   The following options can be provided to create
   a new calendar.
-
-  * `:locale`  can be any configured locale. If
-    provided it will be used to determine the
-    `:day_of_year` and `:days_in_first_week`
-    option values. The default value is `nil`
 
   * `:cldr_backend` defines a default
     backend module to be used for this calendar.
@@ -391,8 +386,7 @@ defmodule Cldr.Calendar do
       ...>   first_or_last: :first,
       ...>   weeks_in_month: [4, 5, 4],
       ...>   year: :majority,
-      ...>   cldr_backend: nil,
-      ...>   locale: nil
+      ...>   cldr_backend: nil
       {:ok, ISOWeek}
   ```
   Note that `Cldr.Calendar.ISOWeek` is included as part of this
@@ -400,41 +394,68 @@ defmodule Cldr.Calendar do
 
   """
   @spec new(module(), calendar_type(), Keyword.t()) ::
-          {:ok, calendar()} | {:already_exists, module()}
+          {:ok, calendar()} | {:module_already_exists, module()}
 
   def new(calendar_module, calendar_type, config)
       when is_atom(calendar_module) and calendar_type in [:week, :month] do
     if Code.ensure_loaded?(calendar_module) do
-      {:already_exists, calendar_module}
+      {:module_already_exists, calendar_module}
     else
       create_calendar(calendar_module, calendar_type, config)
     end
   end
 
+  @doc """
+  Returns a calendar configured according to
+  the preferences defined for a locale.
+
+  """
   @base_calendar_name Cldr.Calendar
   def from_locale(locale, options \\ [])
 
-  def from_locale(%LanguageTag{} = locale, options) do
+  def from_locale(%LanguageTag{} = locale, config) do
     territory = Cldr.Locale.territory_from_locale(locale)
     calendar_name = Module.concat(@base_calendar_name, territory)
-    options = Keyword.merge(options, locale: locale)
+    config = Keyword.put(config, :locale, locale)
 
-    if Code.ensure_loaded?(calendar_name) && function_exported?(calendar_name, :__config__, 0) do
-      {:ok, calendar_name}
-    else
-      create_calendar(calendar_name, :month, options)
+    cond do
+      same_as_gregorian?(config) -> {:ok, Cldr.Calendar.Gregorian}
+      calendar_module?(calendar_name) -> {:ok, calendar_name}
+      true -> create_calendar(calendar_name, :month, config)
     end
   end
 
-  def from_locale(locale_name, options) when is_binary(locale_name) do
-    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+  def from_locale(locale_name, config) when is_binary(locale_name) do
+    backend = Keyword.get_lazy(config, :backend, &Cldr.default_backend/0)
     with {:ok, backend} <- Cldr.validate_backend(backend),
          {:ok, locale} <- Cldr.validate_locale(locale_name, backend) do
-      from_locale(locale, options)
+      from_locale(locale, config)
     end
+  end
+
+  @doc """
+  Returns a boolean indicating if a module
+  is a `Cldr.Calendar` module
+
+  """
+  def calendar_module?(module) when is_atom(module) do
+    Code.ensure_loaded?(module) &&
+    function_exported?(module, :cldr_calendar_type, 0)
+  end
+
+  def same_as_gregorian?(config) do
+    options =
+      Config.extract_options(config)
+
+    gregorian_options =
+      Cldr.Calendar.Gregorian.__config__()
+      |> Map.put(:calendar, nil)
+
+    options == gregorian_options
   end
 
   defp create_calendar(calendar_module, calendar_type, config) do
+    config = Keyword.put(config, :calendar, calendar_module)
     structured_config = Config.extract_options(config)
 
     with {:ok, config} <- Config.validate_config(structured_config, calendar_type) do
@@ -1058,10 +1079,13 @@ defmodule Cldr.Calendar do
 
       iex> Cldr.Calendar.weeks_in_year ~D[2026-W01-1 Cldr.Calendar.ISOWeek]
       53
+
       iex> Cldr.Calendar.weeks_in_year ~D[2019-01-01]
       52
+
       iex> Cldr.Calendar.weeks_in_year ~D[2020-01-01]
-      53
+      52
+
       iex> Cldr.Calendar.weeks_in_year 2020, Cldr.Calendar.ISOWeek
       53
 

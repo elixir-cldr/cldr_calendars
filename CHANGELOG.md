@@ -2,11 +2,19 @@
 
 This is the changelog for Cldr Calendars v1.8.0 released on _______, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
+## Breaking Change (that you might notice but probably won't)
+
+* The `min_days_in_first_week` for the calendar `Cldr.Calendar.Gregorian` is changed to be `1` rather than the previous value of `4`. This only affects week-related processing for the calendar. The reason for the change is that the majority of territories have a preference for `1` for `min_days_in_first_week` so `Cldr.Calendar.Gregorian` more closely aligns to majority expectations.
+
+## Breaking changes (that you shouldn't notice)
+
+* The return result from `Cldr.Calendar.new/3` may return `{:module_already_exists, module}`. It previously returned `{:already_exists, module}`
+
 ## Bug Fixes
 
-* Use `backend.get_locale/0` as priority over `Cldr.get_locale/0` for all options
+* Use `backend.get_locale/0` instead of `Cldr.get_locale/0` for all options
 
-* Ensure that the default values for a locale's `min_days` and `first_day_of_week` are correctly applied
+* Ensure that the default values for a locale's `min_days` and `first_day_of_week` are correctly applied in `Cldr.Calendar.new/3`. Any values passed as options take precedence over those defined for a locale.
 
 ## Enhancements
 

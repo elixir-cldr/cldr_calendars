@@ -7,10 +7,6 @@ defmodule Cldr.Calendar.Config do
   """
   defstruct calendar: nil,
 
-            # Locale can be used to derive
-            # the :day_of_year and :min_days_in_first_weeek
-            locale: nil,
-
             # A default backend for this
             # calendar
             cldr_backend: nil,
@@ -56,8 +52,7 @@ defmodule Cldr.Calendar.Config do
   Defines the struct type for a calendar configuration
   """
   @type t() :: %__MODULE__{
-          calendar: Cldr.Calendar.calendar() | nil,
-          locale: Cldr.Locale.locale_name() | Cldr.LanguageTag.t() | nil,
+          calendar: atom(),
           cldr_backend: Cldr.backend() | nil,
           weeks_in_month: list(pos_integer()),
           begins_or_ends: :begins | :ends,
@@ -68,8 +63,6 @@ defmodule Cldr.Calendar.Config do
           min_days_in_first_week: 1..7
         }
 
-  alias Cldr.Calendar.Preference
-
   @doc false
   def extract_options(options) do
     invalidate_old_options!(options)
@@ -78,46 +71,21 @@ defmodule Cldr.Calendar.Config do
     backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
     locale = Keyword.get(options, :locale, backend.get_locale())
 
-    calendar = Keyword.get_lazy(options, :calendar,
-      fn -> Preference.calendar_for_locale(locale) end)
-
-    {min_days, first_day_of_week} = min_and_first_days(locale, options)
-
     %__MODULE__{
-      min_days_in_first_week: min_days,
-      day_of_week: first_day_of_week,
+      calendar: Keyword.get(options, :calendar),
       cldr_backend: backend,
-      calendar: calendar,
-      month_of_year: Keyword.get(options, :month_of_year, 1),
+      min_days_in_first_week:
+        Keyword.get_lazy(options, :min_days_in_first_week,
+          fn -> Cldr.Calendar.min_days_for_locale(locale) end),
+      day_of_week:
+        Keyword.get_lazy(options, :day_of_week,
+          fn -> Cldr.Calendar.first_day_for_locale(locale) end),
       year: Keyword.get(options, :year, :majority),
+      month_of_year: Keyword.get(options, :month_of_year, 1),
       first_or_last: Keyword.get(options, :first_or_last, :first),
       begins_or_ends: Keyword.get(options, :begins_or_ends, :begins),
       weeks_in_month: Keyword.get(options, :weeks_in_month, [4, 5, 4])
     }
-  end
-
-  # Here we make a decision about what the first day of
-  # the week will be and what the min_days will be.
-  #
-  # The order of precedence for `min_days` is:
-  #
-  # 1. `options[:min_days]` if it exists
-  # 2. `Cldr.Calendar.days_in_week(calendar)
-  #
-  # The order of precedence for `first_day` is:
-  #
-  # 1. `options[:day_of_week]` if it exists
-  # 2. The day of the week for the territory in `options[:locale]`
-  # 3. `Cldr.Calendar.monday()`
-
-  defp min_and_first_days(locale, options) do
-    min_days = Keyword.get_lazy(options, :min_days_in_first_week,
-      fn -> Cldr.Calendar.min_days_for_locale(locale) end)
-
-    first_day = Keyword.get_lazy(options, :day_of_week,
-      fn -> Cldr.Calendar.first_day_for_locale(locale) end)
-
-    {min_days, first_day}
   end
 
   @valid_weeks_in_month [[4, 4, 5], [4, 5, 4], [5, 4, 4]]
@@ -178,6 +146,7 @@ defmodule Cldr.Calendar.Config do
     %__MODULE__{}
     |> Map.delete(:__struct__)
     |> Map.keys()
+    |> List.insert_at(0, :locale)
   end
 
   defp detect_invalid_options!(options) do
