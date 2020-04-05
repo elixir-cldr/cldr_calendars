@@ -26,14 +26,10 @@ defmodule Cldr.Calendar.Preference do
   Returns the calendar module preferred for
   a territory.
 
-  This function finds the first available calendar
-  module that implements a preferred calendar and
-  returns it.
-
   ## Arguments
 
   * `territory` is any valid ISO3166-2 code as
-    a `String.t` or `atom()`
+    an `String.t` or upcased `atom()`
 
   ## Returns
 
