@@ -49,9 +49,9 @@ defmodule Cldr.Calendar.Preference do
 
   ## Notes
 
-  The overwhelming number of territories have
-  `:gregorian` as their first configured
-  preferred calendar and therefore `Cldr.Calendar.Gregorian`
+  The overwhelming majority of territories have
+  `:gregorian` as their first preferred calendar
+  and therefore `Cldr.Calendar.Gregorian`
   will be returned for most territories.
 
   Returning any other calendar module would require:
