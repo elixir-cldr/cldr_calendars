@@ -411,25 +411,41 @@ defmodule Cldr.Calendar do
 
   """
   @base_calendar_name Cldr.Calendar
-  def from_locale(locale, options \\ [])
+  def calendar_for_locale(locale, options \\ [])
 
-  def from_locale(%LanguageTag{} = locale, config) do
-    territory = Cldr.Locale.territory_from_locale(locale)
-    calendar_name = Module.concat(@base_calendar_name, territory)
-    config = Keyword.put(config, :locale, locale)
-
-    cond do
-      same_as_gregorian?(config) -> {:ok, Cldr.Calendar.Gregorian}
-      calendar_module?(calendar_name) -> {:ok, calendar_name}
-      true -> create_calendar(calendar_name, :month, config)
-    end
+  def calendar_for_locale(%LanguageTag{} = locale, config) do
+    locale
+    |> Cldr.Locale.territory_from_locale
+    |> calendar_for_territory(config)
   end
 
-  def from_locale(locale_name, config) when is_binary(locale_name) do
+  def calendar_for_locale(locale_name, config) when is_binary(locale_name) do
     backend = Keyword.get_lazy(config, :backend, &Cldr.default_backend/0)
     with {:ok, backend} <- Cldr.validate_backend(backend),
          {:ok, locale} <- Cldr.validate_locale(locale_name, backend) do
-      from_locale(locale, config)
+      calendar_for_locale(locale, config)
+    end
+  end
+
+  @doc """
+  Returns a calendar configured according to
+  the preferences defined for a territory.
+
+  """
+  def calendar_for_territory(territory, config \\ []) do
+    with {:ok, territory} <- Cldr.validate_territory(territory) do
+      calendar_name = Module.concat(@base_calendar_name, territory)
+
+      config =
+        config
+        |> Keyword.put_new(:min_days_in_first_week, min_days_for_territory(territory))
+        |> Keyword.put_new(:day_of_week, first_day_for_territory(territory))
+
+      cond do
+        same_as_default?(config) -> {:ok, Cldr.Calendar.default_calendar()}
+        calendar_module?(calendar_name) -> {:ok, calendar_name}
+        true -> create_calendar(calendar_name, :month, config)
+      end
     end
   end
 
@@ -443,15 +459,15 @@ defmodule Cldr.Calendar do
     function_exported?(module, :cldr_calendar_type, 0)
   end
 
-  def same_as_gregorian?(config) do
-    options =
+  def same_as_default?(config) do
+    config =
       Config.extract_options(config)
 
-    gregorian_options =
-      Cldr.Calendar.Gregorian.__config__()
+    default_calendar_config =
+      Cldr.Calendar.default_calendar().__config__()
       |> Map.put(:calendar, nil)
 
-    options == gregorian_options
+    config == default_calendar_config
   end
 
   defp create_calendar(calendar_module, calendar_type, config) do

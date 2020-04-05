@@ -25,6 +25,8 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 * Includes pre-defined calendars for Gregorian (compatible with the builtin `Calendar` module), `ISOWeek` and `National Retail Federation (NRF)` calendars
 
+* Includes returning a calendar configured to reflect the `first_day_of_week` and `min_days_in_first_week` for a given territory lor locale.  See `Cldr.Calendar.calendar_from_locale/2`.
+
 * Includes functions to find the first, last, nearest and `nth` days of the week from a date. For example, find the `2nd Tuesday in November`.
 
 **See the documentation for `Cldr.Calendar` for the main public API.**

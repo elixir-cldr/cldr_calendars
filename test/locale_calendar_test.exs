@@ -15,7 +15,7 @@ defmodule Cldr.Calendar.LocaleCalendar.Test do
   test "that we get the Gregorian calendar for locale en-US" do
     {:ok, locale} = Cldr.validate_locale("en-US", MyApp.Cldr)
     assert  Cldr.Calendar.Preference.calendar_for_locale(locale) ==
-      {:ok, Cldr.Calendar.Gregorian}
+      {:ok, Cldr.Calendar.US}
   end
 
   test "that we get the Gregorian calendar for locale en-001" do
@@ -27,7 +27,7 @@ defmodule Cldr.Calendar.LocaleCalendar.Test do
   test "that we get the Gregorian calendar for locale en" do
     {:ok, locale} = Cldr.validate_locale("en", MyApp.Cldr)
     assert  Cldr.Calendar.Preference.calendar_for_locale(locale) ==
-      {:ok, Cldr.Calendar.Gregorian}
+      {:ok, Cldr.Calendar.US}
   end
 
 end

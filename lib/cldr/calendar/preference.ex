@@ -70,17 +70,26 @@ defmodule Cldr.Calendar.Preference do
 
   """
   def calendar_for_territory(territory) do
-    with {:ok, preferences} <- preferences_for_territory(territory) do
-      error = {:error, Cldr.unknown_calendar_error(preferences)}
-      Enum.reduce_while(preferences, error, fn calendar, acc ->
-        module = calendar_module(calendar)
-        if Code.ensure_loaded?(module) do
-          {:halt, {:ok, module}}
-        else
-          {:cont, acc}
-        end
-      end)
+    with {:ok, preferences} <- preferences_for_territory(territory),
+         {:ok, calendar_module} <- find_calendar(preferences) do
+      if calendar_module == Cldr.Calendar.default_calendar() do
+        Cldr.Calendar.calendar_for_territory(territory)
+      else
+        {:ok, calendar_module}
+      end
     end
+   end
+
+  defp find_calendar(preferences) do
+    error = {:error, Cldr.unknown_calendar_error(preferences)}
+    Enum.reduce_while(preferences, error, fn calendar, acc ->
+      module = calendar_module(calendar)
+      if Code.ensure_loaded?(module) do
+        {:halt, {:ok, module}}
+      else
+        {:cont, acc}
+      end
+    end)
   end
 
   @doc """

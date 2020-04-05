@@ -18,9 +18,11 @@ This is the changelog for Cldr Calendars v1.8.0 released on _______, 2020.  For 
 
 ## Enhancements
 
-* Add `Cldr.Calendar.from_locale/2` which will create (or return) a calendar configured for the supplied locale. This typically means applying the correct values for `min_days` and `first_day_of_week`. For now all calendars created in this way are Gregorian monthly calendars.
+* Add `Cldr.Calendar.calendar_for_locale/2` which will create (or return) a gregorian-based calendar configured for the supplied locale. This typically means applying the correct values for `min_days` and `first_day_of_week`. For now all calendars created in this way are Gregorian monthly calendars.
 
-* Add `Cldr.Calendar.Preference.calendar_for_territory/1`
+* Add `Cldr.Calendar.Preference.calendar_for_locale/1` which returns the appropriate calendar for a locale based upon locale preferences and configured calendars. Unlike `Cldr.Calendar.calendar_for_locale/2`, this function may return non-Gregorian calendars. For example, for the locale `fa-IR` it will return `Cldr.Calendar.Persian` (if [ex_cldr_calendars_persian](https://hex.pm/packages/ex_cldr_calendars_persian) is configured) because that is the locale preference.
+
+* Add `Cldr.Calendar.Preference.calendar_for_territory/1` provides the same result as `Cldr.Calendar.Preference.calendar_for_locale/2` except that argument is a territory code.
 
 * Add `Cldr.Calendar.Preference.preferences_for_territory/1`
 
