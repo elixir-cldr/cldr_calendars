@@ -1,5 +1,5 @@
 defmodule Cldr.Calendar.PeriodSequenceTest do
-  use ExUnit.Case
+  use ExUnit.Case, asynch: true
 
   defmodule C454 do
     use Cldr.Calendar.Base.Week,

@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.7.2
+
+This is the changelog for Cldr Calendars v1.7.2 released on April 5th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+## Bug Fixes
+
+* Use `backend.get_locale/0` as priority over `Cldr.get_locale/0` for all options
+
 # Changelog for Cldr Calendars v1.7.1
 
 This is the changelog for Cldr Calendars v1.7.1 released on January 26th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

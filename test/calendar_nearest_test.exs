@@ -1,5 +1,5 @@
 defmodule Cldr.Calendar.Nearest.Test do
-  use ExUnit.Case
+  use ExUnit.Case, asynch: true
 
   # Setting min_days to 4 will deliver the
   # "nearest" result.

@@ -72,19 +72,19 @@ defmodule Cldr.Calendar.Config do
   def extract_options(options) do
     invalidate_old_options!(options)
     detect_invalid_options!(options)
-    backend = Keyword.get(options, :backend)
-    locale = Keyword.get(options, :locale, Cldr.get_locale())
+    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+    locale = Keyword.get(options, :locale, backend.get_locale())
     calendar = Keyword.get(options, :calendar)
     first_or_last = Keyword.get(options, :first_or_last, :first)
     begins_or_ends = Keyword.get(options, :begins_or_ends, :begins)
     weeks_in_month = Keyword.get(options, :weeks_in_month, [4, 5, 4])
     year = Keyword.get(options, :year, :majority)
     month = Keyword.get(options, :month_of_year, 1)
-    {min_days, day} = min_and_first_days(locale, options)
+    {min_days, first_day_of_week} = min_and_first_days(locale, options)
 
     %__MODULE__{
       min_days_in_first_week: min_days,
-      day_of_week: day,
+      day_of_week: first_day_of_week,
       month_of_year: month,
       year: year,
       cldr_backend: backend,
@@ -95,9 +95,27 @@ defmodule Cldr.Calendar.Config do
     }
   end
 
-  defp min_and_first_days(_locale, options) do
-    min_days = Keyword.get(options, :min_days_in_first_week, 7)
-    first_day = Keyword.get(options, :day_of_week, 1)
+  # Here we make a decision about what the first day of
+  # the week will be and what the min_days will be.
+  #
+  # The order of precedence for `min_days` is:
+  #
+  # 1. `options[:min_days]` if it exists
+  # 2. `Cldr.Calendar.days_in_week(calendar)
+  #
+  # The order of precedence for `first_day` is:
+  #
+  # 1. `options[:day_of_week]` if it exists
+  # 2. The day of the week for the territory in `options[:locale]`
+  # 3. `Cldr.Calendar.monday()`
+
+  defp min_and_first_days(locale, options) do
+    min_days = Keyword.get_lazy(options, :min_days_in_first_week,
+      fn -> Cldr.Calendar.min_days_for_locale(locale) end)
+
+    first_day = Keyword.get_lazy(options, :day_of_week,
+      fn -> Cldr.Calendar.first_day_for_locale(locale) end)
+
     {min_days, first_day}
   end
 

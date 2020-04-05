@@ -411,14 +411,42 @@ defmodule Cldr.Calendar do
     end
   end
 
+  @base_calendar_name Cldr.Calendar
+  def from_locale(locale, options \\ [])
+
+  def from_locale(%LanguageTag{} = locale, options) do
+    territory = Cldr.Locale.territory_from_locale(locale)
+    calendar_name = Module.concat(@base_calendar_name, territory)
+    options = Keyword.merge(options, locale: locale)
+
+    if Code.ensure_loaded?(calendar_name) && function_exported?(calendar_name, :__config__, 0) do
+      {:ok, calendar_name}
+    else
+      create_calendar(calendar_name, :month, options)
+    end
+  end
+
+  def from_locale(locale_name, options) when is_binary(locale_name) do
+    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+    with {:ok, backend} <- Cldr.validate_backend(backend),
+         {:ok, locale} <- Cldr.validate_locale(locale_name, backend) do
+      from_locale(locale, options)
+    end
+  end
+
   defp create_calendar(calendar_module, calendar_type, config) do
     structured_config = Config.extract_options(config)
 
-    with {:ok, _} <- Config.validate_config(structured_config, calendar_type) do
+    with {:ok, config} <- Config.validate_config(structured_config, calendar_type) do
       calendar_type =
         calendar_type
         |> to_string
         |> String.capitalize()
+
+      config =
+        config
+        |> Map.from_struct
+        |> Map.to_list
 
       contents =
         quote do
@@ -1131,8 +1159,9 @@ defmodule Cldr.Calendar do
   @spec weekend?(Date.t(), Keyword.t()) :: boolean | {:error, {module(), String.t()}}
 
   def weekend?(date, options \\ []) do
-    locale = Keyword.get(options, :locale, Cldr.get_locale())
-    backend = Keyword.get(options, :backend, Cldr.default_backend())
+    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+    locale = Keyword.get(options, :locale, backend.get_locale())
+
 
     with {:ok, locale} <- Cldr.validate_locale(locale, backend),
          territory = Keyword.get(options, :territory, locale.territory),
@@ -1209,8 +1238,9 @@ defmodule Cldr.Calendar do
   @spec weekday?(Date.t(), Keyword.t()) :: boolean | {:error, {module(), String.t()}}
 
   def weekday?(date, options \\ []) do
-    locale = Keyword.get(options, :locale, Cldr.get_locale())
-    backend = Keyword.get(options, :backend, Cldr.default_backend())
+    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+    locale = Keyword.get(options, :locale, backend.get_locale())
+
 
     with {:ok, locale} <- Cldr.validate_locale(locale, backend),
          territory = Keyword.get(options, :territory, locale.territory),
@@ -1219,17 +1249,44 @@ defmodule Cldr.Calendar do
     end
   end
 
-  @doc false
-  def first_day_for_locale(%LanguageTag{territory: territory}) do
-    with {:ok, territory} <- Cldr.validate_territory(territory) do
-      first_day_for_locale(territory)
+  @doc """
+  Returns the first day of a week for a given
+  locale.
+
+  Note that the first of the first week is commonly
+  not aligned with the first day of the year.
+
+  """
+  def first_day_for_locale(%LanguageTag{} = locale) do
+    locale
+    |> Cldr.Locale.territory_from_locale
+    |> first_day_for_territory
+  end
+
+  def first_day_for_locale(locale, options \\ []) when is_binary(locale) do
+    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+
+    with {:ok, locale} <- Cldr.validate_locale(locale, backend) do
+      first_day_for_locale(locale)
     end
   end
 
-  @doc false
-  def min_days_for_locale(%LanguageTag{territory: territory}) do
-    with {:ok, territory} <- Cldr.validate_territory(territory) do
-      min_days_for_locale(territory)
+  @doc """
+  Returns the minimum days in the first week of a year
+  for a given locale.
+
+  """
+  def min_days_for_locale(%LanguageTag{} = locale) do
+    locale
+    |> Cldr.Locale.territory_from_locale
+    |> min_days_for_territory
+  end
+
+  def min_days_for_locale(locale, options \\ []) when is_binary(locale) do
+    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+
+    with {:ok, locale} <- Cldr.validate_locale(locale, backend) do
+      min_days_for_locale(locale)
     end
   end
 
@@ -1319,11 +1376,11 @@ defmodule Cldr.Calendar do
       get_in(@week_info, [:min_days, territory]) ||
         get_in(@week_info, [:min_days, @the_world])
 
-    def first_day_for_locale(unquote(territory)) do
+    def first_day_for_territory(unquote(territory)) do
       unquote(first_day)
     end
 
-    def min_days_for_locale(unquote(territory)) do
+    def min_days_for_territory(unquote(territory)) do
       unquote(min_days)
     end
 
@@ -1336,15 +1393,15 @@ defmodule Cldr.Calendar do
     end
   end
 
-  def first_day_for_locale(territory) do
+  def first_day_for_territory(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
-      first_day_for_locale(territory)
+      first_day_for_territory(territory)
     end
   end
 
-  def min_days_for_locale(territory) do
+  def min_days_for_territory(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
-      min_days_for_locale(territory)
+      min_days_for_territory(territory)
     end
   end
 
@@ -1735,9 +1792,9 @@ defmodule Cldr.Calendar do
   end
 
   def localize(date, part, options) do
-    cldr_backend = backend_from_calendar(date.calendar)
-    backend = Keyword.get(options, :backend, cldr_backend || Cldr.default_backend())
-    locale = Keyword.get(options, :locale, Cldr.get_locale())
+    backend = Keyword.get_lazy(options, :backend,
+      fn -> backend_from_calendar(date.calendar) || Cldr.default_backend() end)
+    locale = Keyword.get(options, :locale, backend.get_locale())
     type = Keyword.get(options, :type, :format)
     format = Keyword.get(options, :format, :abbreviated)
 
@@ -1751,7 +1808,7 @@ defmodule Cldr.Calendar do
   end
 
   defp backend_from_calendar(calendar) do
-    if function_exported?(calendar, :__config__, 0) do
+    if Code.ensure_loaded?(calendar) && function_exported?(calendar, :__config__, 0) do
       calendar.__config__().cldr_backend
     else
       nil

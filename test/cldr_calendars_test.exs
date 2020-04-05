@@ -1,13 +1,6 @@
 defmodule Cldr.Calendar.Test do
   use ExUnit.Case, asynch: true
 
-  if Version.compare(System.version(), "1.10.0-dev") in [:gt, :eq] do
-    doctest Cldr.Calendar
-    doctest Cldr.Calendar.Duration
-    doctest Cldr.Calendar.Interval
-    doctest Cldr.Calendar.Kday
-  end
-
   # :calendar module doesn't work with year 0 or negative years
   test "that iso week of year is same as erlang" do
     for year <- 0001..2200,
@@ -50,35 +43,35 @@ defmodule Cldr.Calendar.Test do
     end
   end
 
-  test "that Cldr.Calendar.AU dates all round trip" do
+  test "that Cldr.Calendar.Fiscal.AU dates all round trip" do
     for year <- 0001..2200,
         month <- 1..12,
-        day <- 1..Cldr.Calendar.AU.days_in_month(year, month) do
-      {:ok, au} = Date.new(year, month, day, Cldr.Calendar.AU)
+        day <- 1..Cldr.Calendar.Fiscal.AU.days_in_month(year, month) do
+      {:ok, au} = Date.new(year, month, day, Cldr.Calendar.Fiscal.AU)
       {:ok, iso} = Date.convert(au, Calendar.ISO)
-      {:ok, converted} = Date.convert(iso, Cldr.Calendar.AU)
+      {:ok, converted} = Date.convert(iso, Cldr.Calendar.Fiscal.AU)
       assert Date.compare(au, converted) == :eq
     end
   end
 
-  test "that Cldr.Calendar.UK dates all round trip" do
+  test "that Cldr.Calendar.Fiscal.UK dates all round trip" do
     for year <- 0001..2200,
         month <- 1..12,
-        day <- 1..Cldr.Calendar.UK.days_in_month(year, month) do
-      {:ok, uk} = Date.new(year, month, day, Cldr.Calendar.UK)
+        day <- 1..Cldr.Calendar.Fiscal.UK.days_in_month(year, month) do
+      {:ok, uk} = Date.new(year, month, day, Cldr.Calendar.Fiscal.UK)
       {:ok, iso} = Date.convert(uk, Calendar.ISO)
-      {:ok, converted} = Date.convert(iso, Cldr.Calendar.UK)
+      {:ok, converted} = Date.convert(iso, Cldr.Calendar.Fiscal.UK)
       assert Date.compare(uk, converted) == :eq
     end
   end
 
-  test "that Cldr.Calendar.US dates all round trip" do
+  test "that Cldr.Calendar.Fiscal.US dates all round trip" do
     for year <- 0001..2200,
         month <- 1..12,
-        day <- 1..Cldr.Calendar.US.days_in_month(year, month) do
-      {:ok, us} = Date.new(year, month, day, Cldr.Calendar.US)
+        day <- 1..Cldr.Calendar.Fiscal.US.days_in_month(year, month) do
+      {:ok, us} = Date.new(year, month, day, Cldr.Calendar.Fiscal.US)
       {:ok, iso} = Date.convert(us, Calendar.ISO)
-      {:ok, converted} = Date.convert(iso, Cldr.Calendar.US)
+      {:ok, converted} = Date.convert(iso, Cldr.Calendar.Fiscal.US)
       assert Date.compare(us, converted) == :eq
     end
   end

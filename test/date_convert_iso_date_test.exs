@@ -1,5 +1,5 @@
 defmodule Cldr.Calendar.DateConvert.Test do
-  use ExUnit.Case
+  use ExUnit.Case, asynch: true
   alias Cldr.Calendar.Base.Month
   alias Cldr.Calendar.Config
 
