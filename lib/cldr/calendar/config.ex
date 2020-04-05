@@ -69,6 +69,11 @@ defmodule Cldr.Calendar.Config do
     detect_invalid_options!(options)
 
     backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+
+    unless Cldr.Code.ensure_compiled?(backend) do
+      raise ArgumentError, "Could not compile and load backend module #{inspect backend}"
+    end
+
     locale = Keyword.get(options, :locale, backend.get_locale())
 
     %__MODULE__{
