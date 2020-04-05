@@ -12,6 +12,10 @@ This is the changelog for Cldr Calendars v1.8.0 released on _______, 2020.  For 
 
 * Add `Cldr.Calendar.from_locale/2` which will create (or return) a calendar configured for the supplied locale. This typically means applying the correct values for `min_days` and `first_day_of_week`. For now all calendars created in this way are Gregorian monthly calendars.
 
+* Add `Cldr.Calendar.Preference.calendar_for_territory/1`
+
+* Add `Cldr.Calendar.Preference.preferences_for_territory/1`
+
 # Changelog for Cldr Calendars v1.7.1
 
 This is the changelog for Cldr Calendars v1.7.1 released on January 26th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

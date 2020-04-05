@@ -1,11 +1,13 @@
 defmodule Cldr.Calendar.Preference do
 
+  alias Cldr.LanguageTag
+
   @territory_preferences Cldr.Config.calendar_preferences()
   def territory_preferences do
     @territory_preferences
   end
 
-  def for_territory(territory) do
+  def preferences_for_territory(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       territory_preferences = territory_preferences()
       default_territory = Cldr.default_territory()
@@ -72,7 +74,7 @@ defmodule Cldr.Calendar.Preference do
 
   """
   def calendar_for_territory(territory) do
-    with {:ok, preferences} <- for_territory(territory) do
+    with {:ok, preferences} <- preferences_for_territory(territory) do
       error = {:error, Cldr.unknown_calendar_error(preferences)}
       Enum.reduce_while(preferences, error, fn calendar, acc ->
         module = calendar_module(calendar)
@@ -83,6 +85,37 @@ defmodule Cldr.Calendar.Preference do
         end
       end)
     end
+  end
+
+  @doc """
+  Return the calendar for a locale.
+
+
+  """
+  def calendar_for_locale(%LanguageTag{locale: %{calendar: nil}} = locale) do
+    locale
+    |> Cldr.Locale.territory_from_locale
+    |> calendar_for_territory
+  end
+
+  def calendar_for_locale(%LanguageTag{locale: %{calendar: calendar}} = locale) do
+    if calendar_module = calendar_from_name(calendar) do
+      calendar_module
+    else
+      locale
+      |> Cldr.Locale.territory_from_locale
+      |> calendar_for_territory
+    end
+  end
+
+  def calendar_for_locale(%LanguageTag{} = locale) do
+    locale
+    |> Cldr.Locale.territory_from_locale
+    |> calendar_for_territory
+  end
+
+  def calendar_for_locale(other) do
+    {:error, Cldr.Locale.locale_error(other)}
   end
 
   @base_calendar Cldr.Calendar
@@ -104,5 +137,15 @@ defmodule Cldr.Calendar.Preference do
 
   def calendar_module(other) do
     {:error, Cldr.unknown_calendar_error(other)}
+  end
+
+  def calendar_from_name(name) do
+    calendar_module = calendar_module(name)
+
+    if Code.ensure_loaded?(calendar_module) do
+      calendar_module
+    else
+      nil
+    end
   end
 end

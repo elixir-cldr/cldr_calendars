@@ -68,30 +68,31 @@ defmodule Cldr.Calendar.Config do
           min_days_in_first_week: 1..7
         }
 
+  alias Cldr.Calendar.Preference
+
   @doc false
   def extract_options(options) do
     invalidate_old_options!(options)
     detect_invalid_options!(options)
+
     backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
     locale = Keyword.get(options, :locale, backend.get_locale())
-    calendar = Keyword.get(options, :calendar)
-    first_or_last = Keyword.get(options, :first_or_last, :first)
-    begins_or_ends = Keyword.get(options, :begins_or_ends, :begins)
-    weeks_in_month = Keyword.get(options, :weeks_in_month, [4, 5, 4])
-    year = Keyword.get(options, :year, :majority)
-    month = Keyword.get(options, :month_of_year, 1)
+
+    calendar = Keyword.get_lazy(options, :calendar,
+      fn -> Preference.calendar_for_locale(locale) end)
+
     {min_days, first_day_of_week} = min_and_first_days(locale, options)
 
     %__MODULE__{
       min_days_in_first_week: min_days,
       day_of_week: first_day_of_week,
-      month_of_year: month,
-      year: year,
       cldr_backend: backend,
       calendar: calendar,
-      first_or_last: first_or_last,
-      begins_or_ends: begins_or_ends,
-      weeks_in_month: weeks_in_month
+      month_of_year: Keyword.get(options, :month_of_year, 1),
+      year: Keyword.get(options, :year, :majority),
+      first_or_last: Keyword.get(options, :first_or_last, :first),
+      begins_or_ends: Keyword.get(options, :begins_or_ends, :begins),
+      weeks_in_month: Keyword.get(options, :weeks_in_month, [4, 5, 4])
     }
   end
 
