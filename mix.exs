@@ -24,7 +24,7 @@ defmodule Cldr.Calendar.MixProject do
       dialyzer: [
         ignore_warnings: ".dialyzer_ignore_warnings",
         plt_add_apps:
-          ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists ex_cldr_numbers)a
+          ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists ex_cldr_numbers ratio)a
       ],
       compilers: Mix.compilers()
     ]
