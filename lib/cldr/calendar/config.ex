@@ -46,7 +46,7 @@ defmodule Cldr.Calendar.Config do
             # First week has at least
             # this many days in current
             # year
-            min_days_in_first_week: 7
+            min_days_in_first_week: 1
 
   @typedoc """
   Defines the struct type for a calendar configuration
