@@ -68,29 +68,49 @@ defmodule Cldr.Calendar.Config do
     invalidate_old_options!(options)
     detect_invalid_options!(options)
 
-    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+    backend =
+      Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
 
-    unless Cldr.Code.ensure_compiled?(backend) do
-      raise ArgumentError, "Could not compile and load backend module #{inspect backend}"
-    end
-
-    locale = Keyword.get(options, :locale, backend.get_locale())
+    backend =
+      if Cldr.Code.ensure_compiled?(backend), do: backend, else: nil
 
     %__MODULE__{
       calendar: Keyword.get(options, :calendar),
       cldr_backend: backend,
-      min_days_in_first_week:
-        Keyword.get_lazy(options, :min_days_in_first_week,
-          fn -> Cldr.Calendar.min_days_for_locale(locale) end),
-      day_of_week:
-        Keyword.get_lazy(options, :day_of_week,
-          fn -> Cldr.Calendar.first_day_for_locale(locale) end),
+      min_days_in_first_week: min_days_for_locale(backend, options),
+      day_of_week: first_day_for_locale(backend, options),
       year: Keyword.get(options, :year, :majority),
       month_of_year: Keyword.get(options, :month_of_year, 1),
       first_or_last: Keyword.get(options, :first_or_last, :first),
       begins_or_ends: Keyword.get(options, :begins_or_ends, :begins),
       weeks_in_month: Keyword.get(options, :weeks_in_month, [4, 5, 4])
     }
+  end
+
+  def min_days_for_locale(nil, options) do
+    if locale = Keyword.get(options, :locale) do
+      Keyword.get(options, :min_days_in_first_week, Cldr.Calendar.min_days_for_locale(locale))
+    else
+      Keyword.get(options, :min_days_in_first_week, 1)
+    end
+  end
+
+  def min_days_for_locale(backend, options) do
+    locale = Keyword.get(options, :locale, backend.get_locale())
+    Keyword.get(options, :min_days_in_first_week, Cldr.Calendar.min_days_for_locale(locale))
+  end
+
+  def first_day_for_locale(nil, options) do
+    if locale = Keyword.get(options, :locale) do
+      Keyword.get(options, :day_of_week, Cldr.Calendar.first_day_for_locale(locale))
+    else
+      Keyword.get(options, :day_of_week, 1)
+    end
+  end
+
+  def first_day_for_locale(backend, options) do
+    locale = Keyword.get(options, :locale, backend.get_locale())
+    Keyword.get(options, :day_of_week, Cldr.Calendar.first_day_for_locale(locale))
   end
 
   @valid_weeks_in_month [[4, 4, 5], [4, 5, 4], [5, 4, 4]]
