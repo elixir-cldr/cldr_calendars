@@ -26,6 +26,8 @@ This is the changelog for Cldr Calendars v1.8.0 released on _______, 2020.  For 
 
 * Add `Cldr.Calendar.Preference.preferences_for_territory/1`
 
+* Add `Cldr.Calendar.validate_calendar/1` which returns `{:ok, calendar}` if the argument is a `Cldr.Calendar` calendar module or `{:error, {exception, reason}}` if not.
+
 # Changelog for Cldr Calendars v1.7.1
 
 This is the changelog for Cldr Calendars v1.7.1 released on January 26th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
