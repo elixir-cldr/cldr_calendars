@@ -2520,9 +2520,52 @@ defmodule Cldr.Calendar do
     Integer.mod(iso_day_number + 5, 7) + 1
   end
 
+  @doc """
+  Validates if the argument is a Cldr.Calendar
+  calendar module.
+
+  ## Arguments
+
+  * `calendar_module` is a module that implements the
+    `Cldr.Calendar` behaviour
+
+  ## Returns
+
+  * `{:ok, calendar_module}` or
+
+  * `{:error, {exception, reason}}`
+
+  ## Examples
+  
+      iex> Cldr.Calendar.validate_calendar Cldr.Calendar.Gregorian
+      {:ok, Cldr.Calendar.Gregorian}
+
+      iex> Cldr.Calendar.validate_calendar :not_a_calendar
+      {:error,
+       {Cldr.InvalidCalendarModule, ":not_a_calendar is not a calendar module."}}
+
+  """
+  def validate_calendar(calendar_module) when is_atom(calendar_module) do
+    if Code.ensure_loaded?(calendar_module) &&
+        function_exported?(calendar_module, :cldr_calendar_type, 0) do
+      {:ok, calendar_module}
+    else
+      {:error, invalid_calendar_error(calendar_module)}
+    end
+  end
+
+  def validate_calendar(other) do
+    {:error, invalid_calendar_error(other)}
+  end
+
   #
   # Helpers
   #
+
+  @doc false
+  def invalid_calendar_error(calendar_module) do
+    {Cldr.InvalidCalendarModule, "#{inspect calendar_module} is not a calendar module."}
+  end
 
   ## January starts end the same year, December ends starts the same year
   @doc false
