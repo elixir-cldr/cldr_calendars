@@ -284,7 +284,7 @@ defmodule Cldr.Calendar do
     `:week` indicating whcih type of calendar is to
     be created
 
-  * `config` is a keyword list defining the configuration
+  * `config` is a Keyword list defining the configuration
     of the calendar.
 
   ## Returns
@@ -1134,7 +1134,7 @@ defmodule Cldr.Calendar do
 
   * `date` is any `Date.t()`
 
-  * `options` is a keyword list of options
+  * `options` is a Keyword list of options
 
   ## Options
 
@@ -1220,7 +1220,7 @@ defmodule Cldr.Calendar do
 
   * `date` is any `Date.t()`
 
-  * `options` is a keyword list of options
+  * `options` is a Keyword list of options
 
   ## Options
 
@@ -1481,6 +1481,7 @@ defmodule Cldr.Calendar do
 
       iex> Cldr.Calendar.date_to_string ~D[2019-12-04]
       "2019-12-04"
+
       iex> Cldr.Calendar.date_to_string ~D[2019-23-04 Cldr.Calendar.NRF]
       "2019-W23-4"
 
@@ -1616,10 +1617,13 @@ defmodule Cldr.Calendar do
 
       iex> Cldr.Calendar.next ~D[2019-01-01], :day
       ~D[2019-01-02]
+
       iex> Cldr.Calendar.next ~D[2019-01-01], :month
       ~D[2019-02-01]
+
       iex> Cldr.Calendar.next ~D[2019-01-01], :quarter
       ~D[2019-04-01]
+
       iex> Cldr.Calendar.next ~D[2019-01-01], :year
       ~D[2020-01-01]
 
@@ -1697,10 +1701,13 @@ defmodule Cldr.Calendar do
 
       iex> Cldr.Calendar.previous ~D[2019-01-01], :day
       ~D[2018-12-31]
+
       iex> Cldr.Calendar.previous ~D[2019-01-01], :quarter
       ~D[2018-10-01]
+
       iex> Cldr.Calendar.previous ~D[2019-01-01], :month
       ~D[2018-12-01]
+
       iex> Cldr.Calendar.previous ~D[2019-01-01], :year
       ~D[2018-01-01]
 
@@ -1762,7 +1769,7 @@ defmodule Cldr.Calendar do
   * `part` is one of `:era`, `:quarter`, `:month`,
     `:day_of_week` or `:days_of_week`
 
-  * `options` is a keyword list of options
+  * `options` is a Keyword list of options
 
   ## Options
 
@@ -1999,7 +2006,7 @@ defmodule Cldr.Calendar do
   * `period` is `:year`, `:quarter`, `:month`,
     `:week` or `:day`
 
-  * `options` is a Kwyrod list of options
+  * `options` is a Keyword list of options
 
   ## Options
 
@@ -2020,16 +2027,22 @@ defmodule Cldr.Calendar do
 
       iex> Cldr.Calendar.plus ~D[2016-02-29], :days, 1
       ~D[2016-03-01]
+
       iex> Cldr.Calendar.plus ~D[2019-03-01], :months, 1
       ~D[2019-04-01]
+
       iex> Cldr.Calendar.plus ~D[2016-02-29], :days, 1
       ~D[2016-03-01]
+
       iex> Cldr.Calendar.plus ~D[2019-02-28], :days, 1
       ~D[2019-03-01]
+
       iex> Cldr.Calendar.plus ~D[2019-03-01], :months, 1
       ~D[2019-04-01]
+
       iex> Cldr.Calendar.plus ~D[2019-03-01], :quarters, 1
       ~D[2019-06-01]
+
       iex> Cldr.Calendar.plus ~D[2019-03-01], :years, 1
       ~D[2020-03-01]
 
@@ -2152,7 +2165,7 @@ defmodule Cldr.Calendar do
   * `period` is `:year`, `:quarter`, `:month`,
     `:week` or `:day`
 
-  * `options` is a Kwyrod list of options
+  * `options` is a Keyword list of options
 
   ## Options
 
@@ -2173,16 +2186,22 @@ defmodule Cldr.Calendar do
 
       iex> Cldr.Calendar.minus ~D[2016-03-01], :days, 1
       ~D[2016-02-29]
+
       iex> Cldr.Calendar.minus ~D[2019-03-01], :months, 1
       ~D[2019-02-01]
+
       iex> Cldr.Calendar.minus ~D[2016-03-01], :days, 1
       ~D[2016-02-29]
+
       iex> Cldr.Calendar.minus ~D[2019-03-01], :days, 1
       ~D[2019-02-28]
+
       iex> Cldr.Calendar.minus ~D[2019-03-01], :months, 1
       ~D[2019-02-01]
+
       iex> Cldr.Calendar.minus ~D[2019-03-01], :quarters, 1
       ~D[2018-12-01]
+
       iex> Cldr.Calendar.minus ~D[2019-03-01], :years, 1
       ~D[2018-03-01]
 
