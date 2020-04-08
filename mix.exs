@@ -62,10 +62,17 @@ defmodule Cldr.Calendar.MixProject do
 
   defp deps do
     [
+      # {:ex_cldr, "~> 2.14"},
+      # {:ex_cldr_currencies, "~> 2.5"},
+      # {:cldr_utils, "~> 2.9"},
+      # {:ex_cldr_numbers, "~> 2.13"},
+      # {:ex_cldr_units, "~> 3.0"},
+
       {:ex_cldr, path: "../cldr", override: true},
       {:cldr_utils, github: "elixir-cldr/cldr_utils", override: true},
       {:ex_cldr_units, github: "elixir-cldr/cldr_units", optional: true, branch: "cldr"},
       {:ex_cldr_lists, "~> 2.4", optional: true},
+
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.21", only: [:release, :dev]},
       {:earmark, "~> 1.0"},
