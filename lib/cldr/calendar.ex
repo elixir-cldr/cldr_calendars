@@ -244,7 +244,7 @@ defmodule Cldr.Calendar do
 
   @days [1, 2, 3, 4, 5, 6, 7]
   @days_in_a_week Enum.count(@days)
-  @the_world :"001"
+  @the_world Cldr.the_world()
   @valid_precision [:years, :quarters, :months, :weeks, :days]
   @default_calendar Cldr.Calendar.Gregorian
 
@@ -1397,7 +1397,7 @@ defmodule Cldr.Calendar do
   """
   def weekdays(territory)
 
-  @week_info Cldr.Config.week_info()
+  @week_info Cldr.Config.weeks()
 
   for territory <- Cldr.known_territories() do
     starts =
@@ -2555,7 +2555,7 @@ defmodule Cldr.Calendar do
   * `{:error, {exception, reason}}`
 
   ## Examples
-  
+
       iex> Cldr.Calendar.validate_calendar Cldr.Calendar.Gregorian
       {:ok, Cldr.Calendar.Gregorian}
 

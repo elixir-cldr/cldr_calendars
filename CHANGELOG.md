@@ -1,6 +1,6 @@
 # Changelog for Cldr Calendars v1.8.0
 
-This is the changelog for Cldr Calendars v1.8.0 released on _______, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+This is the changelog for Cldr Calendars v1.8.0 released on May 4th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ## Breaking Change (that you might notice but probably won't)
 

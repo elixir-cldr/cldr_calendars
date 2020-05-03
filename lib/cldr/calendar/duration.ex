@@ -105,7 +105,7 @@ defmodule Cldr.Calendar.Duration do
       {except, options} = Keyword.pop(options, :except, [])
 
       for key <- @keys, value = Map.get(duration, key), value != 0 && key not in except do
-        Cldr.Unit.new(key, value)
+        Cldr.Unit.new!(key, value)
       end
       |> Cldr.Unit.to_string(options)
     end
