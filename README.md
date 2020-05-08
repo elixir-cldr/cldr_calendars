@@ -470,7 +470,7 @@ Add `ex_cldr_calendars` to your `deps` in `mix.exs`.
 ```elixir
 def deps do
   [
-    {:ex_cldr_calendars, "~> 2.6"}
+    {:ex_cldr_calendars, "~> 1.7.1"}
     ...
   ]
 end
