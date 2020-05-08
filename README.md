@@ -31,6 +31,19 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 **See the documentation for `Cldr.Calendar` for the main public API.**
 
+## Cldr Calendars Installation
+
+Add `ex_cldr_calendars` to your `deps` in `mix.exs`.
+
+```elixir
+def deps do
+  [
+    {:ex_cldr_calendars, "~> 1.7"}
+    ...
+  ]
+end
+```
+
 ## Getting Started
 
 Let's say you work for [Cisco Systems](https://cisco.com). Your learn that the financial year ends on the last Saturday of July. To make things easy you'd like to compare the results of this financial year to last finanical year.  And you'd like to know how many days are left this quarter in order to achieve your sales targets.
@@ -463,18 +476,6 @@ end
 ```
 You will get a warning indicating that the existing implementation is being overwritten. This is expected.
 
-## Cldr Calendars Installation
-
-Add `ex_cldr_calendars` to your `deps` in `mix.exs`.
-
-```elixir
-def deps do
-  [
-    {:ex_cldr_calendars, "~> 2.6"}
-    ...
-  ]
-end
-```
 
 
 
