@@ -339,6 +339,7 @@ defmodule Cldr.Calendar.Duration do
       else
         calendar.months_in_year(year1) - month1 + month2 - possible_adjustment(day2, day1)
       end
+      |> rem(calendar.months_in_year(year1))
 
     day_diff =
       if day2 > day1 do

@@ -79,6 +79,23 @@ defmodule Cldr.Calendar.Duration.Test do
               %Duration{year: 18, month: 1, day: 6, hour: 0, microsecond: 0, minute: 0, second: 0}}
   end
 
+  test "duration with the same month and day 2 later than day 1" do
+    assert Duration.new(
+             date(2020, 01, 01, Cldr.Calendar.Gregorian),
+             date(2020, 01, 03, Cldr.Calendar.Gregorian)
+           ) ==
+             {:ok,
+              %Duration{
+                year: 0,
+                month: 0,
+                day: 2,
+                hour: 0,
+                microsecond: 0,
+                minute: 0,
+                second: 0
+              }}
+  end
+
   test "duration to_string" do
     {:ok, duration} = Duration.new(~D[2019-01-01], ~D[2019-12-31])
 
