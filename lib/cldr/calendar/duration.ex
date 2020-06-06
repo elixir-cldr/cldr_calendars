@@ -234,24 +234,67 @@ defmodule Cldr.Calendar.Duration do
   @spec new(from :: date_or_datetime(), to :: date_or_datetime()) ::
           {:ok, t()} | {:error, {module(), String.t()}}
 
+  datetime = quote do
+    %{
+      year: _,
+      month: _,
+      day: _,
+      hour: _,
+      minute: _,
+      second: _,
+      microsecond: _,
+      calendar: var!(calendar)}
+  end
+
+  date = quote do
+    %{
+      year: _,
+      month: _,
+      day: _,
+      calendar: var!(calendar)}
+  end
+
   def new(%{calendar: calendar} = from, %{calendar: calendar} = to) do
-    time_diff = time_duration(from, to)
-    date_diff = date_duration(from, to)
+    with {:ok, from} <- cast_date_time(from),
+         {:ok, to} <- cast_date_time(to),
+         :ok <- confirm_date_order(from, to) do
 
-    duration =
-      if time_diff < 0 do
-        back_one_day(date_diff, calendar) |> merge(@microseconds_in_day + time_diff)
-      else
-        date_diff |> merge(time_diff)
-      end
+      time_diff = time_duration(from, to)
+      date_diff = date_duration(from, to)
 
-    {:ok, duration}
+      duration =
+        if time_diff < 0 do
+          back_one_day(date_diff, calendar) |> merge(@microseconds_in_day + time_diff)
+        else
+          date_diff |> merge(time_diff)
+        end
+
+      {:ok, duration}
+    end
   end
 
   def new(%{calendar: _calendar1} = from, %{calendar: _calendar2} = to) do
     {:error,
      {Cldr.IncompatibleCalendarError,
       "The two dates must be in the same calendar. Found #{inspect(from)} and #{inspect(to)}"}}
+  end
+
+  def cast_date_time(unquote(datetime) = datetime) do
+    _ = calendar
+    {:ok, datetime}
+  end
+
+  def cast_date_time(unquote(date) = date) do
+    {:ok, dt} = NaiveDateTime.new(date.year, date.month, date.day, 0, 0, 0, {0, 1}, calendar)
+    DateTime.from_naive(dt, "Etc/UTC")
+  end
+
+  def confirm_date_order(from, to) do
+    if DateTime.compare(from, to) in [:lt, :eq] do
+      :ok
+    else
+      {:error, {ArgumentError, "`from datetime` must be earlier or equal to `to datetime`"}}
+    end
   end
 
   @doc """
@@ -308,45 +351,44 @@ defmodule Cldr.Calendar.Duration do
          %{hour: _, minute: _, second: _, microsecond: _, calendar: calendar} = from,
          %{hour: _, minute: _, second: _, microsecond: _, calendar: calendar} = to
        ) do
-    Time.diff(to, from, :microsecond)
+    Time.diff(from, to, :microsecond)
   end
 
   defp time_duration(_to, _from) do
     0
   end
 
-  defp date_duration(
+  def date_duration(
          %{year: year, month: month, day: day, calendar: calendar},
          %{year: year, month: month, day: day, calendar: calendar}
        ) do
     %__MODULE__{}
   end
 
-  defp date_duration(%{calendar: calendar} = from, %{calendar: calendar} = to) do
-    if Date.compare(from, to) in [:gt] do
-      raise ArgumentError, "`from` date must be before or equal to `to` date"
-    end
-
-    %{year: year1, month: month1, day: day1} = from
-    %{year: year2, month: month2, day: day2} = to
-
-    # Doesnt account for era in calendars like Japanese
-    year_diff = year2 - year1 - possible_adjustment(month2, month1, day2, day1)
-
-    month_diff =
-      if month2 > month1 do
-        month2 - month1 - possible_adjustment(day2, day1)
+  def date_duration(%{calendar: calendar} = from, %{calendar: calendar} = to) do
+    increment =
+      if from.day > to.day do
+        calendar.days_in_month(from.year, from.month)
       else
-        calendar.months_in_year(year1) - month1 + month2 - possible_adjustment(day2, day1)
+        0
       end
-      |> rem(calendar.months_in_year(year1))
 
-    day_diff =
-      if day2 > day1 do
-        day2 - day1
+    {day_diff, increment} =
+      if increment != 0 do
+        {increment + to.day - from.day, 1}
       else
-        calendar.days_in_month(year1, month1) - day1 + day2
+        {to.day - from.day, 0}
       end
+
+    {month_diff, increment} =
+      if (from.month + increment) > to.month do
+        {to.month + calendar.months_in_year(to.year) - from.month - increment, 1}
+      else
+        {to.month - from.month - increment, 0}
+      end
+
+    year_diff =
+      to.year - from.year - increment
 
     %__MODULE__{year: year_diff, month: month_diff, day: day_diff}
   end
@@ -394,13 +436,4 @@ defmodule Cldr.Calendar.Duration do
     |> Map.put(:microsecond, microseconds)
   end
 
-  # The difference in years is adjusted if the
-  # month of the `to` year is less than the
-  # month of the `from` year
-  defp possible_adjustment(m2, m1, _d2, _d1) when m2 < m1, do: 1
-  defp possible_adjustment(m2, m2, d2, d1) when d2 < d1, do: 1
-  defp possible_adjustment(_m2, _m1, _d2, _d1), do: 0
-
-  defp possible_adjustment(m2, m1) when m2 < m1, do: 1
-  defp possible_adjustment(_m2, _m1), do: 0
 end
