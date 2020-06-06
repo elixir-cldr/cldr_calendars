@@ -21,7 +21,7 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 * Provides convenient `Date.Range` calculators for years, quarters, months and weeks for calendars and provides the means to move to the `next` and `previous` period in a calendar where a period may be a year, quarter, month, week or day.
 
-* Supports adding or substracting periods to dates and date ranges. See `Calendar.plus/3` and `Calendar.minus/3`
+* Supports adding or substracting periods to dates and date ranges. See `Cldr.Calendar.plus/3` and `Cldr.Calendar.minus/3`
 
 * Includes pre-defined calendars for Gregorian (compatible with the builtin `Calendar` module), `ISOWeek` and `National Retail Federation (NRF)` calendars
 
@@ -267,7 +267,7 @@ day_of_year/3
 
 ### Fiscal Calendars for Territories
 
-`Cldr Calendars` can create a fiscal year calendar for many territories (countries) based upon data from [the CIA world fact book](https://www.cia.gov/library/publications/the-world-factbook/fields/228.html).  To create a fiscal year calendar for a territory use the `Cldr.Calendar.FiscalYear/1` function.
+`Cldr Calendars` can create a fiscal year calendar for many territories (countries) based upon data from [the CIA world fact book](https://www.cia.gov/library/publications/the-world-factbook/fields/228.html).  To create a fiscal year calendar for a territory use the `Cldr.Calendar.FiscalYear.calendar_for/1` function.
 
 ```
  iex> Cldr.Calendar.FiscalYear.calendar_for("IS")
