@@ -252,7 +252,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       to a `year-month-day`.
 
       `date_part` can be `:years`, `:quarters`
-       or`:months`.
+      or :months`.
 
       """
       @impl true

@@ -24,3 +24,29 @@ defmodule Cldr.InvalidCalendarModule do
   end
 end
 
+defmodule Cldr.InvalidDateOrder do
+  @moduledoc """
+  Exception raised when two dates
+  or times are not ordered from earlier
+  to later
+
+  """
+  defexception [:message]
+
+  def exception(message) do
+    %__MODULE__{message: message}
+  end
+end
+
+defmodule Cldr.Cldr.IncompatibleTimeZone do
+  @moduledoc """
+  Exception raised when a two datestimes
+  are not in the same timezone
+
+  """
+  defexception [:message]
+
+  def exception(message) do
+    %__MODULE__{message: message}
+  end
+end

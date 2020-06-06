@@ -257,7 +257,7 @@ defmodule Cldr.Calendar.Base.Week do
       slice_weeks(month_in_quarter - 1, abs(n), config) +
         maybe_extra_week_for_long_year(year, month_of_year, config)
 
-   week = week - weeks_to_sub
+    week = week - weeks_to_sub
     # IO.puts "  Proposed week of previous month: #{week}"
     {year, week} =
       if week < 1 do

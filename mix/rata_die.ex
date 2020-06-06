@@ -22,12 +22,12 @@ defmodule Cldr.Calendar.RD do
     Cldr.Calendar.Gregorian.date_to_iso_days(year, month, day) + @offset
   end
 
-  fun = quote do
-    :"$handle_undefined_function"
-  end
+  fun =
+    quote do
+      :"$handle_undefined_function"
+    end
 
   def unquote(fun)(func, args) do
     apply(Calendar.Gregorian, func, args)
   end
-
 end

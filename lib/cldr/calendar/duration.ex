@@ -33,7 +33,7 @@ defmodule Cldr.Calendar.Duration do
   @keys Keyword.keys(@struct_list)
   defstruct @struct_list
 
-  @typedoc "Measure a duration in calendar units"
+  @typedoc "Duration in calendar units"
   @type t :: %__MODULE__{
           year: non_neg_integer(),
           month: non_neg_integer(),
@@ -44,18 +44,18 @@ defmodule Cldr.Calendar.Duration do
           microsecond: non_neg_integer()
         }
 
-  @typedoc "A date, time or datetime"
-  @type date_or_datetime ::
-          Calendar.date() | Calendar.time() | Calendar.datetime() | Calendar.naive_datetime()
+  @typedoc "A date, time, naivedatetime or datetime"
+  @type date_or_time_or_datetime ::
+          Calendar.date()
+          | Calendar.time()
+          | Calendar.datetime()
+          | Calendar.naive_datetime()
+
+  @typedoc "A interval as either Date.Range.t() CalendarInterval.t()"
+  @type interval :: Date.Range.t() | CalendarInterval.t()
 
   @microseconds_in_second 1_000_000
   @microseconds_in_day 86_400_000_000
-
-  defimpl String.Chars do
-    def to_string(duration) do
-      Cldr.Calendar.Duration.to_string!(duration)
-    end
-  end
 
   if Code.ensure_loaded?(Cldr.Unit) do
     @doc """
@@ -93,6 +93,10 @@ defmodule Cldr.Calendar.Duration do
 
     Any other options are passed to `Cldr.Number.to_string/3` and
     `Cldr.Unit.to_string/3` during the formatting process.
+
+    ## Note
+
+    * Any duration parts that are `0` are not output.
 
     ## Example
 
@@ -200,18 +204,23 @@ defmodule Cldr.Calendar.Duration do
   ## Arguments
 
   * `from` is a date, time or datetime representing the
-    start of the duration
+    start of the duration.
 
   * `to` is a date, time or datetime representing the
     end of the duration
 
-  Note that `from` must be before or at the same time
-  as `to`. In addition, both `from` and `to` must
-  be in the same calendar.
+  ## Notes
+
+  * `from` must be before or at the same time
+    as `to`. In addition, both `from` and `to` must
+    be in the same calendar
+
+  * If `from` and `to` are `datetime`s then
+    they must both be in the same time zone
 
   ## Returns
 
-  * A `{:ok, duration struct}` tuple or a
+  * A `{:ok, duration}` tuple or a
 
   * `{:error, {exception, reason}}` tuple
 
@@ -231,46 +240,100 @@ defmodule Cldr.Calendar.Duration do
 
   """
 
-  @spec new(from :: date_or_datetime(), to :: date_or_datetime()) ::
+  @spec new(from :: date_or_time_or_datetime(), to :: date_or_time_or_datetime()) ::
           {:ok, t()} | {:error, {module(), String.t()}}
 
-  datetime = quote do
-    %{
-      year: _,
-      month: _,
-      day: _,
-      hour: _,
-      minute: _,
-      second: _,
-      microsecond: _,
-      calendar: var!(calendar)}
-  end
-
-  date = quote do
-    %{
-      year: _,
-      month: _,
-      day: _,
-      calendar: var!(calendar)}
-  end
-
-  def new(%{calendar: calendar} = from, %{calendar: calendar} = to) do
-    with {:ok, from} <- cast_date_time(from),
-         {:ok, to} <- cast_date_time(to),
+  def new(unquote(Cldr.Calendar.datetime()) = from, unquote(Cldr.Calendar.datetime()) = to) do
+    with :ok <- confirm_same_time_zone(from, to),
          :ok <- confirm_date_order(from, to) do
-
       time_diff = time_duration(from, to)
       date_diff = date_duration(from, to)
-
-      duration =
-        if time_diff < 0 do
-          back_one_day(date_diff, calendar) |> merge(@microseconds_in_day + time_diff)
-        else
-          date_diff |> merge(time_diff)
-        end
-
-      {:ok, duration}
+      apply_time_diff_to_duration(date_diff, time_diff, from)
     end
+  end
+
+  def new(unquote(Cldr.Calendar.date()) = from, unquote(Cldr.Calendar.date()) = to) do
+    with {:ok, from} <- cast_date_time(from),
+         {:ok, to} <- cast_date_time(to) do
+      new(from, to)
+    end
+  end
+
+  def new(unquote(Cldr.Calendar.time()) = from, unquote(Cldr.Calendar.time()) = to) do
+    duration = %__MODULE__{}
+    time_diff = time_duration(from, to)
+    apply_time_diff_to_duration(duration, time_diff, from)
+  end
+
+  @doc """
+  Calculates the calendar difference in
+  a `Date.Range` or `CalendarInterval`
+  returning a `Duration` struct.
+
+  The difference calculated is in terms of years, months,
+  days, hours, minutes, seconds and microseconds.
+
+  ## Arguments
+
+  * `interval` is either ` Date.Range.t()` or a
+    `CalendarInterval.t()`
+
+  ## Returns
+
+  * A `{:ok, duration}` tuple or a
+
+  * `{:error, {exception, reason}}` tuple
+
+  ## Notes
+
+  * `CalendarInterval` is defined by the most wonderful
+    [calendar_interval](https://hex.pm/packages/calendar_interval)
+    library.
+
+  ## Example
+
+      iex> Cldr.Calendar.Duration.new(Date.range(~D[2019-01-01], ~D[2019-12-31]))
+      {:ok,
+       %Cldr.Calendar.Duration{
+         year: 0,
+         month: 11,
+         day: 30,
+         hour: 0,
+         microsecond: 0,
+         minute: 0,
+         second: 0
+       }}
+
+  """
+  @spec new(interval()) :: {:ok, t()} | {:error, {module(), String.t()}}
+
+  if Code.ensure_loaded?(CalendarInterval) do
+    def new(%CalendarInterval{first: first, last: last, precision: precision})
+        when precision in [:year, :month, :day] do
+      first = %{first | hour: 0, minute: 0, second: 0, microsecond: {0, 6}}
+      last = %{last | hour: 0, minute: 0, second: 0, microsecond: {0, 6}}
+      new(first, last)
+    end
+
+    def new(%CalendarInterval{first: first, last: last}) do
+      new(first, last)
+    end
+  end
+
+  def new(%Date.Range{first: first, last: last}) do
+    new(first, last)
+  end
+
+  defp apply_time_diff_to_duration(date_diff, time_diff, from) do
+    duration =
+      if time_diff < 0 do
+        back_one_day(date_diff, from)
+        |> merge(@microseconds_in_day + time_diff)
+      else
+        date_diff |> merge(time_diff)
+      end
+
+    {:ok, duration}
   end
 
   def new(%{calendar: _calendar1} = from, %{calendar: _calendar2} = to) do
@@ -279,22 +342,43 @@ defmodule Cldr.Calendar.Duration do
       "The two dates must be in the same calendar. Found #{inspect(from)} and #{inspect(to)}"}}
   end
 
-  def cast_date_time(unquote(datetime) = datetime) do
+  defp cast_date_time(unquote(Cldr.Calendar.datetime()) = datetime) do
     _ = calendar
     {:ok, datetime}
   end
 
-  def cast_date_time(unquote(date) = date) do
-    {:ok, dt} = NaiveDateTime.new(date.year, date.month, date.day, 0, 0, 0, {0, 1}, calendar)
+  defp cast_date_time(unquote(Cldr.Calendar.naivedatetime()) = naivedatetime) do
+    _ = calendar
+    DateTime.from_naive(naivedatetime, "Etc/UTC")
+  end
+
+  defp cast_date_time(unquote(Cldr.Calendar.date()) = date) do
+    {:ok, dt} = NaiveDateTime.new(date.year, date.month, date.day, 0, 0, 0, {0, 6}, calendar)
     DateTime.from_naive(dt, "Etc/UTC")
   end
 
-  def confirm_date_order(from, to) do
+  defp confirm_date_order(from, to) do
     if DateTime.compare(from, to) in [:lt, :eq] do
       :ok
     else
-      {:error, {ArgumentError, "`from datetime` must be earlier or equal to `to datetime`"}}
+      {:error,
+       {
+         Cldr.InvalidDateOrder,
+         "`from` must be earlier or equal to `to`. " <>
+           "Found #{inspect(from)} and #{inspect(to)}"
+       }}
     end
+  end
+
+  defp confirm_same_time_zone(%{time_zone: zone}, %{time_zone: zone}) do
+    :ok
+  end
+
+  defp confirm_same_time_zone(from, to) do
+    {:error,
+     {Cldr.IncompatibleTimeZone,
+      "`from` and `to` must be in the same time zone. " <>
+        "Found #{inspect(from)} and #{inspect(to)}"}}
   end
 
   @doc """
@@ -337,7 +421,7 @@ defmodule Cldr.Calendar.Duration do
 
   """
 
-  @spec new!(from :: date_or_datetime(), to :: date_or_datetime()) ::
+  @spec new!(from :: date_or_time_or_datetime(), to :: date_or_time_or_datetime()) ::
           t() | no_return()
 
   def new!(from, to) do
@@ -347,24 +431,68 @@ defmodule Cldr.Calendar.Duration do
     end
   end
 
-  defp time_duration(
-         %{hour: _, minute: _, second: _, microsecond: _, calendar: calendar} = from,
-         %{hour: _, minute: _, second: _, microsecond: _, calendar: calendar} = to
-       ) do
-    Time.diff(from, to, :microsecond)
+  @doc """
+  Calculates the calendar difference in
+  a `Date.Range` or `CalendarInterval`
+  returning a `Duration` struct.
+
+  The difference calculated is in terms of years, months,
+  days, hours, minutes, seconds and microseconds.
+
+  ## Arguments
+
+  * `interval` is either ` Date.Range.t()` or a
+    `CalendarInterval.t()`
+
+  ## Returns
+
+  * A `duration` struct or
+
+  * raises an exception
+
+  ## Notes
+
+  * `CalendarInterval` is defined by the most wonderful
+    [calendar_interval](https://hex.pm/packages/calendar_interval)
+    library.
+
+  ## Example
+
+      iex> Cldr.Calendar.Duration.new!(Date.range(~D[2019-01-01], ~D[2019-12-31]))
+      %Cldr.Calendar.Duration{
+        year: 0,
+        month: 11,
+        day: 30,
+        hour: 0,
+        microsecond: 0,
+        minute: 0,
+        second: 0
+      }
+
+  """
+
+  @spec new!(interval()) :: t() | no_return()
+
+  def new!(interval) do
+    case new(interval) do
+      {:ok, duration} -> duration
+      {:error, {exception, reason}} -> raise exception, reason
+    end
   end
 
-  defp time_duration(_to, _from) do
-    0
+  defp time_duration(unquote(Cldr.Calendar.time()) = from, unquote(Cldr.Calendar.time()) = to) do
+    Time.diff(to, from, :microsecond)
   end
 
+  # The two dates are the same so there is no duration
   def date_duration(
-         %{year: year, month: month, day: day, calendar: calendar},
-         %{year: year, month: month, day: day, calendar: calendar}
-       ) do
+        %{year: year, month: month, day: day, calendar: calendar},
+        %{year: year, month: month, day: day, calendar: calendar}
+      ) do
     %__MODULE__{}
   end
 
+  # Two dates in the same calendar can be used
   def date_duration(%{calendar: calendar} = from, %{calendar: calendar} = to) do
     increment =
       if from.day > to.day do
@@ -381,48 +509,50 @@ defmodule Cldr.Calendar.Duration do
       end
 
     {month_diff, increment} =
-      if (from.month + increment) > to.month do
+      if from.month + increment > to.month do
         {to.month + calendar.months_in_year(to.year) - from.month - increment, 1}
       else
         {to.month - from.month - increment, 0}
       end
 
-    year_diff =
-      to.year - from.year - increment
+    year_diff = to.year - from.year - increment
 
     %__MODULE__{year: year_diff, month: month_diff, day: day_diff}
   end
 
+  # When we have a negative time duration then
+  # we need to apply a one day adjustment to
+  # the date difference
   defp back_one_day(date_diff, calendar) do
     back_one_day(date_diff, :day, calendar)
   end
 
-  defp back_one_day(%{day: day} = date_diff, :day, calendar) do
+  defp back_one_day(%{day: 0} = date_diff, :day, from) do
+    months_in_year = Cldr.Calendar.months_in_year(from.year)
+    previous_month = Cldr.Math.amod(from.month - 1, months_in_year)
+    days_in_month = from.calendar.days_in_month(from.year, previous_month)
+
+    %{date_diff | day: days_in_month}
+    |> back_one_day(:month, from)
+  end
+
+  defp back_one_day(%{day: day} = date_diff, :day, _from) do
     %{date_diff | day: day - 1}
-    |> back_one_day(:month, calendar)
   end
 
-  defp back_one_day(%{month: month, day: day} = date_diff, :month, calendar) when day < 1 do
+  defp back_one_day(%{month: 0} = date_diff, :month, from) do
+    months_in_year = Cldr.Calendar.months_in_year(from.year)
+
+    %{date_diff | month: months_in_year}
+    |> back_one_day(:year, from)
+  end
+
+  defp back_one_day(%{month: month} = date_diff, :month, _from) do
     %{date_diff | month: month - 1}
-    |> back_one_day(:year, calendar)
   end
 
-  defp back_one_day(%{year: _, month: _, day: _} = date_diff, :month, _calendar) do
-    date_diff
-  end
-
-  defp back_one_day(%{year: year, month: month} = date_diff, :year, calendar) when month < 1 do
-    diff = %{date_diff | year: year - 1}
-    diff = if diff.month < 1, do: %{diff | month: calendar.months_in_year(year)}, else: diff
-
-    diff =
-      if diff.day < 1, do: %{diff | day: calendar.days_in_month(year, diff.month)}, else: diff
-
-    diff
-  end
-
-  defp back_one_day(%{year: _, month: _, day: _} = date_diff, :year, _calendar) do
-    date_diff
+  defp back_one_day(%{year: year} = date_diff, :year, _from) do
+    %{date_diff | year: year - 1}
   end
 
   defp merge(duration, microseconds) do
@@ -435,5 +565,4 @@ defmodule Cldr.Calendar.Duration do
     |> Map.put(:second, seconds)
     |> Map.put(:microsecond, microseconds)
   end
-
 end

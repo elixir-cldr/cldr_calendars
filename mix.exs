@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.MixProject do
   use Mix.Project
 
-  @version "1.8.2"
+  @version "1.9.0"
 
   def project do
     [
@@ -24,7 +24,8 @@ defmodule Cldr.Calendar.MixProject do
       dialyzer: [
         ignore_warnings: ".dialyzer_ignore_warnings",
         plt_add_apps:
-          ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists ex_cldr_numbers ratio)a
+          ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists
+             ex_cldr_numbers ratio calendar_interval)a
       ],
       compilers: Mix.compilers()
     ]
@@ -64,7 +65,8 @@ defmodule Cldr.Calendar.MixProject do
     [
       {:ex_cldr_numbers, "~> 2.13"},
       {:ex_cldr_units, "~> 3.0", optional: true},
-
+      {:tz, "~> 0.9", optional: true, only: [:dev, :test]},
+      {:calendar_interval, "~> 0.2", optional: true},
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.21", only: [:release, :dev]},
       {:earmark, "~> 1.0"},

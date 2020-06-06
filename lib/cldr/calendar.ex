@@ -415,12 +415,13 @@ defmodule Cldr.Calendar do
 
   def calendar_for_locale(%LanguageTag{} = locale, config) do
     locale
-    |> Cldr.Locale.territory_from_locale
+    |> Cldr.Locale.territory_from_locale()
     |> calendar_for_territory(config)
   end
 
   def calendar_for_locale(locale_name, config) when is_binary(locale_name) do
     backend = Keyword.get_lazy(config, :backend, &Cldr.default_backend/0)
+
     with {:ok, backend} <- Cldr.validate_backend(backend),
          {:ok, locale} <- Cldr.validate_locale(locale_name, backend) do
       calendar_for_locale(locale, config)
@@ -456,12 +457,11 @@ defmodule Cldr.Calendar do
   """
   def calendar_module?(module) when is_atom(module) do
     Code.ensure_loaded?(module) &&
-    function_exported?(module, :cldr_calendar_type, 0)
+      function_exported?(module, :cldr_calendar_type, 0)
   end
 
   def same_as_default?(config) do
-    config =
-      Config.extract_options(config)
+    config = Config.extract_options(config)
 
     default_calendar_config =
       Cldr.Calendar.default_calendar().__config__()
@@ -482,8 +482,8 @@ defmodule Cldr.Calendar do
 
       config =
         config
-        |> Map.from_struct
-        |> Map.to_list
+        |> Map.from_struct()
+        |> Map.to_list()
 
       contents =
         quote do
@@ -1202,7 +1202,6 @@ defmodule Cldr.Calendar do
     backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
     locale = Keyword.get(options, :locale, backend.get_locale())
 
-
     with {:ok, locale} <- Cldr.validate_locale(locale, backend),
          territory = Keyword.get(options, :territory, locale.territory),
          {:ok, territory} <- Cldr.validate_territory(territory) do
@@ -1281,7 +1280,6 @@ defmodule Cldr.Calendar do
     backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
     locale = Keyword.get(options, :locale, backend.get_locale())
 
-
     with {:ok, locale} <- Cldr.validate_locale(locale, backend),
          territory = Keyword.get(options, :territory, locale.territory),
          {:ok, territory} <- Cldr.validate_territory(territory) do
@@ -1299,7 +1297,7 @@ defmodule Cldr.Calendar do
   """
   def first_day_for_locale(%LanguageTag{} = locale) do
     locale
-    |> Cldr.Locale.territory_from_locale
+    |> Cldr.Locale.territory_from_locale()
     |> first_day_for_territory
   end
 
@@ -1318,7 +1316,7 @@ defmodule Cldr.Calendar do
   """
   def min_days_for_locale(%LanguageTag{} = locale) do
     locale
-    |> Cldr.Locale.territory_from_locale
+    |> Cldr.Locale.territory_from_locale()
     |> min_days_for_territory
   end
 
@@ -1839,8 +1837,11 @@ defmodule Cldr.Calendar do
   end
 
   def localize(date, part, options) do
-    backend = Keyword.get_lazy(options, :backend,
-      fn -> backend_from_calendar(date.calendar) || Cldr.default_backend() end)
+    backend =
+      Keyword.get_lazy(options, :backend, fn ->
+        backend_from_calendar(date.calendar) || Cldr.default_backend()
+      end)
+
     locale = Keyword.get(options, :locale, backend.get_locale())
     type = Keyword.get(options, :type, :format)
     format = Keyword.get(options, :format, :abbreviated)
@@ -1993,6 +1994,73 @@ defmodule Cldr.Calendar do
     {:ok, backend}
   end
 
+  @spec plus(integer, integer()) :: integer()
+  @doc false
+
+  def plus(value, increment) when is_integer(value) and is_integer(increment) do
+    value + increment
+  end
+
+  @doc """
+  Adds a duration to a date
+
+  ## Arguments
+
+  * `date` is any map that conforms to
+    `Calendar.date()`
+
+  * `duration` is any duration returned
+    by `Cldr.Calendar.Duration.new!/2`
+
+  * `options` is a Keyword list of
+    options
+
+  ## Options
+
+  * Options are those applicatable to
+    `Cldr.Calendar.plus/4`
+
+  ## Returns
+
+  * A `date` advanced by the duration
+
+  ## Examples
+
+      iex> Cldr.Calendar.plus ~D[2020-01-01],
+      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2020-02-01])
+      ~D[2020-02-01]
+
+      iex> Cldr.Calendar.plus ~D[2020-01-01],
+      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2020-01-02])
+      ~D[2020-01-02]
+
+      iex> Cldr.Calendar.plus ~D[2020-01-01],
+      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2020-02-01])
+      ~D[2020-02-01]
+
+      iex> Cldr.Calendar.plus ~D[2020-01-01],
+      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2021-02-01])
+      ~D[2021-02-01]
+
+  """
+
+  @spec plus(Calendar.date(), Cldr.Calendar.Duration.t()) ::
+          Calendar.date()
+
+  def plus(date, %Cldr.Calendar.Duration{} = duration) do
+    plus(date, duration, [])
+  end
+
+  # @spec plus(Calendar.date(), Cldr.Calendar.Duration.t(), Keyword.t()) ::
+  #   Calendar.date()
+
+  def plus(date, %Cldr.Calendar.Duration{} = duration, options) do
+    date
+    |> plus(:days, duration.day, options)
+    |> plus(:months, duration.month, options)
+    |> plus(:years, duration.year, options)
+  end
+
   @doc """
   Increments a date or date range by an
   integer amount of a date period (year,
@@ -2047,12 +2115,9 @@ defmodule Cldr.Calendar do
       ~D[2020-03-01]
 
   """
-  def plus(value, increment) when is_integer(value) and is_integer(increment) do
-    value + increment
-  end
 
-  @spec plus(Date.t(), atom(), integer(), Keyword.t()) :: Date.t()
-  @spec plus(Date.Range.t(), atom(), integer(), Keyword.t()) :: Date.Range.t()
+  @spec plus(Calendar.date() | Date.Range.t(), atom(), integer(), Keyword.t()) ::
+          Calendar.date()
 
   def plus(date, period, increment, options \\ [])
 
@@ -2566,7 +2631,7 @@ defmodule Cldr.Calendar do
   """
   def validate_calendar(calendar_module) when is_atom(calendar_module) do
     if Code.ensure_loaded?(calendar_module) &&
-        function_exported?(calendar_module, :cldr_calendar_type, 0) do
+         function_exported?(calendar_module, :cldr_calendar_type, 0) do
       {:ok, calendar_module}
     else
       {:error, invalid_calendar_error(calendar_module)}
@@ -2583,7 +2648,7 @@ defmodule Cldr.Calendar do
 
   @doc false
   def invalid_calendar_error(calendar_module) do
-    {Cldr.InvalidCalendarModule, "#{inspect calendar_module} is not a calendar module."}
+    {Cldr.InvalidCalendarModule, "#{inspect(calendar_module)} is not a calendar module."}
   end
 
   ## January starts end the same year, December ends starts the same year
@@ -2715,4 +2780,67 @@ defmodule Cldr.Calendar do
   defdelegate day_of_week(date), to: Date
   defdelegate days_in_month(date), to: Date
   defdelegate months_in_year(date), to: Date
+
+  # Functions that aid in pattern matching
+  # in function heads
+
+  @doc false
+  def datetime do
+    quote do
+      %{
+        year: _,
+        month: _,
+        day: _,
+        hour: _,
+        minute: _,
+        second: _,
+        microsecond: _,
+        time_zone: _,
+        zone_abbr: _,
+        utc_offset: _,
+        std_offset: _,
+        calendar: var!(calendar)
+      }
+    end
+  end
+
+  @doc false
+  def naivedatetime do
+    quote do
+      %{
+        year: _,
+        month: _,
+        day: _,
+        hour: _,
+        minute: _,
+        second: _,
+        microsecond: _,
+        calendar: var!(calendar)
+      }
+    end
+  end
+
+  @doc false
+  def date do
+    quote do
+      %{
+        year: _,
+        month: _,
+        day: _,
+        calendar: var!(calendar)
+      }
+    end
+  end
+
+  @doc false
+  def time do
+    quote do
+      %{
+        hour: _,
+        minute: _,
+        second: _,
+        microsecond: _
+      }
+    end
+  end
 end

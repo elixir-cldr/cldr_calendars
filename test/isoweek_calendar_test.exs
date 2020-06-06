@@ -14,6 +14,6 @@ defmodule Cldr.Calendar.ISOWeek.Test do
       year: :majority
     }
 
-    assert Cldr.Calendar.ISOWeek.__config__ == config
+    assert Cldr.Calendar.ISOWeek.__config__() == config
   end
 end

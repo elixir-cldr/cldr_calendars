@@ -1,10 +1,18 @@
-# Changelog for Cldr Calendars v1.8.2
+# Changelog for Cldr Calendars v1.9.0
 
-This is the changelog for Cldr Calendars v1.8.2 released on June 6th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+This is the changelog for Cldr Calendars v1.9.0 released on June 7th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Add `Cldr.Calendar.plus/{3,4}` that allows adding a `Cldr.Calendar.Duration` to a `Calendar.date`. Support for adding durations to `datetime`s is not yet available.
+
+* Add support for `datetimes` to `Cldr.Calendar.Duration.new/2`
+
+* Add support for `Date.Range.t` and `CalendarInterval.t` to `Cldr.Calendar.Duration.new/1`
 
 ### Bug Fixes
 
-* More complete test coverage on durations with some additinal corner case fixes
+* More complete test coverage on durations with some additional corner case fixes
 
 # Changelog for Cldr Calendars v1.8.1
 
@@ -18,7 +26,7 @@ This is the changelog for Cldr Calendars v1.8.1 released on June 4th, 2020.  For
 
 This is the changelog for Cldr Calendars v1.8.0 released on May 4th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
-## Breaking Change (that you might notice but probably won't)
+### Breaking Change (that you might notice but probably won't)
 
 * The `min_days_in_first_week` for the calendar `Cldr.Calendar.Gregorian` is changed to be `1` rather than the previous value of `4`. This only affects week-related processing for the calendar. The reason for the change is that the majority of territories have a preference for `1` for `min_days_in_first_week` so `Cldr.Calendar.Gregorian` more closely aligns to majority expectations.
 

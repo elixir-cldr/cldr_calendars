@@ -68,14 +68,11 @@ defmodule Cldr.Calendar.Config do
     invalidate_old_options!(options)
     detect_invalid_options!(options)
 
-    default_backend =
-      Application.get_env(Cldr.Config.app_name(), :default_backend)
+    default_backend = Application.get_env(Cldr.Config.app_name(), :default_backend)
 
-    backend =
-      Keyword.get(options, :backend, default_backend)
+    backend = Keyword.get(options, :backend, default_backend)
 
-    backend =
-      if backend && Cldr.Code.ensure_compiled?(backend), do: backend, else: nil
+    backend = if backend && Cldr.Code.ensure_compiled?(backend), do: backend, else: nil
 
     %__MODULE__{
       calendar: Keyword.get(options, :calendar),

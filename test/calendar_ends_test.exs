@@ -1,7 +1,6 @@
 defmodule Cldr.Calendar.Ends.Test do
   use ExUnit.Case, asynch: true
 
-
   test "that anchor: :last returns the last gregorian day of year for a range of days of the week" do
     days = %{
       {2019, 7, 25} => 4,

@@ -1,5 +1,4 @@
 defmodule Cldr.Calendar.Preference do
-
   alias Cldr.LanguageTag
 
   @territory_preferences Cldr.Config.calendar_preferences()
@@ -15,8 +14,8 @@ defmodule Cldr.Calendar.Preference do
 
       preferences =
         Map.get(territory_preferences, territory) ||
-        Map.get(territory_preferences, default_territory) ||
-        Map.get(territory_preferences, the_world)
+          Map.get(territory_preferences, default_territory) ||
+          Map.get(territory_preferences, the_world)
 
       {:ok, preferences}
     end
@@ -78,12 +77,14 @@ defmodule Cldr.Calendar.Preference do
         {:ok, calendar_module}
       end
     end
-   end
+  end
 
   defp find_calendar(preferences) do
     error = {:error, Cldr.unknown_calendar_error(preferences)}
+
     Enum.reduce_while(preferences, error, fn calendar, acc ->
       module = calendar_module(calendar)
+
       if Code.ensure_loaded?(module) do
         {:halt, {:ok, module}}
       else
@@ -99,7 +100,7 @@ defmodule Cldr.Calendar.Preference do
   """
   def calendar_for_locale(%LanguageTag{locale: %{calendar: nil}} = locale) do
     locale
-    |> Cldr.Locale.territory_from_locale
+    |> Cldr.Locale.territory_from_locale()
     |> calendar_for_territory
   end
 
@@ -108,14 +109,14 @@ defmodule Cldr.Calendar.Preference do
       calendar_module
     else
       locale
-      |> Cldr.Locale.territory_from_locale
+      |> Cldr.Locale.territory_from_locale()
       |> calendar_for_territory
     end
   end
 
   def calendar_for_locale(%LanguageTag{} = locale) do
     locale
-    |> Cldr.Locale.territory_from_locale
+    |> Cldr.Locale.territory_from_locale()
     |> calendar_for_territory
   end
 
@@ -127,10 +128,11 @@ defmodule Cldr.Calendar.Preference do
   @known_calendars Cldr.known_calendars()
 
   @calendar_modules @known_calendars
-  |> Enum.map(fn c ->
-    {c, Module.concat(@base_calendar, c |> Atom.to_string |> Macro.camelize)}
-  end)
-  |> Map.new
+                    |> Enum.map(fn c ->
+                      {c,
+                       Module.concat(@base_calendar, c |> Atom.to_string() |> Macro.camelize())}
+                    end)
+                    |> Map.new()
 
   def calendar_modules do
     @calendar_modules

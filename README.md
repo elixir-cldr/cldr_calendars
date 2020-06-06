@@ -418,18 +418,57 @@ defmodule MyApp.Cldr do
 end
 ```
 
-To create a duration, use `Cldr.Calendar.Duration.new/2` providing two dates, times or datetimes. The first date must occur before the second date.  To format a duration into a string use `Cldr.Calendar.Duration.to_string/2`.
+To create a duration, use `Cldr.Calendar.Duration.new/2` providing two dates, times or datetimes. The first date must occur before the second date.  Datetimes must be in the same time zone. To format a duration into a string use `Cldr.Calendar.Duration.to_string/2`.
 
 An example is:
 ```elixir
-iex> {:ok, duration} = Duration.new(~D[2019-01-01], ~D[2019-12-31])
+iex> {:ok, duration} = Cldr.Calendar.Duration.new(~D[2019-01-01], ~D[2019-12-31])
 iex> Cldr.Calendar.Duration.to_string(duration)
 "11 months and 30 days"
 ```
 
+A duration can also be created from a `Date.Range.t` and `CalendarInterval.t`. `CalendarInterval.t` is defined by the wonderful [calendar_interval](https://hex.pm/packages/calendar_interval) library.
+
+```elixir
+iex> Cldr.Calendar.Duration.new Date.range(~D[2020-01-01], ~D[2020-12-31])
+{:ok,
+ %Cldr.Calendar.Duration{
+   day: 30,
+   hour: 0,
+   microsecond: 0,
+   minute: 0,
+   month: 11,
+   second: 0,
+   year: 0
+ }}
+
+iex> use CalendarInterval
+CalendarInterval
+
+iex> Cldr.Calendar.Duration.new ~I"2020-01/12"
+{:ok,
+ %Cldr.Calendar.Duration{
+   day: 30,
+   hour: 0,
+   microsecond: 0,
+   minute: 0,
+   month: 11,
+   second: 0,
+   year: 0
+ }}
+```
+
+A duration can be added to a date. Adding to times and datetimes is not currenlty supported. An example is:
+
+```elixir
+iex> {:ok, duration} = Cldr.Calendar.Duration.new(~D[2019-01-01], ~D[2019-12-31])
+iex> Cldr.Calendar.plus ~D[2019-01-01], duration
+~D[2019-12-31]
+```
+
 ### Configuring a Cldr backend for localization
 
-In order to localize date parts a`backend` module must be defined. This
+In order to localize date parts a `backend` module must be defined. This
 is a module which hosts the CLDR data for a set of locales. The detailed
 information for configuring a `backend` is [documented here](https://hexdocs.pm/ex_cldr/readme.html#configuration).
 
@@ -463,7 +502,7 @@ It is also possible to pass the name of a backend module to the `Cldr.Calendar.l
 
 ## Inspecting calendar dates
 
-The examples in this readme reflect inspecting dates as they will be in Elixir 1.10. Until that time if you wish to inspect dates in the same manner, add this code to your project:
+The examples in this readme reflect inspecting dates as they are in Elixir 1.10. For earlier releases of Elixir add this code to your project:
 
 ```elixir
 if Version.compare(System.version(), "1.10.0-dev") == :lt do
