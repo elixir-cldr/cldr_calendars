@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.8.2
+
+This is the changelog for Cldr Calendars v1.8.2 released on June 6th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* More complete test coverage on durations with some additinal corner case fixes
+
 # Changelog for Cldr Calendars v1.8.1
 
 This is the changelog for Cldr Calendars v1.8.1 released on June 4th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
