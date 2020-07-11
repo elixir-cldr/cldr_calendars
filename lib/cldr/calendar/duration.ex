@@ -485,6 +485,7 @@ defmodule Cldr.Calendar.Duration do
   end
 
   # The two dates are the same so there is no duration
+  @doc false
   def date_duration(
         %{year: year, month: month, day: day, calendar: calendar},
         %{year: year, month: month, day: day, calendar: calendar}
