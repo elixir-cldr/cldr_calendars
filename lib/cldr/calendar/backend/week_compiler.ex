@@ -152,10 +152,24 @@ defmodule Cldr.Calendar.Compiler.Week do
       It is an integer from 1 to 7, where 1 is Monday and 7 is Sunday.
 
       """
-      @spec day_of_week(year, month, day) :: 1..7
-      @impl true
-      def day_of_week(year, week, day) do
-        Week.day_of_week(year, week, day, __config__())
+      if function_exported?(Date, :day_of_week, 2) do
+        @spec day_of_week(year, month, day, :default | atom()) ::
+            {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
+              last_day_of_week :: non_neg_integer()}
+
+        @impl true
+        def day_of_week(year, month, day, :default) do
+          %{day_of_week: first_day} = __config__()
+          last_day = Cldr.Math.amod(first_day + days_in_week() - 1, days_in_week())
+          day = Week.day_of_week(year, month, day, __config__())
+          {day, first_day, last_day}
+        end
+      else
+        @spec day_of_week(year, month, day) :: 1..7
+        @impl true
+        def day_of_week(year, month, day) do
+          Week.day_of_week(year, month, day, __config__())
+        end
       end
 
       @doc """
