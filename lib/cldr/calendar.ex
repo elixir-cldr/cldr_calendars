@@ -420,7 +420,7 @@ defmodule Cldr.Calendar do
   end
 
   def calendar_for_locale(locale_name, config) when is_binary(locale_name) do
-    backend = Keyword.get_lazy(config, :backend, &Cldr.default_backend/0)
+    backend = Keyword.get_lazy(config, :backend, &default_backend/0)
 
     with {:ok, backend} <- Cldr.validate_backend(backend),
          {:ok, locale} <- Cldr.validate_locale(locale_name, backend) do
@@ -1199,7 +1199,7 @@ defmodule Cldr.Calendar do
   @spec weekend?(Date.t(), Keyword.t()) :: boolean | {:error, {module(), String.t()}}
 
   def weekend?(date, options \\ []) do
-    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+    backend = Keyword.get_lazy(options, :backend, &default_backend/0)
     locale = Keyword.get(options, :locale, backend.get_locale())
 
     with {:ok, locale} <- Cldr.validate_locale(locale, backend),
@@ -1277,7 +1277,7 @@ defmodule Cldr.Calendar do
   @spec weekday?(Date.t(), Keyword.t()) :: boolean | {:error, {module(), String.t()}}
 
   def weekday?(date, options \\ []) do
-    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+    backend = Keyword.get_lazy(options, :backend, &default_backend/0)
     locale = Keyword.get(options, :locale, backend.get_locale())
 
     with {:ok, locale} <- Cldr.validate_locale(locale, backend),
@@ -1302,7 +1302,7 @@ defmodule Cldr.Calendar do
   end
 
   def first_day_for_locale(locale, options \\ []) when is_binary(locale) do
-    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+    backend = Keyword.get_lazy(options, :backend, &default_backend/0)
 
     with {:ok, locale} <- Cldr.validate_locale(locale, backend) do
       first_day_for_locale(locale)
@@ -1321,7 +1321,7 @@ defmodule Cldr.Calendar do
   end
 
   def min_days_for_locale(locale, options \\ []) when is_binary(locale) do
-    backend = Keyword.get_lazy(options, :backend, &Cldr.default_backend/0)
+    backend = Keyword.get_lazy(options, :backend, &default_backend/0)
 
     with {:ok, locale} <- Cldr.validate_locale(locale, backend) do
       min_days_for_locale(locale)
@@ -1776,7 +1776,7 @@ defmodule Cldr.Calendar do
     returned by `Cldr.Locale.new!/2`. The default is `Cldr.get_locale()`.
 
   * `backend` is any module that includes `use Cldr` and therefore
-    is a `Cldr` backend module. The default is `Cldr.default_backend/0`.
+    is a `Cldr` backend module. The default is `default_backend/0`.
 
   * `:format` is one of `:wide`, `:abbreviated` or `:narrow`. The
     default is `:abbreviated`.
@@ -1839,7 +1839,7 @@ defmodule Cldr.Calendar do
   def localize(date, part, options) do
     backend =
       Keyword.get_lazy(options, :backend, fn ->
-        backend_from_calendar(date.calendar) || Cldr.default_backend()
+        backend_from_calendar(date.calendar) || default_backend()
       end)
 
     locale = Keyword.get(options, :locale, backend.get_locale())
@@ -2780,6 +2780,18 @@ defmodule Cldr.Calendar do
   defdelegate day_of_week(date), to: Date
   defdelegate days_in_month(date), to: Date
   defdelegate months_in_year(date), to: Date
+
+  @doc false
+  # TODO remove for Cldr 3.0
+  if Code.ensure_loaded?(Cldr) && function_exported?(Cldr, :default_backend!, 0) do
+    def default_backend do
+      Cldr.default_backend!()
+    end
+  else
+    def default_backend do
+      Cldr.default_backend()
+    end
+  end
 
   # Functions that aid in pattern matching
   # in function heads

@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.10.1
+
+This is the changelog for Cldr Calendars v1.10.1 released on September 26th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Add a shim for `default_backend/0` that delegates to `Cldr.default_backend/0` or `Cldr.default_backend!/0` depending on `ex_cldr` release. Releases from `2.18.0` use `Cldr.default_backend!/0`.
+
 # Changelog for Cldr Calendars v1.10.0
 
 This is the changelog for Cldr Calendars v1.10.0 released on August 29th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
