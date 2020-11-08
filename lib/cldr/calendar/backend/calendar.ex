@@ -192,6 +192,86 @@ defmodule Cldr.Calendar.Backend do
         def days(locale, _calendar), do: {:error, Locale.locale_error(locale)}
         def day_periods(locale, _calendar), do: {:error, Locale.locale_error(locale)}
       end
+
+      @doc """
+      Returns the calendar module preferred for
+      a territory.
+
+      ## Arguments
+
+      * `territory` is any valid ISO3166-2 code as
+        an `String.t` or upcased `atom()`
+
+      ## Returns
+
+      * `{:ok, calendar_module}` or
+
+      * `{:error, {exception, reason}}`
+
+      ## Examples
+
+          iex> #{inspect __MODULE__}.calendar_from_territory :US
+          {:ok, Cldr.Calendar.Gregorian}
+
+          iex> #{inspect __MODULE__}.calendar_from_territory :XX
+          {:error, {Cldr.UnknownTerritoryError, "The territory :XX is unknown"}}
+
+      ## Notes
+
+      The overwhelming majority of territories have
+      `:gregorian` as their first preferred calendar
+      and therefore `Cldr.Calendar.Gregorian`
+      will be returned for most territories.
+
+      Returning any other calendar module would require:
+
+      1. That another calendar is preferred over `:gregorian`
+         for a territory
+
+      2. That a calendar module is available to support
+         that calendar.
+
+      As an example, Iran (territory `:IR`) prefers the
+      `:persian` calendar. If the optional library
+      [ex_cldr_calendars_persian](https://hex.pm/packages/ex_cldr_calendars_persian)
+      is installed, the calendar module `Cldr.Calendar.Persian` will
+      be returned. If it is not installed, `Cldr.Calendar.Gregorian`
+      will be returned as `:gregorian` is the second preference
+      for `:IR`.
+
+      """
+      def calendar_from_territory(territory) do
+        Cldr.Calendar.calendar_from_territory(territory)
+      end
+
+      @doc """
+      Return the calendar module for a locale.
+
+      ## Arguments
+
+      * `:locale` is any locale or locale name validated
+        by `Cldr.validate_locale/2`.  The default is
+        `Cldr.get_locale()` which returns the locale
+        set for the current process
+
+      ## Returns
+
+      * `{:ok, calendar_module}` or
+
+      * `{:error, {exception, reason}}`
+
+      ## Examples
+
+
+      """
+      def calendar_from_locale(%LanguageTag{} = locale) do
+        Cldr.Calendar.calendar_from_locale(locale)
+      end
+
+      def calendar_from_locale(locale) when is_binary(locale) do
+        Cldr.Calendar.calendar_from_locale(locale, unquote(backend))
+      end
+
     end
   end
 end

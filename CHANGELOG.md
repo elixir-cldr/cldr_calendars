@@ -1,3 +1,17 @@
+# Changelog for Cldr Calendars v1.12.0
+
+This is the changelog for Cldr Calendars v1.12.0 released on November _____, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Rename `Cldr.Calendar.Preference.calendar_for_locale/1` to `Cldr.Calendar.Preference.calendar_from_locale/1`
+
+* Rename `Cldr.Calendar.Preference.calendar_for_territory/1` to `Cldr.Calendar.Preference.calendar_from_territory/1`
+
+* Add `Cldr.Calendar.calendar_from_territory/1`
+
+* Add `Cldr.Calendar.calendar_from_locale/1,2`
+
 # Changelog for Cldr Calendars v1.11.0
 
 This is the changelog for Cldr Calendars v1.11.0 released on November 1st, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
