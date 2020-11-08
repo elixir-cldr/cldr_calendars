@@ -2,10 +2,13 @@ defmodule Cldr.Calendar.Preference do
   alias Cldr.LanguageTag
 
   @territory_preferences Cldr.Config.calendar_preferences()
+
+  @doc false
   def territory_preferences do
     @territory_preferences
   end
 
+  @doc false
   def preferences_for_territory(territory) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
       territory_preferences = territory_preferences()
@@ -79,6 +82,17 @@ defmodule Cldr.Calendar.Preference do
     end
   end
 
+  def calendar_from_territory(territory, calendar) when is_atom(territory) do
+    with {:ok, preferences} <- preferences_for_territory(territory),
+         {:ok, calendar_module} <- find_calendar(preferences, calendar) do
+      if calendar_module == Cldr.Calendar.default_calendar() do
+        Cldr.Calendar.calendar_for_territory(territory)
+      else
+        {:ok, calendar_module}
+      end
+    end
+  end
+
   @deprecated "Use calendar_from_territory/1"
   defdelegate calendar_for_territory(territory), to: __MODULE__, as: :calendar_from_territory
 
@@ -94,6 +108,14 @@ defmodule Cldr.Calendar.Preference do
         {:cont, acc}
       end
     end)
+  end
+
+  defp find_calendar(preferences, calendar) do
+    if preferred = Enum.find(preferences, &(&1 == calendar)) do
+      find_calendar([preferred])
+    else
+      find_calendar(preferences)
+    end
   end
 
   @doc """
@@ -114,6 +136,20 @@ defmodule Cldr.Calendar.Preference do
 
   ## Examples
 
+      iex> Cldr.Calendar.Preference.calendar_from_locale "en-GB"
+      {:ok, Cldr.Calendar.GB}
+
+      iex> Cldr.Calendar.Preference.calendar_from_locale "en-GB-u-ca-gregory"
+      {:ok, Cldr.Calendar.GB}
+
+      iex> Cldr.Calendar.Preference.calendar_from_locale "en"
+      {:ok, Cldr.Calendar.US}
+
+      iex> Cldr.Calendar.Preference.calendar_from_locale "fa-IR"
+      {:ok, Cldr.Calendar.Persian}
+
+      iex> Cldr.Calendar.Preference.calendar_from_locale "fa-IR-u-ca-gregory"
+      {:ok, Cldr.Calendar.IR}
 
   """
   def calendar_from_locale(locale \\ Cldr.get_locale())
@@ -121,23 +157,23 @@ defmodule Cldr.Calendar.Preference do
   def calendar_from_locale(%LanguageTag{locale: %{calendar: nil}} = locale) do
     locale
     |> Cldr.Locale.territory_from_locale()
-    |> calendar_for_territory
+    |> calendar_from_territory
   end
 
   def calendar_from_locale(%LanguageTag{locale: %{calendar: calendar}} = locale) do
-    if calendar_module = calendar_from_name(calendar) do
-      calendar_module
-    else
-      locale
-      |> Cldr.Locale.territory_from_locale()
-      |> calendar_for_territory
-    end
+    locale
+    |> Cldr.Locale.territory_from_locale()
+    |> calendar_from_territory(calendar)
   end
 
   def calendar_from_locale(%LanguageTag{} = locale) do
     locale
     |> Cldr.Locale.territory_from_locale()
-    |> calendar_for_territory
+    |> calendar_from_territory
+  end
+
+  def calendar_from_locale(locale) when is_binary(locale) do
+    calendar_from_locale(locale, Cldr.default_backend!())
   end
 
   def calendar_from_locale(other) do

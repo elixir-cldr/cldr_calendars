@@ -262,6 +262,17 @@ defmodule Cldr.Calendar.Backend do
 
       ## Examples
 
+          iex> #{inspect __MODULE__}.calendar_from_locale "en-GB"
+          {:ok, Cldr.Calendar.GB}
+
+          iex> #{inspect __MODULE__}.calendar_from_locale "en-GB-u-ca-gregory"
+          {:ok, Cldr.Calendar.Gregorian}
+
+          iex> #{inspect __MODULE__}.calendar_from_locale "en"
+          {:ok, Cldr.Calendar.US}
+
+          iex> #{inspect __MODULE__}.calendar_from_locale "fa-IR"
+          {:ok, Cldr.Calendar.Persian}
 
       """
       def calendar_from_locale(%LanguageTag{} = locale) do
