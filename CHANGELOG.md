@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.13.0-rc.0
+
+This is the changelog for Cldr Calendars v1.13.0-rc.0 released on March 19th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Add support for [CLDR 39](http://cldr.unicode.org/index/downloads/cldr-39)
+
 # Changelog for Cldr Calendars v1.12.0
 
 This is the changelog for Cldr Calendars v1.12.0 released on November 8th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
