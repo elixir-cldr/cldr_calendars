@@ -359,4 +359,18 @@ defmodule Cldr.Calendar.Duration.Test do
        year: 0
      }}
   end
+
+  test "time duration" do
+    assert Cldr.Calendar.Duration.new(~T[00:00:59], ~T[00:01:23]) ==
+    {:ok,
+     %Cldr.Calendar.Duration{
+       day: 0,
+       hour: 0,
+       microsecond: 0,
+       minute: 0,
+       month: 0,
+       second: 24,
+       year: 0
+     }}
+   end
 end
