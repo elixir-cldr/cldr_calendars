@@ -260,9 +260,10 @@ defmodule Cldr.Calendar.Duration do
   end
 
   def new(unquote(Cldr.Calendar.time()) = from, unquote(Cldr.Calendar.time()) = to) do
-    duration = %__MODULE__{}
-    time_diff = time_duration(from, to)
-    apply_time_diff_to_duration(duration, time_diff, from)
+    with {:ok, from} <- cast_date_time(from),
+         {:ok, to} <- cast_date_time(to) do
+      new(from, to)
+    end
   end
 
   @doc """
@@ -354,6 +355,11 @@ defmodule Cldr.Calendar.Duration do
 
   defp cast_date_time(unquote(Cldr.Calendar.date()) = date) do
     {:ok, dt} = NaiveDateTime.new(date.year, date.month, date.day, 0, 0, 0, {0, 6}, calendar)
+    DateTime.from_naive(dt, "Etc/UTC")
+  end
+
+  defp cast_date_time(unquote(Cldr.Calendar.time()) = time) do
+    {:ok, dt} = NaiveDateTime.new(1, 1, 1, time.hour, time.minute, time.second, time.microsecond, Calendar.ISO)
     DateTime.from_naive(dt, "Etc/UTC")
   end
 
