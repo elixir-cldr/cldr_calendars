@@ -358,6 +358,12 @@ defmodule Cldr.Calendar.Duration do
     DateTime.from_naive(dt, "Etc/UTC")
   end
 
+  defp cast_date_time(unquote(Cldr.Calendar.time()) = time) do
+    {:ok, dt} =
+      NaiveDateTime.new(1, 1, 1, time.hour, time.minute, time.second, time.microsecond, Calendar.ISO)
+    DateTime.from_naive(dt, "Etc/UTC")
+  end
+
   defp confirm_date_order(from, to) do
     if DateTime.compare(from, to) in [:lt, :eq] do
       :ok
