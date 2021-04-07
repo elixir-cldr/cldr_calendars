@@ -260,9 +260,10 @@ defmodule Cldr.Calendar.Duration do
   end
 
   def new(unquote(Cldr.Calendar.time()) = from, unquote(Cldr.Calendar.time()) = to) do
-    duration = %__MODULE__{}
-    time_diff = time_duration(from, to)
-    apply_time_diff_to_duration(duration, time_diff, from)
+    with {:ok, from} <- cast_date_time(from),
+         {:ok, to} <- cast_date_time(to) do
+      new(from, to)
+    end
   end
 
   @doc """

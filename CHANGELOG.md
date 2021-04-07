@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.13.0-rc.1
+
+This is the changelog for Cldr Calendars v1.13.0-rc.1 released on April 7th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Fix creating durations from two `Time`s.
+
 # Changelog for Cldr Calendars v1.13.0-rc.0
 
 This is the changelog for Cldr Calendars v1.13.0-rc.0 released on March 19th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
