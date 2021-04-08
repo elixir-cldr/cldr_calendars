@@ -359,7 +359,8 @@ defmodule Cldr.Calendar.Duration do
   end
 
   defp cast_date_time(unquote(Cldr.Calendar.time()) = time) do
-    {:ok, dt} = NaiveDateTime.new(1, 1, 1, time.hour, time.minute, time.second, time.microsecond, Calendar.ISO)
+    {:ok, dt} =
+      NaiveDateTime.new(1, 1, 1, time.hour, time.minute, time.second, time.microsecond, Calendar.ISO)
     DateTime.from_naive(dt, "Etc/UTC")
   end
 

@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.MixProject do
   use Mix.Project
 
-  @version "1.12.1"
+  @version "1.13.0"
 
   def project do
     [
@@ -63,12 +63,12 @@ defmodule Cldr.Calendar.MixProject do
 
   defp deps do
     [
-      {:ex_cldr_numbers, "~> 2.16"},
-      {:ex_cldr_units, "~> 3.3", optional: true},
+      {:ex_cldr_numbers, "~> 2.17"},
+      {:ex_cldr_units, "~> 3.5", optional: true},
       {:tz, "~> 0.9", optional: true, only: [:dev, :test]},
       {:calendar_interval, "~> 0.2", optional: true},
       {:jason, "~> 1.0"},
-      {:ex_doc, "~> 0.21", only: [:release, :dev]},
+      {:ex_doc, "~> 0.21", optional: true, runtime: false},
       {:earmark, "~> 1.0"},
       {:benchee, "~> 1.0", optional: true, only: [:dev, :test]},
       {:dialyxir, "~> 1.0.0-rc", only: [:dev], runtime: false},
