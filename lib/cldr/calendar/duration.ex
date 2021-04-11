@@ -262,7 +262,12 @@ defmodule Cldr.Calendar.Duration do
   def new(unquote(Cldr.Calendar.time()) = from, unquote(Cldr.Calendar.time()) = to) do
     with {:ok, from} <- cast_date_time(from),
          {:ok, to} <- cast_date_time(to) do
-      new(from, to)
+       time_diff = time_duration(from, to)
+       {seconds, microseconds} = Cldr.Math.div_mod(time_diff, 1000000)
+       {minutes, seconds} = Cldr.Math.div_mod(seconds, 60)
+       {hours, minutes} = Cldr.Math.div_mod(minutes, 60)
+       {:ok,
+         struct(__MODULE__, hour: hours, minute: minutes, second: seconds, microsecond: microseconds)}
     end
   end
 
@@ -536,7 +541,7 @@ defmodule Cldr.Calendar.Duration do
   end
 
   defp back_one_day(%{day: 0} = date_diff, :day, from) do
-    months_in_year = Cldr.Calendar.months_in_year(from.year)
+    months_in_year = Cldr.Calendar.months_in_year(from)
     previous_month = Cldr.Math.amod(from.month - 1, months_in_year)
     days_in_month = from.calendar.days_in_month(from.year, previous_month)
 
@@ -549,7 +554,7 @@ defmodule Cldr.Calendar.Duration do
   end
 
   defp back_one_day(%{month: 0} = date_diff, :month, from) do
-    months_in_year = Cldr.Calendar.months_in_year(from.year)
+    months_in_year = Cldr.Calendar.months_in_year(from)
 
     %{date_diff | month: months_in_year}
     |> back_one_day(:year, from)

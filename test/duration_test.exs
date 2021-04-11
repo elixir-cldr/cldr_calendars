@@ -372,5 +372,19 @@ defmodule Cldr.Calendar.Duration.Test do
        second: 24,
        year: 0
      }}
-   end
+  end
+
+  test "creating a negative time duration" do
+    assert Cldr.Calendar.Duration.new(~T[10:00:00.0], ~T[09:00:00.0]) ==
+     {:ok,
+      %Cldr.Calendar.Duration{
+        day: 0,
+        hour: -1,
+        microsecond: 0,
+        minute: 0,
+        month: 0,
+        second: 0,
+        year: 0
+      }}
+  end
 end
