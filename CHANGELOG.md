@@ -1,10 +1,10 @@
 # Changelog for Cldr Calendars v1.14.0
 
-This is the changelog for Cldr Calendars v1.14.0 released on _____, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+This is the changelog for Cldr Calendars v1.14.0 released on April 13th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Enhancements
 
-* Support creating time-base durations that are negative in direction. For example:
+* Support creating time-base durations that are negative in direction. Date and DateTime durations must still be positive durations. For example:
 ```elixir
 # Create a time-based duration that is negative in direction
 iex> {:ok, duration} = Cldr.Calendar.Duration.new ~T[10:00:00.0], ~T[09:00:00.0]
