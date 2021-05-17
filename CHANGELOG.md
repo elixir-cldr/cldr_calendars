@@ -1,3 +1,11 @@
+# Changelog for Cldr Calendars v1.14.1
+
+This is the changelog for Cldr Calendars v1.14.1 released on May 17th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix `@impl` warnings on Elixir 1.12
+
 # Changelog for Cldr Calendars v1.14.0
 
 This is the changelog for Cldr Calendars v1.14.0 released on April 13th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

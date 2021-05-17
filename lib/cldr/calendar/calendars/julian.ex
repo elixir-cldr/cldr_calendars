@@ -170,12 +170,12 @@ defmodule Cldr.Calendar.Julian do
   It is an integer from 1 to 7, where 1 is Monday and 7 is Sunday.
 
   """
-  if function_exported?(Date, :day_of_week, 2) do
+  if Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2) do
     @spec day_of_week(year, month, day, 1..7 | :default) ::
       {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
         last_day_of_week :: non_neg_integer()}
 
-    @impl true
+    @impl Calendar
     @epoch_day_of_week 6
     def day_of_week(year, month, day, :default) do
       days = date_to_iso_days(year, month, day)
@@ -185,7 +185,7 @@ defmodule Cldr.Calendar.Julian do
     end
   else
     @spec day_of_week(year, month, day) :: 1..7
-    @impl true
+    @impl Calendar
     @epoch_day_of_week 6
     def day_of_week(year, month, day) do
       days = date_to_iso_days(year, month, day)
@@ -432,7 +432,7 @@ defmodule Cldr.Calendar.Julian do
           Calendar.second(),
           Calendar.microsecond()
         }
-  @impl true
+  @impl Calendar
   def naive_datetime_from_iso_days({days, day_fraction}) do
     {year, month, day} = date_from_iso_days(days)
     {hour, minute, second, microsecond} = time_from_day_fraction(day_fraction)
@@ -440,36 +440,46 @@ defmodule Cldr.Calendar.Julian do
   end
 
   @doc false
+  @impl Calendar
   defdelegate day_rollover_relative_to_midnight_utc, to: Calendar.ISO
 
   @doc false
+  @impl Calendar
   defdelegate months_in_year(year), to: Calendar.ISO
 
   @doc false
+  @impl Calendar
   defdelegate time_from_day_fraction(day_fraction), to: Calendar.ISO
 
   @doc false
+  @impl Calendar
   defdelegate time_to_day_fraction(hour, minute, second, microsecond), to: Calendar.ISO
 
   # Calendar callbacks that appear in Elixir 1.10
   if Version.match?(System.version(), ">= 1.10.0-dev") do
     @doc false
+    @impl Calendar
     defdelegate parse_date(date_string), to: Calendar.ISO
 
     @doc false
+    @impl Calendar
     defdelegate parse_time(time_string), to: Calendar.ISO
 
     @doc false
+    @impl Calendar
     defdelegate parse_utc_datetime(dt_string), to: Calendar.ISO
 
     @doc false
+    @impl Calendar
     defdelegate parse_naive_datetime(dt_string), to: Calendar.ISO
   end
 
   @doc false
+  @impl Calendar
   defdelegate date_to_string(year, month, day), to: Calendar.ISO
 
   @doc false
+  @impl Calendar
   defdelegate datetime_to_string(
                 year,
                 month,
@@ -486,6 +496,7 @@ defmodule Cldr.Calendar.Julian do
               to: Calendar.ISO
 
   @doc false
+  @impl Calendar
   defdelegate naive_datetime_to_string(
                 year,
                 month,
@@ -498,8 +509,10 @@ defmodule Cldr.Calendar.Julian do
               to: Calendar.ISO
 
   @doc false
+  @impl Calendar
   defdelegate time_to_string(hour, minute, second, microsecond), to: Calendar.ISO
 
   @doc false
+  @impl Calendar
   defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
 end
