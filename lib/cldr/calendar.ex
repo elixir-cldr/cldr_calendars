@@ -289,8 +289,8 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.calendar_from_territory :US
       {:ok, Cldr.Calendar.US}
 
-      iex> Cldr.Calendar.calendar_from_territory :XX
-      {:error, {Cldr.UnknownTerritoryError, "The territory :XX is unknown"}}
+      iex> Cldr.Calendar.calendar_from_territory :YY
+      {:error, {Cldr.UnknownTerritoryError, "The territory :YY is unknown"}}
 
   ## Notes
 
@@ -1444,8 +1444,8 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.weekend("SA")
       [5, 6]
 
-      iex> Cldr.Calendar.weekend("xx")
-      {:error, {Cldr.UnknownTerritoryError, "The territory :XX is unknown"}}
+      iex> Cldr.Calendar.weekend("yy")
+      {:error, {Cldr.UnknownTerritoryError, "The territory \\"yy\\" is unknown"}}
 
   """
   def weekend(territory)
@@ -1480,8 +1480,8 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.weekdays("SA")
       [1, 2, 3, 4, 7]
 
-      iex> Cldr.Calendar.weekdays("xx")
-      {:error, {Cldr.UnknownTerritoryError, "The territory :XX is unknown"}}
+      iex> Cldr.Calendar.weekdays("yy")
+      {:error, {Cldr.UnknownTerritoryError, "The territory \\"yy\\" is unknown"}}
 
   """
   def weekdays(territory)

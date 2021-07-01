@@ -44,8 +44,8 @@ defmodule Cldr.Calendar.Preference do
       iex> Cldr.Calendar.Preference.calendar_from_territory :US
       {:ok, Cldr.Calendar.US}
 
-      iex> Cldr.Calendar.Preference.calendar_from_territory :XX
-      {:error, {Cldr.UnknownTerritoryError, "The territory :XX is unknown"}}
+      iex> Cldr.Calendar.Preference.calendar_from_territory :YY
+      {:error, {Cldr.UnknownTerritoryError, "The territory :YY is unknown"}}
 
   ## Notes
 

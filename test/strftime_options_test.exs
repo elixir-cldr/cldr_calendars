@@ -44,7 +44,7 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
   end
 
   test "invalid locale in options" do
-    assert_raise Cldr.UnknownLocaleError, fn ->
+    assert_raise Cldr.InvalidLanguageError, fn ->
       MyApp.Cldr.Calendar.strftime_options!("zz")[:abbreviated_month_names].(1)
     end
   end
@@ -94,7 +94,7 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
            ) ==
              "19-08-26 01:52:06 אחה״צ"
 
-    assert_raise Cldr.UnknownLocaleError, fn ->
+    assert_raise Cldr.InvalidLanguageError, fn ->
       NimbleStrftime.format(
         dt,
         "%y-%m-%d %I:%M:%S %p",

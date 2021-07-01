@@ -1,4 +1,14 @@
-# Changelog for Cldr Calendars v1.14.1
+# Changelog
+
+## Cldr Calendars v1.15.0
+
+This is the changelog for Cldr Calendars v1.15.0 released on July 1st, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Updated to [ex_cldr version 2.23.0](https://hex.pm/packages/ex_cldr/2.23.0) which has some changes to the valid territories list requiring a change in some tests. This normally wouldn't require a minor version change but doing so makes it easier to target this library as a dependency.
+
+## Cldr Calendars v1.14.1
 
 This is the changelog for Cldr Calendars v1.14.1 released on May 17th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -6,7 +16,7 @@ This is the changelog for Cldr Calendars v1.14.1 released on May 17th, 2021.  Fo
 
 * Fix `@impl` warnings on Elixir 1.12
 
-# Changelog for Cldr Calendars v1.14.0
+## Cldr Calendars v1.14.0
 
 This is the changelog for Cldr Calendars v1.14.0 released on April 13th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -28,7 +38,7 @@ iex> {:ok, duration} = Cldr.Calendar.Duration.new ~T[10:00:00.0], ~T[09:00:00.0]
  }}
 ```
 
-# Changelog for Cldr Calendars v1.13.0
+## Cldr Calendars v1.13.0
 
 This is the changelog for Cldr Calendars v1.13.0 released on April 8th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -38,7 +48,7 @@ This is the changelog for Cldr Calendars v1.13.0 released on April 8th, 2021.  F
 
 * Add support for [CLDR 39](http://cldr.unicode.org/index/downloads/cldr-39) data release
 
-# Changelog for Cldr Calendars v1.12.1
+## Cldr Calendars v1.12.1
 
 This is the changelog for Cldr Calendars v1.12.1 released on April 7th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -46,7 +56,7 @@ This is the changelog for Cldr Calendars v1.12.1 released on April 7th, 2021.  F
 
 * Fix a bug that prevented durations being created from times (as apposed to dates and datetimes)
 
-# Changelog for Cldr Calendars v1.12.0
+## Cldr Calendars v1.12.0
 
 This is the changelog for Cldr Calendars v1.12.0 released on November 8th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -60,7 +70,7 @@ This is the changelog for Cldr Calendars v1.12.0 released on November 8th, 2020.
 
 * Add `Cldr.Calendar.calendar_from_locale/1,2`
 
-# Changelog for Cldr Calendars v1.11.0
+## Cldr Calendars v1.11.0
 
 This is the changelog for Cldr Calendars v1.11.0 released on November 1st, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -68,7 +78,7 @@ This is the changelog for Cldr Calendars v1.11.0 released on November 1st, 2020.
 
 * Add support for [CLDR 38](http://cldr.unicode.org/index/downloads/cldr-38)
 
-# Changelog for Cldr Calendars v1.10.1
+## Cldr Calendars v1.10.1
 
 This is the changelog for Cldr Calendars v1.10.1 released on September 26th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -76,7 +86,7 @@ This is the changelog for Cldr Calendars v1.10.1 released on September 26th, 202
 
 * Add a shim for `default_backend/0` that delegates to `Cldr.default_backend/0` or `Cldr.default_backend!/0` depending on `ex_cldr` release. Releases from `2.18.0` use `Cldr.default_backend!/0`.
 
-# Changelog for Cldr Calendars v1.10.0
+## Cldr Calendars v1.10.0
 
 This is the changelog for Cldr Calendars v1.10.0 released on August 29th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -84,7 +94,7 @@ This is the changelog for Cldr Calendars v1.10.0 released on August 29th, 2020. 
 
 * Supports upcoming Elixir 1.11.0.  The `Calendar` callback for `day_of_week/3` has been changed to `day_of_week/4` to allow for a different start day of week.  Since `Cldr Calendars` already supports defining calendars with different start days of the week (ie other than Monday), the impementation only supports the `:default` parameter. Thanks to @lostkobrakai for the report. Closes `Cldr Dates Times` issue #17.
 
-# Changelog for Cldr Calendars v1.9.0
+## Cldr Calendars v1.9.0
 
 This is the changelog for Cldr Calendars v1.9.0 released on June 7th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -100,7 +110,7 @@ This is the changelog for Cldr Calendars v1.9.0 released on June 7th, 2020.  For
 
 * More complete test coverage on durations with some additional corner case fixes
 
-# Changelog for Cldr Calendars v1.8.1
+## Cldr Calendars v1.8.1
 
 This is the changelog for Cldr Calendars v1.8.1 released on June 4th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -108,7 +118,7 @@ This is the changelog for Cldr Calendars v1.8.1 released on June 4th, 2020.  For
 
 * Fix duration calculation when the year and month are the same and the day of the last date is greater than the day of the first date
 
-# Changelog for Cldr Calendars v1.8.0
+## Cldr Calendars v1.8.0
 
 This is the changelog for Cldr Calendars v1.8.0 released on May 4th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -138,7 +148,7 @@ This is the changelog for Cldr Calendars v1.8.0 released on May 4th, 2020.  For 
 
 * Add `Cldr.Calendar.validate_calendar/1` which returns `{:ok, calendar}` if the argument is a `Cldr.Calendar` calendar module or `{:error, {exception, reason}}` if not.
 
-# Changelog for Cldr Calendars v1.7.1
+## Cldr Calendars v1.7.1
 
 This is the changelog for Cldr Calendars v1.7.1 released on January 26th, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -146,7 +156,7 @@ This is the changelog for Cldr Calendars v1.7.1 released on January 26th, 2020. 
 
 * Fix doc link in `MyApp.Cldr.Calendar.strftime_options!/2`
 
-# Changelog for Cldr Calendars v1.7.0
+## Cldr Calendars v1.7.0
 
 This is the changelog for Cldr Calendars v1.7.0 released on January 2nd, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -154,7 +164,7 @@ This is the changelog for Cldr Calendars v1.7.0 released on January 2nd, 2020.  
 
 * Remove call to deprecated `Code.ensure_compiled?/1` in Elixir 1.10
 
-# Changelog for Cldr Calendars v1.6.0
+## Cldr Calendars v1.6.0
 
 This is the changelog for Cldr Calendars v1.6.0 released on December 9th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -162,7 +172,7 @@ This is the changelog for Cldr Calendars v1.6.0 released on December 9th, 2019. 
 
 * Adds support for localizing Persian, Coptic and Ethiopic calendar localization. These calendars are published separately but they rely upon localization support from this package.
 
-# Changelog for Cldr Calendars v1.5.1
+## Cldr Calendars v1.5.1
 
 This is the changelog for Cldr Calendars v1.5.1 released on November 10th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -170,7 +180,7 @@ This is the changelog for Cldr Calendars v1.5.1 released on November 10th, 2019.
 
 * Fix `Cldr.Calendar.next/3` and `Cldr.Calendar.previous/3` for months with week-based calendars. Thanks to @bglusman for the report. Closes #3. Note that the use of the `:coerce` option is recommended in most cases.
 
-# Changelog for Cldr Calendars v1.5.0
+## Cldr Calendars v1.5.0
 
 This is the changelog for Cldr Calendars v1.5.0 released on November 3rd, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -178,7 +188,7 @@ This is the changelog for Cldr Calendars v1.5.0 released on November 3rd, 2019. 
 
 * Adds `MyApp.Cldr.Calendar.strftime_options!/2` to return a keyword list of options that can be applied to `NimbleStrftime.format/3`
 
-# Changelog for Cldr Calendars v1.4.0
+## Cldr Calendars v1.4.0
 
 This is the changelog for Cldr Calendars v1.4.0 released on September 14th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -186,7 +196,7 @@ This is the changelog for Cldr Calendars v1.4.0 released on September 14th, 2019
 
 * Adjusts `<calendar>.add/3` to `<calendar>.add/5` so that it takes individual date and time elements and not formal structs.  This is consistent with other calendar behaviours.
 
-# Changelog for Cldr Calendars v1.3.0
+## Cldr Calendars v1.3.0
 
 This is the changelog for Cldr Calendars v1.3.0 released on September 1st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -194,7 +204,7 @@ This is the changelog for Cldr Calendars v1.3.0 released on September 1st, 2019.
 
 Adds `<calendar>.add/3` to add `:quarter` or `:week` to a naive datetime. This adds to the existing support for `:year` and `:month`.
 
-# Changelog for Cldr Calendars v1.2.0
+## Cldr Calendars v1.2.0
 
 This is the changelog for Cldr Calendars v1.2.0 released on August 31st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -204,7 +214,7 @@ This is the changelog for Cldr Calendars v1.2.0 released on August 31st, 2019.  
 
 * Changes `sigil_d/2` from a function to a macro so that dates are created at compile time
 
-# Changelog for Cldr Calendars v1.1.0
+## Cldr Calendars v1.1.0
 
 This is the changelog for Cldr Calendars v1.1.0 released on August 30th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -214,7 +224,7 @@ This is the changelog for Cldr Calendars v1.1.0 released on August 30th, 2019.  
 
 * Changes the output of `to_string/1` to consistently use the full name of the calendar module, not an appreviated name.
 
-# Changelog for Cldr Calendars v1.0.0
+## Cldr Calendars v1.0.0
 
 This is the changelog for Cldr Calendars v1.0.0 released on June 16th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -253,7 +263,7 @@ iex> IEx.configure(inspect: [inspect_fun: &Cldr.Calendar.inspect/2])
 
 * Fix `sigil_d` to correctly parse ISO Week dates that have only a single digit day
 
-# Changelog for Cldr Calendars v0.9.0
+## Cldr Calendars v0.9.0
 
 This is the changelog for Cldr Calendars v0.9.0 released on June 9th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -261,7 +271,7 @@ This is the changelog for Cldr Calendars v0.9.0 released on June 9th, 2019.  For
 
 * Depends on Elixir 1.8 and above since it requires recent `Calendar` functionality.
 
-# Changelog for Cldr Calendars v0.8.0
+## Cldr Calendars v0.8.0
 
 This is the changelog for Cldr v0.8.0 released on June 8th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -275,7 +285,7 @@ This is the changelog for Cldr v0.8.0 released on June 8th, 2019.  For older cha
 
 * Add `Cldr.Calendar.default_cldr_calendar/0`. Returns `:gregorian`
 
-# Changelog for Cldr Calendars v0.7.0
+## Cldr Calendars v0.7.0
 
 This is the changelog for Cldr Calendars v0.7.0 released on June 1st, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -289,7 +299,7 @@ This is the changelog for Cldr Calendars v0.7.0 released on June 1st, 2019.  For
 
 * Defaults the calendar to `Cldr.Calendar.Gregorian` for `Cldr.Calendar.Interval.year/2`, `Cldr.Calendar.Interval.quarter/3`, `Cldr.Calendar.Interval.month/3`, `Cldr.Calendar.Interval.week/3` and `Cldr.Calendar.Interval.day/3`
 
-# Changelog for Cldr Calendars v0.6.0
+## Cldr Calendars v0.6.0
 
 This is the changelog for Cldr Calendars v0.6.0 released on April 28th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -297,7 +307,7 @@ This is the changelog for Cldr Calendars v0.6.0 released on April 28th, 2019.  F
 
 * Remove the need for [nimble_csv](https://hex.pm/nimble_csv) as a dependency
 
-# Changelog for Cldr Calendars v0.5.0
+## Cldr Calendars v0.5.0
 
 This is the changelog for Cldr Calendars v0.5.0 released on April 21th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -309,7 +319,7 @@ This is the changelog for Cldr Calendars v0.5.0 released on April 21th, 2019.  F
 
 * Add `Cldr.Calendar.localize/6` which localises numbers as part of a date without parameter checking.  This is considered a private implementation for now.
 
-# Changelog for Cldr Calendars v0.4.1
+## Cldr Calendars v0.4.1
 
 This is the changelog for Cldr Calendars v0.4.1 released on April 19th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -317,7 +327,7 @@ This is the changelog for Cldr Calendars v0.4.1 released on April 19th, 2019.  F
 
 * Fix calculation of `days_in_month` for the last month in long year of a week-based calendar
 
-# Changelog for Cldr Calendars v0.4.0
+## Cldr Calendars v0.4.0
 
 This is the changelog for Cldr Calendars v0.4.0 released on April 19th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -333,7 +343,7 @@ This is the changelog for Cldr Calendars v0.4.0 released on April 19th, 2019.  F
 
 * Fix `Cldr.Calendar.day_of_week/1` for week-based calendars
 
-# Changelog for Cldr Calendars v0.3.0
+## Cldr Calendars v0.3.0
 
 This is the changelog for Cldr Calendars v0.3.0 released on April 16th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -368,7 +378,7 @@ iex> Cldr.Calendar.interval d, d2, :months
   %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 5, year: 2019}
 ]
 ```
-# Changelog for Cldr Calendars v0.2.0
+## Cldr Calendars v0.2.0
 
 This is the changelog for Cldr Calendars v0.2.0 released on April 14th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
@@ -388,7 +398,7 @@ This is the changelog for Cldr Calendars v0.2.0 released on April 14th, 2019.  F
 
 * Fixes calculating negative offsets for months in a week-based calendar.  Thanks to @bglusman. Closes #2.
 
-# Changelog for Cldr Calendars v0.1.0
+## Cldr Calendars v0.1.0
 
 This is the changelog for Cldr Calendars v0.1.0 released on April 5th, 2019.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
