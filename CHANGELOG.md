@@ -1,5 +1,13 @@
 # Changelog
 
+## Cldr Calendars v1.15.1
+
+This is the changelog for Cldr Calendars v1.15.1 released on August 8th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Add `Code.ensure_loaded?(Date)` when checking for whether we need to implement `Date.day_of_week/3` or `Date.day_of_week/4` since this changed from earlier Elixir versions.
+
 ## Cldr Calendars v1.15.0
 
 This is the changelog for Cldr Calendars v1.15.0 released on July 1st, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

@@ -151,7 +151,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 7, where 1 is Monday and 7 is Sunday.
 
       """
-      if function_exported?(Date, :day_of_week, 2) do
+      if Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2) do
         @dialyzer {:nowarn_function, {:day_of_week, 4}}
         @spec day_of_week(year, month, day, :default | atom()) ::
             {Calendar.day_of_week(), first_day_of_week ::
