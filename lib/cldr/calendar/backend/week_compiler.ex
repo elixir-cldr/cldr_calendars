@@ -11,7 +11,9 @@ defmodule Cldr.Calendar.Compiler.Week do
     Module.put_attribute(env.module, :calendar_config, config)
 
     quote location: :keep do
-      @moduledoc false
+      unless @moduledoc do
+        @moduledoc false
+      end
 
       @behaviour Calendar
       @behaviour Cldr.Calendar
