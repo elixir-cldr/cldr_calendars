@@ -1,5 +1,13 @@
 # Changelog
 
+## Cldr Calendars v1.15.2
+
+This is the changelog for Cldr Calendars v1.15.2 released on August 20th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix doc errors. Thanks to @maennchen for the report. Doc errors in other `ex_cldr` packages are also updated.
+
 ## Cldr Calendars v1.15.1
 
 This is the changelog for Cldr Calendars v1.15.1 released on August 8th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

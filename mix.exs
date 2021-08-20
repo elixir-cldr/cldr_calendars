@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.MixProject do
   use Mix.Project
 
-  @version "1.15.1"
+  @version "1.15.2"
 
   def project do
     [
@@ -96,7 +96,7 @@ defmodule Cldr.Calendar.MixProject do
         "LICENSE.md",
         "CHANGELOG.md"
       ],
-      skip_undefined_reference_warnings_on: ["changelog", "CHANGELOG.md"]
+      skip_undefined_reference_warnings_on: ["changelog", "CHANGELOG.md", "README.md"]
     ]
   end
 

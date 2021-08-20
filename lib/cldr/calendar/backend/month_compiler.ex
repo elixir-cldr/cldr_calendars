@@ -11,10 +11,6 @@ defmodule Cldr.Calendar.Compiler.Month do
     Module.put_attribute(env.module, :calendar_config, config)
 
     quote location: :keep do
-      unless @moduledoc do
-        @moduledoc false
-      end
-
       @behaviour Calendar
       @behaviour Cldr.Calendar
 
@@ -177,7 +173,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       @doc """
       Calculates the number of period in a given `year`. A period
       corresponds to a month in month-based calendars and
-      a week in week-based calendars..
+      a week in week-based calendars.
 
       """
       @impl true
@@ -216,7 +212,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Returns the number days in a a week.
+      Returns the number days in a week.
 
       """
       def days_in_week do
@@ -224,7 +220,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Returns a `Date.Range.t` representing
+      Returns a `t:Date.Range` representing
       a given year.
 
       """
@@ -234,7 +230,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Returns a `Date.Range.t` representing
+      Returns a `t:Date.Range` representing
       a given quarter of a year.
 
       """
@@ -245,7 +241,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Returns a `Date.Range.t` representing
+      Returns a `t:Date.Range` representing
       a given month of a year.
 
       """
@@ -255,7 +251,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Returns a `Date.Range.t` representing
+      Returns a `t:Date.Range` representing
       a given week of a year.
 
       """
@@ -269,7 +265,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       to a `year-month-day`.
 
       `date_part` can be `:years`, `:quarters`
-      or :months`.
+      or `:months`.
 
       """
       @impl true
@@ -288,9 +284,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Adds :year, :quarter, :month, :week increments
+      Adds `:year`, `:quarter`, `:month`, `:week` increments
 
-      These functions support CalendarInterval
+      These functions support `CalendarInterval`
 
       """
       def add(year, month, day, hour, minute, second, microsecond, :year, step) do
@@ -358,7 +354,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Returns the `t:Calendar.iso_days/0` format of the specified date.
+      Returns the `t:Calendar.iso_days` format of the specified date.
 
       """
       @impl true
@@ -386,7 +382,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
-      Converts the `t:Calendar.iso_days/0` format to the datetime format specified by this calendar.
+      Converts the `t:Calendar.iso_days` format to the datetime format specified by this calendar.
 
       """
       @spec naive_datetime_from_iso_days(Calendar.iso_days()) :: {

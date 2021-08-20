@@ -9,7 +9,7 @@ defmodule Cldr.Calendar.Gregorian do
   date ranges for `year`, `quarter`, `month` and `week`.
 
   When calling `Cldr.Calendar.localize/3` on a
-  `Calendar.ISO`-based date, those dates are first
+  `Calendar.ISO` -based date, those dates are first
   moved to this calendar acting as a localisation
   proxy.
 
