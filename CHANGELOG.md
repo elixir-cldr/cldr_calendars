@@ -1,5 +1,13 @@
 # Changelog
 
+## Cldr Calendars v1.15.3
+
+This is the changelog for Cldr Calendars v1.15.3 released on August 22nd, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fixes a case when `Cldr.Calendar.Kday.kday_after/1` would return the same date, not the subsequent one.
+
 ## Cldr Calendars v1.15.2
 
 This is the changelog for Cldr Calendars v1.15.2 released on August 20th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

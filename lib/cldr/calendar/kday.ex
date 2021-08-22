@@ -183,7 +183,8 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
+  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or
+    ISO days since epoch.
 
   * `k` is an integer day of the week.
 
@@ -202,6 +203,9 @@ defmodule Cldr.Calendar.Kday do
       iex> Cldr.Calendar.Kday.kday_after(~D[2017-06-30], 6)
       ~D[2017-07-01]
 
+      iex> Cldr.Calendar.Kday.kday_after(~D[2021-03-28], 7)
+      ~D[2021-04-04]
+
   """
   @spec kday_after(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
           Calendar.day() | Date.t()
@@ -215,7 +219,7 @@ defmodule Cldr.Calendar.Kday do
   end
 
   def kday_after(iso_days, k) do
-    kday_on_or_after(iso_days, k)
+    kday_on_or_after(iso_days + 1, k)
   end
 
   @doc """
@@ -224,7 +228,8 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
+  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or
+    ISO days since epoch.
 
   * `n` is the cardinal number of `k` before (negative `n`) or after
     (positive `n`) the specified date
@@ -275,7 +280,8 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or ISO days
+  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or
+    ISO days since epoch.
 
   * `k` is an integer day of the week.
 
@@ -315,7 +321,8 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
+  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or
+    ISO days since epoch.
 
   * `k` is an integer day of the week.
 
