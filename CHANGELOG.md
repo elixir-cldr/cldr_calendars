@@ -1,5 +1,15 @@
 # Changelog
 
+## Cldr Calendars v1.16.0
+
+This is the changelog for Cldr Calendars v1.16.0 released on August 27th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+**This release requires a minimum of Elixir 1.10 in line with supporting the current release and the two previous releases. Therefore Elixir 1.10, 1.11 and 1.12 are supported.**
+
+### Bug Fixes
+
+* Do not require `ex_cldr_numbers` as a dependency.
+
 ## Cldr Calendars v1.15.3
 
 This is the changelog for Cldr Calendars v1.15.3 released on August 22nd, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

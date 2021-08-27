@@ -192,20 +192,38 @@ defmodule Cldr.Calendar.Duration.Test do
               }}
   end
 
-  test "duration to_string" do
-    {:ok, duration} = Duration.new(~D[2019-01-01], ~D[2019-12-31])
+  if Code.ensure_loaded?(Cldr.List) do
+    test "duration to_string" do
+      {:ok, duration} = Duration.new(~D[2019-01-01], ~D[2019-12-31])
 
-    assert to_string(duration) ==
-             "11 months and 30 days"
+      assert to_string(duration) ==
+               "11 months and 30 days"
 
-    assert Cldr.Calendar.Duration.to_string(duration, style: :narrow) ==
-             {:ok, "11m and 30d"}
+      assert Cldr.Calendar.Duration.to_string(duration, style: :narrow) ==
+               {:ok, "11m and 30d"}
 
-    assert Cldr.Calendar.Duration.to_string(duration,
-             style: :narrow,
-             list_options: [style: :unit_narrow]
-           ) ==
-             {:ok, "11m 30d"}
+      assert Cldr.Calendar.Duration.to_string(duration,
+               style: :narrow,
+               list_options: [style: :unit_narrow]
+             ) ==
+               {:ok, "11m 30d"}
+    end
+  else
+    test "duration to_string" do
+      {:ok, duration} = Duration.new(~D[2019-01-01], ~D[2019-12-31])
+
+      assert to_string(duration) ==
+               "11 months, 30 days"
+
+      assert Cldr.Calendar.Duration.to_string(duration, style: :narrow) ==
+        {:ok, "11 months, 30 days"}
+
+      assert Cldr.Calendar.Duration.to_string(duration,
+               style: :narrow,
+               list_options: [style: :unit_narrow]
+             ) ==
+               {:ok, "11 months, 30 days"}
+    end
   end
 
   test "incompatible calendars" do
