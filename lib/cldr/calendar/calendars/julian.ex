@@ -455,24 +455,21 @@ defmodule Cldr.Calendar.Julian do
   @impl Calendar
   defdelegate time_to_day_fraction(hour, minute, second, microsecond), to: Calendar.ISO
 
-  # Calendar callbacks that appear in Elixir 1.10
-  if Version.match?(System.version(), ">= 1.10.0-dev") do
-    @doc false
-    @impl Calendar
-    defdelegate parse_date(date_string), to: Calendar.ISO
+  @doc false
+  @impl Calendar
+  defdelegate parse_date(date_string), to: Calendar.ISO
 
-    @doc false
-    @impl Calendar
-    defdelegate parse_time(time_string), to: Calendar.ISO
+  @doc false
+  @impl Calendar
+  defdelegate parse_time(time_string), to: Calendar.ISO
 
-    @doc false
-    @impl Calendar
-    defdelegate parse_utc_datetime(dt_string), to: Calendar.ISO
+  @doc false
+  @impl Calendar
+  defdelegate parse_utc_datetime(dt_string), to: Calendar.ISO
 
-    @doc false
-    @impl Calendar
-    defdelegate parse_naive_datetime(dt_string), to: Calendar.ISO
-  end
+  @doc false
+  @impl Calendar
+  defdelegate parse_naive_datetime(dt_string), to: Calendar.ISO
 
   @doc false
   @impl Calendar
