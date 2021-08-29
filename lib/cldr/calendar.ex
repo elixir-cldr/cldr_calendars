@@ -166,7 +166,8 @@ defmodule Cldr.Calendar do
   Only algorithmic calendars are considered
   in this implementation
   """
-  @callback cldr_calendar_type() :: :gregorian | :persian | :coptic | :ethiopic
+  @callback cldr_calendar_type() ::
+    :gregorian | :persian | :coptic | :ethiopic | :chinese | :japanese
 
   @doc """
   Returns the calendar basis.
