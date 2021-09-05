@@ -67,6 +67,50 @@ defmodule Cldr.Calendar.Behaviour do
       end
 
       @doc """
+      Returns the calendar year as displayed
+      on rendered calendars.
+
+      """
+      @spec calendar_year(year, month, day) :: Calendar.year()
+      @impl true
+      def calendar_year(year, month, day) do
+        year
+      end
+
+      @doc """
+      Returns the related gregorain year as displayed
+      on rendered calendars.
+
+      """
+      @spec related_gregorian_year(year, month, day) :: Calendar.year()
+      @impl true
+      def related_gregorian_year(year, month, day) do
+        year
+      end
+
+      @doc """
+      Returns the extended year as displayed
+      on rendered calendars.
+
+      """
+      @spec extended_year(year, month, day) :: Calendar.year()
+      @impl true
+      def extended_year(year, month, day) do
+        year
+      end
+
+      @doc """
+      Returns the cyclic year as displayed
+      on rendered calendars.
+
+      """
+      @spec cyclic_year(year, month, day) :: Calendar.year()
+      @impl true
+      def cyclic_year(year, month, day) do
+        year
+      end
+
+      @doc """
       Calculates the quarter of the year from the given
       `year`, `month`, and `day`.
 
@@ -526,6 +570,11 @@ defmodule Cldr.Calendar.Behaviour do
       defoverridable epoch: 0
       defoverridable cldr_calendar_type: 0
       defoverridable calendar_base: 0
+
+      defoverridable calendar_year: 3
+      defoverridable extended_year: 3
+      defoverridable related_gregorian_year: 3
+      defoverridable cyclic_year: 3
 
     end
   end
