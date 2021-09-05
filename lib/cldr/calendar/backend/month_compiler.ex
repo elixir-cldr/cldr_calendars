@@ -70,6 +70,50 @@ defmodule Cldr.Calendar.Compiler.Month do
       end
 
       @doc """
+      Returns the calendar year as displayed
+      on rendered calendars.
+
+      """
+      @spec calendar_year(year, month, day) :: Calendar.year()
+      @impl true
+      def calendar_year(year, month, day) do
+        year
+      end
+
+      @doc """
+      Returns the related gregorain year as displayed
+      on rendered calendars.
+
+      """
+      @spec related_gregorian_year(year, month, day) :: Calendar.year()
+      @impl true
+      def related_gregorian_year(year, month, day) do
+        year
+      end
+
+      @doc """
+      Returns the extended year as displayed
+      on rendered calendars.
+
+      """
+      @spec extended_year(year, month, day) :: Calendar.year()
+      @impl true
+      def extended_year(year, month, day) do
+        year
+      end
+
+      @doc """
+      Returns the cyclic year as displayed
+      on rendered calendars.
+
+      """
+      @spec cyclic_year(year, month, day) :: Calendar.year()
+      @impl true
+      def cyclic_year(year, month, day) do
+        year
+      end
+
+      @doc """
       Calculates the quarter of the year from the given `year`, `month`, and `day`.
       It is an integer from 1 to 4.
 

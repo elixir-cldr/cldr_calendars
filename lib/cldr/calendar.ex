@@ -197,6 +197,30 @@ defmodule Cldr.Calendar do
   @callback days_in_year(year :: Calendar.year()) :: Calendar.day()
 
   @doc """
+  Returns a the year in a calendar year.
+
+  """
+  @callback calendar_year(Calendar.year(), Cldr.Calendar.week(), Calendar.day()) :: Calendar.year()
+
+  @doc """
+  Returns a the extended year in a calendar year.
+
+  """
+  @callback extended_year(Calendar.year(), Calendar.month(), Calendar.day()) :: Calendar.year()
+
+  @doc """
+  Returns a the related year in a calendar year.
+
+  """
+  @callback related_gregorian_year(Calendar.year(), Calendar.month(), Calendar.day()) :: Calendar.year()
+
+  @doc """
+  Returns a the cyclic year in a calendar year.
+
+  """
+  @callback cyclic_year(Calendar.year(), Calendar.month(), Calendar.day()) :: Calendar.year()
+
+  @doc """
   Returns a date range representing the days in a
   calendar year.
 
@@ -936,6 +960,133 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Returns the `year` number for
+  a `date` that is the representation
+  used for a calendar.
+
+  The calendar year may be different the
+  the year in the struct. The struct year
+  is designed for convertability and for
+  date/time arithmetic.
+
+  The representation in rendered calendar
+  may be different. For example, in the Chinese
+  calendar the cardinal year since epoch is
+  stored in the struct but the calendar
+  year used for representation is the
+  sexigesimal year (a number between 1 and 60).
+
+  ## Arguments
+
+  * `date` is any `Date.t()`
+
+  ## Returns
+
+  * the calendar year as an
+    integer.
+
+  ## Examples
+
+      iex> Cldr.Calendar.calendar_year ~D[2019-01-01]
+      2019
+
+      iex> Cldr.Calendar.calendar_year Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      2019
+
+      iex> Cldr.Calendar.calendar_year Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      2019
+
+  """
+  @spec calendar_year(Date.t()) :: Calendar.year()
+
+  def calendar_year(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> calendar_year()
+  end
+
+  def calendar_year(date) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.calendar_year(year, month, day)
+  end
+
+  @doc """
+  Returns the extended `year` number for
+  a `date`.
+
+  ## Arguments
+
+  * `date` is any `Date.t()`
+
+  ## Returns
+
+  * the extended calendar year as an
+    integer.
+
+  ## Examples
+
+      iex> Cldr.Calendar.extended_year ~D[2019-01-01]
+      2019
+
+      iex> Cldr.Calendar.extended_year Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      2019
+
+      iex> Cldr.Calendar.extended_year Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      2019
+
+  """
+  @spec extended_year(Date.t()) :: Calendar.year()
+
+  def extended_year(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> extended_year()
+  end
+  def extended_year(date) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.extended_year(year, month, day)
+  end
+
+  @doc """
+  Returns the related gregorian `year`
+  number for a `date`.
+
+  A related gregorian year is the gregorian
+  year that is most closely associated with a
+  date that is in another calendar.
+
+  ## Arguments
+
+  * `date` is any `Date.t()`
+
+  ## Returns
+
+  * the related gregorian year as an
+    integer.
+
+  ## Examples
+
+      iex> Cldr.Calendar.related_gregorian_year ~D[2019-01-01]
+      2019
+
+      iex> Cldr.Calendar.related_gregorian_year Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      2019
+
+      iex> Cldr.Calendar.related_gregorian_year Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      2019
+
+  """
+  @spec related_gregorian_year(Date.t()) :: Calendar.year()
+
+  def related_gregorian_year(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> related_gregorian_year()
+  end
+
+  def related_gregorian_year(date) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+    calendar.related_gregorian_year(year, month, day)
+  end
+
+  @doc """
   Returns the `quarter` number for
   a `date`.
 
@@ -977,7 +1128,7 @@ defmodule Cldr.Calendar do
 
   ## Returns
 
-  * a the quarter of the year as an
+  * a the month of the year as an
     integer
 
   ## Examples
