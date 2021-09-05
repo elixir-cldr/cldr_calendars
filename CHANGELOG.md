@@ -8,6 +8,8 @@ This is the changelog for Cldr Calendars v1.17.0 released on _____, 2021.  For o
 
 * Adds support for Chinese [ex_cldr_calendars_chinese](https://hex.pm/packages/ex_cldr_calendars_chinese) and [ex_cldr_calendars_japanese](https://hex.pm/packages/ex_cldr_calendars_japanese) calendars.
 
+* Adds `Cldr.Calendar.Behaviour` that can be `use`d to factor out a lot of calendar boilerplate for many (but not all) calendar types.
+
 ## Cldr Calendars v1.16.0
 
 This is the changelog for Cldr Calendars v1.16.0 released on August 27th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
