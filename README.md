@@ -9,7 +9,7 @@
 
 # Introduction
 
-Calendars are curious things. For centuries people from all cultures have sought to impose human order on the astronomical movements of the earth and moon. Today, despite much of the world converting on the Gregorian calendar, there remain many derivative and alternative ways for humans to organize the passage of time.
+Calendars are curious things. For centuries people from all cultures have sought to impose human order on the astronomical movements of the earth and moon. Today, despite much of the world converging on the [Proleptic Gregorian](https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar) calendar, there remain many derivative and alternative ways for humans to organize the passage of time.
 
 `Cldr Calendars` builds on Elixir's standard `Calendar` module to provide additional calendars and calendar functionality intended to be of practical use.  In particular `Cdlr Calendars`:
 
