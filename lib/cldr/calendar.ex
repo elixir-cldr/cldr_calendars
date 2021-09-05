@@ -1004,9 +1004,12 @@ defmodule Cldr.Calendar do
     |> calendar_year()
   end
 
-  def calendar_year(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def calendar_year(%{year: year, month: month, day: day, calendar: calendar}) do
     calendar.calendar_year(year, month, day)
+  end
+
+  def calendar_year(%{year: year, calendar: calendar}) do
+    calendar.calendar_year(year, 1, 1)
   end
 
   @doc """
@@ -1040,9 +1043,13 @@ defmodule Cldr.Calendar do
     %{date | calendar: Cldr.Calendar.Gregorian}
     |> extended_year()
   end
-  def extended_year(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+
+  def extended_year(%{year: year, month: month, day: day, calendar: calendar}) do
     calendar.extended_year(year, month, day)
+  end
+
+  def extended_year(%{year: year, calendar: calendar}) do
+    calendar.extended_year(year, 1, 1)
   end
 
   @doc """
@@ -1081,9 +1088,55 @@ defmodule Cldr.Calendar do
     |> related_gregorian_year()
   end
 
-  def related_gregorian_year(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def related_gregorian_year(%{year: year, month: month, day: day, calendar: calendar}) do
     calendar.related_gregorian_year(year, month, day)
+  end
+
+  def related_gregorian_year(%{year: year, calendar: calendar}) do
+    calendar.related_gregorian_year(year, 1, 1)
+  end
+
+  @doc """
+  Returns the cycle `year`
+  number for a `date`.
+
+  A related gregorian year is the gregorian
+  year that is most closely associated with a
+  date that is in another calendar.
+
+  ## Arguments
+
+  * `date` is any `Date.t()`
+
+  ## Returns
+
+  * the cyclic year as an integer.
+
+  ## Examples
+
+      iex> Cldr.Calendar.cyclic_year ~D[2019-01-01]
+      2019
+
+      iex> Cldr.Calendar.cyclic_year Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      2019
+
+      iex> Cldr.Calendar.cyclic_year Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      2019
+
+  """
+  @spec cyclic_year(Date.t()) :: Calendar.year()
+
+  def cyclic_year(%{calendar: Calendar.ISO} = date) do
+    %{date | calendar: Cldr.Calendar.Gregorian}
+    |> cyclic_year()
+  end
+
+  def cyclic_year(%{year: year, month: month, day: day, calendar: calendar}) do
+    calendar.cyclic_year(year, month, day)
+  end
+
+  def cyclic_year(%{year: year, calendar: calendar}) do
+    calendar.cyclic_year(year, 1, 1)
   end
 
   @doc """
@@ -2114,6 +2167,15 @@ defmodule Cldr.Calendar do
     locale
     |> backend.eras(date.calendar.cldr_calendar_type)
     |> get_in([format, era])
+  end
+
+  def localize(date, :cyclic_year, _type, format, backend, locale) do
+    backend = Module.concat(backend, Calendar)
+    cyclic_year = cyclic_year(date)
+
+    locale
+    |> backend.cyclic_years(date.calendar.cldr_calendar_type)
+    |> get_in([format, cyclic_year])
   end
 
   @doc false

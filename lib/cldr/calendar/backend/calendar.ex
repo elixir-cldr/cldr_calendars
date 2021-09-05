@@ -29,7 +29,7 @@ defmodule Cldr.Calendar.Backend do
         alias Cldr.LanguageTag
 
         @default_calendar :gregorian
-        @acceptable_calendars [:gregorian, :persian, :coptic, :ethiopic]
+        @acceptable_calendars [:gregorian, :persian, :coptic, :ethiopic, :chinese, :japanese]
 
         @doc """
         Returns a keyword list of options than can be applied to
