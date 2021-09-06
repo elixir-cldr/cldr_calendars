@@ -2169,13 +2169,13 @@ defmodule Cldr.Calendar do
     |> get_in([format, era])
   end
 
-  def localize(date, :cyclic_year, _type, format, backend, locale) do
+  def localize(date, :cyclic_year, type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
     cyclic_year = cyclic_year(date)
 
     locale
     |> backend.cyclic_years(date.calendar.cldr_calendar_type)
-    |> get_in([format, cyclic_year])
+    |> get_in([:years, type, format, cyclic_year])
   end
 
   @doc false
@@ -2191,11 +2191,23 @@ defmodule Cldr.Calendar do
   @doc false
   def localize(date, :month, type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
-    month = month_of_year(date)
+    case month_of_year(date) do
+      month when is_number(month) ->
+        locale
+        |> backend.months(date.calendar.cldr_calendar_type)
+        |> get_in([type, format, month])
 
-    locale
-    |> backend.months(date.calendar.cldr_calendar_type)
-    |> get_in([type, format, month])
+      {month, false = _leap_month?} ->
+        locale
+        |> backend.months(date.calendar.cldr_calendar_type)
+        |> get_in([type, format, month])
+
+      {month, true = _leap_month?} ->
+        locale
+        |> backend.months(date.calendar.cldr_calendar_type)
+        |> get_in([type, format, month])
+        |> Kernel.<>(" LEAP")
+    end
   end
 
   @doc false

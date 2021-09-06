@@ -132,6 +132,18 @@ defmodule Cldr.Calendar.Backend do
           day_periods(cldr_locale_name, calendar)
         end
 
+        def cyclic_years(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
+
+        def cyclic_years(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
+          cyclic_years(cldr_locale_name, calendar)
+        end
+
+        def month_patterns(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
+
+        def month_patterns(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
+          month_patterns(cldr_locale_name, calendar)
+        end
+
         for locale_name <- Cldr.Config.known_locale_names(config) do
           date_data =
             locale_name
@@ -168,6 +180,14 @@ defmodule Cldr.Calendar.Backend do
             def day_periods(unquote(locale_name), unquote(calendar)) do
               unquote(Macro.escape(get_in(date_data, [:calendars, calendar, :day_periods])))
             end
+
+            def cyclic_years(unquote(locale_name), unquote(calendar)) do
+              unquote(Macro.escape(get_in(date_data, [:calendars, calendar, :cyclic_name_sets])))
+            end
+
+            def month_patterns(unquote(locale_name), unquote(calendar)) do
+              unquote(Macro.escape(get_in(date_data, [:calendars, calendar, :month_patterns])))
+            end
           end
 
           def eras(unquote(locale_name), calendar),
@@ -184,6 +204,12 @@ defmodule Cldr.Calendar.Backend do
 
           def day_periods(unquote(locale_name), calendar),
             do: {:error, Calendar.calendar_error(calendar)}
+
+          def cyclic_years(unquote(locale_name), calendar),
+            do: {:error, Calendar.calendar_error(calendar)}
+
+          def month_patterns(unquote(locale_name), calendar),
+            do: {:error, Calendar.calendar_error(calendar)}
         end
 
         def eras(locale, _calendar), do: {:error, Locale.locale_error(locale)}
@@ -191,6 +217,8 @@ defmodule Cldr.Calendar.Backend do
         def months(locale, _calendar), do: {:error, Locale.locale_error(locale)}
         def days(locale, _calendar), do: {:error, Locale.locale_error(locale)}
         def day_periods(locale, _calendar), do: {:error, Locale.locale_error(locale)}
+        def cyclic_years(locale, _calendar), do: {:error, Locale.locale_error(locale)}
+        def month_patterns(locale, _calendar), do: {:error, Locale.locale_error(locale)}
       end
 
       @doc """
