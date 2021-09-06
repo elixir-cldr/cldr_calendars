@@ -13,6 +13,10 @@ defmodule Cldr.Calendar.Behaviour do
     quote do
       import Cldr.Macros
 
+      @type year :: -9999..9999
+      @type month :: 1..13
+      @type day :: 1..30
+
       @days_in_week unquote(days_in_week)
       @epoch unquote(epoch)
       @epoch_day_of_week unquote(epoch_day_of_week)
