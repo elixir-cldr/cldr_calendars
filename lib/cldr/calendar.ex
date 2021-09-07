@@ -2198,10 +2198,10 @@ defmodule Cldr.Calendar do
 
     case month_of_year(date) do
       month when is_number(month) ->
-        to_string(month)
+        month
 
       {month, false = _leap_month?} ->
-        to_string(month)
+        month
 
       {month, true = _leap_month?} ->
         leap_pattern = get_in(month_patterns, [:numeric, :all, :leap])
