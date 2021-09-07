@@ -2173,9 +2173,12 @@ defmodule Cldr.Calendar do
     backend = Module.concat(backend, Calendar)
     cyclic_year = cyclic_year(date)
 
-    locale
-    |> backend.cyclic_years(date.calendar.cldr_calendar_type)
-    |> get_in([:years, type, format, cyclic_year])
+    localized_cyclic_year =
+      locale
+      |> backend.cyclic_years(date.calendar.cldr_calendar_type)
+      |> get_in([:years, type, format, cyclic_year])
+
+    localized_cyclic_year || to_string(cyclic_year)
   end
 
   @doc false
@@ -2189,8 +2192,29 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
+  def localize(date, :month, :numeric, _format, backend, locale) do
+    backend = Module.concat(backend, Calendar)
+    month_patterns = backend.month_patterns(locale, date.calendar)
+
+    case month_of_year(date) do
+      month when is_number(month) ->
+        to_string(month)
+
+      {month, false = _leap_month?} ->
+        to_string(month)
+
+      {month, true = _leap_month?} ->
+        leap_pattern = get_in(month_patterns, [:numeric, :all, :leap])
+
+        Cldr.Substitution.substitute([to_string(month)], leap_pattern)
+        |> :erlang.iolist_to_binary()
+    end
+  end
+
   def localize(date, :month, type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
+    month_patterns = backend.month_patterns(locale, date.calendar)
+
     case month_of_year(date) do
       month when is_number(month) ->
         locale
@@ -2203,10 +2227,16 @@ defmodule Cldr.Calendar do
         |> get_in([type, format, month])
 
       {month, true = _leap_month?} ->
-        locale
-        |> backend.months(date.calendar.cldr_calendar_type)
-        |> get_in([type, format, month])
-        |> Kernel.<>(" LEAP")
+        month =
+          locale
+          |> backend.months(date.calendar.cldr_calendar_type)
+          |> get_in([type, format, month])
+
+        leap_pattern =
+          get_in(month_patterns, [type, format, :leap])
+
+        Cldr.Substitution.substitute([to_string(month)], leap_pattern)
+        |> :erlang.iolist_to_binary()
     end
   end
 
