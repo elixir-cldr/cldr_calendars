@@ -63,6 +63,8 @@ defmodule Cldr.Calendar.MixProject do
 
   defp deps do
     [
+      {:cldr_utils, path: "../cldr_utils", override: true},
+
       # {:ex_cldr, "~> 2.24"},
       {:ex_cldr, path: "../cldr", override: true},
       {:ex_cldr_units, "~> 3.7", optional: true},

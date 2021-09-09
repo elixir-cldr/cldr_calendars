@@ -13,6 +13,9 @@ defmodule Cldr.Calendar.Behaviour do
     quote do
       import Cldr.Macros
 
+      @behaviour Calendar
+      @behaviour Cldr.Calendar
+
       @type year :: -9999..9999
       @type month :: 1..13
       @type day :: 1..30

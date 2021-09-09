@@ -3124,6 +3124,12 @@ defmodule Cldr.Calendar do
     Kernel.inspect(module)
   end
 
+  @doc false
+  @calendars Cldr.Config.calendars()
+  def calendars do
+    @calendars
+  end
+
   defdelegate day_of_week(date), to: Date
   defdelegate days_in_month(date), to: Date
   defdelegate months_in_year(date), to: Date
