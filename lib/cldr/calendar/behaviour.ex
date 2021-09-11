@@ -16,6 +16,8 @@ defmodule Cldr.Calendar.Behaviour do
       @behaviour Calendar
       @behaviour Cldr.Calendar
 
+      @after_compile Cldr.Calendar.Behaviour
+
       @type year :: -9999..9999
       @type month :: 1..13
       @type day :: 1..30
@@ -538,6 +540,7 @@ defmodule Cldr.Calendar.Behaviour do
       @impl Calendar
       defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
 
+      defoverridable valid_date?: 3
       defoverridable valid_time?: 4
       defoverridable naive_datetime_to_string: 7
       defoverridable date_to_string: 3
@@ -551,7 +554,6 @@ defmodule Cldr.Calendar.Behaviour do
       defoverridable naive_datetime_from_iso_days: 1
       defoverridable naive_datetime_to_iso_days: 7
 
-      defoverridable valid_date?: 3
       defoverridable year_of_era: 1
       defoverridable quarter_of_year: 3
       defoverridable month_of_year: 3
@@ -567,6 +569,7 @@ defmodule Cldr.Calendar.Behaviour do
       defoverridable days_in_year: 1
       defoverridable days_in_month: 2
       defoverridable days_in_week: 0
+
       defoverridable year: 1
       defoverridable quarter: 2
       defoverridable month: 2
@@ -584,5 +587,9 @@ defmodule Cldr.Calendar.Behaviour do
       defoverridable cyclic_year: 3
 
     end
+  end
+
+  def __after_compile__(env, _bytecode) do
+    Cldr.Calendar.Era.define_era_module(env.module)
   end
 end
