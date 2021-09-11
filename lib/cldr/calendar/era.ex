@@ -53,7 +53,6 @@ defmodule Cldr.Calendar.Era do
       cldr_calendar
       |> eras_for_calendar()
       |> eras_to_iso_days(cldr_calendar, calendar_module)
-      |> IO.inspect
       |> define_era_module(era_module)
     else
       :no_op
@@ -91,8 +90,10 @@ defmodule Cldr.Calendar.Era do
 
   defp eras_to_iso_days(eras, cldr_calendar, calendar)
       when cldr_calendar in @eras_in_gregorian_year do
+    # {epoch_year, _month, _day} = calendar.date_from_iso_days(calendar.epoch())
+
     Enum.map eras, fn [era, %{start: [year, month, day]}]  ->
-      [era, calendar.date_to_iso_days(year, month, day) - calendar.epoch()]
+      [era, calendar.date_to_iso_days(year, month, day)]
     end
   end
 
@@ -108,13 +109,16 @@ defmodule Cldr.Calendar.Era do
 
   defp eras_to_iso_days(eras, cldr_calendar, _calendar)
       when cldr_calendar in @eras_in_julian_calendar do
+    #{epoch_year, _month, _day} =
+    #  Cldr.Calendar.Julian.date_from_iso_days(Cldr.Calendar.Julian.epoch())
+
     Enum.map eras, fn [era, %{start: [year, month, day]}]  ->
       [era, Cldr.Calendar.Julian.date_to_iso_days(year, month, day)]
     end
   end
 
-  defp eras_to_iso_days(eras, cldr_calendar, calendar) do
-    IO.inspect {cldr_calendar, calendar, eras}
+  defp eras_to_iso_days(_eras, _cldr_calendar, _calendar) do
+   #  IO.inspect {cldr_calendar, calendar, eras}
   end
 
   defp define_era_module(eras, module) do
