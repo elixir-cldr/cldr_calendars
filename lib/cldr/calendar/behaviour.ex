@@ -5,8 +5,8 @@ defmodule Cldr.Calendar.Behaviour do
 
     {date, []} = Code.eval_quoted(epoch)
     epoch = Date.to_gregorian_days(date)
-    epoch_day_of_week = Date.day_of_week(date)
 
+    epoch_day_of_week  = Date.day_of_week(date)
     cldr_calendar_type = Keyword.get(opts, :cldr_calendar_type, :gregorian)
     cldr_calendar_base = Keyword.get(opts, :cldr_calendar_base, :month)
 
@@ -20,7 +20,7 @@ defmodule Cldr.Calendar.Behaviour do
 
       @type year :: -9999..9999
       @type month :: 1..13
-      @type day :: 1..30
+      @type day :: 1..31
 
       @days_in_week unquote(days_in_week)
       @epoch unquote(epoch)
@@ -51,7 +51,7 @@ defmodule Cldr.Calendar.Behaviour do
       end
 
       @doc """
-      Determines if the date given is valid according to
+      Determines if the `date` given is valid according to
       this calendar.
 
       """
@@ -64,15 +64,26 @@ defmodule Cldr.Calendar.Behaviour do
       Calculates the year and era from the given `year`.
 
       """
-      @spec year_of_era(year) :: {year, era :: 0..1}
+      @spec year_of_era(year) :: {year :: Calendar.year(), era :: Calendar.era()}
       @impl true
 
-      def year_of_era(year) when year >= 0 do
-        {year, 1}
+      @era_module Cldr.Calendar.Era.era_module(unquote(cldr_calendar_type))
+
+      def year_of_era(year) do
+        iso_days = date_to_iso_days(year, 1, 1)
+        @era_module.year_of_era(iso_days, year)
       end
 
-      def year_of_era(year) when year < 0 do
-        {abs(year), 0}
+      @doc """
+      Calculates the year and era from the given `date`.
+
+      """
+      @spec year_of_era(year, month, day) :: {year :: Calendar.year(), era :: Calendar.era()}
+      @impl true
+
+      def year_of_era(year, month, day) do
+        iso_days = date_to_iso_days(year, month, day)
+        @era_module.year_of_era(iso_days, year)
       end
 
       @doc """

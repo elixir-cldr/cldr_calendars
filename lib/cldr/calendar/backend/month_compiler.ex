@@ -57,6 +57,7 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       @doc """
       Calculates the year and era from the given `year`.
+
       The ISO calendar has two eras: the current era which
       starts in year 1 and is defined as era "1". And a
       second era for those years less than 1 defined as
@@ -66,6 +67,22 @@ defmodule Cldr.Calendar.Compiler.Month do
       @spec year_of_era(year) :: {year, era :: non_neg_integer}
       @impl true
       def year_of_era(year) do
+        Month.year_of_era(year, __config__())
+      end
+
+      @doc """
+      Calculates the year and era from the given `year`,
+      `month` and `day`.
+
+      The ISO calendar has two eras: the current era which
+      starts in year 1 and is defined as era "1". And a
+      second era for those years less than 1 defined as
+      era "0".
+
+      """
+      @spec year_of_era(year, month, day) :: {year, era :: non_neg_integer}
+      @impl true
+      def year_of_era(year, _month, _day) do
         Month.year_of_era(year, __config__())
       end
 

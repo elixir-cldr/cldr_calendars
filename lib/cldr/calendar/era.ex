@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.Era do
   @moduledoc """
   Encapsulates the era information for
-  known CLDR calendars
+  known CLDR calendars.
 
   The [era data in CLDR](https://github.com/unicode-org/cldr/blob/master/common/supplemental/supplementalData.xml)
   is presented in different calendars at different times. The current
@@ -16,7 +16,7 @@ defmodule Cldr.Calendar.Era do
     inclusive its Gregorian year but lunar month and day.
 
   * For earlier eras it is Julian year with lunar month and
-    day (but the Julian and Gregorian years coincide, there are
+    day (but the Julian and Gregorian years coincide; there are
     no era dates where the Gregorian year would be different
     to the Julian year).
 
@@ -28,7 +28,7 @@ defmodule Cldr.Calendar.Era do
   * For Coptic, Ethiopic and Islamic calendars the eras are
     Julian dates (Julian day, month and year).
 
-  * Perian era is Julian year with persian month and day.
+  * Persian era is Julian year with persian month and day.
 
   * Gregorian is, well, Gregorian date.
 
@@ -41,7 +41,7 @@ defmodule Cldr.Calendar.Era do
   #
   # If the calendar does not have a known CLDR
   # calendar name associated with it then no
-  # module is produced
+  # module is produced and no error is returned.
 
   @doc false
   def define_era_module(calendar_module) do
@@ -53,7 +53,7 @@ defmodule Cldr.Calendar.Era do
       cldr_calendar
       |> eras_for_calendar()
       |> eras_to_iso_days(cldr_calendar, calendar_module)
-      |> define_era_module(era_module)
+      |> define_era_module(calendar_module, era_module)
     else
       :no_op
     end
@@ -69,15 +69,19 @@ defmodule Cldr.Calendar.Era do
     Cldr.Config.calendars()
     |> Map.fetch!(calendar)
     |> Map.fetch!(:eras)
-    |> Enum.reverse
+    |> Enum.reverse()
   end
 
   defp eras_to_iso_days(eras, :japanese, calendar) do
     Enum.map eras, fn
       [era, %{start: [year, month, day]}] when year >= 1912 ->
-        [era, Cldr.Calendar.Gregorian.date_to_iso_days(year, month, day)]
+        [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, day), year: year]
       [era, %{start: [year, month, day]}]  ->
-        [era, calendar.date_to_iso_days(year, month, day)]
+        [era, start: calendar.date_to_iso_days(year, month, day), year: year]
+      [era, %{end: [year, month, day]}] when year >= 1912 ->
+        [era, end: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, day), year: year]
+      [era, %{end: [year, month, day]}]  ->
+        [era, end: calendar.date_to_iso_days(year, month, day), year: year]
     end
   end
 
@@ -90,10 +94,11 @@ defmodule Cldr.Calendar.Era do
 
   defp eras_to_iso_days(eras, cldr_calendar, calendar)
       when cldr_calendar in @eras_in_gregorian_year do
-    # {epoch_year, _month, _day} = calendar.date_from_iso_days(calendar.epoch())
-
-    Enum.map eras, fn [era, %{start: [year, month, day]}]  ->
-      [era, calendar.date_to_iso_days(year, month, day)]
+    Enum.map eras, fn
+      [era, %{start: [year, month, day]}]  ->
+        [era, start: calendar.date_to_iso_days(year, month, day), year: year]
+      [era, %{end: [year, month, day]}]  ->
+        [era, end: calendar.date_to_iso_days(year, month, day), year: year]
     end
   end
 
@@ -109,24 +114,80 @@ defmodule Cldr.Calendar.Era do
 
   defp eras_to_iso_days(eras, cldr_calendar, _calendar)
       when cldr_calendar in @eras_in_julian_calendar do
-    #{epoch_year, _month, _day} =
-    #  Cldr.Calendar.Julian.date_from_iso_days(Cldr.Calendar.Julian.epoch())
-
-    Enum.map eras, fn [era, %{start: [year, month, day]}]  ->
-      [era, Cldr.Calendar.Julian.date_to_iso_days(year, month, day)]
+    Enum.map eras, fn
+      [era, %{start: [year, month, day]}]  ->
+        [era, start: Cldr.Calendar.Julian.date_to_iso_days(year, month, day), year: year]
+      [era, %{end: [year, month, day]}]  ->
+        [era, end: Cldr.Calendar.Julian.date_to_iso_days(year, month, day), year: year]
     end
   end
 
-  defp eras_to_iso_days(_eras, _cldr_calendar, _calendar) do
-   #  IO.inspect {cldr_calendar, calendar, eras}
+  defp define_era_module(eras, calendar, module) do
+    module_body = [moduledoc(module), default(calendar) | function_body(eras)]
+    Module.create(module, module_body, Macro.Env.location(__ENV__))
   end
 
-  defp define_era_module(eras, module) do
-    {eras, module}
+  defp moduledoc(module) do
+    quote do
+      @moduledoc """
+      Implements a `year_of_era/{1, 2}` function to return
+      the year of era and the era number for the
+      `#{inspect(unquote(module))}` calendar.
+
+      This module is generated at compile time from
+      CLDR era data.
+
+      """
+
+      @doc false
+      @spec year_of_era(integer(), Calendar.year()) :: {Calendar.year(), Calendar.era()}
+    end
   end
 
-  defp era_module(calendar) do
-    module = to_string(calendar) |> String.capitalize()
-    Module.concat(Cldr.Calendar.Era, module)
+  defp default(calendar) do
+    quote do
+      @doc """
+      Returns the year of era and the era number
+      for a given date in days since epoch.
+
+      """
+      @spec year_of_era(integer()) :: {Calendar.year(), Calendar.era()}
+
+      def year_of_era(iso_days) do
+        {year, _month, _day} = unquote(calendar).date_from_iso_days(iso_days)
+        year_of_era(iso_days, year)
+      end
+    end
+  end
+
+  defp function_body(eras) do
+    for [era, {position, date}, {:year, era_year}] <- eras do
+      case position do
+        :start ->
+          quote do
+            def year_of_era(iso_days, year) when iso_days >= unquote(date) do
+              {year - unquote(era_year) + 1, unquote(era)}
+            end
+          end
+        :end ->
+          quote do
+            def year_of_era(iso_days, year) when iso_days <= unquote(date) do
+              {year - unquote(era_year) + 1, unquote(era)}
+            end
+          end
+      end
+    end
+  end
+
+  @doc """
+  Return the era module for a given
+  cldr calendar type.
+
+  """
+  @era_module_base Cldr.Calendar.Era
+
+  def era_module(cldr_calendar) do
+    module = to_string(cldr_calendar) |> String.capitalize()
+    Module.concat(@era_module_base, module)
   end
 end

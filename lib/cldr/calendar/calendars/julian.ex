@@ -81,8 +81,19 @@ defmodule Cldr.Calendar.Julian do
     {year, 1}
   end
 
-  def year_of_era(year) when year < 0 do
+  def year_of_era(year) when year <= 0 do
     {abs(year), 0}
+  end
+
+  @doc """
+  Calculates the year and era from the given `year`,
+  `month` and `day`.
+
+  """
+  @spec year_of_era(year, month, day) :: {year :: Calendar.year(), era :: 0..1}
+  @impl true
+  def year_of_era(year, _month, _day) do
+    year_of_era(year)
   end
 
   @doc """

@@ -70,6 +70,22 @@ defmodule Cldr.Calendar.Compiler.Week do
       end
 
       @doc """
+      Calculates the year and era from the given `year`,
+      `month` and `day`.
+
+      The ISO calendar has two eras: the current era which
+      starts in year 1 and is defined as era "1". And a
+      second era for those years less than 1 defined as
+      era "0".
+
+      """
+      @spec year_of_era(year, month, day) :: {year, era :: non_neg_integer}
+      @impl true
+      def year_of_era(year, _week, _day) do
+        Week.year_of_era(year, __config__())
+      end
+
+      @doc """
       Returns the calendar year as displayed
       on rendered calendars.
 

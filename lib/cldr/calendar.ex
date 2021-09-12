@@ -185,6 +185,19 @@ defmodule Cldr.Calendar do
   @callback periods_in_year(year :: Calendar.year()) :: week() | Calendar.month()
 
   @doc """
+  Returns the year of era and the era number from a given
+  year, month and day.
+
+  This callback is in addition to the callback `year_of_era/1`
+  defined in the `Calendar` behaviour. It is required because
+  at least one calendar (the Japanese calendar) can change eras
+  on any day of the year.
+
+  """
+  @callback year_of_era(Calendar.year(), Calendar.month(), Calendar.day()) ::
+    {year :: Calendar.year(), era :: Calendar.era()}
+
+  @doc """
   Returns the number of weeks in a year
 
   """
