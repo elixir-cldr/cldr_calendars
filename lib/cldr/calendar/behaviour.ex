@@ -21,6 +21,8 @@ defmodule Cldr.Calendar.Behaviour do
       @after_compile Cldr.Calendar.Behaviour
 
       @days_in_week unquote(days_in_week)
+      @quarters_in_year 4
+
       @epoch unquote(epoch)
       @epoch_day_of_week unquote(epoch_day_of_week)
 
@@ -137,22 +139,19 @@ defmodule Cldr.Calendar.Behaviour do
       end
 
       @doc """
-      Calculates the quarter of the year from the given
+      Returns the quarter of the year from the given
       `year`, `month`, and `day`.
-
-      By default this function always returns
-      `{:error, :not_defined}`.
 
       """
       @spec quarter_of_year(Calendar.year, Calendar.month, Calendar.day) :: quarter()
       @impl true
 
-      def quarter_of_year(_year, _month, _day) do
-        {:error, :not_defined}
+      def quarter_of_year(year, month, day) do
+        ceil(month / (months_in_year(year) / @quarters_in_year))
       end
 
       @doc """
-      Calculates the month of the year from the given
+      Returns the month of the year from the given
       `year`, `month`, and `day`.
 
       """

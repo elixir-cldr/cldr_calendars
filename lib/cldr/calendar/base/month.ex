@@ -35,9 +35,8 @@ defmodule Cldr.Calendar.Base.Month do
     Calendar.ISO.year_of_era(year)
   end
 
-  def quarter_of_year(_year, month, _day, _config) do
-    Float.ceil(month / @months_in_quarter)
-    |> trunc
+  def quarter_of_year(year, month, _day, config) do
+    ceil(month / (months_in_year(year, config) / @quarters_in_year))
   end
 
   def month_of_year(_year, month, _day, _config) do
@@ -119,7 +118,7 @@ defmodule Cldr.Calendar.Base.Month do
     first_day = first_gregorian_day_of_year(year, config)
     last_day = last_gregorian_day_of_year(year, config)
 
-    Float.ceil((last_day - first_day) / @days_in_week) |> trunc
+    ceil((last_day - first_day) / @days_in_week)
   end
 
   def weeks_in_year(year, config) do
