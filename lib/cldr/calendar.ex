@@ -86,6 +86,12 @@ defmodule Cldr.Calendar do
   @type day_of_week :: 1..7
 
   @typedoc """
+  Boolean indicating is this is a leap month
+
+  """
+  @type leap_month? :: boolean()
+
+  @typedoc """
   The precision for date intervals
   """
   @type precision :: :years | :quarters | :months | :weeks | :days
@@ -120,7 +126,7 @@ defmodule Cldr.Calendar do
               month :: Calendar.month() | Cldr.Calendar.week(),
               day :: Calendar.day()
             ) ::
-              Calendar.month()
+              Calendar.month() | {Calendar.month(), leap_month?()}
 
   @doc """
   Returns a tuple of `{year, week_in_year}` for a given `year`, `month` or `week`, and `day`
@@ -167,7 +173,7 @@ defmodule Cldr.Calendar do
   in this implementation
   """
   @callback cldr_calendar_type() ::
-    :gregorian | :persian | :coptic | :ethiopic | :chinese | :japanese
+    :gregorian | :persian | :coptic | :ethiopic | :chinese | :japanese | :dangi
 
   @doc """
   Returns the calendar basis.
@@ -213,46 +219,53 @@ defmodule Cldr.Calendar do
   Returns a the year in a calendar year.
 
   """
-  @callback calendar_year(Calendar.year(), Cldr.Calendar.week(), Calendar.day()) :: Calendar.year()
+  @callback calendar_year(Calendar.year(), Cldr.Calendar.week(), Calendar.day()) ::
+    Calendar.year()
 
   @doc """
   Returns a the extended year in a calendar year.
 
   """
-  @callback extended_year(Calendar.year(), Calendar.month(), Calendar.day()) :: Calendar.year()
+  @callback extended_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+    Calendar.year()
 
   @doc """
   Returns a the related year in a calendar year.
 
   """
-  @callback related_gregorian_year(Calendar.year(), Calendar.month(), Calendar.day()) :: Calendar.year()
+  @callback related_gregorian_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+    Calendar.year()
 
   @doc """
   Returns a the cyclic year in a calendar year.
 
   """
-  @callback cyclic_year(Calendar.year(), Calendar.month(), Calendar.day()) :: Calendar.year()
+  @callback cyclic_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+    Calendar.year()
 
   @doc """
   Returns a date range representing the days in a
   calendar year.
 
   """
-  @callback year(year :: Calendar.year()) :: Date.Range.t()
+  @callback year(year :: Calendar.year()) ::
+    Date.Range.t() | {:error, :not_defined}
 
   @doc """
   Returns a date range representing the days in a
   given quarter for a calendar year.
 
   """
-  @callback quarter(year :: Calendar.year(), quarter :: Cldr.Calendar.quarter()) :: Date.Range.t()
+  @callback quarter(year :: Calendar.year(), quarter :: Cldr.Calendar.quarter()) ::
+    Date.Range.t() | {:error, :not_defined}
 
   @doc """
   Returns a date range representing the days in a
   given month for a calendar year.
 
   """
-  @callback month(year :: Calendar.year(), month :: Calendar.month()) :: Date.Range.t()
+  @callback month(year :: Calendar.year(), month :: Calendar.month()) ::
+    Date.Range.t() | {:error, :not_defined}
 
   @doc """
   Returns a date range representing the days in a
@@ -260,7 +273,7 @@ defmodule Cldr.Calendar do
 
   """
   @callback week(year :: Calendar.year(), week :: week()) ::
-              Date.Range.t() | {:error, :not_defined}
+    Date.Range.t() | {:error, :not_defined}
 
   @doc """
   Increments a `Date.t` or `Date.Range.t` by a specified positive

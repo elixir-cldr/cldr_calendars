@@ -67,7 +67,12 @@ defmodule Cldr.Calendar.MixProject do
 
       # {:ex_cldr, "~> 2.24"},
       {:ex_cldr, path: "../cldr", override: true},
-      {:ex_cldr_units, "~> 3.7", optional: true},
+
+      {:ex_cldr_units, path: "../cldr_units", override: true},
+      # {:ex_cldr_units, "~> 3.7", optional: true},
+
+      {:ex_cldr_lists, path: "../cldr_lists", override: true},
+
       {:tz, "~> 0.9", optional: true, only: [:dev, :test]},
       {:calendar_interval, "~> 0.2", optional: true},
       {:jason, "~> 1.0"},

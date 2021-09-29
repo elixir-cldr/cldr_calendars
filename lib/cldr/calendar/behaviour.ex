@@ -7,6 +7,8 @@ defmodule Cldr.Calendar.Behaviour do
 
     epoch_day_of_week  = Date.day_of_week(date)
     days_in_week = Keyword.get(opts, :days_in_week, 7)
+    first_day_of_week = Keyword.get(opts, :first_day_of_week, 1)
+
     cldr_calendar_type = Keyword.get(opts, :cldr_calendar_type, :gregorian)
     cldr_calendar_base = Keyword.get(opts, :cldr_calendar_base, :month)
     months_in_ordinary_year = Keyword.get(opts, :months_in_ordinary_year, 12)
@@ -25,15 +27,26 @@ defmodule Cldr.Calendar.Behaviour do
 
       @epoch unquote(epoch)
       @epoch_day_of_week unquote(epoch_day_of_week)
+      @first_day_of_week unquote(first_day_of_week)
+      @last_day_of_week Cldr.Math.amod(@first_day_of_week + @days_in_week - 1, @days_in_week)
 
       @months_in_ordinary_year unquote(months_in_ordinary_year)
       @months_in_leap_year unquote(months_in_leap_year)
 
-      @typedoc "Quarter of year"
-      @type quarter :: 1..4
-
       def epoch do
         @epoch
+      end
+
+      def epoch_day_of_week do
+        @epoch_day_of_week
+      end
+
+      def first_day_of_week do
+        @first_day_of_week
+      end
+
+      def last_day_of_week do
+        @last_day_of_week
       end
 
       @doc """
@@ -111,6 +124,7 @@ defmodule Cldr.Calendar.Behaviour do
 
       """
       @spec related_gregorian_year(Calendar.year, Calendar.month, Calendar.day) :: Calendar.year()
+
       @impl true
       def related_gregorian_year(year, month, day) do
         year
@@ -122,6 +136,7 @@ defmodule Cldr.Calendar.Behaviour do
 
       """
       @spec extended_year(Calendar.year, Calendar.month, Calendar.day) :: Calendar.year()
+
       @impl true
       def extended_year(year, month, day) do
         year
@@ -133,6 +148,7 @@ defmodule Cldr.Calendar.Behaviour do
 
       """
       @spec cyclic_year(Calendar.year, Calendar.month, Calendar.day) :: Calendar.year()
+
       @impl true
       def cyclic_year(year, month, day) do
         year
@@ -143,9 +159,10 @@ defmodule Cldr.Calendar.Behaviour do
       `year`, `month`, and `day`.
 
       """
-      @spec quarter_of_year(Calendar.year, Calendar.month, Calendar.day) :: quarter()
-      @impl true
+      @spec quarter_of_year(Calendar.year, Calendar.month, Calendar.day) ::
+        Cldr.Calendar.quarter()
 
+      @impl true
       def quarter_of_year(year, month, day) do
         ceil(month / (months_in_year(year) / @quarters_in_year))
       end
@@ -156,7 +173,7 @@ defmodule Cldr.Calendar.Behaviour do
 
       """
       @spec month_of_year(Calendar.year, Calendar.month, Calendar.day) ::
-        Calendar.month()
+        Calendar.month() | {Calendar.month, Cldr.Calendar.leap_month?()}
 
       @impl true
       def month_of_year(_year, month, _day) do
@@ -243,35 +260,61 @@ defmodule Cldr.Calendar.Behaviour do
         this_day - first_day + 1
       end
 
-      if Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2) do
-        @last_day_of_week 5
-
-        @spec day_of_week(Calendar.year, Calendar.month, Calendar.day, :default | atom()) ::
-                {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
-                 last_day_of_week :: non_neg_integer()}
-
+      if !(Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2)) do
         @impl true
-        def day_of_week(year, month, day, :default) do
-          days = date_to_iso_days(year, month, day)
-          days_after_saturday = rem(days, @days_in_week)
-          day = Cldr.Math.amod(days_after_saturday + @epoch_day_of_week, @days_in_week)
-
-          {day, @epoch_day_of_week, @last_day_of_week}
-        end
-
-        defoverridable day_of_week: 4
-      else
-        @spec day_of_week(Calendar.year, Calendar.month, Calendar.day) :: 1..7
-
-        @impl true
-        def day_of_week(year, month, day) do
-          days = date_to_iso_days(year, month, day)
-          days_after_saturday = rem(days, @days_in_week)
-          Cldr.Math.amod(days_after_saturday + @epoch_day_of_week, @days_in_week)
-        end
-
-        defoverridable day_of_week: 3
       end
+
+      @spec day_of_week(Calendar.year, Calendar.month, Calendar.day) :: 1..7
+      def day_of_week(year, month, day) do
+        day_of_week(year, month, day, :default)
+      end
+
+      @spec day_of_week(Calendar.year, Calendar.month, Calendar.day, :default | atom()) ::
+              {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
+               last_day_of_week :: non_neg_integer()}
+
+      if Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2) do
+        @impl true
+      end
+
+      def day_of_week(year, month, day, starting_on) do
+        days = date_to_iso_days(year, month, day)
+        day = Integer.mod(days + day_of_week_offset(starting_on), @days_in_week) + 1
+
+        {day, @first_day_of_week, @last_day_of_week}
+      end
+
+      # This is the offset from the day of the week
+      # for the epoch to the subject day
+      # For the Gregorian calendar, the epoch of
+      # 0-1-1 is Saturday (day 6)
+
+      defp day_of_week_offset(:default),
+        do: Integer.mod(@epoch_day_of_week - @first_day_of_week + 1, @days_in_week)
+
+      defp day_of_week_offset(:wednesday),
+        do: Integer.mod(@epoch_day_of_week - 2, @days_in_week)
+
+      defp day_of_week_offset(:thursday),
+        do: Integer.mod(@epoch_day_of_week - 3, @days_in_week)
+
+      defp day_of_week_offset(:friday),
+        do: Integer.mod(@epoch_day_of_week - 4, @days_in_week)
+
+      defp day_of_week_offset(:saturday),
+        do: Integer.mod(@epoch_day_of_week - 5, @days_in_week)
+
+      defp day_of_week_offset(:sunday),
+        do: Integer.mod(@epoch_day_of_week - 6, @days_in_week)
+
+      defp day_of_week_offset(:monday),
+        do: Integer.mod(@epoch_day_of_week, @days_in_week)
+
+      defp day_of_week_offset(:tuesday),
+        do: Integer.mod(@epoch_day_of_week - 1, @days_in_week)
+
+      defoverridable day_of_week: 3
+      defoverridable day_of_week: 4
 
       @doc """
       Returns the number of periods in a given
