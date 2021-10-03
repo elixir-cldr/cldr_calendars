@@ -277,41 +277,12 @@ defmodule Cldr.Calendar.Behaviour do
         @impl true
       end
 
-      def day_of_week(year, month, day, starting_on) do
+      def day_of_week(year, month, day, :default = starting_on) do
         days = date_to_iso_days(year, month, day)
-        day = Integer.mod(days + day_of_week_offset(starting_on), @days_in_week) + 1
+        day_of_week = Cldr.Math.amod(days - 1, @days_in_week)
 
-        {day, @first_day_of_week, @last_day_of_week}
+        {day_of_week, @first_day_of_week, @last_day_of_week}
       end
-
-      # This is the offset from the day of the week
-      # for the epoch to the subject day
-      # For the Gregorian calendar, the epoch of
-      # 0-1-1 is Saturday (day 6)
-
-      defp day_of_week_offset(:default),
-        do: Integer.mod(@epoch_day_of_week - @first_day_of_week + 1, @days_in_week)
-
-      defp day_of_week_offset(:wednesday),
-        do: Integer.mod(@epoch_day_of_week - 2, @days_in_week)
-
-      defp day_of_week_offset(:thursday),
-        do: Integer.mod(@epoch_day_of_week - 3, @days_in_week)
-
-      defp day_of_week_offset(:friday),
-        do: Integer.mod(@epoch_day_of_week - 4, @days_in_week)
-
-      defp day_of_week_offset(:saturday),
-        do: Integer.mod(@epoch_day_of_week - 5, @days_in_week)
-
-      defp day_of_week_offset(:sunday),
-        do: Integer.mod(@epoch_day_of_week - 6, @days_in_week)
-
-      defp day_of_week_offset(:monday),
-        do: Integer.mod(@epoch_day_of_week, @days_in_week)
-
-      defp day_of_week_offset(:tuesday),
-        do: Integer.mod(@epoch_day_of_week - 1, @days_in_week)
 
       defoverridable day_of_week: 3
       defoverridable day_of_week: 4
