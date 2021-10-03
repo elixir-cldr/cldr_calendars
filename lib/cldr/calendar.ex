@@ -939,31 +939,41 @@ defmodule Cldr.Calendar do
   * a the year since the start of the era and
     the era of the year as a tuple
 
-  ## Note
+  ## Notes
 
-  Unlike `Date.year_of_era/1`, this function supports
-  eras that change part way through the calendar
-  year. This is common in the Japanese calendar where
-  the eras change when a new emperor is ordained which
-  can happen at any time of year. Therefore this
-  function is consistent with `Date.year_of_era/1` for
-  the Gregorian and related calendars, but returns a
-  different (and more accurate) result for the Japanese
-  calendar.
+  1. Unlike `Date.year_of_era/1`, this function supports
+    eras that change part way through the calendar
+    year. This is common in the Japanese calendar where
+    the eras change when a new emperor is ordained which
+    can happen at any time of year. Therefore this
+    function is consistent with `Date.year_of_era/1` for
+    the Gregorian and related calendars, but returns a
+    different (and more accurate) result for the Japanese
+    calendar.
+
+  2. This is also true for fiscal year calendars that
+    start on a day other than January 1st. The year of
+    era will depend on whether the calendar was configured
+    with `year: :beginning`, `year: :ending` or `year: :majority`
 
   ## Examples
 
       iex> Cldr.Calendar.year_of_era ~D[2019-01-01]
-      {737060, 1}
+      {2019, 1}
 
       iex> Cldr.Calendar.year_of_era Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
-      {737093, 1}
+      {2019, 1}
 
       iex> Cldr.Calendar.year_of_era Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
-      {737456, 1}
+      {2019, 1}
 
   """
   @spec year_of_era(Date.t()) :: {Calendar.day(), Calendar.era()}
+
+  def year_of_era(%{calendar: Calendar.ISO} = date) do
+    %{year: year, month: month, day: day} = date
+    Cldr.Calendar.Gregorian.year_of_era(year, month, day)
+  end
 
   def year_of_era(date) do
     %{year: year, month: month, day: day, calendar: calendar} = date

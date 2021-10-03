@@ -25,7 +25,27 @@ defmodule Cldr.Calendar.Base.Week do
     week <= weeks_in_year(year, config) and day in 1..days_in_week()
   end
 
-  def year_of_era(year, config) do
+  # Year of era assumes that the era transitions are always aligned
+  # to the calendar year. But for 445 type calendar and country fiscal
+  # calendars this is not necessarily true. So we have to decide whether
+  # the beginning or ending Gregorian year is the year we consider.
+
+  def year_of_era(year, %{year: :ending} = config) do
+    {_, year} = Cldr.Calendar.start_end_gregorian_years(year, config)
+    Calendar.ISO.year_of_era(year)
+  end
+
+  def year_of_era(year, %{year: :beginning} = config) do
+    {year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)
+    Calendar.ISO.year_of_era(year)
+  end
+
+  def year_of_era(year, %{year: :majority, month_of_year: starts} = config) when starts <= 6 do
+    {year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)
+    Calendar.ISO.year_of_era(year)
+  end
+
+  def year_of_era(year, %{year: :majority} = config) do
     {_, year} = Cldr.Calendar.start_end_gregorian_years(year, config)
     Calendar.ISO.year_of_era(year)
   end
