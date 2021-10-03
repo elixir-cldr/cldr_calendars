@@ -1,8 +1,8 @@
 # Changelog
 
-## Cldr Calendars v1.17.0
+## Cldr Calendars v1.17.0-rc.0
 
-This is the changelog for Cldr Calendars v1.17.0 released on _____, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+This is the changelog for Cldr Calendars v1.17.0-rc.0 released on October 3rd, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Enhancements
 
