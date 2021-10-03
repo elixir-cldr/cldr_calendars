@@ -148,7 +148,7 @@ defmodule Cldr.Calendar.Era do
     quote do
       @doc """
       Returns the year of era and the era number
-      for a given date in days since epoch.
+      for a given date in `iso_days`.
 
       """
       @spec year_of_era(integer()) :: {Calendar.year(), Calendar.era()}
@@ -157,6 +157,18 @@ defmodule Cldr.Calendar.Era do
         {year, _month, _day} = unquote(calendar).date_from_iso_days(iso_days)
         year_of_era(iso_days, year)
       end
+
+      @doc """
+      Returns the day of era and the era number
+      for a given date in `iso_days`.
+
+      """
+      @spec day_of_era(integer()) :: {Calendar.day(), Calendar.era()}
+
+      def day_of_era(iso_days)
+
+      @doc false
+      def era(iso_days)
     end
   end
 
@@ -165,14 +177,34 @@ defmodule Cldr.Calendar.Era do
       case position do
         :start ->
           quote do
+            def year_of_era(iso_days, year) when iso_days >= unquote(date) and year < unquote(era_year) do
+              {1, unquote(era)}
+            end
+
             def year_of_era(iso_days, year) when iso_days >= unquote(date) do
               {year - unquote(era_year) + 1, unquote(era)}
+            end
+
+            def day_of_era(iso_days) when iso_days >= unquote(date) do
+              {iso_days - unquote(date) + 1, unquote(era)}
+            end
+
+            def era(iso_days) when iso_days >= unquote(date) do
+              {unquote(date), nil, unquote(era)}
             end
           end
         :end ->
           quote do
             def year_of_era(iso_days, year) when iso_days <= unquote(date) do
               {year - unquote(era_year) + 1, unquote(era)}
+            end
+
+            def day_of_era(iso_days) when iso_days <= unquote(date) do
+              {iso_days + 1, unquote(era)}
+            end
+
+            def era(iso_days) when iso_days >= unquote(date) do
+              {nil, unquote(date), unquote(era)}
             end
           end
       end

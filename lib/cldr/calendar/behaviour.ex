@@ -241,9 +241,8 @@ defmodule Cldr.Calendar.Behaviour do
 
       @impl true
       def day_of_era(year, month, day) do
-        {_, era} = year_of_era(year)
-        days = date_to_iso_days(year, month, day)
-        {days + epoch(), era}
+        iso_days = date_to_iso_days(year, month, day)
+        @era_module.day_of_era(iso_days)
       end
 
       @doc """

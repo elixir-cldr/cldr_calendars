@@ -8,6 +8,8 @@ This is the changelog for Cldr Calendars v1.17.0 released on _____, 2021.  For o
 
 * Add support for Chinese, Japanese and Korean [lunisolar calendars](https://hex.pm/packages/ex_cldr_calendars_lunisolar).
 
+* Adds `Cldr.Calendar.year_of_era/1` that supports eras that might change at any time during a calendar year. This is primarily applicable to the Japanese calendar.
+
 * Add `Cldr.Calendar.Behaviour` that can be `use`d to factor out a lot of calendar boilerplate for many (but not all) calendar types.
 
 * Add `year_of_era/3` as a callback in the `Cldr.Calendar` behaviour. This is required because at least one calendar (the Japanese) can change era on any day of the year.
