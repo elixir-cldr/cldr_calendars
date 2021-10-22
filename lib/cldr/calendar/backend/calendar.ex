@@ -155,7 +155,7 @@ defmodule Cldr.Calendar.Backend do
         for locale_name <- Cldr.Config.known_locale_names(config) do
           date_data =
             locale_name
-            |> Cldr.Config.get_locale(config)
+            |> Cldr.Locale.Loader.get_locale(config)
             |> Map.get(:dates)
 
           # Should be Cldr.known_calendars() but

@@ -1280,7 +1280,8 @@ defmodule Cldr.Calendar do
       6
 
   """
-  @spec month_of_year(Date.t()) :: Calendar.month()
+  @spec month_of_year(Date.t()) ::
+    Calendar.month() | {Calendar.month(), leap_month? :: boolean}
 
   def month_of_year(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
