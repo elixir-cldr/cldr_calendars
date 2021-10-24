@@ -71,9 +71,9 @@ defmodule Cldr.Calendar.MixProject do
       {:calendar_interval, "~> 0.2", optional: true},
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.21", optional: true, runtime: false},
-      {:earmark, "~> 1.0"},
+      {:earmark, "1.4.14", optional: true, runtime: false},
       {:benchee, "~> 1.0", optional: true, only: [:dev, :test]},
-      {:dialyxir, "~> 1.0.0-rc", only: [:dev], runtime: false},
+      {:dialyxir, "~> 1.0", optional: true, only: [:dev], runtime: false},
       {:nimble_strftime, "~> 0.1", only: :test},
       {:stream_data, "~> 0.4", only: :test}
     ]
