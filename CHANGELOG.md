@@ -1,5 +1,13 @@
 # Changelog
 
+## Cldr Calendars v1.17.0-rc.2
+
+This is the changelog for Cldr Calendars v1.17.0-rc.2 released on October 25th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix `day_of_week/{3, 4}` to be compatible with Elixir 1.12 and also earlier versions - and ensure dialyzer passes on consuming applications.
+
 ## Cldr Calendars v1.17.0-rc.1
 
 This is the changelog for Cldr Calendars v1.17.0-rc.1 released on October 25th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

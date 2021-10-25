@@ -259,32 +259,31 @@ defmodule Cldr.Calendar.Behaviour do
         this_day - first_day + 1
       end
 
-      if !(Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2)) do
+      if (Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2)) do
         @impl true
-      end
 
-      @spec day_of_week(Calendar.year, Calendar.month, Calendar.day) :: 1..7
-      def day_of_week(year, month, day) do
-        day_of_week(year, month, day, :default)
-      end
+        @spec day_of_week(Calendar.year, Calendar.month, Calendar.day, :default | atom()) ::
+                {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
+                 last_day_of_week :: non_neg_integer()}
 
-      @spec day_of_week(Calendar.year, Calendar.month, Calendar.day, :default | atom()) ::
-              {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
-               last_day_of_week :: non_neg_integer()}
+        def day_of_week(year, month, day, :default = starting_on) do
+          days = date_to_iso_days(year, month, day)
+          day_of_week = Cldr.Math.amod(days - 1, @days_in_week)
 
-      if Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2) do
+          {day_of_week, @first_day_of_week, @last_day_of_week}
+        end
+
+        defoverridable day_of_week: 4
+      else
         @impl true
+
+        @spec day_of_week(Calendar.year, Calendar.month, Calendar.day) :: 1..7
+        def day_of_week(year, month, day) do
+          day_of_week(year, month, day, :default)
+        end
+
+        defoverridable day_of_week: 3
       end
-
-      def day_of_week(year, month, day, :default = starting_on) do
-        days = date_to_iso_days(year, month, day)
-        day_of_week = Cldr.Math.amod(days - 1, @days_in_week)
-
-        {day_of_week, @first_day_of_week, @last_day_of_week}
-      end
-
-      defoverridable day_of_week: 3
-      defoverridable day_of_week: 4
 
       @doc """
       Returns the number of periods in a given
