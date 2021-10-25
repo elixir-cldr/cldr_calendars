@@ -152,7 +152,7 @@ defmodule Cldr.Calendar.Backend do
           month_patterns(cldr_locale_name, calendar)
         end
 
-        for locale_name <- Cldr.Config.known_locale_names(config) do
+        for locale_name <- Cldr.Locale.Loader.known_locale_names(config) do
           date_data =
             locale_name
             |> Cldr.Locale.Loader.get_locale(config)
