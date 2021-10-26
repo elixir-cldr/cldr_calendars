@@ -1,5 +1,29 @@
 # Changelog
 
+## Cldr Calendars v1.17.0
+
+This is the changelog for Cldr Calendars v1.17.0 released on October 27th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Updates to support [CLDR release 40](https://cldr.unicode.org/index/downloads/cldr-40) via [ex_cldr version 2.24](https://hex.pm/packages/ex_cldr/2.24.0)
+
+* Add support for Chinese, Japanese and Korean [lunisolar calendars](https://github/elixir-cldr/cldr_calendars_lunisolar).
+
+* Adds `Cldr.Calendar.year_of_era/1` that supports eras that might change at any time during a calendar year. This is primarily applicable to the Japanese calendar.
+
+* Add `Cldr.Calendar.Behaviour` that can be `use`d to factor out a lot of calendar boilerplate for many (but not all) calendar types.
+
+* Add `year_of_era/3` as a callback in the `Cldr.Calendar` behaviour. This is required because at least one calendar (the Japanese) can change era on any day of the year.
+
+### Bug Fixes
+
+* Fix `day_of_week/{3, 4}` to be compatible with Elixir 1.12 and also earlier versions - and ensure dialyzer passes on consuming applications.
+
+### Deprecations
+
+* Don't call deprecated `Cldr.Config.known_locale_names/1`, call `Cldr.Locale.Loader.known_locale_names/1` instead.
+
 ## Cldr Calendars v1.17.0-rc.3
 
 This is the changelog for Cldr Calendars v1.17.0-rc.3 released on October 25th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
