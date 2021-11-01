@@ -1,5 +1,13 @@
 # Changelog
 
+## Cldr Calendars v1.17.1
+
+This is the changelog for Cldr Calendars v1.17.1 released on November 1st, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Ensure compatibility with Elixir 1.13 by marking the implementations of `Calendar.year_of_era/1` as `@impl true` only on releases earlier than Elixir 1.13. In Elixir 1.13 the callback is `Calendar.year_of_era/3`.
+
 ## Cldr Calendars v1.17.0
 
 This is the changelog for Cldr Calendars v1.17.0 released on October 27th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

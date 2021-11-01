@@ -88,7 +88,10 @@ defmodule Cldr.Calendar.Behaviour do
 
       @spec year_of_era(Calendar.year) :: {year :: Calendar.year(), era :: Calendar.era()}
 
-      @impl true
+      unless Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :year_of_era, 3) do
+        @impl true
+      end
+
       def year_of_era(year) do
         iso_days = date_to_iso_days(year, 1, 1)
         @era_module.year_of_era(iso_days, year)

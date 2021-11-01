@@ -64,7 +64,10 @@ defmodule Cldr.Calendar.Compiler.Week do
 
       """
       @spec year_of_era(year) :: {year, era :: non_neg_integer}
-      @impl true
+      unless Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :year_of_era, 3) do
+        @impl true
+      end
+
       def year_of_era(year) do
         Week.year_of_era(year, __config__())
       end
@@ -81,6 +84,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       """
       @spec year_of_era(year, month, day) :: {year, era :: non_neg_integer}
       @impl true
+
       def year_of_era(year, _week, _day) do
         Week.year_of_era(year, __config__())
       end

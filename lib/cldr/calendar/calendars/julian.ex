@@ -76,7 +76,10 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec year_of_era(year) :: {year, era :: 0..1}
-  @impl true
+  unless Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :year_of_era, 3) do
+    @impl true
+  end
+
   def year_of_era(year) when year > 0 do
     {year, 1}
   end
@@ -92,6 +95,7 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec year_of_era(year, month, day) :: {year :: Calendar.year(), era :: 0..1}
   @impl true
+
   def year_of_era(year, _month, _day) do
     year_of_era(year)
   end
