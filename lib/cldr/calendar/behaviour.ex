@@ -3,7 +3,7 @@ defmodule Cldr.Calendar.Behaviour do
     epoch = Keyword.fetch!(opts, :epoch)
 
     {date, []} = Code.eval_quoted(epoch)
-    epoch = Date.to_gregorian_days(date)
+    epoch = Cldr.Calendar.date_to_iso_days(date)
 
     epoch_day_of_week  = Date.day_of_week(date)
     days_in_week = Keyword.get(opts, :days_in_week, 7)

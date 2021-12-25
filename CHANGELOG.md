@@ -8,6 +8,8 @@ This is the changelog for Cldr Calendars v1.17.2 released on December 26th, 2021
 
 * Fixes `Cldr.Calendar.FiscalYear.calendar_for/2`. Thanks for @DaTrader for the report. Closes #10.
 
+* Use `Cldr.Calendar.date_to_iso_days/1` in preference to `Date.to_gregorian_days/1` since the latter is only available in Elixir 1.11 and later. Thanks to @DaTrader for the report. Closes #11.
+
 ## Cldr Calendars v1.17.1
 
 This is the changelog for Cldr Calendars v1.17.1 released on November 1st, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
