@@ -36,7 +36,7 @@ defmodule Cldr.Calendar.FiscalYear do
                                 {:ok, territory} = Cldr.validate_territory(territory)
                                 calendar = Module.concat([calendar])
                                 month = String.to_integer(month)
-                                {territory, [calendar: calendar, month: month]}
+                                {territory, [calendar: calendar, month_of_year: month]}
 
                               _other ->
                                 nil

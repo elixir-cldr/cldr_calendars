@@ -1,5 +1,13 @@
 # Changelog
 
+## Cldr Calendars v1.17.2
+
+This is the changelog for Cldr Calendars v1.17.2 released on December 26th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fixes `Cldr.Calendar.FiscalYear.calendar_for/2`. Thanks for @DaTrader for the report. Closes #10.
+
 ## Cldr Calendars v1.17.1
 
 This is the changelog for Cldr Calendars v1.17.1 released on November 1st, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
