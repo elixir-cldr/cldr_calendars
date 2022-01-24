@@ -1556,7 +1556,7 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.weekend? ~D[2019-03-23]
       true
 
-      iex> Cldr.Calendar.weekend? ~D[2019-03-23], locale: "en"
+      iex> Cldr.Calendar.weekend? ~D[2019-03-23], locale: :en
       true
 
       iex> Cldr.Calendar.weekend? ~D[2019-03-23], territory: "IS"
@@ -1567,15 +1567,15 @@ defmodule Cldr.Calendar do
       false
 
       # In Israel the weekend starts on Friday
-      iex> Cldr.Calendar.weekend? ~D[2019-03-22], locale: "he", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekend? ~D[2019-03-22], locale: :he, backend: MyApp.Cldr
       true
 
       # As it also does in Saudia Arabia
-      iex> Cldr.Calendar.weekend? ~D[2019-03-22], locale: "ar-SA", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekend? ~D[2019-03-22], locale: :"ar-SA", backend: MyApp.Cldr
       true
 
       # Sunday is not a weekend day in Saudi Arabia
-      iex> Cldr.Calendar.weekend? ~D[2019-03-24], locale: "ar-SA", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekend? ~D[2019-03-24], locale: :"ar-SA", backend: MyApp.Cldr
       false
 
   """
@@ -1638,22 +1638,22 @@ defmodule Cldr.Calendar do
       # The defalt locale for `Cldr` is `en-001` for which
       # the territory is `001` (the world). The weekdays
       # for `001` are Monday to Friday
-      iex> Cldr.Calendar.weekday? ~D[2019-03-23], locale: "en"
+      iex> Cldr.Calendar.weekday? ~D[2019-03-23], locale: :en
       false
 
       iex> Cldr.Calendar.weekday? ~D[2019-03-23], territory: "IS"
       false
 
       # Saturday is a weekday in India
-      iex> Cldr.Calendar.weekday? ~D[2019-03-23], locale: "en-IN", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekday? ~D[2019-03-23], locale: :"en-IN", backend: MyApp.Cldr
       true
 
       # Friday is not a weekday in Saudi Arabia
-      iex> Cldr.Calendar.weekday? ~D[2019-03-22], locale: "ar-SA", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekday? ~D[2019-03-22], locale: :"ar-SA", backend: MyApp.Cldr
       false
 
       # Friday is not a weekday in Israel
-      iex> Cldr.Calendar.weekday? ~D[2019-03-22], locale: "he", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekday? ~D[2019-03-22], locale: :he, backend: MyApp.Cldr
       false
 
   """
