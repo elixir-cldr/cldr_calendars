@@ -267,11 +267,11 @@ defmodule Cldr.Calendar.Kday do
   end
 
   def nth_kday(iso_days, n, k) when is_integer(iso_days) and n > 0 do
-    weeks_to_days(n) + kday_before(iso_days, k)
+    weeks_to_days(n) + kday_on_or_before(iso_days, k)
   end
 
   def nth_kday(iso_days, n, k) when is_integer(iso_days) do
-    weeks_to_days(n) + kday_after(iso_days, k)
+    weeks_to_days(n) + kday_on_or_after(iso_days, k)
   end
 
   @doc """

@@ -1,5 +1,13 @@
 # Changelog
 
+## Cldr Calendars v1.17.3
+
+This is the changelog for Cldr Calendars v1.17.3 released on January 31st, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix `Kday.nth_kday/3` for when the `kday` is the same as the day of the week of the date.
+
 ## Cldr Calendars v1.17.2
 
 This is the changelog for Cldr Calendars v1.17.2 released on December 26th, 2021.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
