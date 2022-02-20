@@ -116,10 +116,22 @@ defmodule Cldr.Calendar.Backend do
           eras(cldr_locale_name, calendar)
         end
 
+        def eras(locale_name, calendar) when is_binary(locale_name) do
+          with {:ok, locale} <- unquote(backend).validate_locale(locale_name) do
+            eras(locale, calendar)
+          end
+        end
+
         def quarters(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
 
         def quarters(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           quarters(cldr_locale_name, calendar)
+        end
+
+        def quarters(locale_name, calendar) when is_binary(locale_name) do
+          with {:ok, locale} <- unquote(backend).validate_locale(locale_name) do
+            quarters(locale, calendar)
+          end
         end
 
         def months(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
@@ -128,10 +140,22 @@ defmodule Cldr.Calendar.Backend do
           months(cldr_locale_name, calendar)
         end
 
+        def months(locale_name, calendar) when is_binary(locale_name) do
+          with {:ok, locale} <- unquote(backend).validate_locale(locale_name) do
+            months(locale, calendar)
+          end
+        end
+
         def days(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
 
         def days(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           days(cldr_locale_name, calendar)
+        end
+
+        def days(locale_name, calendar) when is_binary(locale_name) do
+          with {:ok, locale} <- unquote(backend).validate_locale(locale_name) do
+            days(locale, calendar)
+          end
         end
 
         def day_periods(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
@@ -140,16 +164,34 @@ defmodule Cldr.Calendar.Backend do
           day_periods(cldr_locale_name, calendar)
         end
 
+        def day_periods(locale_name, calendar) when is_binary(locale_name) do
+          with {:ok, locale} <- unquote(backend).validate_locale(locale_name) do
+            day_periods(locale, calendar)
+          end
+        end
+
         def cyclic_years(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
 
         def cyclic_years(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           cyclic_years(cldr_locale_name, calendar)
         end
 
+        def cyclic_years(locale_name, calendar) when is_binary(locale_name) do
+          with {:ok, locale} <- unquote(backend).validate_locale(locale_name) do
+            cyclic_years(locale, calendar)
+          end
+        end
+
         def month_patterns(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
 
         def month_patterns(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           month_patterns(cldr_locale_name, calendar)
+        end
+
+        def month_patterns(locale_name, calendar) when is_binary(locale_name) do
+          with {:ok, locale} <- unquote(backend).validate_locale(locale_name) do
+            month_patterns(locale, calendar)
+          end
         end
 
         for locale_name <- Cldr.Locale.Loader.known_locale_names(config) do
