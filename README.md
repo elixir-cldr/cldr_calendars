@@ -21,7 +21,7 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 * Provides convenient `Date.Range` calculators for years, quarters, months and weeks for calendars and provides the means to move to the `next` and `previous` period in a calendar where a period may be a year, quarter, month, week or day.
 
-* Supports adding or substracting periods to dates and date ranges. See `Cldr.Calendar.plus/3` and `Cldr.Calendar.minus/3`
+* Supports adding or subtracting periods to dates and date ranges. See `Cldr.Calendar.plus/3` and `Cldr.Calendar.minus/3`
 
 * Includes pre-defined calendars for Gregorian (compatible with the builtin `Calendar` module), `ISOWeek` and `National Retail Federation (NRF)` calendars
 
@@ -148,7 +148,7 @@ That's interesting.  The first day of the 2019 year in the ISO Week calendar is 
 
 Week-based calendars can start or end on a given day of the week in a given month.  But there is a third option: the given day of the week *nearest* to the start or end of the given month.  This is indicated by the configuration parameter `:min_days_in_first_week`.  For the `ISO Week` calendar we have `min_days_in_first_week: 4`.  That means that at least `4` days of the first or last week have to be in the specified `:month_of_year` and then we select the nearest day of the week.  Hence it is possible and even common for the gregorian start of the year for a week-based calendar to be up to 6 days before or after the Gregorian start of the year.
 
-Whats the last week of 2019 in the `ISO Week` calendar?
+What's the last week of 2019 in the `ISO Week` calendar?
 ```
  iex> date = Cldr.Calendar.Interval.week(2019, 52, Cldr.Calendar.ISOWeek)
  #DateRange<~d[2019-W52-1 ISOWeek], ~d[2019-W52-7 ISOWeek]>
@@ -165,7 +165,7 @@ The Gregorian calendar is the canonical example of a month-based calendar. It st
 
 `Cldr Calendars` allows month-based calendars to be defined based upon the first or last gregorian month of the year for that calendar.
 
-Of course sometimes we also want to refer to weeks within a year although this is less common than refering to days within months.  Nevertheless, a month-based calendar can also take advantage of `:first_day` and `:min_days` to determine how to calculate weeks for month-based calendars too.
+Of course sometimes we also want to refer to weeks within a year although this is less common than referring to days within months.  Nevertheless, a month-based calendar can also take advantage of `:first_day` and `:min_days` to determine how to calculate weeks for month-based calendars too.
 
 Here's how we define each of the three example calendars above:
 
@@ -196,7 +196,7 @@ end
 
 When we talk about the Gregorian calendar we refer to the 12 months from January to December. However when we consider the various fiscal calendars, the Gregorian starting date and the Gregorian ending date will often be in different years.
 
-In these cases, when we say "the 2019 US Fiscal Year" what does that mean?  The US fiscal year starts in October. Now we need to know whether refering to the "the 2019 US Fiscal Year" means the year that ends in September 2019 or the year that starts in October 2019.
+In these cases, when we say "the 2019 US Fiscal Year" what does that mean?  The US fiscal year starts in October. Now we need to know whether referring to the "the 2019 US Fiscal Year" means the year that ends in September 2019 or the year that starts in October 2019.
 
 Some further examples are:
 
@@ -282,7 +282,7 @@ day_of_year/3
 
 ## Sigil ~d
 
-`Cldr Calendars` provides a convenince sigil for the creation of dates in calendars. Note that it is necessary to import the `Cldr.Calendar.Sigils` module before using the `~d` sigil.
+`Cldr Calendars` provides a convenience sigil for the creation of dates in calendars. Note that it is necessary to import the `Cldr.Calendar.Sigils` module before using the `~d` sigil.
 ```
  iex> import Cldr.Calendar.Sigils
 
@@ -458,7 +458,7 @@ iex> Cldr.Calendar.Duration.new ~I"2020-01/12"
  }}
 ```
 
-A duration can be added to a date. Adding to times and datetimes is not currenlty supported. An example is:
+A duration can be added to a date. Adding to times and datetimes is not currently supported. An example is:
 
 ```elixir
 iex> {:ok, duration} = Cldr.Calendar.Duration.new(~D[2019-01-01], ~D[2019-12-31])

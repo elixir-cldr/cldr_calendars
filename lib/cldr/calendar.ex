@@ -425,7 +425,7 @@ defmodule Cldr.Calendar do
     name of the created calendar.
 
   * `calendar_type` is an atom of either `:month` or
-    `:week` indicating whcih type of calendar is to
+    `:week` indicating which type of calendar is to
     be created
 
   * `config` is a Keyword list defining the configuration
@@ -498,7 +498,7 @@ defmodule Cldr.Calendar do
   ## Examples
 
   Each calendar has a function `__config__/0` generated within
-  it and therefore the configuraiton of the included calendars
+  it and therefore the configuration of the included calendars
   in `ex_cldr_calendars` provide insight into the behaviour
   of the configuration parameters.
 
@@ -1550,7 +1550,7 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      # The defalt locale for `Cldr` is `en-001` for which
+      # The default locale for `Cldr` is `en-001` for which
       # the territory is `001` (the world). The weekend
       # for `001` is Saturday and Sunday
       iex> Cldr.Calendar.weekend? ~D[2019-03-23]
@@ -1635,7 +1635,7 @@ defmodule Cldr.Calendar do
 
   ## Examples
 
-      # The defalt locale for `Cldr` is `en-001` for which
+      # The default locale for `Cldr` is `en-001` for which
       # the territory is `001` (the world). The weekdays
       # for `001` are Monday to Friday
       iex> Cldr.Calendar.weekday? ~D[2019-03-23], locale: :en
@@ -2451,7 +2451,7 @@ defmodule Cldr.Calendar do
 
   ## Options
 
-  * Options are those applicatable to
+  * Options are those applicable to
     `Cldr.Calendar.plus/4`
 
   ## Returns
@@ -2784,7 +2784,7 @@ defmodule Cldr.Calendar do
   enumerated.
 
   This function has the same arguments and provides
-  the same functionality as `interval/3` exept that
+  the same functionality as `interval/3` except that
   it is lazily evaluated.
 
   ## Arguments

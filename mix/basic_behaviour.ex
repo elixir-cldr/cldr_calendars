@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.Behaviour.Basic do
   @moduledoc """
   Implementation of the Coptic calendar used
-  only to validate the calendar bahaviour
+  only to validate the calendar behaviour
 
   """
 
