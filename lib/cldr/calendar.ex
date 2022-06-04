@@ -513,7 +513,7 @@ defmodule Cldr.Calendar do
       min_days_in_first_week, 4,   # 4 Cldr.Calendar.Gregorian days of the year must be in the first week
       begins_or_ends: :begins,     # The year *begins* on the `day_of_week` and `month_of_year`
       first_or_last: :first,       # They year *begins* on the *first* `day_of_week` and `month_of_year`
-      weeks_in_month: [4, 5, 4],   # The weeks are laid out as *months* in a `[4,5,4]` pattern
+      weeks_in_month: [4, 4, 5],   # The weeks are laid out as *months* in a `[4,4,5]` pattern
       year: :majority,             # Any given year is that in which the majority of Cldr.Calendar.Gregorian months fall
       cldr_backend: nil,           # No default `cldr_backend` is configured.
       locale: nil                  # No `locale` is used to aid configuration
@@ -528,7 +528,7 @@ defmodule Cldr.Calendar do
       ...>   min_days_in_first_week: 4,
       ...>   begins_or_ends: :begins,
       ...>   first_or_last: :first,
-      ...>   weeks_in_month: [4, 5, 4],
+      ...>   weeks_in_month: [4, 4, 5],
       ...>   year: :majority,
       ...>   cldr_backend: nil
       {:ok, ISOWeek}
