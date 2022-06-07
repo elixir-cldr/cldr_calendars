@@ -1,5 +1,13 @@
 # Changelog
 
+## Cldr Calendars v1.18.1
+
+This is the changelog for Cldr Calendars v1.18.1 released on June 5th, 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* `MyApp.Cldr.Calendar.calendar_from_locale/1` was added to the backend compiler module, not the backend module itself and therefore was not visible.
+
 ## Cldr Calendars v1.18.0
 
 This is the changelog for Cldr Calendars v1.18.0 released on February 21st, 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
