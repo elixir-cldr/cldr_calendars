@@ -1,5 +1,13 @@
 # Changelog
 
+## Cldr Calendars v1.19.0
+
+This is the changelog for Cldr Calendars v1.19.0 released on June 9th, 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Adds `Cldr.Calendar.localize/{1,2}` that converts a date into the calendar associated with the provided locale.
+
 ## Cldr Calendars v1.18.1
 
 This is the changelog for Cldr Calendars v1.18.1 released on June 5th, 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

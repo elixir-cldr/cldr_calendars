@@ -2140,12 +2140,63 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Localize a date by converting it to calendar
+  introspected from the provided or default locale.
+
+  ## Arguments
+
+  * `date` is any `Date.t`
+
+  * `options` is a Keyword list of options. The default is
+    `[]`
+
+  ## Options
+
+  * `:locale` is any valid locale name in the list returned by
+    `Cldr.known_locale_names/1` or a `Cldr.LanguageTag` struct
+    returned by `Cldr.Locale.new!/2`. The default is `Cldr.get_locale()`.
+
+  * `:backend` is any module that includes `use Cldr` and therefore
+    is a `Cldr` backend module. The default is `default_backend/0`.
+
+  ## Returns
+
+  * `{:ok, date}` where `date` is converted into the calendar
+    associated with the current or provided locale.
+
+  ## Examples
+
+      iex> Cldr.Calendar.localize ~D[2022-06-09], locale: "fr"
+      {:ok, %Date{year: 2022, month: 6, day: 9, calendar: Cldr.Calendar.FR}}
+
+  """
+  @doc since: "1.19.0"
+  @spec localize(Date.t()) ::
+    {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+
+  def localize(date) do
+    localize(date, [])
+  end
+
+  @doc since: "1.19.0"
+  @spec localize(Date.t(), Keyword.t()) ::
+    {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+
+  def localize(date, options) when is_list(options) do
+    with {locale, backend} <- Cldr.locale_and_backend_from(options),
+         {:ok, locale} <- Cldr.validate_locale(locale, backend),
+         {:ok, calendar} <- calendar_from_locale(locale) do
+      Date.convert(date, calendar)
+    end
+  end
+
+  @doc """
   Returns a localized string for a part of
   a `Date.t`.
 
   ## Arguments
 
-  * `date_` is any `Date.t`
+  * `date` is any `Date.t`
 
   * `part` is one of `:era`, `:quarter`, `:month`,
     `:day_of_week` or `:days_of_week`
@@ -2158,7 +2209,7 @@ defmodule Cldr.Calendar do
     `Cldr.known_locale_names/1` or a `Cldr.LanguageTag` struct
     returned by `Cldr.Locale.new!/2`. The default is `Cldr.get_locale()`.
 
-  * `backend` is any module that includes `use Cldr` and therefore
+  * `:backend` is any module that includes `use Cldr` and therefore
     is a `Cldr` backend module. The default is `default_backend/0`.
 
   * `:format` is one of `:wide`, `:abbreviated` or `:narrow`. The
