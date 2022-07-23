@@ -18,7 +18,7 @@ defmodule Cldr.Calendar.Julian do
   Currently only `:gregorian` is supported.
 
   """
-  @impl true
+  @impl Cldr.Calendar
   def cldr_calendar_type do
     :gregorian
   end
@@ -26,7 +26,7 @@ defmodule Cldr.Calendar.Julian do
   @doc """
   Identifies that this calendar is month based.
   """
-  @impl true
+  @impl Cldr.Calendar
   def calendar_base do
     :month
   end
@@ -40,7 +40,7 @@ defmodule Cldr.Calendar.Julian do
   Determines if the date given is valid according to this calendar.
 
   """
-  @impl true
+  @impl Calendar
   def valid_date?(0, _month, _day) do
     false
   end
@@ -77,7 +77,7 @@ defmodule Cldr.Calendar.Julian do
   """
   @spec year_of_era(year) :: {year, era :: 0..1}
   unless Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :year_of_era, 3) do
-    @impl true
+    @impl Cldr.Calendar
   end
 
   def year_of_era(year) when year > 0 do
@@ -94,7 +94,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec year_of_era(year, month, day) :: {year :: Calendar.year(), era :: 0..1}
-  @impl true
+  @impl Calendar
 
   def year_of_era(year, _month, _day) do
     year_of_era(year)
@@ -106,7 +106,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec calendar_year(year, month, day) :: Calendar.year()
-  @impl true
+  @impl Cldr.Calendar
   def calendar_year(year, _month, _day) do
     year
   end
@@ -117,7 +117,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec related_gregorian_year(year, month, day) :: Calendar.year()
-  @impl true
+  @impl Cldr.Calendar
   def related_gregorian_year(year, month, day) do
     iso_days = date_to_iso_days(year, month, day)
     {year, _month, _day} = Cldr.Calendar.Gregorian.date_from_iso_days(iso_days)
@@ -130,7 +130,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec extended_year(year, month, day) :: Calendar.year()
-  @impl true
+  @impl Cldr.Calendar
   def extended_year(year, _month, _day) do
     year
   end
@@ -141,7 +141,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec cyclic_year(year, month, day) :: Calendar.year()
-  @impl true
+  @impl Cldr.Calendar
   def cyclic_year(year, _month, _day) do
     year
   end
@@ -152,7 +152,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec quarter_of_year(year, month, day) :: 1..4
-  @impl true
+  @impl Calendar
   def quarter_of_year(_year, month, _day) do
     Float.ceil(month / @months_in_quarter)
     |> trunc
@@ -164,7 +164,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec month_of_year(year, month, day) :: month
-  @impl true
+  @impl Cldr.Calendar
   def month_of_year(_year, month, _day) do
     month
   end
@@ -175,7 +175,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec week_of_year(year, month, day) :: {:error, :not_defined}
-  @impl true
+  @impl Cldr.Calendar
   def week_of_year(_year, _month, _day) do
     {:error, :not_defined}
   end
@@ -186,7 +186,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec iso_week_of_year(year, month, day) :: {:error, :not_defined}
-  @impl true
+  @impl Cldr.Calendar
   def iso_week_of_year(_year, _month, _day) do
     {:error, :not_defined}
   end
@@ -197,7 +197,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec week_of_month(year, month, day) :: {pos_integer(), pos_integer()} | {:error, :not_defined}
-  @impl true
+  @impl Cldr.Calendar
   def week_of_month(_year, _month, _day) do
     {:error, :not_defined}
   end
@@ -207,7 +207,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec day_of_era(year, month, day) :: {day :: pos_integer(), era :: 0..1}
-  @impl true
+  @impl Calendar
   def day_of_era(year, month, day) do
     {_, era} = year_of_era(year)
     days = date_to_iso_days(year, month, day)
@@ -219,7 +219,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec day_of_year(year, month, day) :: 1..366
-  @impl true
+  @impl Calendar
   def day_of_year(year, month, day) do
     first_day = date_to_iso_days(year, 1, 1)
     this_day = date_to_iso_days(year, month, day)
@@ -261,12 +261,12 @@ defmodule Cldr.Calendar.Julian do
   a week in week-based calendars..
 
   """
-  @impl true
+  @impl Cldr.Calendar
   def periods_in_year(_year) do
     @months_in_year
   end
 
-  @impl true
+  @impl Cldr.Calendar
   def weeks_in_year(_year) do
     {:error, :not_defined}
   end
@@ -275,7 +275,7 @@ defmodule Cldr.Calendar.Julian do
   Returns the number days in a given year.
 
   """
-  @impl true
+  @impl Cldr.Calendar
   def days_in_year(year) do
     if leap_year?(year), do: 366, else: 365
   end
@@ -285,7 +285,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec days_in_month(year, month) :: 28..31
-  @impl true
+  @impl Calendar
 
   def days_in_month(year, 2) do
     if leap_year?(year), do: 29, else: 28
@@ -312,7 +312,7 @@ defmodule Cldr.Calendar.Julian do
   a given year.
 
   """
-  @impl true
+  @impl Cldr.Calendar
   def year(year) do
     last_month = months_in_year(year)
     days_in_last_month = days_in_month(year, last_month)
@@ -328,7 +328,7 @@ defmodule Cldr.Calendar.Julian do
   a given quarter of a year.
 
   """
-  @impl true
+  @impl Cldr.Calendar
   def quarter(year, quarter) do
     months_in_quarter = div(months_in_year(year), @quarters_in_year)
     starting_month = months_in_quarter * (quarter - 1) + 1
@@ -348,7 +348,7 @@ defmodule Cldr.Calendar.Julian do
   a given month of a year.
 
   """
-  @impl true
+  @impl Cldr.Calendar
   def month(year, month) do
     starting_day = 1
     ending_day = days_in_month(year, month)
@@ -364,7 +364,7 @@ defmodule Cldr.Calendar.Julian do
   a given week of a year.
 
   """
-  @impl true
+  @impl Cldr.Calendar
   def week(_year, _week) do
     {:error, :not_defined}
   end
@@ -377,7 +377,7 @@ defmodule Cldr.Calendar.Julian do
    or`:months`.
 
   """
-  @impl true
+  @impl Cldr.Calendar
   def plus(year, month, day, date_part, increment, options \\ [])
 
   def plus(year, month, day, :quarters, quarters, options) do
@@ -406,7 +406,7 @@ defmodule Cldr.Calendar.Julian do
 
   """
   @spec leap_year?(year) :: boolean()
-  @impl true
+  @impl Calendar
   def leap_year?(year) do
     Cldr.Math.mod(year, 4) == if year > 0, do: 0, else: 3
   end
@@ -465,7 +465,7 @@ defmodule Cldr.Calendar.Julian do
   Returns the `t:Calendar.iso_days/0` format of the specified date.
 
   """
-  @impl true
+  @impl Calendar
   @spec naive_datetime_to_iso_days(
           Calendar.year(),
           Calendar.month(),
