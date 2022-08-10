@@ -3038,7 +3038,7 @@ defmodule Cldr.Calendar do
 
   * `calendar` is any module implementing
     the `Calendar` and `Cldr.Calendar`
-    behaviours
+    behaviours. The default is `Cldr.Calendar.Gregorian`.
 
   ## Returns
 
@@ -3053,9 +3053,50 @@ defmodule Cldr.Calendar do
       {:error, :invalid_date}
 
   """
-  def date_from_tuple({year, month, day}, calendar) do
+  def date_from_tuple({year, month, day}, calendar \\ Cldr.Calendar.Gregorian) do
     with {:ok, date} <- Date.new(year, month, day, calendar) do
       date
+    end
+  end
+
+  @doc """
+  Returns a `Date.t` from a keyword list
+  and a calendar.
+
+  ## Arguments
+
+  * `[year: year, month: month, day: day}` is a
+    keyword list representing a date
+
+  * `calendar` is any module implementing
+    the `Calendar` and `Cldr.Calendar`
+    behaviours. The default is `Cldr.Calendar.Gregorian`.
+
+  ## Returns
+
+  * a `Date.t` or
+
+  * `{:error, :invalid_date}`
+
+  ## Examples
+
+      iex> Cldr.Calendar.date_from_list [year: 2019, month: 3, day: 25], Cldr.Calendar.Gregorian
+      %Date{calendar: Cldr.Calendar.Gregorian, day: 25, month: 3, year: 2019}
+
+      iex> Cldr.Calendar.date_from_list [year: 2019, month: 2, day: 29], Cldr.Calendar.Gregorian
+      {:error, :invalid_date}
+
+  """
+  def date_from_list([{atom, _value} | _rest] = list, calendar \\ Cldr.Calendar.Gregorian)
+      when is_atom(atom) do
+    with {:ok, year} <- Keyword.fetch(list, :year),
+         {:ok, month} <- Keyword.fetch(list, :month),
+         {:ok, day} <- Keyword.fetch(list, :day),
+         {:ok, date} <- Date.new(year, month, day, calendar) do
+      date
+    else
+      :error -> {:error, :invalid_date}
+      other -> other
     end
   end
 
