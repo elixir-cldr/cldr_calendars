@@ -1,5 +1,15 @@
 # Changelog
 
+## Cldr Calendars v1.20.0
+
+This release is primarily targetted at supporting the [Tempo](https://github.com/kipcole9/tempo) library
+
+### Enhancements
+
+* Add `Cldr.Calendar.date_from_list/2` that takes a keyword list of time units and returns a `t:Date.t/0`
+
+* Add `Cldr.Calendar.date_from_day_of_year/3` that returns a `t:Date.t/0` for the ordinal day of the year.
+
 ## Cldr Calendars v1.19.0
 
 This is the changelog for Cldr Calendars v1.19.0 released on June 9th, 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
