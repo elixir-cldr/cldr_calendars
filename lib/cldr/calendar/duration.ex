@@ -62,7 +62,7 @@ defmodule Cldr.Calendar.Duration do
     Returns a string formatted representation of
     a duration.
 
-    Note that time units that are zero are ommitted
+    Note that time units that are zero are omitted
     from the output.
 
     Formatting is
@@ -118,7 +118,7 @@ defmodule Cldr.Calendar.Duration do
     Returns a string formatted representation of
     a duration.
 
-    Note that time units that are zero are ommitted
+    Note that time units that are zero are omitted
     from the output.
 
     ## Localized formatting

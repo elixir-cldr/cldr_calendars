@@ -238,7 +238,7 @@ This is the changelog for Cldr Calendars v1.10.0 released on August 29th, 2020. 
 
 ### Enhancements
 
-* Supports upcoming Elixir 1.11.0.  The `Calendar` callback for `day_of_week/3` has been changed to `day_of_week/4` to allow for a different start day of week.  Since `Cldr Calendars` already supports defining calendars with different start days of the week (ie other than Monday), the impementation only supports the `:default` parameter. Thanks to @lostkobrakai for the report. Closes `Cldr Dates Times` issue #17.
+* Supports upcoming Elixir 1.11.0.  The `Calendar` callback for `day_of_week/3` has been changed to `day_of_week/4` to allow for a different start day of week.  Since `Cldr Calendars` already supports defining calendars with different start days of the week (ie other than Monday), the implementation only supports the `:default` parameter. Thanks to @lostkobrakai for the report. Closes `Cldr Dates Times` issue #17.
 
 ## Cldr Calendars v1.9.0
 

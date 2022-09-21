@@ -292,7 +292,7 @@ defmodule Cldr.Calendar.Backend do
 
           # Should be Cldr.known_calendars() but
           # for now just calendars where we have
-          # implemenations.
+          # implementations.
 
           calendars =
             date_data

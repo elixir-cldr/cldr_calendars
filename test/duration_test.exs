@@ -109,7 +109,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Duration{year: 0, month: 0, day: 1, hour: 0, microsecond: 0, minute: 0, second: 0}}
   end
 
-  test "datetime one day crossing year bounday" do
+  test "datetime one day crossing year boundary" do
     assert Duration.new(~D[2019-12-31], ~D[2020-01-01]) ==
              {:ok,
               %Duration{year: 0, month: 0, day: 1, hour: 0, microsecond: 0, minute: 0, second: 0}}
@@ -135,7 +135,7 @@ defmodule Cldr.Calendar.Duration.Test do
               }}
   end
 
-  test "datetime duration of two months across a year bounday" do
+  test "datetime duration of two months across a year boundary" do
     assert Duration.new(~D[2000-12-01], ~D[2019-01-31]) ==
              {:ok,
               %Duration{
