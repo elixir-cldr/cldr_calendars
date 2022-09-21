@@ -1,5 +1,15 @@
 # Changelog
 
+## Cldr Calendars v1.20.0
+
+This is the changelog for Cldr Calendars v1.20.0 released on September 21st, 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Doctests now reflect the new expression based inspection outputs in Elixir 1.14 for `t:Date.Range.t()`
+
+* Improve the documentation for periods. Thanks to @alappe for the pull requests.
+
 ## Cldr Calendars v1.19.0
 
 This is the changelog for Cldr Calendars v1.19.0 released on June 9th, 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
