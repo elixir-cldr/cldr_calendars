@@ -2556,8 +2556,8 @@ defmodule Cldr.Calendar do
   * `date_or_date_range` is any `Date.t` or
     `Date.Range.t`
 
-  * `period` is `:year`, `:quarter`, `:month`,
-    `:week` or `:day`
+  * `period` is `:years`, `:quarters`, `:months`,
+    `:weeks` or `:days`
 
   * `options` is a Keyword list of options
 
@@ -2566,7 +2566,7 @@ defmodule Cldr.Calendar do
   * `:coerce` is a boolean which, when set to `true`
     will coerce the month and/or day to be a valid date.
     This affects,for example, moving to the previous month
-    from `~D[2019-03-31]`. Sincce there is no date `~D[2019-02-31]`
+    from `~D[2019-03-31]`. Since there is no date `~D[2019-02-31]`
     this would normally return `{:error, :invalid_date}`.
     Setting `coerce: true` it will return `~D[2019-02-28]`.
 
@@ -2712,8 +2712,8 @@ defmodule Cldr.Calendar do
   * `date_or_date_range` is any `Date.t` or
     `Date.Range.t`
 
-  * `period` is `:year`, `:quarter`, `:month`,
-    `:week` or `:day`
+  * `period` is `:years`, `:quarters`, `:months`,
+    `:weeks` or `:days`
 
   * `options` is a Keyword list of options
 
@@ -2722,7 +2722,7 @@ defmodule Cldr.Calendar do
   * `:coerce` is a boolean which, when set to `true`
     will coerce the month and/or day to be a valid date.
     This affects,for example, moving to the previous month
-    from `~D[2019-03-31]`. Sincce there is no date `~D[2019-02-31]`
+    from `~D[2019-03-31]`. Since there is no date `~D[2019-02-31]`
     this would normally return `{:error, :invalid_date}`.
     Setting `coerce: true` it will return `~D[2019-02-28]`.
 
