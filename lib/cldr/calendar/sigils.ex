@@ -13,7 +13,7 @@ defmodule Cldr.Calendar.Sigils do
   Dates can be expressed in the following formats:
 
   * `~d[yyyy-mm-dd]` which produces a date in the `Cldr.Calendar.Gregorian` calendar
-  * `~d[yyyy-Wmm-dd]` which produces a date in the `Cldr.Calendar.IsoWeek` calendar
+  * `~d[yyyy-Wmm-dd]` which produces a date in the `Cldr.Calendar.ISOWeek` calendar
   * `~d[yyyy-mm-dd calendar]` which produces a date in the given month-based calendar
   * `~d[yyyy-Wmm-dd calendar]` which produces a date in the given week-based calendar
   * `~d[yyyy-mm-dd C.E Julian]` which produces a date in the Cldr.Calendar.Julian calendar
