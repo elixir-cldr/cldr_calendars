@@ -173,7 +173,7 @@ defmodule Cldr.Calendar do
   in this implementation
   """
   @callback cldr_calendar_type() ::
-    :gregorian | :persian | :coptic | :ethiopic | :chinese | :japanese | :dangi
+              :gregorian | :persian | :coptic | :ethiopic | :chinese | :japanese | :dangi
 
   @doc """
   Returns the calendar basis.
@@ -202,7 +202,7 @@ defmodule Cldr.Calendar do
     """
 
     @callback year_of_era(Calendar.year(), Calendar.month(), Calendar.day()) ::
-      {year :: Calendar.year(), era :: Calendar.era()}
+                {year :: Calendar.year(), era :: Calendar.era()}
   end
 
   @doc """
@@ -222,28 +222,28 @@ defmodule Cldr.Calendar do
 
   """
   @callback calendar_year(Calendar.year(), Cldr.Calendar.week(), Calendar.day()) ::
-    Calendar.year()
+              Calendar.year()
 
   @doc """
   Returns a the extended year in a calendar year.
 
   """
   @callback extended_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
-    Calendar.year()
+              Calendar.year()
 
   @doc """
   Returns a the related year in a calendar year.
 
   """
   @callback related_gregorian_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
-    Calendar.year()
+              Calendar.year()
 
   @doc """
   Returns a the cyclic year in a calendar year.
 
   """
   @callback cyclic_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
-    Calendar.year()
+              Calendar.year()
 
   @doc """
   Returns a date range representing the days in a
@@ -251,7 +251,7 @@ defmodule Cldr.Calendar do
 
   """
   @callback year(year :: Calendar.year()) ::
-    Date.Range.t() | {:error, :not_defined}
+              Date.Range.t() | {:error, :not_defined}
 
   @doc """
   Returns a date range representing the days in a
@@ -259,7 +259,7 @@ defmodule Cldr.Calendar do
 
   """
   @callback quarter(year :: Calendar.year(), quarter :: Cldr.Calendar.quarter()) ::
-    Date.Range.t() | {:error, :not_defined}
+              Date.Range.t() | {:error, :not_defined}
 
   @doc """
   Returns a date range representing the days in a
@@ -267,7 +267,7 @@ defmodule Cldr.Calendar do
 
   """
   @callback month(year :: Calendar.year(), month :: Calendar.month()) ::
-    Date.Range.t() | {:error, :not_defined}
+              Date.Range.t() | {:error, :not_defined}
 
   @doc """
   Returns a date range representing the days in a
@@ -275,7 +275,7 @@ defmodule Cldr.Calendar do
 
   """
   @callback week(year :: Calendar.year(), week :: week()) ::
-    Date.Range.t() | {:error, :not_defined}
+              Date.Range.t() | {:error, :not_defined}
 
   @doc """
   Increments a `Date.t` or `Date.Range.t` by a specified positive
@@ -1020,11 +1020,12 @@ defmodule Cldr.Calendar do
 
   ## Arguments
 
-  * `date` is any `Date.t()`
+  * `date_or_datetime` is any `Date.t()` or a `DateTime.t()`
+    if a `DateTime.t()` is given, the result will be given at the current timezone.
 
   ## Returns
 
-  * an integer number representing the
+  * an number representing the
     Modified Julian Day of the `date`
 
   ## Notes
@@ -1037,12 +1038,70 @@ defmodule Cldr.Calendar do
   ## Examples
 
       iex> Cldr.Calendar.modified_julian_day ~D[2019-01-01]
-      58484
+      58484.0
+
+      iex> Cldr.Calendar.modified_julian_day ~U[2019-01-01 12:00:00Z]
+      58484.5
+
+      iex> Cldr.Calendar.modified_julian_day(~U[2022-09-26 18:00:00.000Z])
+      59848.75
+
+  If the given DateTime is not UTC, the result is given on the local timezone
+
+      iex> dt = DateTime.shift_zone!(~U[2019-01-01 14:00:00Z], "America/Sao_Paulo")
+      #DateTime<2019-01-01 12:00:00-02:00 -02 America/Sao_Paulo>
+      iex> Cldr.Calendar.modified_julian_day(dt)
+      58484.5
+  """
+  @mjd_epoch_in_iso_days 678_941
+  def modified_julian_day(%DateTime{} = datetime) do
+    date = DateTime.to_date(datetime)
+    {seconds, _microseconds} = datetime |> DateTime.to_time() |> Time.to_seconds_after_midnight()
+
+    mjd_from_date_and_seconds(date, seconds)
+  end
+
+  def modified_julian_day(%Date{} = date) do
+    mjd_from_date_and_seconds(date, 0)
+  end
+
+  defp mjd_from_date_and_seconds(date, seconds) do
+    mjd_integer_part = date_to_iso_days(date) - @mjd_epoch_in_iso_days
+    mjd_offset = seconds * 1000 / :timer.hours(24)
+
+    mjd_integer_part + mjd_offset
+  end
+
+  @doc """
+  Returns the DateTime (defaulting to UTC timezone)
+  for the given Modified Julian Day.
+
+  ## Arguments
+
+  * `mjd` is a number representing days passed since November 17, 1858 (Julian Calendar)
+
+  ## Returns
+
+  * a `DateTime.t()` at UTC timezone
+
+  ## Examples
+
+      iex> Cldr.Calendar.datetime_from_modified_julian_date(59848)
+      ~U[2022-09-26 00:00:00.000Z]
+
+      iex> Cldr.Calendar.datetime_from_modified_julian_date(59848.75)
+      ~U[2022-09-26 18:00:00.000Z]
 
   """
-  @mjd_epoch 678_941
-  def modified_julian_day(date) do
-    date_to_iso_days(date) - @mjd_epoch
+  @mjd_epoch_in_mjd 678_576
+  @unix_epoch_fixed 719_163
+  def datetime_from_modified_julian_date(mjd) when is_number(mjd) do
+    # fixed date conversion taken from Calixir library
+    mjd_fixed = mjd + @mjd_epoch_in_mjd
+    day_in_ms = :timer.hours(24)
+    unix = day_in_ms * (mjd_fixed - @unix_epoch_fixed)
+
+    DateTime.from_unix!(trunc(unix), :millisecond)
   end
 
   @doc """
@@ -1283,7 +1342,7 @@ defmodule Cldr.Calendar do
 
   """
   @spec month_of_year(Date.t()) ::
-    Calendar.month() | {Calendar.month(), leap_month? :: boolean}
+          Calendar.month() | {Calendar.month(), leap_month? :: boolean}
 
   def month_of_year(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
@@ -2172,7 +2231,7 @@ defmodule Cldr.Calendar do
   """
   @doc since: "1.19.0"
   @spec localize(Date.t()) ::
-    {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+          {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
 
   def localize(date) do
     localize(date, [])
@@ -2180,7 +2239,7 @@ defmodule Cldr.Calendar do
 
   @doc since: "1.19.0"
   @spec localize(Date.t(), Keyword.t()) ::
-    {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+          {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
 
   def localize(date, options) when is_list(options) do
     with {locale, backend} <- Cldr.locale_and_backend_from(options),
@@ -2370,8 +2429,7 @@ defmodule Cldr.Calendar do
           |> backend.months(date.calendar.cldr_calendar_type)
           |> get_in([type, format, month])
 
-        leap_pattern =
-          get_in(month_patterns, [type, format, :leap])
+        leap_pattern = get_in(month_patterns, [type, format, :leap])
 
         Cldr.Substitution.substitute([to_string(month)], leap_pattern)
         |> :erlang.iolist_to_binary()
