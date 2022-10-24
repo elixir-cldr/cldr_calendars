@@ -1,5 +1,13 @@
 # Changelog
 
+## Cldr Calendars v1.21.0
+
+This is the changelog for Cldr Calendars v1.20.0 released on October 24th, 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Adds modified Julian days conversions. Thanks to @polvalente for the PR. Closes #14.
+
 ## Cldr Calendars v1.20.0
 
 This is the changelog for Cldr Calendars v1.20.0 released on September 21st, 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
