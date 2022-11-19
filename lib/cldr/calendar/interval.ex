@@ -252,8 +252,8 @@ defmodule Cldr.Calendar.Interval do
       iex> Cldr.Calendar.Interval.day 2019, 92, Cldr.Calendar.NRF
       Date.range(~D[2019-W14-1 Cldr.Calendar.NRF], ~D[2019-W14-1 Cldr.Calendar.NRF])
 
-      Cldr.Calendar.Interval.day 2019, 8, Cldr.Calendar.ISOWeek
-      #Date.range(%Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 2, year: 2019}, %Date{calendar: Cldr.Calendar.ISOWeek, day: 1, month: 2, year: 2019})
+      iex> Cldr.Calendar.Interval.day 2019, 8, Cldr.Calendar.ISOWeek
+      Date.range(~D[2019-W02-1 Cldr.Calendar.ISOWeek], ~D[2019-W02-1 Cldr.Calendar.ISOWeek])
 
   """
   @spec day(Calendar.year(), Calendar.day(), Cldr.Calendar.calendar()) :: Date.Range.t()
