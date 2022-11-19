@@ -158,6 +158,15 @@ defmodule Cldr.Calendar.Base.Month do
     ISO.days_in_month(iso_year, iso_month)
   end
 
+  # TODO Flex for any starting month
+  def days_in_month(month, %{month_of_year: 1}) do
+    case month do
+      2 -> {:error, :unresolved}
+      month when month in [9, 4, 6, 11] -> 30
+      _other -> 31
+    end
+  end
+
   def days_in_week do
     @days_in_week
   end

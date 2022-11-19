@@ -218,6 +218,12 @@ defmodule Cldr.Calendar do
   @callback days_in_year(year :: Calendar.year()) :: Calendar.day()
 
   @doc """
+  Returns the number of days in a month (withoout a year)
+
+  """
+  @callback days_in_month(month :: Calendar.month()) :: Calendar.day() | {:error, :unresolved}
+
+  @doc """
   Returns a the year in a calendar year.
 
   """

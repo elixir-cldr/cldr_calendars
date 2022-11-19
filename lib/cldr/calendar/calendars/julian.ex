@@ -300,6 +300,23 @@ defmodule Cldr.Calendar.Julian do
   end
 
   @doc """
+  Returns how many days there are in the given month.
+
+  If the days in month cannot be determined without
+  knowning the year and error tuple is returned.
+
+  """
+  @spec days_in_month(month) :: Calendar.day()
+  @impl true
+  def days_in_month(month) do
+    case month do
+      2 -> {:error, :unresolved}
+      month when month in @months_with_30_days -> 30
+      _other -> 31
+    end
+  end
+
+  @doc """
   Returns the number days in a a week.
 
   """

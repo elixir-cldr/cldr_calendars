@@ -361,6 +361,20 @@ defmodule Cldr.Calendar.Behaviour do
       end
 
       @doc """
+      Returns how many days there are in the given month.
+
+      Must be implemented in derived calendars because
+      we cannot know what the calendar format is.
+
+      """
+      @spec days_in_month(Calendar.month) :: Calendar.month() | {:error, :unresovled}
+      @impl true
+
+      def days_in_month(month) do
+
+      end
+
+      @doc """
       Returns the number days in a a week.
 
       """
@@ -600,6 +614,7 @@ defmodule Cldr.Calendar.Behaviour do
       defoverridable weeks_in_year: 1
       defoverridable days_in_year: 1
       defoverridable days_in_month: 2
+      defoverridable days_in_month: 1
       defoverridable days_in_week: 0
 
       defoverridable year: 1

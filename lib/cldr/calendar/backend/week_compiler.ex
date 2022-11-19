@@ -277,6 +277,19 @@ defmodule Cldr.Calendar.Compiler.Week do
       end
 
       @doc """
+      Returns how many days there are in the given month.
+
+      If the days in month cannot be determined without
+      knowning the year and error tuple is returned.
+
+      """
+      @spec days_in_month(month) :: Calendar.day()
+      @impl true
+      def days_in_month(month) do
+        Week.days_in_month(month, __config__())
+      end
+
+      @doc """
       Returns the number days in a a week.
 
       """

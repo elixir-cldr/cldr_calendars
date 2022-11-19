@@ -166,6 +166,10 @@ defmodule Cldr.Calendar.Base.Week do
     Enum.at(weeks_in_month, month_in_quarter - 1) * days_in_week()
   end
 
+  def days_in_month(month, config) do
+    days_in_month(month, @months_in_year, config)
+  end
+
   def days_in_week do
     @days_in_week
   end
