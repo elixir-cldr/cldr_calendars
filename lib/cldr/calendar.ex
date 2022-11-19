@@ -3159,6 +3159,49 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Returns a `Date.t` from a year, day_of_year
+  and a calendar.
+
+  ## Arguments
+
+  * `year` is any integer year that is valid in
+    `calendar`
+
+  * `day_of_year` is any valid ordinal day of
+    `year`
+
+  * `calendar` is any module implementing
+    the `Calendar` and `Cldr.Calendar`
+    behaviours. The default is `Cldr.Calendar.Gregorian`.
+
+  ## Returns
+
+  * a `Date.t` or
+
+  * `{:error, :invalid_date}`
+
+  """
+  def date_from_day_of_year(year, day_of_year, calendar \\ Cldr.Calendar.Gregorian)
+
+  def date_from_day_of_year(year, day_of_year, calendar)
+      when is_integer(year) and is_integer(day_of_year) and day_of_year > 0 do
+    iso_days = calendar.date_to_iso_days(year, 1, 1) + day_of_year - 1
+
+    if day_of_year <= calendar.days_in_year(year) do
+      {year, month, day} = calendar.date_from_iso_days(iso_days)
+      with {:ok, date} <- Date.new(year, month, day) do
+        date
+      end
+    else
+      {:error, :invalid_date}
+    end
+  end
+
+  def date_from_day_of_year(_year, _day_of_year, _calendar) do
+    {:error, :invalid_date}
+  end
+
+  @doc """
   Returns the day of the week for a given
   `iso_day_number`
 
