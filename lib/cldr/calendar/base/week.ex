@@ -154,6 +154,8 @@ defmodule Cldr.Calendar.Base.Week do
     end
   end
 
+  # The last month may be a long month so the
+  # days in month might be a week longer
   def days_in_month(year, @months_in_year, config) do
     %Config{weeks_in_month: [_, _, weeks_in_last_month]} = config
     weeks = if long_year?(year, config), do: weeks_in_last_month + 1, else: weeks_in_last_month
@@ -166,8 +168,18 @@ defmodule Cldr.Calendar.Base.Week do
     Enum.at(weeks_in_month, month_in_quarter - 1) * days_in_week()
   end
 
-  def days_in_month(month, config) do
-    days_in_month(month, @months_in_year, config)
+  # If the month is the last month of the year then it will be different
+  # number of days in a long year.
+  @any_year 2000
+
+  def days_in_month(month, %Config{weeks_in_month: [_, _, weeks_in_last_month]} = config) do
+    if month == @months_in_year do
+      long_year_days =  (weeks_in_last_month + 1) * days_in_week()
+      short_year_days = weeks_in_last_month * days_in_week()
+      {:ambiguous, [short_year_days, long_year_days]}
+    else
+      days_in_month(@any_year, month, config)
+    end
   end
 
   def days_in_week do

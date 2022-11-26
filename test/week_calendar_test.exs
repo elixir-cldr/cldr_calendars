@@ -125,4 +125,15 @@ defmodule Cldr.Calendar.Week.Test do
              year: 2019
            }
   end
+
+  test "days in month without year" do
+    config = %Cldr.Calendar.Config{weeks_in_month: [4, 4, 5]}
+
+    assert Cldr.Calendar.Base.Week.days_in_month(1, config) == 28
+    assert Cldr.Calendar.Base.Week.days_in_month(2, config) == 28
+    assert Cldr.Calendar.Base.Week.days_in_month(3, config) == 35
+    assert Cldr.Calendar.Base.Week.days_in_month(4, config) == 28
+
+    assert Cldr.Calendar.Base.Week.days_in_month(12, config) == {:ambiguous, [35, 42]}
+  end
 end

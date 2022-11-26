@@ -9,6 +9,7 @@ defmodule Cldr.Calendar.Base.Month do
   @days_in_week 7
   @quarters_in_year 4
   @months_in_quarter 3
+  @months_in_year 12
   @weeks_in_quarter 13
   @iso_week_first_day 1
   @iso_week_min_days 4
@@ -158,13 +159,21 @@ defmodule Cldr.Calendar.Base.Month do
     ISO.days_in_month(iso_year, iso_month)
   end
 
-  # TODO Flex for any starting month
   def days_in_month(month, %{month_of_year: 1}) do
     case month do
-      2 -> {:error, :unresolved}
+      2 -> {:ambiguous, 28..29}
       month when month in [9, 4, 6, 11] -> 30
       _other -> 31
     end
+  end
+
+  def days_in_month(month, %{month_of_year: calendar_start_month}) do
+    gregorian_month = calendar_month_to_gregorian_month(month, calendar_start_month)
+    days_in_month(gregorian_month, %{month_of_year: 1})
+  end
+
+  def calendar_month_to_gregorian_month(month, calendar_start_month) do
+    Cldr.Math.amod((calendar_start_month - 1) + month, @months_in_year)
   end
 
   def days_in_week do
