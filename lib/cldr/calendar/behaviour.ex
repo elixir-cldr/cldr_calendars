@@ -367,11 +367,11 @@ defmodule Cldr.Calendar.Behaviour do
       we cannot know what the calendar format is.
 
       """
-      @spec days_in_month(Calendar.month) :: Calendar.month() | {:error, :unresovled}
+      @spec days_in_month(Calendar.month) :: Calendar.month() | {:ambiguous, Range.t() | [pos_integer()]} | {:error, :undefined}
       @impl true
 
       def days_in_month(month) do
-
+        {:error, :undefined}
       end
 
       @doc """
