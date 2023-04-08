@@ -2407,16 +2407,20 @@ defmodule Cldr.Calendar do
 
       {month, true = _leap_month?} ->
         month_patterns = backend.month_patterns(locale, date.calendar.cldr_calendar_type)
-        leap_pattern = get_in(month_patterns, [:numeric, :all, :leap])
 
-        Cldr.Substitution.substitute([to_string(month)], leap_pattern)
-        |> :erlang.iolist_to_binary()
+        if month_patterns do
+          leap_pattern = get_in(month_patterns, [:numeric, :all, :leap])
+
+          Cldr.Substitution.substitute([to_string(month)], leap_pattern)
+          |> :erlang.iolist_to_binary()
+        else
+          to_string(month)
+        end
     end
   end
 
   def localize(date, :month, type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
-
 
     case month_of_year(date) do
       month when is_number(month) ->
@@ -2438,10 +2442,14 @@ defmodule Cldr.Calendar do
           |> backend.months(date.calendar.cldr_calendar_type)
           |> get_in([type, format, month])
 
-        leap_pattern = get_in(month_patterns, [type, format, :leap])
+        if month_patterns do
+          leap_pattern = get_in(month_patterns, [type, format, :leap])
 
-        Cldr.Substitution.substitute([to_string(month)], leap_pattern)
-        |> :erlang.iolist_to_binary()
+          Cldr.Substitution.substitute([to_string(month)], leap_pattern)
+          |> :erlang.iolist_to_binary()
+        else
+          month
+        end
     end
   end
 
