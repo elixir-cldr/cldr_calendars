@@ -2397,7 +2397,6 @@ defmodule Cldr.Calendar do
   @doc false
   def localize(date, :month, :numeric, _format, backend, locale) do
     backend = Module.concat(backend, Calendar)
-    month_patterns = backend.month_patterns(locale, date.calendar)
 
     case month_of_year(date) do
       month when is_number(month) ->
@@ -2407,6 +2406,7 @@ defmodule Cldr.Calendar do
         month
 
       {month, true = _leap_month?} ->
+        month_patterns = backend.month_patterns(locale, date.calendar.cldr_calendar_type)
         leap_pattern = get_in(month_patterns, [:numeric, :all, :leap])
 
         Cldr.Substitution.substitute([to_string(month)], leap_pattern)
@@ -2416,7 +2416,7 @@ defmodule Cldr.Calendar do
 
   def localize(date, :month, type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
-    month_patterns = backend.month_patterns(locale, date.calendar)
+
 
     case month_of_year(date) do
       month when is_number(month) ->
@@ -2430,6 +2430,9 @@ defmodule Cldr.Calendar do
         |> get_in([type, format, month])
 
       {month, true = _leap_month?} ->
+        month_patterns =
+          backend.month_patterns(locale, date.calendar.cldr_calendar_type)
+
         month =
           locale
           |> backend.months(date.calendar.cldr_calendar_type)
