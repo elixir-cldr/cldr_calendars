@@ -10,6 +10,12 @@ This is the changelog for Cldr Calendars v1.22.0 released on _____, 2023.  For o
 
 * Fixes localization of leap months which are used in lunisolar calendars.
 
+### Enhancements
+
+* Updates to [ex_cldr version 2.37.0](https://hex.pm/packages/ex_cldr/2.37.0) which includes data from [CLDR release 43](https://cldr.unicode.org/index/downloads/cldr-43)
+
+* Supports configuring the `:cldr_calendar_name` for a calendar that is defined with the `Cldr.Calendar.Base.{Month, Week}` macros. The options can be `:gregorian` (the default) or `:japanese`. This change support the new `ex_cldr_calendars_japanese` library.
+
 ## Cldr Calendars v1.21.0
 
 This is the changelog for Cldr Calendars v1.21.0 released on October 24th, 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

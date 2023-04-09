@@ -8,6 +8,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       |> Cldr.Calendar.Config.extract_options()
       |> Cldr.Calendar.Config.validate_config!(:month)
 
+    Module.put_attribute(env.module, :cldr_calendar_type, config.cldr_calendar_type)
     Module.put_attribute(env.module, :calendar_config, config)
 
     quote location: :keep do
@@ -38,12 +39,12 @@ defmodule Cldr.Calendar.Compiler.Month do
       Defines the CLDR calendar type for this calendar.
 
       This type is used in support of `Cldr.Calendar.localize/3`.
-      Currently only `:gregorian` is supported.
+      Currently only `:gregorian` or `:japanese` are supported.
 
       """
       @impl true
       def cldr_calendar_type do
-        :gregorian
+        @cldr_calendar_type
       end
 
       @doc """

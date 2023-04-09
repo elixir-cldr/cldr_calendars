@@ -65,14 +65,33 @@ defmodule Cldr.Calendar.Era do
   # clauses, most recent dates match first and
   # those are the dates most likely to be used).
 
-  defp eras_for_calendar(calendar) do
+  @doc false
+  def eras_for_calendar(calendar) do
     Cldr.Config.calendars()
     |> Map.fetch!(calendar)
     |> Map.fetch!(:eras)
     |> Enum.reverse()
   end
 
-  defp eras_to_iso_days(eras, :japanese, calendar) do
+  @eras_in_gregorian_year [
+    :chinese,
+    :dangi,
+    :persian,
+    :gregorian
+  ]
+
+  @eras_in_julian_calendar [
+    :coptic,
+    :ethiopic,
+    :islamic,
+    :islamic_civil,
+    :islamic_rgsa,
+    :islamic_tbla,
+    :islamic_umalqura
+  ]
+
+  @doc false
+  def eras_to_iso_days(eras, :japanese, calendar) do
     Enum.map eras, fn
       [era, %{start: [year, month, day]}] when year >= 1912 ->
         [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, day), year: year]
@@ -85,14 +104,7 @@ defmodule Cldr.Calendar.Era do
     end
   end
 
-  @eras_in_gregorian_year [
-    :chinese,
-    :dangi,
-    :persian,
-    :gregorian
-  ]
-
-  defp eras_to_iso_days(eras, cldr_calendar, calendar)
+  def eras_to_iso_days(eras, cldr_calendar, calendar)
       when cldr_calendar in @eras_in_gregorian_year do
     Enum.map eras, fn
       [era, %{start: [year, month, day]}]  ->
@@ -102,17 +114,7 @@ defmodule Cldr.Calendar.Era do
     end
   end
 
-  @eras_in_julian_calendar [
-    :coptic,
-    :ethiopic,
-    :islamic,
-    :islamic_civil,
-    :islamic_rgsa,
-    :islamic_tbla,
-    :islamic_umalqura
-  ]
-
-  defp eras_to_iso_days(eras, cldr_calendar, _calendar)
+  def eras_to_iso_days(eras, cldr_calendar, _calendar)
       when cldr_calendar in @eras_in_julian_calendar do
     Enum.map eras, fn
       [era, %{start: [year, month, day]}]  ->
