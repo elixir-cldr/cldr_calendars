@@ -90,17 +90,25 @@ defmodule Cldr.Calendar.Era do
     :islamic_umalqura
   ]
 
+  # Four of the era dates below are invalid in the CLDR data
+  # as of April 10th, 2023 and CLDR 4r3.
+
   @doc false
-  def eras_to_iso_days(eras, :japanese, calendar) do
+  def eras_to_iso_days(eras, :japanese, _calendar) do
     Enum.map eras, fn
-      [era, %{start: [year, month, day]}] when year >= 1912 ->
+      [era, %{start: [1504 = year, 2 = month, 30]}] ->
+        [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, 29), year: year]
+      [era, %{start: [1624 = year, 2 = month, 30]}] ->
+        [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, 28), year: year]
+      [era, %{start: [1501 = year, 2 = month, 29]}] ->
+        [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, 28), year: year]
+      [era, %{start: [1278 = year, 2 = month, 29]}] ->
+        [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, 28), year: year]
+
+      [era, %{start: [year, month, day]}] ->
         [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, day), year: year]
-      [era, %{start: [year, month, day]}]  ->
-        [era, start: calendar.date_to_iso_days(year, month, day), year: year]
-      [era, %{end: [year, month, day]}] when year >= 1912 ->
+      [era, %{end: [year, month, day]}] ->
         [era, end: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, day), year: year]
-      [era, %{end: [year, month, day]}]  ->
-        [era, end: calendar.date_to_iso_days(year, month, day), year: year]
     end
   end
 
