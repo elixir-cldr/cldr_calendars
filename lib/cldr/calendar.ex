@@ -1348,7 +1348,7 @@ defmodule Cldr.Calendar do
 
   """
   @spec month_of_year(Date.t()) ::
-          Calendar.month() | {Calendar.month(), leap_month? :: boolean}
+          Calendar.month() | {Calendar.month(), leap_month :: :leap}
 
   def month_of_year(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
@@ -2402,10 +2402,7 @@ defmodule Cldr.Calendar do
       month when is_number(month) ->
         month
 
-      {month, false = _leap_month?} ->
-        month
-
-      {month, true = _leap_month?} ->
+      {month, :leap} ->
         month_patterns = backend.month_patterns(locale, date.calendar.cldr_calendar_type)
 
         if month_patterns do
