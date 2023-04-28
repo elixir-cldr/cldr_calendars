@@ -2428,12 +2428,7 @@ defmodule Cldr.Calendar do
         |> backend.months(date.calendar.cldr_calendar_type)
         |> get_in([type, format, month])
 
-      {month, false = _leap_month?} ->
-        locale
-        |> backend.months(date.calendar.cldr_calendar_type)
-        |> get_in([type, format, month])
-
-      {month, true = _leap_month?} ->
+      {month, :leap} ->
         month_patterns =
           backend.month_patterns(locale, date.calendar.cldr_calendar_type)
 

@@ -80,6 +80,22 @@ defmodule Cldr.Calendar.Behaviour do
       end
 
       @doc """
+      Returns the number of months in a normal year.
+
+      """
+      def months_in_ordinary_year do
+        @months_in_ordinary_year
+      end
+
+      @doc """
+      Returns the number of months in a leap year.
+
+      """
+      def months_in_leap_year do
+        @months_in_leap_year
+      end
+
+      @doc """
       Calculates the year and era from the given `year`.
 
       """
