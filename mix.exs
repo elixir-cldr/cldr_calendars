@@ -25,7 +25,7 @@ defmodule Cldr.Calendar.MixProject do
         ignore_warnings: ".dialyzer_ignore_warnings",
         plt_add_apps:
           ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists
-             ex_cldr_numbers ratio calendar_interval)a
+             ex_cldr_numbers calendar_interval)a
       ],
       compilers: Mix.compilers()
     ]
@@ -72,7 +72,7 @@ defmodule Cldr.Calendar.MixProject do
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.21", optional: true, runtime: false},
       {:benchee, "~> 1.0", optional: true, only: [:dev, :test]},
-      {:dialyxir, "~> 1.0", optional: true, only: [:dev], runtime: false},
+      {:dialyxir, "~> 1.0", optional: true, only: [:dev, :test], runtime: false},
       {:nimble_strftime, "~> 0.1", only: :test},
       {:stream_data, "~> 0.4", only: :test}
     ]

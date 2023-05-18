@@ -13,6 +13,8 @@ defmodule Calendar.Date do
     Cldr.Test.Calendars.Saturday,
     Cldr.Test.Calendars.Sunday
   ]
+
+  @dialyzer {:nowarn_function, {:generate_date, 0}}
   def generate_date do
     ExUnitProperties.gen all(
                            year <- StreamData.integer(1900..2100),

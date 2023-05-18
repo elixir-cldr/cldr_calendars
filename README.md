@@ -1,5 +1,5 @@
 # Cldr Calendars
-![Build Status](http://sweatbox.noexpectations.com.au:8080/buildStatus/icon?job=cldr_calendars)
+
 [![Hex.pm](https://img.shields.io/hexpm/v/ex_cldr_calendars.svg)](https://hex.pm/packages/ex_cldr_calendars)
 [![Hex.pm](https://img.shields.io/hexpm/dw/ex_cldr_calendars.svg?)](https://hex.pm/packages/ex_cldr_calendars)
 [![Hex.pm](https://img.shields.io/hexpm/l/ex_cldr_calendars.svg)](https://hex.pm/packages/ex_cldr_calendars)
