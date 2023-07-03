@@ -1,5 +1,15 @@
 # Changelog
 
+## Cldr.Calendars v1.22.1
+
+This is the changelog for Cldr Calendars v1.22.1 released on July 4th 2023.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+**Note that `ex_cldr_calendars` version 1.21.1 and later are supported on Elixir 1.11 and later only.**
+
+### Bug Fixes
+
+* Compatibility with the `Calendar` behaviour changes in Elixir 1.15.
+
 ## Cldr.Calendars v1.22.0
 
 This is the changelog for Cldr Calendars v1.22.0 released on April 28th 2023.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
