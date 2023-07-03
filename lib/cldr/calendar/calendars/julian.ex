@@ -75,11 +75,11 @@ defmodule Cldr.Calendar.Julian do
   era "0".
 
   """
-  @spec year_of_era(year) :: {year, era :: 0..1}
   unless Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :year_of_era, 3) do
-    @impl Cldr.Calendar
+    @impl Calendar
   end
 
+  @spec year_of_era(year) :: {year, era :: 0..1}
   def year_of_era(year) when year > 0 do
     {year, 1}
   end
@@ -93,8 +93,14 @@ defmodule Cldr.Calendar.Julian do
   `month` and `day`.
 
   """
+
+  if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :year_of_era, 3) do
+    @impl Calendar
+  else
+    @impl Cldr.Calendar
+  end
+
   @spec year_of_era(year, month, day) :: {year :: Calendar.year(), era :: 0..1}
-  @impl Calendar
 
   def year_of_era(year, _month, _day) do
     year_of_era(year)
@@ -515,6 +521,16 @@ defmodule Cldr.Calendar.Julian do
     {year, month, day} = date_from_iso_days(days)
     {hour, minute, second, microsecond} = time_from_day_fraction(day_fraction)
     {year, month, day, hour, minute, second, microsecond}
+  end
+
+  if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
+    @doc false
+    @impl Calendar
+    defdelegate iso_days_to_beginning_of_day(iso_days), to: Calendar.ISO
+
+    @doc false
+    @impl Calendar
+    defdelegate iso_days_to_end_of_day(iso_days), to: Calendar.ISO
   end
 
   @doc false

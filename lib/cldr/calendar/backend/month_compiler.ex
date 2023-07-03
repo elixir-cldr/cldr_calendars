@@ -215,25 +215,17 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 7, where 1 is Monday and 7 is Sunday.
 
       """
-      if Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2) do
-        @dialyzer {:nowarn_function, {:day_of_week, 4}}
-        @spec day_of_week(year, month, day, :default | atom()) ::
-            {Calendar.day_of_week(), first_day_of_week ::
-              non_neg_integer(), last_day_of_week :: non_neg_integer()}
+      @dialyzer {:nowarn_function, {:day_of_week, 4}}
+      @spec day_of_week(year, month, day, :default | atom()) ::
+          {Calendar.day_of_week(), first_day_of_week ::
+            non_neg_integer(), last_day_of_week :: non_neg_integer()}
 
-        @impl true
-        def day_of_week(year, month, day, :default) do
-          %{day_of_week: first_day} = __config__()
-          last_day = Cldr.Math.amod(first_day + days_in_week() - 1, days_in_week())
-          day = Month.day_of_week(year, month, day, __config__())
-          {day, first_day, last_day}
-        end
-      else
-        @spec day_of_week(year, month, day) :: 1..7
-        @impl true
-        def day_of_week(year, month, day) do
-          Month.day_of_week(year, month, day, __config__())
-        end
+      @impl true
+      def day_of_week(year, month, day, :default) do
+        %{day_of_week: first_day} = __config__()
+        last_day = Cldr.Math.amod(first_day + days_in_week() - 1, days_in_week())
+        day = Month.day_of_week(year, month, day, __config__())
+        {day, first_day, last_day}
       end
 
       @doc """
@@ -541,10 +533,16 @@ defmodule Cldr.Calendar.Compiler.Month do
         Cldr.Calendar.Parse.parse_naive_datetime(string, __MODULE__)
       end
 
-      if Version.match?(System.version(), ">= 1.10.0-dev") do
+      if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
         @doc false
-        defdelegate parse_time(string), to: Calendar.ISO
+        defdelegate iso_days_to_beginning_of_day(iso_days), to: Calendar.ISO
+
+        @doc false
+        defdelegate iso_days_to_end_of_day(iso_days), to: Calendar.ISO
       end
+
+      @doc false
+      defdelegate parse_time(string), to: Calendar.ISO
 
       @doc false
       defdelegate day_rollover_relative_to_midnight_utc, to: Calendar.ISO

@@ -602,6 +602,16 @@ defmodule Cldr.Calendar.Behaviour do
       @impl Calendar
       defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
 
+      if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
+        @doc false
+        @impl true
+        defdelegate iso_days_to_beginning_of_day(iso_days), to: Calendar.ISO
+
+        @doc false
+        @impl true
+        defdelegate iso_days_to_end_of_day(iso_days), to: Calendar.ISO
+      end
+
       defoverridable valid_date?: 3
       defoverridable valid_time?: 4
       defoverridable naive_datetime_to_string: 7

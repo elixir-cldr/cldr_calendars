@@ -128,7 +128,8 @@ defmodule Cldr.Calendar.Base.Month do
 
   def day_of_week(year, month, day, config) do
     {year, month, day} = date_to_iso_date(year, month, day, config)
-    ISO.day_of_week(year, month, day)
+    {day, _first, _last} = ISO.day_of_week(year, month, day, :default)
+    day
   end
 
   def months_in_year(year, _config) do
