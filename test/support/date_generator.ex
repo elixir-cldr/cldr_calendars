@@ -22,7 +22,8 @@ defmodule Calendar.Date do
                            day <- StreamData.integer(1..7),
                            calendar <- StreamData.member_of(@week_calendars)
                          ) do
-      week = min(week, Cldr.Calendar.weeks_in_year(year, calendar))
+      {weeks_in_year, _days_in_last_week} = Cldr.Calendar.weeks_in_year(year, calendar)
+      week = min(week, weeks_in_year)
       {:ok, date} = Date.new(year, week, day, calendar)
       date
     end

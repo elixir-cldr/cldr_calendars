@@ -136,7 +136,11 @@ defmodule Cldr.Calendar.Base.Month do
     Calendar.ISO.months_in_year(year)
   end
 
-  def weeks_in_year(year, config) do
+  # If the weeks start on the first day of the calendar year
+  # (which is unusual) then we will have a fractional last week
+  # of the year of either 1 or 2 days (depending on leap year)
+
+  def weeks_in_year(year, %Config{day_of_week: :first} = config) do
     first_day = first_gregorian_day_of_year(year, config)
     last_day = last_gregorian_day_of_year(year, config)
 
@@ -146,6 +150,19 @@ defmodule Cldr.Calendar.Base.Month do
 
       {weeks, days_in_last_week} ->
         {weeks + 1, days_in_last_week}
+    end
+  end
+
+  # In all other cases, like the ISO calendar, there is a
+  # designated day that starts the week. In this case the
+  # weeks of a year do not align to the calendar year start
+  # and end dates.
+
+  def weeks_in_year(year, config) do
+    if Base.Week.long_year?(year, config) do
+      Base.Week.weeks_in_long_year()
+    else
+      Base.Week.weeks_in_normal_year()
     end
   end
 
@@ -195,57 +212,84 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def quarter(year, quarter, config) do
-    months_in_quarter = div(months_in_year(year, config), @quarters_in_year)
-    starting_month = months_in_quarter * (quarter - 1) + 1
-    starting_day = 1
+    if quarter in 1..@quarters_in_year do
+      months_in_quarter = div(months_in_year(year, config), @quarters_in_year)
+      starting_month = months_in_quarter * (quarter - 1) + 1
+      starting_day = 1
 
-    ending_month = starting_month + months_in_quarter - 1
-    ending_day = days_in_month(year, ending_month, config)
+      ending_month = starting_month + months_in_quarter - 1
+      ending_day = days_in_month(year, ending_month, config)
 
-    with {:ok, start_date} <- Date.new(year, starting_month, starting_day, config.calendar),
-         {:ok, end_date} <- Date.new(year, ending_month, ending_day, config.calendar) do
-      Date.range(start_date, end_date)
+      with {:ok, start_date} <- Date.new(year, starting_month, starting_day, config.calendar),
+           {:ok, end_date} <- Date.new(year, ending_month, ending_day, config.calendar) do
+        Date.range(start_date, end_date)
+      end
+    else
+      {:error, :invalid_date}
     end
   end
 
   def month(year, month, config) do
-    starting_day = 1
-    ending_day = days_in_month(year, month, config)
+    if month in 1..months_in_year(year, month) do
+      starting_day = 1
+      ending_day = days_in_month(year, month, config)
 
-    with {:ok, start_date} <- Date.new(year, month, starting_day, config.calendar),
-         {:ok, end_date} <- Date.new(year, month, ending_day, config.calendar) do
-      Date.range(start_date, end_date)
+      with {:ok, start_date} <- Date.new(year, month, starting_day, config.calendar),
+           {:ok, end_date} <- Date.new(year, month, ending_day, config.calendar) do
+        Date.range(start_date, end_date)
+      end
+    else
+      {:error, :invalid_date}
     end
   end
 
+  # When the weeks starts on the first day of the year we will have
+  # a final partial week of one of two days.
+
   def week(year, week, %Config{day_of_week: :first} = config) do
-    first_day = first_gregorian_day_of_year(year, config)
-    last_day = last_gregorian_day_of_year(year, config)
+    {weeks_in_year, _days_in_last_week} = weeks_in_year(year, config)
 
-    start_day = first_day + (week - 1) * @days_in_week
-    end_day = min(start_day + @days_in_week - 1, last_day)
+    if week in 1..weeks_in_year do
+      first_day = first_gregorian_day_of_year(year, config)
+      last_day = last_gregorian_day_of_year(year, config)
 
-    {year, month, day} = date_from_iso_days(start_day, config)
-    {:ok, start_date} = Date.new(year, month, day, config.calendar)
+      start_day = first_day + (week - 1) * @days_in_week
+      end_day = min(start_day + @days_in_week - 1, last_day)
 
-    {year, month, day} = date_from_iso_days(end_day, config)
-    {:ok, end_date} = Date.new(year, month, day, config.calendar)
+      {year, month, day} = date_from_iso_days(start_day, config)
+      {:ok, start_date} = Date.new(year, month, day, config.calendar)
 
-    Date.range(start_date, end_date)
+      {year, month, day} = date_from_iso_days(end_day, config)
+      {:ok, end_date} = Date.new(year, month, day, config.calendar)
+
+      Date.range(start_date, end_date)
+    else
+      {:error, :invalid_date}
+    end
   end
 
+  # For all other configurations where the week starts on a fixed
+  # day we will have a fixed number of weeks (52 or 53) each of 7
+  # days. But the range of dates for a week may fall outside the
+  # calendar year.
+
   def week(year, week, config) do
-    starting_day =
-      Cldr.Calendar.Base.Week.first_gregorian_day_of_year(year, config) +
+    {weeks_in_year, _days_in_last_week} = weeks_in_year(year, config)
+
+    if week in 1..weeks_in_year do
+      starting_day = Base.Week.first_gregorian_day_of_year(year, config) +
         Cldr.Calendar.weeks_to_days(week - 1)
 
-    ending_day = starting_day + days_in_week() - 1
+      ending_day = starting_day + days_in_week() - 1
 
-    with {year, month, day} <- date_from_iso_days(starting_day, config),
-         {:ok, start_date} <- Date.new(year, month, day, config.calendar),
-         {year, month, day} <- date_from_iso_days(ending_day, config),
-         {:ok, end_date} <- Date.new(year, month, day, config.calendar) do
-      Date.range(start_date, end_date)
+      with {year, month, day} <- date_from_iso_days(starting_day, config),
+           {:ok, start_date} <- Date.new(year, month, day, config.calendar),
+           {year, month, day} <- date_from_iso_days(ending_day, config),
+           {:ok, end_date} <- Date.new(year, month, day, config.calendar) do
+        Date.range(start_date, end_date)
+      end
+    else
+      {:error, :invalid_date}
     end
   end
 

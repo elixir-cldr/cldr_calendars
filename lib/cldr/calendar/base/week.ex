@@ -22,7 +22,8 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def valid_date?(year, week, day, config) do
-    week <= weeks_in_year(year, config) and day in 1..days_in_week()
+    {weeks_in_year, _days_in_last_week} = weeks_in_year(year, config)
+    week in 1..weeks_in_year and day in 1..days_in_week()
   end
 
   # Year of era assumes that the era transitions are always aligned
@@ -199,42 +200,56 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def quarter(year, quarter, config) do
-    starting_week = (quarter - 1) * @weeks_in_quarter + 1
-    ending_week = starting_week + weeks_in_quarter(year, quarter, config) - 1
+    if quarter in 1..@quarters_in_year do
+      starting_week = (quarter - 1) * @weeks_in_quarter + 1
+      ending_week = starting_week + weeks_in_quarter(year, quarter, config) - 1
 
-    with {:ok, first_day} <- Date.new(year, starting_week, 1, config.calendar),
-         {:ok, last_day} <- Date.new(year, ending_week, days_in_week(), config.calendar) do
-      Date.range(first_day, last_day)
+      with {:ok, first_day} <- Date.new(year, starting_week, 1, config.calendar),
+           {:ok, last_day} <- Date.new(year, ending_week, days_in_week(), config.calendar) do
+        Date.range(first_day, last_day)
+      end
+    else
+      {:error, :invalid_date}
     end
   end
 
   def month(year, month, %{weeks_in_month: weeks_in_month} = config) do
-    months_prior_in_quarter = rem(month - 1, @months_in_quarter)
-    prior_quarters = Month.quarter_of_year(year, month, 1, config) - 1
-    quarter_weeks_prior = prior_quarters * @weeks_in_quarter
+    if month in 1..months_in_year(year, month) do
+      months_prior_in_quarter = rem(month - 1, @months_in_quarter)
+      prior_quarters = Month.quarter_of_year(year, month, 1, config) - 1
+      quarter_weeks_prior = prior_quarters * @weeks_in_quarter
 
-    weeks_prior_in_quarter =
-      weeks_in_month
-      |> Enum.take(months_prior_in_quarter)
-      |> Enum.sum()
+      weeks_prior_in_quarter =
+        weeks_in_month
+        |> Enum.take(months_prior_in_quarter)
+        |> Enum.sum()
 
-    weeks_in_month =
-      Enum.at(weeks_in_month, months_prior_in_quarter) +
-        maybe_extra_week_for_long_year(year, month, config)
+      weeks_in_month =
+        Enum.at(weeks_in_month, months_prior_in_quarter) +
+          maybe_extra_week_for_long_year(year, month, config)
 
-    first_week = quarter_weeks_prior + weeks_prior_in_quarter + 1
-    last_week = first_week + weeks_in_month - 1
+      first_week = quarter_weeks_prior + weeks_prior_in_quarter + 1
+      last_week = first_week + weeks_in_month - 1
 
-    {:ok, start_of_month} = Date.new(year, first_week, 1, config.calendar)
-    {:ok, end_of_month} = Date.new(year, last_week, days_in_week(), config.calendar)
+      {:ok, start_of_month} = Date.new(year, first_week, 1, config.calendar)
+      {:ok, end_of_month} = Date.new(year, last_week, days_in_week(), config.calendar)
 
-    Date.range(start_of_month, end_of_month)
+      Date.range(start_of_month, end_of_month)
+    else
+      {:error, :invalid_date}
+    end
   end
 
   def week(year, week, config) do
-    with {:ok, first_day} <- Date.new(year, week, 1, config.calendar),
-         {:ok, last_day} <- Date.new(year, week, days_in_week(), config.calendar) do
-      Date.range(first_day, last_day)
+    {weeks_in_year, _days_in_last_week} = weeks_in_year(year, config)
+
+    if week in 1..weeks_in_year do
+      with {:ok, first_day} <- Date.new(year, week, 1, config.calendar),
+           {:ok, last_day} <- Date.new(year, week, days_in_week(), config.calendar) do
+        Date.range(first_day, last_day)
+      end
+    else
+      {:error, :invalid_date}
     end
   end
 
