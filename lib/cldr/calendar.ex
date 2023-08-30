@@ -209,7 +209,7 @@ defmodule Cldr.Calendar do
   Returns the number of weeks in a year
 
   """
-  @callback weeks_in_year(year :: Calendar.year()) :: week() | {:error, :not_defined}
+  @callback weeks_in_year(year :: Calendar.year()) :: {Cldr.Calendar.week(), Calendar.day()} | {:error, :not_defined}
 
   @doc """
   Returns the number of days in a year
@@ -1537,24 +1537,24 @@ defmodule Cldr.Calendar do
 
   ## Returns
 
-  * In integer number of weeks in a year
+  * `{weeks_in_year, days_in_last_week}`
 
   ## Examples
 
       iex> Cldr.Calendar.weeks_in_year ~D[2026-W01-1 Cldr.Calendar.ISOWeek]
-      53
+      {53, 7}
 
       iex> Cldr.Calendar.weeks_in_year ~D[2019-01-01]
-      52
+      {53, 1}
 
       iex> Cldr.Calendar.weeks_in_year ~D[2020-01-01]
-      52
+      {53, 2}
 
       iex> Cldr.Calendar.weeks_in_year 2020, Cldr.Calendar.ISOWeek
-      53
+      {53, 7}
 
   """
-  @spec weeks_in_year(Date.t()) :: Cldr.Calendar.week()
+  @spec weeks_in_year(Date.t()) :: {Cldr.Calendar.week(), Calendar.day_of_week()}
   def weeks_in_year(%{year: year, calendar: Calendar.ISO}) do
     weeks_in_year(year, Cldr.Calendar.Gregorian)
   end
@@ -1563,7 +1563,7 @@ defmodule Cldr.Calendar do
     weeks_in_year(year, calendar)
   end
 
-  @spec weeks_in_year(Calendar.year(), calendar) :: Cldr.Calendar.week()
+  @spec weeks_in_year(Calendar.year(), calendar) :: {Cldr.Calendar.week(), Calendar.day_of_week()}
   def weeks_in_year(year, Calendar.ISO) do
     Cldr.Calendar.Gregorian.weeks_in_year(year)
   end
@@ -2676,13 +2676,13 @@ defmodule Cldr.Calendar do
   def plus(%Date.Range{first: %{calendar: Calendar.ISO} = first}, period, increment, options) do
     %{first | calendar: Cldr.Calendar.Gregorian}
     |> plus(period, increment, options)
-    |> coerce_iso_calendar
+    |> coerce_iso_calendar()
   end
 
   def plus(%{calendar: Calendar.ISO} = date, period, increment, options) do
     %{date | calendar: Cldr.Calendar.Gregorian}
     |> plus(period, increment, options)
-    |> coerce_iso_calendar
+    |> coerce_iso_calendar()
   end
 
   def plus(%Date.Range{last: date}, :years, years, options) do
@@ -2731,11 +2731,11 @@ defmodule Cldr.Calendar do
     |> Interval.week()
   end
 
-  def plus(%{calendar: calendar} = date, :weeks, weeks, _options) do
-    date
-    |> date_to_iso_days
-    |> plus(weeks_to_days(weeks))
-    |> date_from_iso_days(calendar)
+  def plus(date, :weeks, weeks, _options) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+
+    calendar.plus(year, month, day, :weeks, weeks)
+    |> date_from_tuple(calendar)
   end
 
   def plus(%Date.Range{last: date}, :days, days, _options) do
@@ -2743,11 +2743,11 @@ defmodule Cldr.Calendar do
     |> Interval.day()
   end
 
-  def plus(%{calendar: calendar} = date, :days, days, _options) do
-    date
-    |> date_to_iso_days
-    |> plus(days)
-    |> date_from_iso_days(calendar)
+  def plus(date, :days, days, _options) do
+    %{year: year, month: month, day: day, calendar: calendar} = date
+
+    calendar.plus(year, month, day, :days, days)
+    |> date_from_tuple(calendar)
   end
 
   @doc false

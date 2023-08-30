@@ -131,11 +131,11 @@ defmodule Cldr.Calendar.Base.Week do
   end
 
   def weeks_in_long_year do
-    @weeks_in_long_year
+    {@weeks_in_long_year, @days_in_week}
   end
 
   def weeks_in_normal_year do
-    @weeks_in_normal_year
+    {@weeks_in_normal_year, @days_in_week}
   end
 
   def weeks_in_quarter(year, quarter, config) do
@@ -192,8 +192,8 @@ defmodule Cldr.Calendar.Base.Week do
 
   def year(year, config) do
     with {:ok, first_day} <- Date.new(year, 1, 1, config.calendar),
-         {:ok, last_day} <-
-           Date.new(year, weeks_in_year(year, config), days_in_week(), config.calendar) do
+         {weeks_in_year, _} <- weeks_in_year(year, config),
+         {:ok, last_day} <- Date.new(year, weeks_in_year, days_in_week(), config.calendar) do
       Date.range(first_day, last_day)
     end
   end
@@ -271,7 +271,8 @@ defmodule Cldr.Calendar.Base.Week do
       slice_weeks(month_in_quarter - 1, n, config) +
         maybe_extra_week_for_long_year(year, month_of_year, config)
 
-    {year_increment, week} = Cldr.Math.div_mod(week + weeks_to_add, weeks_in_year(year, config))
+    {weeks_in_year, _} = weeks_in_year(year, config)
+    {year_increment, week} = Cldr.Math.div_mod(week + weeks_to_add, weeks_in_year)
     add_days(year + year_increment, week, day, day_of_month - 1, config, options)
   end
 
@@ -294,10 +295,11 @@ defmodule Cldr.Calendar.Base.Week do
         maybe_extra_week_for_long_year(year, month_of_year, config)
 
     week = week - weeks_to_sub
+    {weeks_in_year, _} = weeks_in_year(year - 1, config)
     # IO.puts "  Proposed week of previous month: #{week}"
     {year, week} =
       if week < 1 do
-        {year - 1, weeks_in_year(year - 1, config) - week}
+        {year - 1, weeks_in_year - week}
       else
         {year, week}
       end
@@ -329,6 +331,20 @@ defmodule Cldr.Calendar.Base.Week do
     else
       {year, week, day}
     end
+  end
+
+  def plus(year, month, day, config, :weeks, weeks, _options) do
+    year
+    |> date_to_iso_days(month, day, config)
+    |> Kernel.+(Cldr.Calendar.weeks_to_days(weeks))
+    |> date_from_iso_days(config)
+  end
+
+  def plus(year, month, day, config, :days, days, _options) do
+    year
+    |> date_to_iso_days(month, day, config)
+    |> Kernel.+(days)
+    |> date_from_iso_days(config)
   end
 
   def add(naive_datetime, :year, step) do

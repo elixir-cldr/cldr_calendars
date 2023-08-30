@@ -34,7 +34,7 @@ defmodule Cldr.Calendar.Test do
 
   test "that Cldr.Calendar.ISOWeek dates all round trip" do
     for year <- 0001..2200,
-        month <- 1..Cldr.Calendar.ISOWeek.weeks_in_year(year),
+        month <- 1..elem(Cldr.Calendar.ISOWeek.weeks_in_year(year), 0),
         day <- 1..7 do
       {:ok, iso_week} = Date.new(year, month, day, Cldr.Calendar.ISOWeek)
       {:ok, iso} = Date.convert(iso_week, Calendar.ISO)

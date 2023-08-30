@@ -1,5 +1,19 @@
 # Changelog
 
+## Cldr.Calendars v1.23.0
+
+This is the changelog for Cldr Calendars v1.23.0 released on _____, 2023.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+**Note that `ex_cldr_calendars` version 1.21.1 and later are supported on Elixir 1.11 and later only.**
+
+### Breaking Change
+
+* `Cldr.Calendar.weeks_in_year/1` now returns a tuple of the form `{weeks_in_year, days_in_last_week}` instead of an integer value. In particular for Gregorian based calendars, the value of `weeks_in_year` will be 53 and the value of `days_last_week` will be either `1` or `2` depending on whether it is a leap year or not.
+
+### Enhancements
+
+* Adds `:week` and `:day` to the options for `<calendar>.plus/5`. These are in addition to the already existing `:year`, `:quarter` and `:month` options. This addition is primarily to support [tempo](https://github.com/kipcole9/tempo). This enhancement has no affect on the public API in the `Cldr.Calendar` module. The bump in minor release number is to allow for `tempo` to target the appropriate verison in a semver compatible manner.
+
 ## Cldr.Calendars v1.22.1
 
 This is the changelog for Cldr Calendars v1.22.1 released on July 4th 2023.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

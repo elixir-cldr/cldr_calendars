@@ -136,18 +136,16 @@ defmodule Cldr.Calendar.Base.Month do
     Calendar.ISO.months_in_year(year)
   end
 
-  def weeks_in_year(year, %Config{day_of_week: :first} = config) do
+  def weeks_in_year(year, config) do
     first_day = first_gregorian_day_of_year(year, config)
     last_day = last_gregorian_day_of_year(year, config)
 
-    ceil((last_day - first_day) / @days_in_week)
-  end
+    case Cldr.Math.div_mod(last_day - first_day + 1, @days_in_week) do
+      {weeks, 0} ->
+        {weeks, @days_in_week}
 
-  def weeks_in_year(year, config) do
-    if Base.Week.long_year?(year, config) do
-      Base.Week.weeks_in_long_year()
-    else
-      Base.Week.weeks_in_normal_year()
+      {weeks, days_in_last_week} ->
+        {weeks + 1, days_in_last_week}
     end
   end
 
@@ -286,6 +284,20 @@ defmodule Cldr.Calendar.Base.Month do
       end
 
     {new_year, new_month, new_day}
+  end
+
+  def plus(year, month, day, config, :weeks, weeks, _options) do
+    year
+    |> date_to_iso_days(month, day, config)
+    |> Kernel.+(Cldr.Calendar.weeks_to_days(weeks))
+    |> date_from_iso_days(config)
+  end
+
+  def plus(year, month, day, config, :days, days, _options) do
+    year
+    |> date_to_iso_days(month, day, config)
+    |> Kernel.+(days)
+    |> date_from_iso_days(config)
   end
 
   def first_gregorian_day_of_year(year, %Config{month_of_year: 1}) do

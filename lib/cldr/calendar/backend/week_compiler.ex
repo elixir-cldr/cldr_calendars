@@ -235,14 +235,31 @@ defmodule Cldr.Calendar.Compiler.Week do
       @spec periods_in_year(year) :: Calendar.week()
       @impl true
       def periods_in_year(year) do
-        weeks_in_year(year)
+        {weeks_in_year, _} = weeks_in_year(year)
+        weeks_in_year
       end
 
       @doc """
       Returns the number weeks in a given year.
 
+      ### Arguments
+
+      * `year` is any `t:Calendar.year/0`
+
+      ### Returns
+
+      * `{weeks_in_year, days_in_last_week}`
+
+      ### Example
+
+          iex> Cldr.Calendar.ISOWeek.weeks_in_year 2020
+          {53, 7}
+
+          iex> Cldr.Calendar.ISOWeek.weeks_in_year 2021
+          {52, 7
+
       """
-      @spec weeks_in_year(year) :: Calendar.week()
+      @spec weeks_in_year(year) :: {Calendar.week(), Calendar.day()}
       @impl true
       def weeks_in_year(year) do
         Week.weeks_in_year(year, __config__())
@@ -334,7 +351,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       to a `year-month-day`.
 
       `date_part` can be `:years`, `:quarters`,
-      or `:months`.
+      `:months` or `days`.
 
       """
       @impl true
@@ -350,6 +367,14 @@ defmodule Cldr.Calendar.Compiler.Week do
 
       def plus(year, week, day, :months, months, options) do
         Week.plus(year, week, day, __config__(), :months, months, options)
+      end
+
+      def plus(year, month, day, :weeks, weeks, options) do
+        Week.plus(year, month, day, __config__(), :weeks, weeks, options)
+      end
+
+      def plus(year, week, day, :days, days, options) do
+        Week.plus(year, week, day, __config__(), :days, days, options)
       end
 
       @doc """

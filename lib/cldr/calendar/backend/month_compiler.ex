@@ -252,8 +252,30 @@ defmodule Cldr.Calendar.Compiler.Month do
       @doc """
       Returns the number weeks in a given year.
 
+      Note that for Gregorian month-based calendars the
+      number of weeks returned will be 53 (not the sometimes
+      expected 52) since there is always a week 53 with
+      1 or 2 (in a leap year) additional days in the
+      last week.
+
+      ### Arguments
+
+      * `year` is any `t:Calendar.year/0`
+
+      ### Returns
+
+      * `{weeks_in_year, days_in_last_week}`
+
+      ### Example
+
+        iex> Cldr.Calendar.Gregorian.weeks_in_year 2019
+        {53, 1}
+
+        iex> Cldr.Calendar.Gregorian.weeks_in_year 2020
+        {53, 2}
+
       """
-      @spec weeks_in_year(year) :: Calendar.week()
+      @spec weeks_in_year(year) :: {Calendar.week(), Calendar.day()}
       @impl true
       def weeks_in_year(year) do
         Month.weeks_in_year(year, __config__())
@@ -336,7 +358,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       to a `year-month-day`.
 
       `date_part` can be `:years`, `:quarters`
-      or `:months`.
+      `:months` or `:days`.
 
       """
       @impl true
@@ -352,6 +374,14 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       def plus(year, month, day, :months, months, options) do
         Month.plus(year, month, day, __config__(), :months, months, options)
+      end
+
+      def plus(year, month, day, :weeks, weeks, options) do
+        Month.plus(year, month, day, __config__(), :weeks, weeks, options)
+      end
+
+      def plus(year, month, day, :days, days, options) do
+        Month.plus(year, month, day, __config__(), :days, days, options)
       end
 
       @doc """
