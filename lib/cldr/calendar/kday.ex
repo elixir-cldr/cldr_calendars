@@ -18,13 +18,15 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
+  * `date` is `t:Date.t/0`, a `t:DateTime.t/0`, `t:NaiveDateTime.t/0` or
+    ISO days since epoch.
 
-  * `k` is an integer day of the week.
+    * `k` is an integer day of the week where `1` is
+    Monday and `7` is Sunday.
 
   ## Returns
 
-  * A `%Date{}` in the calendar of the date provided as an argument
+  * A `t:Date.t/0` in the calendar of the date provided as an argument.
 
   ## Examples
 
@@ -36,6 +38,9 @@ defmodule Cldr.Calendar.Kday do
 
       iex> Cldr.Calendar.Kday.kday_on_or_before(~D[2017-06-30], 6)
       ~D[2017-06-24]
+
+      iex> Cldr.Calendar.Kday.kday_on_or_before(~D[2023-09-29], 5)
+      ~D[2023-09-29]
 
   """
   @spec kday_on_or_before(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
@@ -59,13 +64,15 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
+  * `date` is `t:Date.t/0`, a `t:DateTime.t/0`, `t:NaiveDateTime.t/0` or
+    ISO days since epoch.
 
-  * `k` is an integer day of the week.
+    * `k` is an integer day of the week where `1` is
+    Monday and `7` is Sunday.
 
   ## Returns
 
-  * A `%Date{}` in the calendar of the date provided as an argument
+  * A `t:Date.t/0` in the calendar of the date provided as an argument
 
   ## Examples
 
@@ -77,6 +84,9 @@ defmodule Cldr.Calendar.Kday do
 
       iex> Cldr.Calendar.Kday.kday_on_or_after(~D[2017-06-30], 6)
       ~D[2017-07-01]
+
+      iex> Cldr.Calendar.Kday.kday_on_or_after(~D[2023-09-29], 5)
+      ~D[2023-09-29]
 
   """
   @spec kday_on_or_after(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
@@ -91,7 +101,7 @@ defmodule Cldr.Calendar.Kday do
   end
 
   def kday_on_or_after(iso_days, k) when is_integer(iso_days) do
-    kday_on_or_before(iso_days + 7, k)
+    kday_on_or_before(iso_days + 6, k)
   end
 
   @doc """
@@ -100,13 +110,15 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
+  * `date` is `t:Date.t/0`, a `t:DateTime.t/0`, `t:NaiveDateTime.t/0` or
+    ISO days since epoch.
 
-  * `k` is an integer day of the week.
+  * `k` is an integer day of the week where `1` is
+    Monday and `7` is Sunday.
 
   ## Returns
 
-  * A `%Date{}` in the calendar of the date provided as an argument
+  * A `t:Date.t/0` in the calendar of the date provided as an argument.
 
   ## Examples
 
@@ -141,13 +153,15 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
+  * `date` is `t:Date.t/0`, a `t:DateTime.t/0`, `t:NaiveDateTime.t/0` or
+    ISO days since epoch.
 
-  * `k` is an integer day of the week.
+  * `k` is an integer day of the week where `1` is
+    Monday and `7` is Sunday.
 
   ## Returns
 
-  * A `%Date{}` in the calendar of the date provided as an argument
+  * A `t:Date.t/0` in the calendar of the date provided as an argument.
 
   ## Examples
 
@@ -156,6 +170,9 @@ defmodule Cldr.Calendar.Kday do
 
       iex> Cldr.Calendar.Kday.kday_before(~D[2017-11-30], 1)
       ~D[2017-11-27]
+
+      iex> Cldr.Calendar.Kday.kday_before(~D[2023-09-30], 5)
+      ~D[2023-09-29]
 
       # 6 means Saturday.  Use either the integer value or the atom form.
       iex> Cldr.Calendar.Kday.kday_before(~D[2017-06-30], 6)
@@ -183,14 +200,15 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or
+  * `date` is `t:Date.t/0`, a `t:DateTime.t/0`, `t:NaiveDateTime.t/0` or
     ISO days since epoch.
 
-  * `k` is an integer day of the week.
+  * `k` is an integer day of the week where `1` is
+    Monday and `7` is Sunday.
 
   ## Returns
 
-  * A `%Date{}` in the calendar of the date provided as an argument
+  * A `t:Date.t/0` in the calendar of the date provided as an argument.
 
   ## Examples
 
@@ -228,17 +246,18 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or
+  * `date` is `t:Date.t/0`, a `t:DateTime.t/0`, `t:NaiveDateTime.t/0` or
     ISO days since epoch.
 
   * `n` is the cardinal number of `k` before (negative `n`) or after
-    (positive `n`) the specified date
+    (positive `n`) the specified date.
 
-  * `k` is an integer day of the week.
+  * `k` is an integer day of the week where `1` is
+    Monday and `7` is Sunday.
 
   ## Returns
 
-  * A `%Date{}` in the calendar of the date provided as an argument
+  * A `t:Date.t/0` in the calendar of the date provided as an argument.
 
   ## Examples
 
@@ -270,7 +289,7 @@ defmodule Cldr.Calendar.Kday do
     weeks_to_days(n) + kday_on_or_before(iso_days, k)
   end
 
-  def nth_kday(iso_days, n, k) when is_integer(iso_days) do
+  def nth_kday(iso_days, n, k) when is_integer(iso_days) and n < 0 do
     weeks_to_days(n) + kday_on_or_after(iso_days, k)
   end
 
@@ -280,14 +299,15 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or
+  * `date` is `t:Date.t/0`, a `t:DateTime.t/0`, `t:NaiveDateTime.t/0` or
     ISO days since epoch.
 
-  * `k` is an integer day of the week.
+  * `k` is an integer day of the week where `1` is
+    Monday and `7` is Sunday.
 
   ## Returns
 
-  * A `%Date{”}` in the calendar of the date provided as an argument
+  * A `t:Date.t/0` in the calendar of the date provided as an argument.
 
   ## Examples
 
@@ -321,14 +341,15 @@ defmodule Cldr.Calendar.Kday do
 
   ## Arguments
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or
+  * `date` is `t:Date.t/0`, a `t:DateTime.t/0`, `t:NaiveDateTime.t/0` or
     ISO days since epoch.
 
-  * `k` is an integer day of the week.
+  * `k` is an integer day of the week where `1` is
+    Monday and `7` is Sunday.
 
   ## Returns
 
-  * A `%Date{}` in the calendar of the date provided as an argument
+  * A `t:Date.t/0` in the calendar of the date provided as an argument
 
   ## Example
 

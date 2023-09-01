@@ -3241,17 +3241,17 @@ defmodule Cldr.Calendar do
   ### Arguments
 
   * `iso_day_number` is the number of days since the start
-    of the epoch.  See `Cldr.Calendar.date_to_iso_days/1`
+    of the epoch.  See `Cldr.Calendar.date_to_iso_days/1`.
 
   ### Returns
 
   * An integer representing a day of the week where Monday
-    is represented by `1` and Sunday is represented by `7`
+    is represented by `1` and Sunday is represented by `7`.
 
   ### Examples
 
       iex> days = Cldr.Calendar.date_to_iso_days ~D[2019-01-01]
-      iex> Cldr.Calendar.iso_days_to_day_of_week(days) == Cldr.Calendar.tuesday
+      iex> Cldr.Calendar.iso_days_to_day_of_week(days) == Cldr.Calendar.tuesday()
       true
 
   """
@@ -3261,7 +3261,7 @@ defmodule Cldr.Calendar do
   end
 
   def iso_days_to_day_of_week(iso_day_number) when is_integer(iso_day_number) do
-    Integer.mod(iso_day_number + 5, 7) + 1
+    Integer.mod(iso_day_number + 6, 7)
   end
 
   @doc """

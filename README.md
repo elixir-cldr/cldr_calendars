@@ -9,9 +9,9 @@
 
 # Introduction
 
-Calendars are curious things. For centuries people from all cultures have sought to impose human order on the astronomical movements of the earth and moon. Today, despite much of the world converging on the [Proleptic Gregorian](https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar) calendar, there remain many derivative and alternative ways for humans to organize the passage of time.
+Calendars are curious things. For centuries people from all cultures have sought to impose human order on the astronomical movements of the earth and moon. Today, despite much of the world converging on the [Proleptic Gregorian](https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar) calendar, there remain many derivative and alternative ways for humans to organise the passage of time.
 
-`Cldr Calendars` builds on Elixir's standard `Calendar` module to provide additional calendars and calendar functionality intended to be of practical use.  In particular `Cdlr Calendars`:
+`Cldr Calendars` builds on Elixir's standard `Calendar` module to provide additional calendars and calendar functionality intended to be of practical use.  In particular `Cldr Calendars`:
 
 * Provides support for configurable month-based and week-based calendars that are in common use as [Fiscal Year](https://en.wikipedia.org/wiki/Fiscal_year) calendars for countries and organizations around the world. See `Cldr.Calendar.new/3`
 
@@ -33,12 +33,12 @@ Calendars are curious things. For centuries people from all cultures have sought
 
 ## Cldr Calendars Installation
 
-Add `ex_cldr_calendars` to your `deps` in `mix.exs`.
+Add `ex_cldr_calendars` to your `deps` in `mix.exs`. **Note that `ex_cldr_calendars` is supported on Elixir 1.11 and later only**.
 
 ```elixir
 def deps do
   [
-    {:ex_cldr_calendars, "~> 1.17"}
+    {:ex_cldr_calendars, "~> 1.23"}
     ...
   ]
 end
@@ -500,20 +500,6 @@ end
 
 It is also possible to pass the name of a backend module to the `Cldr.Calendar.localize/3` function by specifying the `:backend` option with a `backend` module name.
 
-## Inspecting calendar dates
-
-The examples in this readme reflect inspecting dates as they are in Elixir 1.10. For earlier releases of Elixir add this code to your project:
-
-```elixir
-if Version.compare(System.version(), "1.10.0-dev") == :lt do
-  defimpl Inspect, for: Date do
-    def inspect(date, opts) do
-      Cldr.Calendar.inspect(date, opts)
-    end
-  end
-end
-```
-You will get a warning indicating that the existing implementation is being overwritten. This is expected.
 
 
 
