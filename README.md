@@ -2,6 +2,7 @@
 
 [![Hex.pm](https://img.shields.io/hexpm/v/ex_cldr_calendars.svg)](https://hex.pm/packages/ex_cldr_calendars)
 [![Hex.pm](https://img.shields.io/hexpm/dw/ex_cldr_calendars.svg?)](https://hex.pm/packages/ex_cldr_calendars)
+[![Hex.pm](https://img.shields.io/hexpm/dt/ex_cldr_calendars.svg?)](https://hex.pm/packages/ex_cldr_calendars)
 [![Hex.pm](https://img.shields.io/hexpm/l/ex_cldr_calendars.svg)](https://hex.pm/packages/ex_cldr_calendars)
 
 > My wife's jealousy is getting ridiculous. The other day she looked at my calendar and wanted to know who May was.
