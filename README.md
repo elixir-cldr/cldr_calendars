@@ -1,5 +1,6 @@
 # Cldr Calendars
 
+![Build status](https://github.com/elixir-cldr/cldr_calendars/actions/workflows/main.yml/badge.svg)
 [![Hex.pm](https://img.shields.io/hexpm/v/ex_cldr_calendars.svg)](https://hex.pm/packages/ex_cldr_calendars)
 [![Hex.pm](https://img.shields.io/hexpm/dw/ex_cldr_calendars.svg?)](https://hex.pm/packages/ex_cldr_calendars)
 [![Hex.pm](https://img.shields.io/hexpm/dt/ex_cldr_calendars.svg?)](https://hex.pm/packages/ex_cldr_calendars)
