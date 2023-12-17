@@ -268,11 +268,11 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       ### Example
 
-        iex> Cldr.Calendar.Gregorian.weeks_in_year 2019
-        {53, 1}
+          iex> Cldr.Calendar.Gregorian.weeks_in_year(2019)
+          {53, 1}
 
-        iex> Cldr.Calendar.Gregorian.weeks_in_year 2020
-        {53, 2}
+          iex> Cldr.Calendar.Gregorian.weeks_in_year(2020)
+          {53, 2}
 
       """
       @spec weeks_in_year(year) :: {Calendar.week(), Calendar.day()}
