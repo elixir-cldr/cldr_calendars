@@ -242,7 +242,7 @@ From the diagram above we can define the following rules:
 
 ## Calendar Creation
 
-Since calendars defined in `Cldr.Calendar` are intended to be compatible and converible to other Calendars supporting Elixir's `Calendar` behaviour, the configuration of calendars needs to be encapsulated.
+Since calendars defined in `Cldr.Calendar` are intended to be compatible and convertible to other Calendars supporting Elixir's `Calendar` behaviour, the configuration of calendars needs to be encapsulated.
 
 The simplest way to is to define a module that `use`s either `Cldr.Calendar.Base.Week` or `Cldr.Calendar.Base.Month`. This is how we have been defining calendar modules in the examples so far.
 
