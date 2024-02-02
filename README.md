@@ -502,6 +502,9 @@ end
 
 It is also possible to pass the name of a backend module to the `Cldr.Calendar.localize/3` function by specifying the `:backend` option with a `backend` module name.
 
+## Interesting calendar links
+
+* [Why isn’t the new year on the winter solstice?](https://slj.ma/cal.html)
 
 
 
