@@ -12,7 +12,7 @@ This is the changelog for Cldr Calendars v1.23.0 released on December 16th, 2023
 
 ### Enhancements
 
-* Adds `:week` and `:day` to the options for `<calendar>.plus/5`. These are in addition to the already existing `:year`, `:quarter` and `:month` options. This addition is primarily to support [tempo](https://github.com/kipcole9/tempo). This enhancement has no affect on the public API in the `Cldr.Calendar` module. The bump in minor release number is to allow for `tempo` to target the appropriate verison in a semver compatible manner.
+* Adds `:week` and `:day` to the options for `<calendar>.plus/5`. These are in addition to the already existing `:year`, `:quarter` and `:month` options. This addition is primarily to support [tempo](https://github.com/kipcole9/tempo). This enhancement has no affect on the public API in the `Cldr.Calendar` module. The bump in minor release number is to allow for `tempo` to target the appropriate version in a semver compatible manner.
   
 * Adds `Cldr.Calendar.ISO` which is a month-based calendar with weeks that start on Monday and the first week must have at least 4 days of the current year in it. This aligns to the ISO8601 standard and is the month-based counterpart to the week-based `Cldr.Calendar.ISOWeek` calendar already included in `ex_cldr_calendars`.
 
