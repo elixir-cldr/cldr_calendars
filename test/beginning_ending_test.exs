@@ -1,5 +1,5 @@
 defmodule Cldr.Calendar.BeginsEnds.Test do
-  use ExUnit.Case, asynch: true
+  use ExUnit.Case, async: true
 
   test "The US fiscal calendar for fiscal year start and end years" do
     assert Cldr.Calendar.start_end_gregorian_years(2019, %Cldr.Calendar.Config{

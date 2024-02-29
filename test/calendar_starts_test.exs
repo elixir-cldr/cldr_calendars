@@ -1,5 +1,5 @@
 defmodule Cldr.Calendar.Starts.Test do
-  use ExUnit.Case, asynch: true
+  use ExUnit.Case, async: true
 
   test "that anchor: :first returns the first gregorian day of year for a range of days of the week" do
     days = %{

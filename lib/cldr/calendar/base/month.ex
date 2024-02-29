@@ -15,6 +15,11 @@ defmodule Cldr.Calendar.Base.Month do
   @iso_week_min_days 4
   @january 1
 
+  # Whether to coerce valid date with plus/3 for
+  # years and months (days, weeks dont ever require
+  # coercion).
+  @default_coercion Cldr.Calendar.default_coercion()
+
   defmacro __using__(options \\ []) do
     quote bind_quoted: [options: options] do
       @options options
@@ -295,7 +300,7 @@ defmodule Cldr.Calendar.Base.Month do
 
   def plus(year, month, day, config, :years, years, options) do
     new_year = year + years
-    coerce? = Keyword.get(options, :coerce, false)
+    coerce? = Keyword.get(options, :coerce, @default_coercion)
     {new_month, new_day} = Cldr.Calendar.month_day(new_year, month, day, config.calendar, coerce?)
     {new_year, new_month, new_day}
   end
@@ -320,7 +325,7 @@ defmodule Cldr.Calendar.Base.Month do
     new_year = year + year_increment
 
     new_day =
-      if Keyword.get(options, :coerce, true) do
+      if Keyword.get(options, :coerce, @default_coercion) do
         max_new_day = days_in_month(new_year, new_month, config)
         min(day, max_new_day)
       else

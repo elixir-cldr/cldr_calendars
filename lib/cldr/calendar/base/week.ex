@@ -14,6 +14,11 @@ defmodule Cldr.Calendar.Base.Week do
   @weeks_in_normal_year 52
   @quarters_in_year 4
 
+  # Whether to coerce valid date with plus/3 for
+  # years and months (days, weeks dont ever require
+  # coercion).
+  @default_coercion Cldr.Calendar.default_coercion()
+
   defmacro __using__(options \\ []) do
     quote bind_quoted: [options: options] do
       @options options
@@ -255,7 +260,7 @@ defmodule Cldr.Calendar.Base.Week do
 
   def plus(year, week, day, config, :years, years, options) do
     new_year = year + years
-    coerce? = Keyword.get(options, :coerce, false)
+    coerce? = Keyword.get(options, :coerce, @default_coercion)
     {new_week, new_day} = Cldr.Calendar.month_day(new_year, week, day, config.calendar, coerce?)
     {new_year, new_week, new_day}
   end
@@ -332,7 +337,7 @@ defmodule Cldr.Calendar.Base.Week do
 
     {year, week, day} =
       Enum.reduce(1..abs(months), {year, week, day}, fn _i, {year, week, day} ->
-        plus(year, week, day, config, :months, increment, coerce: true)
+        plus(year, week, day, config, :months, increment, coerce: @default_coercion)
       end)
 
     # Now reconcile the original date of the month with the
@@ -384,7 +389,7 @@ defmodule Cldr.Calendar.Base.Week do
 
   def add_days(year, week, day, days, config, options) do
     days_to_add =
-      if Keyword.get(options, :coerce) do
+      if Keyword.get(options, :coerce, @default_coercion) do
         month = month_of_year(year, week, day, config)
         min(days_in_month(year, month, config) - 1, days)
       else

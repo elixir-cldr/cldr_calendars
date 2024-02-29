@@ -1,5 +1,5 @@
 defmodule Cldr.Calendar.Doc.Test do
-  use ExUnit.Case, asynch: true
+  use ExUnit.Case, async: true
 
   doctest Cldr.Calendar
   doctest Cldr.Calendar.Duration

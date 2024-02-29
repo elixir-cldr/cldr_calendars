@@ -35,6 +35,11 @@ defmodule Cldr.Calendar do
   alias Cldr.Calendar.Interval
   import Kernel, except: [inspect: 1, inspect: 2]
 
+  # Whether to coerce valid date with plus/3 for
+  # years and months (days, weeks dont ever require
+  # cercion).
+  @default_coercion true
+
   @typedoc """
   Specifies the type of a calendar.
 
@@ -284,7 +289,7 @@ defmodule Cldr.Calendar do
               Date.Range.t() | {:error, :not_defined}
 
   @doc """
-  Increments a `Date.t` or `Date.Range.t` by a specified positive
+  Increments a `t:Date.t/0` or `Date.Range.t` by a specified positive
   or negative integer number of periods (year, quarter, month,
   week or day).
 
@@ -315,17 +320,22 @@ defmodule Cldr.Calendar do
     Cldr.Calendar.Backend.Compiler.define_calendar_modules(config)
   end
 
+  @doc false
+  def default_coercion do
+    @default_coercion
+  end
+
+  @doc false
+  def default_cldr_calendar do
+    default_calendar().cldr_calendar_type()
+  end
+
   @doc """
   Returns the default calendar.
 
   """
   def default_calendar do
     @default_calendar
-  end
-
-  @doc false
-  def default_cldr_calendar do
-    default_calendar().cldr_calendar_type()
   end
 
   @doc """
@@ -335,7 +345,7 @@ defmodule Cldr.Calendar do
   ### Arguments
 
   * `territory` is any valid ISO3166-2 code as
-    an `String.t` or upcased `atom()`
+    an `t:String.t/0` or upcased `atom`.
 
   ### Returns
 
@@ -388,7 +398,7 @@ defmodule Cldr.Calendar do
   * `:locale` is any locale or locale name validated
     by `Cldr.validate_locale/2`.  The default is
     `Cldr.get_locale()` which returns the locale
-    set for the current process
+    set for the current process.
 
   ### Returns
 
@@ -432,7 +442,7 @@ defmodule Cldr.Calendar do
 
   * `calendar_type` is an atom of either `:month` or
     `:week` indicating which type of calendar is to
-    be created
+    be created.
 
   * `config` is a Keyword list defining the configuration
     of the calendar.
@@ -741,11 +751,11 @@ defmodule Cldr.Calendar do
 
   @doc """
   Returns the first date of a `year`
-  for a `Date.t`.
+  for a `t:Date.t/0`.
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -771,7 +781,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `year` is any year
+  * `year` is any year.
 
   * `calendar` is any module that implements
     the `Calendar` and `Cldr.Calendar`
@@ -814,11 +824,11 @@ defmodule Cldr.Calendar do
 
   @doc """
   Returns the last date of a `year`
-  for a `Date.t`.
+  for a `t:Date.t/0`.
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -844,7 +854,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `year` is any integer year number
+  * `year` is any integer year number.
 
   * `calendar` is any module that implements the `Calendar` and
     `Cldr.Calendar` behaviours or `Calendar.ISO`
@@ -890,10 +900,10 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `year` is any integer year number
+  * `year` is any integer year number.
 
   * `calendar` is any module that implements the `Calendar` and
-    `Cldr.Calendar` behaviours or `Calendar.ISO`
+    `Cldr.Calendar` behaviours or `Calendar.ISO`.
 
   ### Examples
 
@@ -940,12 +950,12 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
   * a the year since the start of the era and
-    the era of the year as a tuple
+    the era of the year as a tuple.
 
   ### Notes
 
@@ -962,7 +972,7 @@ defmodule Cldr.Calendar do
   2. This is also true for fiscal year calendars that
     start on a day other than January 1st. The year of
     era will depend on whether the calendar was configured
-    with `year: :beginning`, `year: :ending` or `year: :majority`
+    with `year: :beginning`, `year: :ending` or `year: :majority`.
 
   ### Examples
 
@@ -994,12 +1004,12 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
   * a the days since the start of the era and
-    the era of the year as a tuple
+    the era of the year as a tuple.
 
   ### Examples
 
@@ -1022,17 +1032,18 @@ defmodule Cldr.Calendar do
 
   @doc """
   Returns the Modified Julian Day of
-  a `Date.t`.
+  a `t:Date.t/0`.
 
   ### Arguments
 
-  * `date_or_datetime` is any `t:Date.t/0`  or a `DateTime.t()`
-    if a `DateTime.t()` is given, the result will be given at the current timezone.
+  * `date_or_datetime` is any `t:Date.t/0` or a `t:DateTime.t/0`.
+    If a `t:DateTime.t/0` is given, the result will be given in
+    the current timezone.
 
   ### Returns
 
   * an number representing the
-    Modified Julian Day of the `date`
+    Modified Julian Day of the `date`.
 
   ### Notes
 
@@ -1052,12 +1063,14 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.modified_julian_day(~U[2022-09-26 18:00:00.000Z])
       59848.75
 
-  If the given DateTime is not UTC, the result is given on the local timezone
+      # If the given DateTime is not UTC, the result is given in
+      # the local timezone
 
       iex> dt = DateTime.shift_zone!(~U[2019-01-01 14:00:00Z], "America/Sao_Paulo")
       #DateTime<2019-01-01 12:00:00-02:00 -02 America/Sao_Paulo>
       iex> Cldr.Calendar.modified_julian_day(dt)
       58484.5
+
   """
   @mjd_epoch_in_iso_days 678_941
   def modified_julian_day(%DateTime{} = datetime) do
@@ -1088,7 +1101,7 @@ defmodule Cldr.Calendar do
 
   ### Returns
 
-  * a `DateTime.t()` at UTC timezone
+  * a `t:DateTime.t/0` at UTC timezone.
 
   ### Examples
 
@@ -1129,7 +1142,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -1169,7 +1182,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -1257,7 +1270,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -1296,7 +1309,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -1366,7 +1379,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -1408,7 +1421,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -1457,7 +1470,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -1498,7 +1511,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -1536,7 +1549,7 @@ defmodule Cldr.Calendar do
   ### Arguments
 
   * Either a `t:Date.t/0` or
-    an integer year a calendar name
+    an integer year a calendar name.
 
   ### Returns
 
@@ -1606,17 +1619,17 @@ defmodule Cldr.Calendar do
 
   * `date` is any `t:Date.t/0`.
 
-  * `options` is a Keyword list of options.
+  * `options` is a `t:Keyword.t/0` list of options.
 
   ### Options
 
   * `:locale` is any locale or locale name validated
     by `Cldr.validate_locale/2`.  The default is
     `Cldr.get_locale()` which returns the locale
-    set for the current process
+    set for the current process.
 
   * `:territory` is any valid ISO-3166-2 territory
-    that is validated by `Cldr.validate_territory/1`
+    that is validated by `Cldr.validate_territory/1`.
 
   * `:backend` is any `Cldr` backend module. See the
     [backend configuration](https://hexdocs.pm/ex_cldr/readme.html#configuration)
@@ -1630,9 +1643,9 @@ defmodule Cldr.Calendar do
   to determine whether a given day is a weekend or not
   the following order applies:
 
-  * A territory specified by the `:territory` option
+  * A territory specified by the `:territory` option.
 
-  * The territory defined as part of the `:locale` option
+  * The territory defined as part of the `:locale` option.
 
   * The territory defined as part of the current processes
     default locale.
@@ -1689,19 +1702,19 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
-  * `options` is a Keyword list of options
+  * `options` is a `t:Keyword.t/0` list of options.
 
   ### Options
 
   * `:locale` is any locale or locale name validated
     by `Cldr.validate_locale/2`.  The default is
     `Cldr.get_locale()` which returns the locale
-    set for the current process
+    set for the current process.
 
   * `:territory` is any valid ISO-3166-2 territory
-    that is validated by `Cldr.validate_territory/1`
+    that is validated by `Cldr.validate_territory/1`.
 
   * `:backend` is any `Cldr` backend module. See the
     [backend configuration](https://hexdocs.pm/ex_cldr/readme.html#configuration)
@@ -1715,9 +1728,9 @@ defmodule Cldr.Calendar do
   to determine whether a given day is a weekday or not
   the following order applies:
 
-  * A territory specified by the `:territory` option
+  * A territory specified by the `:territory` option.
 
-  * The territory defined as part of the `:locale` option
+  * The territory defined as part of the `:locale` option.
 
   * The territory defined as part of the current processes
     default locale.
@@ -1803,16 +1816,16 @@ defmodule Cldr.Calendar do
   @doc """
   Returns a list of the days of the week that
   are considered a weekend for a given
-  territory (country)
+  territory (country).
 
   ### Arguments
 
-  * `territory` is any valid ISO3166-2 code
+  * `territory` is any valid ISO3166-2 code.
 
   ### Returns
 
   * A list of integers representing the days of
-    the week that are weekend days
+    the week that are weekend days.
 
   ### Examples
 
@@ -1834,16 +1847,16 @@ defmodule Cldr.Calendar do
   @doc """
   Returns a list of the days of the week that
   are considered a weekend for a given
-  territory (country)
+  territory (country).
 
   ### Arguments
 
-  * `territory` is any valid ISO3166-2 code
+  * `territory` is any valid ISO3166-2 code.
 
   ### Returns
 
   * A list of integers representing the days of
-    the week that are week days
+    the week that are week days.
 
   ### Notes
 
@@ -1942,7 +1955,7 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Formats a date into a string representation
+  Formats a date into a string representation.
 
   Note that the output is not decorated with
   the calendar module name.
@@ -2001,15 +2014,15 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date_or_date_range` is any `Date.t` or
-    `Date.Range.t`
+  * `date_or_date_range` is any `t:Date.t/0` or
+    `Date.Range.t`.
 
   * `period` is `:year`, `:quarter`, `:month`,
-    `:week` or `:day`
+    `:week` or `:day`.
 
   ### Returns
 
-  When a `Date.t` is passed, a `Date.t` is
+  When a `t:Date.t/0` is passed, a `t:Date.t/0` is
   returned.  When a `Date.Range.t` is passed
   a `Date.Range.t` is returned.
 
@@ -2071,15 +2084,15 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date_or_date_range` is any `Date.t` or
-    `Date.Range.t`
+  * `date_or_date_range` is any `t:Date.t/0` or
+    `Date.Range.t`.
 
   * `period` is `:year`, `:quarter`, `:month`,
-  ` :week` or `:day`
+  ` :week` or `:day`.
 
   ### Returns
 
-  When a `Date.t` is passed, a `Date.t` is
+  When a `t:Date.t/0` is passed, a `t:Date.t/0` is
   returned.  When a `Date.Range.t` is passed
   a `Date.Range.t` is returned.
 
@@ -2152,18 +2165,18 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date_or_date_range` is any `Date.t` or
-    `Date.Range.t`
+  * `date_or_date_range` is any `t:Date.t/0` or
+    `Date.Range.t`.
 
   * `period` is `:year`, `:quarter`, `:month`,
-    `:week` or `:day`
+    `:week` or `:day`.
 
-  * `options` is a Keyword list of options that is
-    passed to `plus/4` or `minus/4`
+  * `options` is a `t:Keyword.t/0` list of options that is
+    passed to `plus/4` or `minus/4`.
 
   ### Returns
 
-  When a `Date.t` is passed, a `Date.t` is
+  When a `t:Date.t/0` is passed, a `t:Date.t/0` is
   returned.  When a `Date.Range.t` is passed
   a `Date.Range.t` is returned.
 
@@ -2234,10 +2247,10 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `Date.t`
+  * `date` is any `t:Date.t/0`.
 
-  * `options` is a Keyword list of options. The default is
-    `[]`
+  * `options` is a `t:Keyword.t/0` list of options. The default is
+    `[]`.
 
   ### Options
 
@@ -2281,16 +2294,16 @@ defmodule Cldr.Calendar do
 
   @doc """
   Returns a localized string for a part of
-  a `Date.t`.
+  a `t:Date.t/0`.
 
   ### Arguments
 
-  * `date` is any `Date.t`
+  * `date` is any `t:Date.t/0`.
 
   * `part` is one of `:era`, `:quarter`, `:month`,
-    `:day_of_week` or `:days_of_week`
+    `:day_of_week` or `:days_of_week`.
 
-  * `options` is a Keyword list of options
+  * `options` is a `t:Keyword.t/0` list of options.
 
   ### Options
 
@@ -2583,22 +2596,22 @@ defmodule Cldr.Calendar do
   ### Arguments
 
   * `date` is any map that conforms to
-    `Calendar.date()`
+    `t:Calendar.date.t/0`.
 
   * `duration` is any duration returned
-    by `Cldr.Calendar.Duration.new!/2`
+    by `Cldr.Calendar.Duration.new!/2`.
 
   * `options` is a Keyword list of
-    options
+    options.
 
   ### Options
 
   * Options are those applicable to
-    `Cldr.Calendar.plus/4`
+    `Cldr.Calendar.plus/4`.
 
   ### Returns
 
-  * A `date` advanced by the duration
+  * A `t:Calendar.date.t/0` advanced by the duration.
 
   ### Examples
 
@@ -2644,13 +2657,13 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date_or_date_range` is any `Date.t` or
-    `Date.Range.t`
+  * `date_or_date_range` is any `t:Date.t/0` or
+    `Date.Range.t`.
 
   * `period` is `:years`, `:quarters`, `:months`,
-    `:weeks` or `:days`
+    `:weeks` or `:days`.
 
-  * `options` is a Keyword list of options
+  * `options` is a `t:Keyword.t/0` list of options.
 
   ### Options
 
@@ -2660,10 +2673,11 @@ defmodule Cldr.Calendar do
     from `~D[2019-03-31]`. Since there is no date `~D[2019-02-31]`
     this would normally return `{:error, :invalid_date}`.
     Setting `coerce: true` it will return `~D[2019-02-28]`.
+    `coerce: true` is the default.
 
   ### Returns
 
-  When a `Date.t` is passed, a `Date.t` is
+  When a `t:Date.t/0` is passed, a `t:Date.t/0` is
   returned.  When a `Date.Range.t` is passed
   a `Date.Range.t` is returned.
 
@@ -2718,7 +2732,7 @@ defmodule Cldr.Calendar do
     %{year: year, month: month, day: day, calendar: calendar} = date
     new_year = year + years
 
-    coerce? = Keyword.get(options, :coerce, false)
+    coerce? = Keyword.get(options, :coerce, @default_coercion)
     {new_month, new_day} = month_day(new_year, month, day, calendar, coerce?)
 
     with {:ok, date} <- Date.new(new_year, new_month, new_day, calendar) do
@@ -2800,13 +2814,13 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date_or_date_range` is any `Date.t` or
+  * `date_or_date_range` is any `t:Date.t/0` or
     `Date.Range.t`
 
   * `period` is `:years`, `:quarters`, `:months`,
-    `:weeks` or `:days`
+    `:weeks` or `:days`.
 
-  * `options` is a Keyword list of options
+  * `options` is a `t:Keyword.t/0` list of options.
 
   ### Options
 
@@ -2816,10 +2830,11 @@ defmodule Cldr.Calendar do
     from `~D[2019-03-31]`. Since there is no date `~D[2019-02-31]`
     this would normally return `{:error, :invalid_date}`.
     Setting `coerce: true` it will return `~D[2019-02-28]`.
+    `coerce: true` is the default.
 
   ### Returns
 
-  When a `Date.t` is passed, a `Date.t` is
+  When a `t:Date.t/0` is passed, a `t:Date.t/0` is
   returned.  When a `Date.Range.t` is passed
   a `Date.Range.t` is returned.
 
@@ -2854,19 +2869,19 @@ defmodule Cldr.Calendar do
   @doc """
   Returns an `Enumerable` list of dates of a given precision
   of either `:years`, `:quarters`, `:months`, `:weeks` or
-  `:days`
+  `:days`.
 
   ### Arguments
 
-  * `date_from` is a any `Date.t` that is the start of the
-    sequence
+  * `date_from` is a any `t:Date.t/0` that is the start of the
+    sequence.
 
   * `date_to_or_count` is upper bound of the sequence
-    as a `Date.t` or the number of dates in the
-    sequence to be generated
+    as a `t:Date.t/0` or the number of dates in the
+    sequence to be generated.
 
   * `precision` is one of `:years`, `:quarters`,
-    `:months`, `:weeks` or `:days`
+    `:months`, `:weeks` or `:days`.
 
   The sequence is generated starting with `date_from` until the next date
   in the sequence would be after `date_to`.
@@ -2931,15 +2946,15 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date_from` is a any `Date.t` that is the start of the
-    sequence
+  * `date_from` is a any `t:Date.t/0` that is the start of the
+    sequence.
 
   * `date_to_or_count` is upper bound of the sequence
-    as a `Date.t` or the number of dates in the
-    sequence to be generated
+    as a `t:Date.t/0` or the number of dates in the
+    sequence to be generated.
 
   * `precision` is one of `:years`, `:quarters`,
-    `:months`, `:weeks` or `:days`
+    `:months`, `:weeks` or `:days`.
 
   The sequence is generated starting with `date_from` until the next date
   in the sequence would be after `date_to`.
@@ -2951,7 +2966,7 @@ defmodule Cldr.Calendar do
 
   ### Returns
 
-  * A list of dates
+  * A list of dates.
 
   ### Examples
 
@@ -3046,7 +3061,7 @@ defmodule Cldr.Calendar do
 
   ## Argumenets
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0`.
 
   ### Returns
 
@@ -3085,7 +3100,7 @@ defmodule Cldr.Calendar do
     number of days since the start of the epoch.
 
   * `calendar` is any module that implements
-    the `Calendar` and `Cldr.Calendar` behaviours
+    the `Calendar` and `Cldr.Calendar` behaviours.
 
   ### Returns
 
@@ -3119,13 +3134,13 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns a `Date.t` from a date tuple of
+  Returns a `t:Date.t/0` from a date tuple of
   `{year, month, day}` and a calendar.
 
   ### Arguments
 
   * `{year, month, day}` is a tuple
-    representing a date
+    representing a date.
 
   * `calendar` is any module implementing
     the `Calendar` and `Cldr.Calendar`
@@ -3133,7 +3148,7 @@ defmodule Cldr.Calendar do
 
   ### Returns
 
-  * a `Date.t`
+  * a `t:Date.t/0`.
 
   ### Examples
 
@@ -3151,13 +3166,13 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns a `Date.t` from a keyword list
+  Returns a `t:Date.t/0` from a keyword list
   and a calendar.
 
   ### Arguments
 
   * `[year: year, month: month, day: day}` is a
-    keyword list representing a date
+    keyword list representing a date.
 
   * `calendar` is any module implementing
     the `Calendar` and `Cldr.Calendar`
@@ -3165,7 +3180,7 @@ defmodule Cldr.Calendar do
 
   ### Returns
 
-  * a `Date.t` or
+  * a `t:Date.t/0` or
 
   * `{:error, :invalid_date}`
 
@@ -3192,16 +3207,16 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns a `Date.t` from a year, day_of_year
+  Returns a `t:Date.t/0` from a year, day_of_year
   and a calendar.
 
   ### Arguments
 
   * `year` is any integer year that is valid in
-    `calendar`
+    `calendar`.
 
   * `day_of_year` is any valid ordinal day of
-    `year`
+    `year`.
 
   * `calendar` is any module implementing
     the `Calendar` and `Cldr.Calendar`
@@ -3209,7 +3224,7 @@ defmodule Cldr.Calendar do
 
   ### Returns
 
-  * a `Date.t` or
+  * a `t:Date.t/0` or
 
   * `{:error, :invalid_date}`
 
@@ -3271,7 +3286,7 @@ defmodule Cldr.Calendar do
   ### Arguments
 
   * `calendar_module` is a module that implements the
-    `Cldr.Calendar` behaviour
+    `Cldr.Calendar` behaviour.
 
   ### Returns
 

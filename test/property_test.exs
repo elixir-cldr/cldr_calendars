@@ -1,5 +1,5 @@
 defmodule Cldr.Calendar.PropertyTest do
-  use ExUnit.Case, asynch: true
+  use ExUnit.Case, async: true
   use ExUnitProperties
   alias Calendar
 

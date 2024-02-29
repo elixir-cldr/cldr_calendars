@@ -1,5 +1,5 @@
 defmodule Cldr.Calendar.Test do
-  use ExUnit.Case, asynch: true
+  use ExUnit.Case, async: true
 
   # :calendar module doesn't work with year 0 or negative years
   test "that iso week of year is same as erlang" do
