@@ -2,6 +2,14 @@
 
 **Note that `ex_cldr_calendars` version 1.21.1 and later are supported on Elixir 1.11 and later only.**
 
+## Cldr.Calendars v1.24.0
+
+This is the changelog for Cldr Calendars v1.24.0 released on _____, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Adds new calendar callbacks `Calendar.shift_date/4`, `Calendar.shift_time/5` and `Calendar.shift_naive_datetime/8` supported in Elixir 1.17.
+
 ## Cldr.Calendars v1.23.1
 
 This is the changelog for Cldr Calendars v1.23.1 released on March 1st, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
@@ -9,6 +17,8 @@ This is the changelog for Cldr Calendars v1.23.1 released on March 1st, 2024.  F
 ### Bug Fixes
 
 * `Cldr.Calendar.plus/4` consistently applies a default for the `:coerce` option to `Cldr.Calendar.plus/4` and `Cldr.Calendar.minus/4`. The default is `true`. Previously the default for plus/minus months was `true` but the default for years was `false`. Thanks to @linusdm for raising the issue.
+
+* Fix specs for `Cldr.Calendar.localize/{1..3}`. Thanks to @alappe for raising the issue. Closes #15.
 
 ## Cldr.Calendars v1.23.0
 

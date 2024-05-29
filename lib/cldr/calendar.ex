@@ -2273,16 +2273,21 @@ defmodule Cldr.Calendar do
 
   """
   @doc since: "1.19.0"
+
   @spec localize(Date.t()) ::
           {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+
+  @spec localize(Date.t(), Keyword.t() | atom()) ::
+          {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+
+  @spec localize(Date.t(), atom(), Keyword.t()) ::
+          String.t() | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
 
   def localize(date) do
     localize(date, [])
   end
 
   @doc since: "1.19.0"
-  @spec localize(Date.t(), Keyword.t()) ::
-          {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
 
   def localize(date, options) when is_list(options) do
     with {locale, backend} <- Cldr.locale_and_backend_from(options),
@@ -2363,7 +2368,6 @@ defmodule Cldr.Calendar do
       "السبت"
 
   """
-  @spec localize(Date.t(), atom(), Keyword.t()) :: String.t() | {:error, {module(), String.t()}}
 
   def localize(date, part, options \\ [])
 
@@ -2405,7 +2409,7 @@ defmodule Cldr.Calendar do
     {_, era} = day_of_era(date)
 
     locale
-    |> backend.eras(date.calendar.cldr_calendar_type)
+    |> backend.eras(date.calendar.cldr_calendar_type())
     |> get_in([format, era])
   end
 
@@ -2415,7 +2419,7 @@ defmodule Cldr.Calendar do
 
     localized_cyclic_year =
       locale
-      |> backend.cyclic_years(date.calendar.cldr_calendar_type)
+      |> backend.cyclic_years(date.calendar.cldr_calendar_type())
       |> get_in([:years, type, format, cyclic_year])
 
     localized_cyclic_year || to_string(cyclic_year)
@@ -2427,7 +2431,7 @@ defmodule Cldr.Calendar do
     quarter = quarter_of_year(date)
 
     locale
-    |> backend.quarters(date.calendar.cldr_calendar_type)
+    |> backend.quarters(date.calendar.cldr_calendar_type())
     |> get_in([type, format, quarter])
   end
 
@@ -2440,7 +2444,7 @@ defmodule Cldr.Calendar do
         month
 
       {month, :leap} ->
-        month_patterns = backend.month_patterns(locale, date.calendar.cldr_calendar_type)
+        month_patterns = backend.month_patterns(locale, date.calendar.cldr_calendar_type())
 
         if month_patterns do
           leap_pattern = get_in(month_patterns, [:numeric, :all, :leap])
@@ -2459,16 +2463,16 @@ defmodule Cldr.Calendar do
     case month_of_year(date) do
       month when is_number(month) ->
         locale
-        |> backend.months(date.calendar.cldr_calendar_type)
+        |> backend.months(date.calendar.cldr_calendar_type())
         |> get_in([type, format, month])
 
       {month, :leap} ->
         month_patterns =
-          backend.month_patterns(locale, date.calendar.cldr_calendar_type)
+          backend.month_patterns(locale, date.calendar.cldr_calendar_type())
 
         month =
           locale
-          |> backend.months(date.calendar.cldr_calendar_type)
+          |> backend.months(date.calendar.cldr_calendar_type())
           |> get_in([type, format, month])
 
         if month_patterns do
@@ -2488,7 +2492,7 @@ defmodule Cldr.Calendar do
     day = day_of_week(date)
 
     locale
-    |> backend.days(date.calendar.cldr_calendar_type)
+    |> backend.days(date.calendar.cldr_calendar_type())
     |> get_in([type, format, day])
   end
 
@@ -2501,7 +2505,7 @@ defmodule Cldr.Calendar do
 
       day_name =
         locale
-        |> backend.days(date.calendar.cldr_calendar_type)
+        |> backend.days(date.calendar.cldr_calendar_type())
         |> get_in([type, format, day_of_week])
 
       {day_of_week, day_name}

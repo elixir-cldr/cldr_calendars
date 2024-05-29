@@ -62,7 +62,9 @@ defmodule Cldr.Calendar.Behaviour do
       end
 
       @doc """
-      Identifies that this calendar is month based.
+      Identifies whether this calendar is month
+      or week based.
+
       """
       @impl true
       def calendar_base do
@@ -302,6 +304,23 @@ defmodule Cldr.Calendar.Behaviour do
         end
 
         defoverridable day_of_week: 3
+      end
+
+      if (Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :shift_date, 4)) do
+        @impl true
+        def shift_date(year, month, day, duration) do
+
+        end
+
+        @impl true
+        def shift_time(hour, minute, second, millisecond, duration) do
+
+        end
+
+        @impl true
+        def shift_naive_datetime(year, month, day, hour, minute, second, millisecond, duration) do
+
+        end
       end
 
       @doc """

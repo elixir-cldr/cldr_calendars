@@ -9,7 +9,7 @@ defmodule Cldr.Calendar.Base.Month do
   @days_in_week 7
   @quarters_in_year 4
   @months_in_quarter 3
-  @months_in_year 12
+  @months_in_gregorian_year 12
   @weeks_in_quarter 13
   @iso_week_first_day 1
   @iso_week_min_days 4
@@ -194,7 +194,7 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def calendar_month_to_gregorian_month(month, calendar_start_month) do
-    Cldr.Math.amod((calendar_start_month - 1) + month, @months_in_year)
+    Cldr.Math.amod((calendar_start_month - 1) + month, @months_in_gregorian_year)
   end
 
   def days_in_week do

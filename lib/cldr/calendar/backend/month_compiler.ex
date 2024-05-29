@@ -328,7 +328,6 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @impl true
-
       def quarter(year, quarter) do
         Month.quarter(year, quarter, __config__())
       end
@@ -411,9 +410,63 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @spec leap_year?(year) :: boolean()
       @impl true
-
       def leap_year?(year) do
         Month.leap_year?(year, __config__())
+      end
+
+      if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :shift_date, 4) do
+        @doc """
+        Shifts a date by given duration.
+
+        """
+        @spec shift_date(Calendar.year(), Calendar.month(), Calendar.day(), Duration.t()) ::
+          {Calendar.year(), Calendar.month(), Calendar.day()}
+
+        @impl true
+        def shift_date(year, month, day, duration) do
+          Calendar.ISO.shift_date(year, month, day, duration)
+        end
+
+        @doc """
+        Shifts a time by given duration.
+
+        """
+        @spec shift_time(Calendar.hour(), Calendar.minute(), Calendar.second(), Calendar.microsecond(), Duration.t()) ::
+                    {Calendar.hour(), Calendar.minute(), Calendar.second(), Calendar.microsecond()}
+
+        @impl true
+        def shift_time(hour, minute, second, microsecond, duration) do
+          Calendar.ISO.shift_time(hour, minute, second, microsecond, duration)
+        end
+
+        @doc """
+        Shifts a naive date time by given duration.
+
+        """
+        @spec shift_naive_datetime(
+            Calendar.year(),
+            Calendar.month(),
+            Calendar.day(),
+            Calendar.hour(),
+            Calendar.minute(),
+            Calendar.second(),
+            Calendar.microsecond(),
+            Duration.t()
+          ) ::
+            {
+              Calendar.year(),
+              Calendar.month(),
+              Calendar.day(),
+              Calendar.hour(),
+              Calendar.minute(),
+              Calendar.second(),
+              Calendar.microsecond()
+            }
+
+        @impl true
+        def shift_naive_datetime(year, month, day, hour, minute, second, microsecond, duration) do
+          Calendar.ISO.shift_naive_datetime(year, month, day, hour, minute, second, microsecond, duration)
+        end
       end
 
       @doc """
