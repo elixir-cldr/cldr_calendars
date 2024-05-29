@@ -1,13 +1,13 @@
 defmodule Cldr.Calendar.MixProject do
   use Mix.Project
 
-  @version "1.23.1"
+  @version "1.24.0"
 
   def project do
     [
       app: :ex_cldr_calendars,
       version: @version,
-      elixir: "~> 1.11",
+      elixir: "~> 1.12",
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
       name: "Cldr Calendars",
