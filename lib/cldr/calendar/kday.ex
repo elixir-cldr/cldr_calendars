@@ -285,12 +285,12 @@ defmodule Cldr.Calendar.Kday do
     |> date_from_iso_days(calendar)
   end
 
-  def nth_kday(iso_days, n, k) when is_integer(iso_days) and n > 0 do
-    weeks_to_days(n) + kday_on_or_before(iso_days, k)
+  def nth_kday(gregorian_days, n, k) when is_integer(gregorian_days) and n > 0 do
+    kday_on_or_after(gregorian_days, k) + weeks_to_days(n - 1)
   end
 
-  def nth_kday(iso_days, n, k) when is_integer(iso_days) and n < 0 do
-    weeks_to_days(n) + kday_on_or_after(iso_days, k)
+  def nth_kday(gregorian_days, n, k) when is_integer(gregorian_days) do
+    kday_on_or_before(gregorian_days, k) + weeks_to_days(n + 1)
   end
 
   @doc """
