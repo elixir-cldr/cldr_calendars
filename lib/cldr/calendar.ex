@@ -437,7 +437,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `calendar_module` is am atom representing the module
+  * `calendar_module` is an atom representing the module
     name of the created calendar.
 
   * `calendar_type` is an atom of either `:month` or
