@@ -23,8 +23,7 @@ defmodule Cldr.Calendar.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       dialyzer: [
         ignore_warnings: ".dialyzer_ignore_warnings",
-        plt_add_apps:
-          ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists
+        plt_add_apps: ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists
              ex_cldr_numbers calendar_interval)a
       ],
       compilers: Mix.compilers()
@@ -66,7 +65,6 @@ defmodule Cldr.Calendar.MixProject do
       {:ex_cldr_numbers, "~> 2.31"},
       {:ex_cldr_units, "~> 3.16", optional: true},
       {:ex_cldr_lists, "~> 2.10", optional: true},
-
       {:tz, "~> 0.9", optional: true, only: [:dev, :test]},
       {:calendar_interval, "~> 0.2", optional: true},
       {:jason, "~> 1.0"},

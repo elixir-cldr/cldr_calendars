@@ -44,4 +44,3 @@ defmodule Cldr.Calendar.Behaviour.Basic do
     {year, month, day}
   end
 end
-

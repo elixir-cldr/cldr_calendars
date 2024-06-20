@@ -64,7 +64,8 @@ defmodule Cldr.Calendar.Compiler.Week do
 
       """
       @spec year_of_era(year) :: {year, era :: non_neg_integer}
-      unless Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :year_of_era, 3) do
+      unless Code.ensure_loaded?(Calendar.ISO) &&
+               function_exported?(Calendar.ISO, :year_of_era, 3) do
         @impl true
       end
 
@@ -215,8 +216,8 @@ defmodule Cldr.Calendar.Compiler.Week do
 
       """
       @spec day_of_week(year, month, day, :default | atom()) ::
-          {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
-            last_day_of_week :: non_neg_integer()}
+              {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
+               last_day_of_week :: non_neg_integer()}
 
       @impl true
       def day_of_week(year, month, day, :default) do
@@ -408,6 +409,77 @@ defmodule Cldr.Calendar.Compiler.Week do
         Week.long_year?(year, __config__())
       end
 
+      if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :shift_date, 4) do
+        @doc """
+        Shifts a date by given duration.
+
+        """
+        @spec shift_date(Calendar.year(), Calendar.month(), Calendar.day(), Duration.t()) ::
+                {Calendar.year(), Calendar.month(), Calendar.day()}
+
+        @impl Calendar
+        def shift_date(year, month, day, duration) do
+          Cldr.Calendar.shift_date(year, month, day, __MODULE__, duration)
+        end
+
+        @doc """
+        Shifts a time by given duration.
+
+        """
+        @spec shift_time(
+                Calendar.hour(),
+                Calendar.minute(),
+                Calendar.second(),
+                Calendar.microsecond(),
+                Duration.t()
+              ) ::
+                {Calendar.hour(), Calendar.minute(), Calendar.second(), Calendar.microsecond()}
+
+        @impl Calendar
+        def shift_time(hour, minute, second, microsecond, duration) do
+          Calendar.ISO.shift_time(hour, minute, second, microsecond, duration)
+        end
+
+        @doc """
+        Shifts a naive date time by given duration.
+
+        """
+        @spec shift_naive_datetime(
+                Calendar.year(),
+                Calendar.month(),
+                Calendar.day(),
+                Calendar.hour(),
+                Calendar.minute(),
+                Calendar.second(),
+                Calendar.microsecond(),
+                Duration.t()
+              ) ::
+                {
+                  Calendar.year(),
+                  Calendar.month(),
+                  Calendar.day(),
+                  Calendar.hour(),
+                  Calendar.minute(),
+                  Calendar.second(),
+                  Calendar.microsecond()
+                }
+
+        @impl Calendar
+        def shift_naive_datetime(year, month, day, hour, minute, second, microsecond, duration) do
+          Cldr.Calendar.shift_naive_datetime(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
+            microsecond,
+            __MODULE__,
+            duration
+          )
+        end
+      end
+
       @doc """
       Returns the number of days since the calendar
       epoch for a given `year-month-day`
@@ -558,7 +630,8 @@ defmodule Cldr.Calendar.Compiler.Week do
       @doc false
       defdelegate parse_time(string), to: Calendar.ISO
 
-      if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
+      if Code.ensure_loaded?(Calendar.ISO) &&
+           function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
         @doc false
         defdelegate iso_days_to_beginning_of_day(iso_days), to: Calendar.ISO
 

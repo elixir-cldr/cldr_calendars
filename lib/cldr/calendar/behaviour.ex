@@ -5,7 +5,7 @@ defmodule Cldr.Calendar.Behaviour do
     {date, []} = Code.eval_quoted(epoch)
     epoch = Cldr.Calendar.date_to_iso_days(date)
 
-    epoch_day_of_week  = Date.day_of_week(date)
+    epoch_day_of_week = Date.day_of_week(date)
     days_in_week = Keyword.get(opts, :days_in_week, 7)
     first_day_of_week = Keyword.get(opts, :first_day_of_week, 1)
 
@@ -104,9 +104,10 @@ defmodule Cldr.Calendar.Behaviour do
 
       @era_module Cldr.Calendar.Era.era_module(unquote(cldr_calendar_type))
 
-      @spec year_of_era(Calendar.year) :: {year :: Calendar.year(), era :: Calendar.era()}
+      @spec year_of_era(Calendar.year()) :: {year :: Calendar.year(), era :: Calendar.era()}
 
-      unless Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :year_of_era, 3) do
+      unless Code.ensure_loaded?(Calendar.ISO) &&
+               function_exported?(Calendar.ISO, :year_of_era, 3) do
         @impl true
       end
 
@@ -119,8 +120,8 @@ defmodule Cldr.Calendar.Behaviour do
       Calculates the year and era from the given `date`.
 
       """
-      @spec year_of_era(Calendar.year, Calendar.month, Calendar.day) ::
-        {year :: Calendar.year(), era :: Calendar.era()}
+      @spec year_of_era(Calendar.year(), Calendar.month(), Calendar.day()) ::
+              {year :: Calendar.year(), era :: Calendar.era()}
 
       @impl true
       def year_of_era(year, month, day) do
@@ -133,7 +134,7 @@ defmodule Cldr.Calendar.Behaviour do
       on rendered calendars.
 
       """
-      @spec calendar_year(Calendar.year, Calendar.month, Calendar.day) :: Calendar.year()
+      @spec calendar_year(Calendar.year(), Calendar.month(), Calendar.day()) :: Calendar.year()
       @impl true
       def calendar_year(year, month, day) do
         year
@@ -144,7 +145,8 @@ defmodule Cldr.Calendar.Behaviour do
       on rendered calendars.
 
       """
-      @spec related_gregorian_year(Calendar.year, Calendar.month, Calendar.day) :: Calendar.year()
+      @spec related_gregorian_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+              Calendar.year()
 
       @impl true
       def related_gregorian_year(year, month, day) do
@@ -156,7 +158,7 @@ defmodule Cldr.Calendar.Behaviour do
       on rendered calendars.
 
       """
-      @spec extended_year(Calendar.year, Calendar.month, Calendar.day) :: Calendar.year()
+      @spec extended_year(Calendar.year(), Calendar.month(), Calendar.day()) :: Calendar.year()
 
       @impl true
       def extended_year(year, month, day) do
@@ -168,7 +170,7 @@ defmodule Cldr.Calendar.Behaviour do
       on rendered calendars.
 
       """
-      @spec cyclic_year(Calendar.year, Calendar.month, Calendar.day) :: Calendar.year()
+      @spec cyclic_year(Calendar.year(), Calendar.month(), Calendar.day()) :: Calendar.year()
 
       @impl true
       def cyclic_year(year, month, day) do
@@ -180,8 +182,8 @@ defmodule Cldr.Calendar.Behaviour do
       `year`, `month`, and `day`.
 
       """
-      @spec quarter_of_year(Calendar.year, Calendar.month, Calendar.day) ::
-        Cldr.Calendar.quarter()
+      @spec quarter_of_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+              Cldr.Calendar.quarter()
 
       @impl true
       def quarter_of_year(year, month, day) do
@@ -193,8 +195,8 @@ defmodule Cldr.Calendar.Behaviour do
       `year`, `month`, and `day`.
 
       """
-      @spec month_of_year(Calendar.year, Calendar.month, Calendar.day) ::
-        Calendar.month() | {Calendar.month, Cldr.Calendar.leap_month?()}
+      @spec month_of_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+              Calendar.month() | {Calendar.month(), Cldr.Calendar.leap_month?()}
 
       @impl true
       def month_of_year(_year, month, _day) do
@@ -209,8 +211,8 @@ defmodule Cldr.Calendar.Behaviour do
       `{:error, :not_defined}`.
 
       """
-      @spec week_of_year(Calendar.year, Calendar.month, Calendar.day) ::
-        {:error, :not_defined}
+      @spec week_of_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+              {:error, :not_defined}
 
       @impl true
       def week_of_year(_year, _month, _day) do
@@ -225,8 +227,8 @@ defmodule Cldr.Calendar.Behaviour do
       `{:error, :not_defined}`.
 
       """
-      @spec iso_week_of_year(Calendar.year, Calendar.month, Calendar.day) ::
-        {:error, :not_defined}
+      @spec iso_week_of_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+              {:error, :not_defined}
 
       @impl true
       def iso_week_of_year(_year, _month, _day) do
@@ -241,8 +243,8 @@ defmodule Cldr.Calendar.Behaviour do
       `{:error, :not_defined}`.
 
       """
-      @spec week_of_month(Calendar.year, Calendar.month, Calendar.day) ::
-        {pos_integer(), pos_integer()} | {:error, :not_defined}
+      @spec week_of_month(Calendar.year(), Calendar.month(), Calendar.day()) ::
+              {pos_integer(), pos_integer()} | {:error, :not_defined}
 
       @impl true
       def week_of_month(_year, _month, _day) do
@@ -257,8 +259,8 @@ defmodule Cldr.Calendar.Behaviour do
       and on-or-after the epoch.
 
       """
-      @spec day_of_era(Calendar.year, Calendar.month, Calendar.day) ::
-        {day :: Calendar.day, era :: Calendar.era}
+      @spec day_of_era(Calendar.year(), Calendar.month(), Calendar.day()) ::
+              {day :: Calendar.day(), era :: Calendar.era()}
 
       @impl true
       def day_of_era(year, month, day) do
@@ -271,7 +273,7 @@ defmodule Cldr.Calendar.Behaviour do
       `year`, `month`, and `day`.
 
       """
-      @spec day_of_year(Calendar.year, Calendar.month, Calendar.day) :: Calendar.day()
+      @spec day_of_year(Calendar.year(), Calendar.month(), Calendar.day()) :: Calendar.day()
 
       @impl true
       def day_of_year(year, month, day) do
@@ -280,10 +282,10 @@ defmodule Cldr.Calendar.Behaviour do
         this_day - first_day + 1
       end
 
-      if (Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2)) do
+      if Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2) do
         @impl true
 
-        @spec day_of_week(Calendar.year, Calendar.month, Calendar.day, :default | atom()) ::
+        @spec day_of_week(Calendar.year(), Calendar.month(), Calendar.day(), :default | atom()) ::
                 {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
                  last_day_of_week :: non_neg_integer()}
 
@@ -298,7 +300,7 @@ defmodule Cldr.Calendar.Behaviour do
       else
         @impl true
 
-        @spec day_of_week(Calendar.year, Calendar.month, Calendar.day) :: 1..7
+        @spec day_of_week(Calendar.year(), Calendar.month(), Calendar.day()) :: 1..7
         def day_of_week(year, month, day) do
           day_of_week(year, month, day, :default)
         end
@@ -306,20 +308,30 @@ defmodule Cldr.Calendar.Behaviour do
         defoverridable day_of_week: 3
       end
 
-      if (Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :shift_date, 4)) do
+      if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :shift_date, 4) do
         @impl true
         def shift_date(year, month, day, duration) do
-
+          Cldr.Calendar.shift_date(year, month, day, __MODULE__, duration)
         end
 
         @impl true
-        def shift_time(hour, minute, second, millisecond, duration) do
-
+        def shift_time(hour, minute, second, microsecond, duration) do
+          Calendar.ISO.shift_time(hour, minute, second, microsecond, duration)
         end
 
         @impl true
-        def shift_naive_datetime(year, month, day, hour, minute, second, millisecond, duration) do
-
+        def shift_naive_datetime(year, month, day, hour, minute, second, microsecond, duration) do
+          Cldr.Calendar.shift_naive_datetime(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
+            microsecond,
+            __MODULE__,
+            duration
+          )
         end
       end
 
@@ -378,7 +390,7 @@ defmodule Cldr.Calendar.Behaviour do
       and month.
 
       """
-      @spec days_in_month(Calendar.year, Calendar.month) :: Calendar.month()
+      @spec days_in_month(Calendar.year(), Calendar.month()) :: Calendar.month()
       @impl true
 
       def days_in_month(year, month) do
@@ -402,7 +414,8 @@ defmodule Cldr.Calendar.Behaviour do
       we cannot know what the calendar format is.
 
       """
-      @spec days_in_month(Calendar.month) :: Calendar.month() | {:ambiguous, Range.t() | [pos_integer()]} | {:error, :undefined}
+      @spec days_in_month(Calendar.month()) ::
+              Calendar.month() | {:ambiguous, Range.t() | [pos_integer()]} | {:error, :undefined}
       @impl true
 
       def days_in_month(month) do
@@ -517,7 +530,8 @@ defmodule Cldr.Calendar.Behaviour do
             ) :: Calendar.iso_days()
 
       def naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond) do
-        {date_to_iso_days(year, month, day), time_to_day_fraction(hour, minute, second, microsecond)}
+        {date_to_iso_days(year, month, day),
+         time_to_day_fraction(hour, minute, second, microsecond)}
       end
 
       @doc """
@@ -621,7 +635,8 @@ defmodule Cldr.Calendar.Behaviour do
       @impl Calendar
       defdelegate valid_time?(hour, minute, second, microsecond), to: Calendar.ISO
 
-      if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
+      if Code.ensure_loaded?(Calendar.ISO) &&
+           function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
         @doc false
         @impl true
         defdelegate iso_days_to_beginning_of_day(iso_days), to: Calendar.ISO
@@ -677,7 +692,6 @@ defmodule Cldr.Calendar.Behaviour do
       defoverridable extended_year: 3
       defoverridable related_gregorian_year: 3
       defoverridable cyclic_year: 3
-
     end
   end
 

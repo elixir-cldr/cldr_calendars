@@ -194,7 +194,7 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   def calendar_month_to_gregorian_month(month, calendar_start_month) do
-    Cldr.Math.amod((calendar_start_month - 1) + month, @months_in_gregorian_year)
+    Cldr.Math.amod(calendar_start_month - 1 + month, @months_in_gregorian_year)
   end
 
   def days_in_week do
@@ -282,8 +282,9 @@ defmodule Cldr.Calendar.Base.Month do
     {weeks_in_year, _days_in_last_week} = weeks_in_year(year, config)
 
     if week in 1..weeks_in_year do
-      starting_day = Base.Week.first_gregorian_day_of_year(year, config) +
-        Cldr.Calendar.weeks_to_days(week - 1)
+      starting_day =
+        Base.Week.first_gregorian_day_of_year(year, config) +
+          Cldr.Calendar.weeks_to_days(week - 1)
 
       ending_day = starting_day + days_in_week() - 1
 

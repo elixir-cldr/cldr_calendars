@@ -214,7 +214,8 @@ defmodule Cldr.Calendar do
   Returns the number of weeks in a year
 
   """
-  @callback weeks_in_year(year :: Calendar.year()) :: {Cldr.Calendar.week(), Calendar.day()} | {:error, :not_defined}
+  @callback weeks_in_year(year :: Calendar.year()) ::
+              {Cldr.Calendar.week(), Calendar.day()} | {:error, :not_defined}
 
   @doc """
   Returns the number of days in a year
@@ -226,7 +227,8 @@ defmodule Cldr.Calendar do
   Returns the number of days in a month (withoout a year)
 
   """
-  @callback days_in_month(month :: Calendar.month()) :: Calendar.day() | {:ambiguous, Range.t | [pos_integer()]} | {:error, :undefined}
+  @callback days_in_month(month :: Calendar.month()) ::
+              Calendar.day() | {:ambiguous, Range.t() | [pos_integer()]} | {:error, :undefined}
 
   @doc """
   Returns a the year in a calendar year.
@@ -2793,6 +2795,152 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
+  def shift_date(year, month, day, calendar, duration) do
+    shift_options = shift_date_options(duration)
+
+    Enum.reduce(shift_options, {year, month, day}, fn
+      {_, 0}, date ->
+        date
+
+      {:year, value}, {year, month, day} ->
+        calendar.plus(year, month, day, :years, value)
+
+      {:month, value}, {year, month, day} ->
+        calendar.plus(year, month, day, :months, value)
+
+      {:week, value}, {year, month, day} ->
+        calendar.plus(year, month, day, :weeks, value)
+
+      {:day, value}, {year, month, day} ->
+        calendar.plus(year, month, day, :days, value)
+    end)
+  end
+
+  @doc false
+  def shift_naive_datetime(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        microsecond,
+        calendar,
+        duration
+      ) do
+    shift_options = shift_datetime_options(duration)
+
+    Enum.reduce(shift_options, {year, month, day, hour, minute, second, microsecond}, fn
+      {_, 0}, naive_datetime ->
+        naive_datetime
+
+      {:year, value}, {year, month, day, hour, minute, second, microsecond} ->
+        {new_year, new_month, new_day} = calendar.plus(year, month, day, :years, value)
+        {new_year, new_month, new_day, hour, minute, second, microsecond}
+
+      {:month, value}, {year, month, day, hour, minute, second, microsecond} ->
+        {new_year, new_month, new_day} = calendar.plus(year, month, day, :months, value)
+        {new_year, new_month, new_day, hour, minute, second, microsecond}
+
+      {time_unit, value}, naive_datetime ->
+        shift_time_unit(naive_datetime, calendar, value, time_unit)
+    end)
+  end
+
+  defp shift_time_unit(
+         {year, month, day, hour, minute, second, microsecond},
+         calendar,
+         value,
+         unit
+       )
+       when unit in [:second, :millisecond, :microsecond, :nanosecond] or is_integer(unit) do
+    {value, precision} = shift_time_unit_values(value, microsecond)
+
+    {year, month, day, hour, minute, second, {ms_value, _}} =
+      calendar.naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond)
+      |> shift_time_unit(calendar, value, unit)
+      |> calendar.naive_datetime_from_iso_days()
+
+    {year, month, day, hour, minute, second, {ms_value, precision}}
+  end
+
+  defp shift_time_unit({hour, minute, second, microsecond}, calendar, value, unit)
+       when unit in [:second, :millisecond, :microsecond, :nanosecond] or is_integer(unit) do
+    {value, precision} = shift_time_unit_values(value, microsecond)
+
+    {_days, day_fraction} =
+      shift_time_unit(
+        {0, Calendar.ISO.time_to_day_fraction(hour, minute, second, microsecond)},
+        calendar,
+        value,
+        unit
+      )
+
+    {hour, minute, second, {microsecond, _}} = Calendar.ISO.time_from_day_fraction(day_fraction)
+
+    {hour, minute, second, {microsecond, precision}}
+  end
+
+  defp shift_time_unit({_days, _day_fraction} = iso_days, _calendar, value, unit)
+       when unit in [:second, :millisecond, :microsecond, :nanosecond] or is_integer(unit) do
+    ppd = System.convert_time_unit(86400, :second, unit)
+    Calendar.ISO.add_day_fraction_to_iso_days(iso_days, value, ppd)
+  end
+
+  defp shift_time_unit_values({0, _}, {_, original_precision}) do
+    {0, original_precision}
+  end
+
+  defp shift_time_unit_values({ms_value, ms_precision}, {_, _}) do
+    {ms_value, ms_precision}
+  end
+
+  defp shift_time_unit_values(value, {_, original_precision}) do
+    {value, original_precision}
+  end
+
+  defp shift_date_options(%Duration{
+         year: year,
+         month: month,
+         week: week,
+         day: day,
+         hour: 0,
+         minute: 0,
+         second: 0,
+         microsecond: {0, 0}
+       }) do
+    [
+      year: year,
+      month: month,
+      week: week,
+      day: day
+    ]
+  end
+
+  defp shift_date_options(_duration) do
+    raise ArgumentError,
+          "cannot shift date by time scale unit. Expected :year, :month, :week, :day"
+  end
+
+  defp shift_datetime_options(%Duration{
+         year: year,
+         month: month,
+         week: week,
+         day: day,
+         hour: hour,
+         minute: minute,
+         second: second,
+         microsecond: microsecond
+       }) do
+    [
+      year: year,
+      month: month,
+      second: week * 7 * 86400 + day * 86400 + hour * 3600 + minute * 60 + second,
+      microsecond: microsecond
+    ]
+  end
+
+  @doc false
   def month_day(_year, month, day, _calendar, false) do
     {month, day}
   end
@@ -3241,6 +3389,7 @@ defmodule Cldr.Calendar do
 
     if day_of_year <= calendar.days_in_year(year) do
       {year, month, day} = calendar.date_from_iso_days(iso_days)
+
       with {:ok, date} <- Date.new(year, month, day) do
         date
       end

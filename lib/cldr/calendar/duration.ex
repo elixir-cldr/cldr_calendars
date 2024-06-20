@@ -262,12 +262,18 @@ defmodule Cldr.Calendar.Duration do
   def new(unquote(Cldr.Calendar.time()) = from, unquote(Cldr.Calendar.time()) = to) do
     with {:ok, from} <- cast_date_time(from),
          {:ok, to} <- cast_date_time(to) do
-       time_diff = time_duration(from, to)
-       {seconds, microseconds} = Cldr.Math.div_mod(time_diff, 1000000)
-       {minutes, seconds} = Cldr.Math.div_mod(seconds, 60)
-       {hours, minutes} = Cldr.Math.div_mod(minutes, 60)
-       {:ok,
-         struct(__MODULE__, hour: hours, minute: minutes, second: seconds, microsecond: microseconds)}
+      time_diff = time_duration(from, to)
+      {seconds, microseconds} = Cldr.Math.div_mod(time_diff, 1_000_000)
+      {minutes, seconds} = Cldr.Math.div_mod(seconds, 60)
+      {hours, minutes} = Cldr.Math.div_mod(minutes, 60)
+
+      {:ok,
+       struct(__MODULE__,
+         hour: hours,
+         minute: minutes,
+         second: seconds,
+         microsecond: microseconds
+       )}
     end
   end
 
@@ -365,7 +371,17 @@ defmodule Cldr.Calendar.Duration do
 
   defp cast_date_time(unquote(Cldr.Calendar.time()) = time) do
     {:ok, dt} =
-      NaiveDateTime.new(1, 1, 1, time.hour, time.minute, time.second, time.microsecond, Calendar.ISO)
+      NaiveDateTime.new(
+        1,
+        1,
+        1,
+        time.hour,
+        time.minute,
+        time.second,
+        time.microsecond,
+        Calendar.ISO
+      )
+
     DateTime.from_naive(dt, "Etc/UTC")
   end
 

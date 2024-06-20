@@ -56,10 +56,10 @@ defmodule Cldr.Calendar.Backend do
 
         ## Examples
 
-            iex> #{inspect __MODULE__}.calendar_from_territory :US
+            iex> #{inspect(__MODULE__)}.calendar_from_territory :US
             {:ok, Cldr.Calendar.Gregorian}
 
-            iex> #{inspect __MODULE__}.calendar_from_territory :XX
+            iex> #{inspect(__MODULE__)}.calendar_from_territory :XX
             {:error, {Cldr.UnknownTerritoryError, "The territory :XX is unknown"}}
 
         ## Notes
@@ -108,16 +108,16 @@ defmodule Cldr.Calendar.Backend do
 
         ## Examples
 
-            iex> #{inspect __MODULE__}.calendar_from_locale "en-GB"
+            iex> #{inspect(__MODULE__)}.calendar_from_locale "en-GB"
             {:ok, Cldr.Calendar.GB}
 
-            iex> #{inspect __MODULE__}.calendar_from_locale "en-GB-u-ca-gregory"
+            iex> #{inspect(__MODULE__)}.calendar_from_locale "en-GB-u-ca-gregory"
             {:ok, Cldr.Calendar.Gregorian}
 
-            iex> #{inspect __MODULE__}.calendar_from_locale "en"
+            iex> #{inspect(__MODULE__)}.calendar_from_locale "en"
             {:ok, Cldr.Calendar.US}
 
-            iex> #{inspect __MODULE__}.calendar_from_locale "fa-IR"
+            iex> #{inspect(__MODULE__)}.calendar_from_locale "fa-IR"
             {:ok, Cldr.Calendar.Persian}
 
         """

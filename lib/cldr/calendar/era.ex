@@ -46,7 +46,7 @@ defmodule Cldr.Calendar.Era do
   @doc false
   def define_era_module(calendar_module) do
     if function_exported?(calendar_module, :cldr_calendar_type, 0) &&
-        !Code.ensure_loaded?(era_module(calendar_module.cldr_calendar_type())) do
+         !Code.ensure_loaded?(era_module(calendar_module.cldr_calendar_type())) do
       cldr_calendar = calendar_module.cldr_calendar_type()
       era_module = era_module(cldr_calendar)
 
@@ -95,41 +95,47 @@ defmodule Cldr.Calendar.Era do
 
   @doc false
   def eras_to_iso_days(eras, :japanese, _calendar) do
-    Enum.map eras, fn
+    Enum.map(eras, fn
       [era, %{start: [1504 = year, 2 = month, 30]}] ->
         [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, 29), year: year]
+
       [era, %{start: [1624 = year, 2 = month, 30]}] ->
         [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, 28), year: year]
+
       [era, %{start: [1501 = year, 2 = month, 29]}] ->
         [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, 28), year: year]
+
       [era, %{start: [1278 = year, 2 = month, 29]}] ->
         [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, 28), year: year]
 
       [era, %{start: [year, month, day]}] ->
         [era, start: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, day), year: year]
+
       [era, %{end: [year, month, day]}] ->
         [era, end: Cldr.Calendar.Gregorian.date_to_iso_days(year, month, day), year: year]
-    end
+    end)
   end
 
   def eras_to_iso_days(eras, cldr_calendar, calendar)
       when cldr_calendar in @eras_in_gregorian_year do
-    Enum.map eras, fn
-      [era, %{start: [year, month, day]}]  ->
+    Enum.map(eras, fn
+      [era, %{start: [year, month, day]}] ->
         [era, start: calendar.date_to_iso_days(year, month, day), year: year]
-      [era, %{end: [year, month, day]}]  ->
+
+      [era, %{end: [year, month, day]}] ->
         [era, end: calendar.date_to_iso_days(year, month, day), year: year]
-    end
+    end)
   end
 
   def eras_to_iso_days(eras, cldr_calendar, _calendar)
       when cldr_calendar in @eras_in_julian_calendar do
-    Enum.map eras, fn
-      [era, %{start: [year, month, day]}]  ->
+    Enum.map(eras, fn
+      [era, %{start: [year, month, day]}] ->
         [era, start: Cldr.Calendar.Julian.date_to_iso_days(year, month, day), year: year]
-      [era, %{end: [year, month, day]}]  ->
+
+      [era, %{end: [year, month, day]}] ->
         [era, end: Cldr.Calendar.Julian.date_to_iso_days(year, month, day), year: year]
-    end
+    end)
   end
 
   defp define_era_module(eras, calendar, module) do
@@ -187,7 +193,8 @@ defmodule Cldr.Calendar.Era do
       case position do
         :start ->
           quote do
-            def year_of_era(iso_days, year) when iso_days >= unquote(date) and year < unquote(era_year) do
+            def year_of_era(iso_days, year)
+                when iso_days >= unquote(date) and year < unquote(era_year) do
               {1, unquote(era)}
             end
 
@@ -203,6 +210,7 @@ defmodule Cldr.Calendar.Era do
               {unquote(date), nil, unquote(era)}
             end
           end
+
         :end ->
           quote do
             def year_of_era(iso_days, year) when iso_days <= unquote(date) do

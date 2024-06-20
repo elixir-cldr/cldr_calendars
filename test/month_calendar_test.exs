@@ -24,5 +24,4 @@ defmodule Cldr.Calendar.Month.Test do
     assert Cldr.Calendar.Base.Month.days_in_month(4, %{month_of_year: 1}) == 30
     assert Cldr.Calendar.Base.Month.days_in_month(2, %{month_of_year: 1}) == {:ambiguous, 28..29}
   end
-
 end

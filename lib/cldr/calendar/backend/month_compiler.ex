@@ -66,7 +66,8 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @spec year_of_era(year) :: {year, era :: non_neg_integer}
-      unless Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :year_of_era, 3) do
+      unless Code.ensure_loaded?(Calendar.ISO) &&
+               function_exported?(Calendar.ISO, :year_of_era, 3) do
         @impl true
       end
 
@@ -217,8 +218,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       """
       @dialyzer {:nowarn_function, {:day_of_week, 4}}
       @spec day_of_week(year, month, day, :default | atom()) ::
-          {Calendar.day_of_week(), first_day_of_week ::
-            non_neg_integer(), last_day_of_week :: non_neg_integer()}
+              {Calendar.day_of_week(),
+               first_day_of_week ::
+                 non_neg_integer(), last_day_of_week :: non_neg_integer()}
 
       @impl true
       def day_of_week(year, month, day, :default) do
@@ -420,19 +422,25 @@ defmodule Cldr.Calendar.Compiler.Month do
 
         """
         @spec shift_date(Calendar.year(), Calendar.month(), Calendar.day(), Duration.t()) ::
-          {Calendar.year(), Calendar.month(), Calendar.day()}
+                {Calendar.year(), Calendar.month(), Calendar.day()}
 
         @impl true
         def shift_date(year, month, day, duration) do
-          Calendar.ISO.shift_date(year, month, day, duration)
+          Cldr.Calendar.shift_date(year, month, day, __MODULE__, duration)
         end
 
         @doc """
         Shifts a time by given duration.
 
         """
-        @spec shift_time(Calendar.hour(), Calendar.minute(), Calendar.second(), Calendar.microsecond(), Duration.t()) ::
-                    {Calendar.hour(), Calendar.minute(), Calendar.second(), Calendar.microsecond()}
+        @spec shift_time(
+                Calendar.hour(),
+                Calendar.minute(),
+                Calendar.second(),
+                Calendar.microsecond(),
+                Duration.t()
+              ) ::
+                {Calendar.hour(), Calendar.minute(), Calendar.second(), Calendar.microsecond()}
 
         @impl true
         def shift_time(hour, minute, second, microsecond, duration) do
@@ -444,28 +452,38 @@ defmodule Cldr.Calendar.Compiler.Month do
 
         """
         @spec shift_naive_datetime(
-            Calendar.year(),
-            Calendar.month(),
-            Calendar.day(),
-            Calendar.hour(),
-            Calendar.minute(),
-            Calendar.second(),
-            Calendar.microsecond(),
-            Duration.t()
-          ) ::
-            {
-              Calendar.year(),
-              Calendar.month(),
-              Calendar.day(),
-              Calendar.hour(),
-              Calendar.minute(),
-              Calendar.second(),
-              Calendar.microsecond()
-            }
+                Calendar.year(),
+                Calendar.month(),
+                Calendar.day(),
+                Calendar.hour(),
+                Calendar.minute(),
+                Calendar.second(),
+                Calendar.microsecond(),
+                Duration.t()
+              ) ::
+                {
+                  Calendar.year(),
+                  Calendar.month(),
+                  Calendar.day(),
+                  Calendar.hour(),
+                  Calendar.minute(),
+                  Calendar.second(),
+                  Calendar.microsecond()
+                }
 
         @impl true
         def shift_naive_datetime(year, month, day, hour, minute, second, microsecond, duration) do
-          Calendar.ISO.shift_naive_datetime(year, month, day, hour, minute, second, microsecond, duration)
+          Cldr.Calendar.shift_naive_datetime(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
+            microsecond,
+            __MODULE__,
+            duration
+          )
         end
       end
 
@@ -616,7 +634,8 @@ defmodule Cldr.Calendar.Compiler.Month do
         Cldr.Calendar.Parse.parse_naive_datetime(string, __MODULE__)
       end
 
-      if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
+      if Code.ensure_loaded?(Calendar.ISO) &&
+           function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
         @doc false
         defdelegate iso_days_to_beginning_of_day(iso_days), to: Calendar.ISO
 

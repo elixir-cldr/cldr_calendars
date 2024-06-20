@@ -239,8 +239,8 @@ defmodule Cldr.Calendar.Julian do
   """
   if Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2) do
     @spec day_of_week(year, month, day, 1..7 | :default) ::
-      {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
-        last_day_of_week :: non_neg_integer()}
+            {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
+             last_day_of_week :: non_neg_integer()}
 
     @impl Calendar
     @epoch_day_of_week 6
@@ -258,6 +258,77 @@ defmodule Cldr.Calendar.Julian do
       days = date_to_iso_days(year, month, day)
       days_after_saturday = rem(days, 7)
       Cldr.Math.amod(days_after_saturday + @epoch_day_of_week, @days_in_week)
+    end
+  end
+
+  if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :shift_date, 4) do
+    @doc """
+    Shifts a date by given duration.
+
+    """
+    @spec shift_date(Calendar.year(), Calendar.month(), Calendar.day(), Duration.t()) ::
+            {Calendar.year(), Calendar.month(), Calendar.day()}
+
+    @impl Calendar
+    def shift_date(year, month, day, duration) do
+      Cldr.Calendar.shift_date(year, month, day, __MODULE__, duration)
+    end
+
+    @doc """
+    Shifts a time by given duration.
+
+    """
+    @spec shift_time(
+            Calendar.hour(),
+            Calendar.minute(),
+            Calendar.second(),
+            Calendar.microsecond(),
+            Duration.t()
+          ) ::
+            {Calendar.hour(), Calendar.minute(), Calendar.second(), Calendar.microsecond()}
+
+    @impl Calendar
+    def shift_time(hour, minute, second, microsecond, duration) do
+      Calendar.ISO.shift_time(hour, minute, second, microsecond, duration)
+    end
+
+    @doc """
+    Shifts a naive date time by given duration.
+
+    """
+    @spec shift_naive_datetime(
+            Calendar.year(),
+            Calendar.month(),
+            Calendar.day(),
+            Calendar.hour(),
+            Calendar.minute(),
+            Calendar.second(),
+            Calendar.microsecond(),
+            Duration.t()
+          ) ::
+            {
+              Calendar.year(),
+              Calendar.month(),
+              Calendar.day(),
+              Calendar.hour(),
+              Calendar.minute(),
+              Calendar.second(),
+              Calendar.microsecond()
+            }
+
+    @impl Calendar
+    def shift_naive_datetime(year, month, day, hour, minute, second, microsecond, duration) do
+      Cldr.Calendar.shift_naive_datetime(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        microsecond,
+        __MODULE__,
+        duration
+      )
     end
   end
 
@@ -523,7 +594,8 @@ defmodule Cldr.Calendar.Julian do
     {year, month, day, hour, minute, second, microsecond}
   end
 
-  if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
+  if Code.ensure_loaded?(Calendar.ISO) &&
+       function_exported?(Calendar.ISO, :iso_days_to_beginning_of_day, 1) do
     @doc false
     @impl Calendar
     defdelegate iso_days_to_beginning_of_day(iso_days), to: Calendar.ISO

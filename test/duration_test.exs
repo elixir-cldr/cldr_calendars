@@ -216,7 +216,7 @@ defmodule Cldr.Calendar.Duration.Test do
                "11 months, 30 days"
 
       assert Cldr.Calendar.Duration.to_string(duration, style: :narrow) ==
-        {:ok, "11 months, 30 days"}
+               {:ok, "11 months, 30 days"}
 
       assert Cldr.Calendar.Duration.to_string(duration,
                style: :narrow,
@@ -233,176 +233,176 @@ defmodule Cldr.Calendar.Duration.Test do
     assert Duration.new(from, to) ==
              {:error,
               {Cldr.IncompatibleCalendarError,
-               "The two dates must be in the same calendar. Found #{inspect(from)} and #{
-                 inspect(to)
-               }"}}
+               "The two dates must be in the same calendar. Found #{inspect(from)} and #{inspect(to)}"}}
   end
 
   test "incompatible time zones" do
     {:ok, from} = ~U[2020-01-01 00:00:00.0Z] |> DateTime.from_naive("Etc/UTC")
-    {:ok, to}  = ~U[2020-01-01 00:00:00.0Z] |> DateTime.from_naive("Australia/Sydney")
+    {:ok, to} = ~U[2020-01-01 00:00:00.0Z] |> DateTime.from_naive("Australia/Sydney")
 
-    assert Duration.new(from, to) == {:error, {Cldr.IncompatibleTimeZone,
-      "`from` and `to` must be in the same time zone. " <>
-      "Found ~U[2020-01-01 00:00:00.0Z] and #DateTime<2020-01-01 00:00:00.0+11:00 AEDT Australia/Sydney>"
-    }}
+    assert Duration.new(from, to) ==
+             {:error,
+              {Cldr.IncompatibleTimeZone,
+               "`from` and `to` must be in the same time zone. " <>
+                 "Found ~U[2020-01-01 00:00:00.0Z] and #DateTime<2020-01-01 00:00:00.0+11:00 AEDT Australia/Sydney>"}}
   end
 
   test "duration with positive time difference no date difference" do
     assert Cldr.Calendar.Duration.new(~U[2020-01-01 00:00:00.0Z], ~U[2020-01-01 01:00:00.0Z]) ==
-      {:ok,
-       %Cldr.Calendar.Duration{
-         day: 0,
-         hour: 1,
-         microsecond: 0,
-         minute: 0,
-         month: 0,
-         second: 0,
-         year: 0
-       }}
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 0,
+                hour: 1,
+                microsecond: 0,
+                minute: 0,
+                month: 0,
+                second: 0,
+                year: 0
+              }}
 
     assert Cldr.Calendar.Duration.new(~U[2020-01-01 00:00:00.0Z], ~U[2020-01-01 01:02:00.0Z]) ==
-      {:ok,
-      %Cldr.Calendar.Duration{
-        day: 0,
-        hour: 1,
-        microsecond: 0,
-        minute: 2,
-        month: 0,
-        second: 0,
-        year: 0
-      }}
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 0,
+                hour: 1,
+                microsecond: 0,
+                minute: 2,
+                month: 0,
+                second: 0,
+                year: 0
+              }}
 
     assert Cldr.Calendar.Duration.new(~U[2020-01-01 00:00:00.0Z], ~U[2020-01-01 01:02:03.0Z]) ==
-      {:ok,
-       %Cldr.Calendar.Duration{
-         day: 0,
-         hour: 1,
-         microsecond: 0,
-         minute: 2,
-         month: 0,
-         second: 3,
-         year: 0
-       }}
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 0,
+                hour: 1,
+                microsecond: 0,
+                minute: 2,
+                month: 0,
+                second: 3,
+                year: 0
+              }}
 
     assert Cldr.Calendar.Duration.new(~U[2020-01-01 00:00:00.0Z], ~U[2020-01-01 01:02:03.4Z])
-      {:ok,
-      %Cldr.Calendar.Duration{
-        day: 0,
-        hour: 1,
-        microsecond: 400000,
-        minute: 2,
-        month: 0,
-        second: 3,
-        year: 0
-      }}
+
+    {:ok,
+     %Cldr.Calendar.Duration{
+       day: 0,
+       hour: 1,
+       microsecond: 400_000,
+       minute: 2,
+       month: 0,
+       second: 3,
+       year: 0
+     }}
   end
 
   test "duration with negative time difference" do
     assert Cldr.Calendar.Duration.new(~U[2020-01-01 02:00:00.0Z], ~U[2020-01-02 01:00:00.0Z]) ==
-    {:ok,
-     %Cldr.Calendar.Duration{
-       day: 0,
-       hour: 23,
-       microsecond: 0,
-       minute: 0,
-       month: 0,
-       second: 0,
-       year: 0
-     }}
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 0,
+                hour: 23,
+                microsecond: 0,
+                minute: 0,
+                month: 0,
+                second: 0,
+                year: 0
+              }}
 
-   assert Cldr.Calendar.Duration.new(~U[2020-01-01 02:02:00.0Z], ~U[2020-01-02 01:00:00.0Z]) ==
-   {:ok,
-    %Cldr.Calendar.Duration{
-      day: 0,
-      hour: 22,
-      microsecond: 0,
-      minute: 58,
-      month: 0,
-      second: 0,
-      year: 0
-    }}
+    assert Cldr.Calendar.Duration.new(~U[2020-01-01 02:02:00.0Z], ~U[2020-01-02 01:00:00.0Z]) ==
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 0,
+                hour: 22,
+                microsecond: 0,
+                minute: 58,
+                month: 0,
+                second: 0,
+                year: 0
+              }}
 
     assert Cldr.Calendar.Duration.new(~U[2020-01-01 02:02:02.0Z], ~U[2020-01-02 01:00:00.0Z]) ==
-    {:ok,
-     %Cldr.Calendar.Duration{
-       day: 0,
-       hour: 22,
-       microsecond: 0,
-       minute: 57,
-       month: 0,
-       second: 58,
-       year: 0
-     }}
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 0,
+                hour: 22,
+                microsecond: 0,
+                minute: 57,
+                month: 0,
+                second: 58,
+                year: 0
+              }}
 
     assert Cldr.Calendar.Duration.new(~U[2020-01-01 02:03:04.0Z], ~U[2020-01-02 01:00:00.0Z]) ==
-    {:ok,
-     %Cldr.Calendar.Duration{
-       day: 0,
-       hour: 22,
-       microsecond: 0,
-       minute: 56,
-       month: 0,
-       second: 56,
-       year: 0
-     }}
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 0,
+                hour: 22,
+                microsecond: 0,
+                minute: 56,
+                month: 0,
+                second: 56,
+                year: 0
+              }}
   end
 
   test "duration from date range" do
     assert Cldr.Calendar.Duration.new(Date.range(~D[2020-01-01], ~D[2020-12-31])) ==
-    {:ok,
-     %Cldr.Calendar.Duration{
-       day: 30,
-       hour: 0,
-       microsecond: 0,
-       minute: 0,
-       month: 11,
-       second: 0,
-       year: 0
-     }}
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 30,
+                hour: 0,
+                microsecond: 0,
+                minute: 0,
+                month: 11,
+                second: 0,
+                year: 0
+              }}
   end
 
   test "duration from CalendarInterval" do
     use CalendarInterval
 
     assert Cldr.Calendar.Duration.new(~I"2020-01/12") ==
-    {:ok,
-     %Cldr.Calendar.Duration{
-       day: 30,
-       hour: 0,
-       microsecond: 0,
-       minute: 0,
-       month: 11,
-       second: 0,
-       year: 0
-     }}
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 30,
+                hour: 0,
+                microsecond: 0,
+                minute: 0,
+                month: 11,
+                second: 0,
+                year: 0
+              }}
   end
 
   test "time duration" do
     assert Cldr.Calendar.Duration.new(~T[00:00:59], ~T[00:01:23]) ==
-    {:ok,
-     %Cldr.Calendar.Duration{
-       day: 0,
-       hour: 0,
-       microsecond: 0,
-       minute: 0,
-       month: 0,
-       second: 24,
-       year: 0
-     }}
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 0,
+                hour: 0,
+                microsecond: 0,
+                minute: 0,
+                month: 0,
+                second: 24,
+                year: 0
+              }}
   end
 
   test "creating a negative time duration" do
     assert Cldr.Calendar.Duration.new(~T[10:00:00.0], ~T[09:00:00.0]) ==
-     {:ok,
-      %Cldr.Calendar.Duration{
-        day: 0,
-        hour: -1,
-        microsecond: 0,
-        minute: 0,
-        month: 0,
-        second: 0,
-        year: 0
-      }}
+             {:ok,
+              %Cldr.Calendar.Duration{
+                day: 0,
+                hour: -1,
+                microsecond: 0,
+                minute: 0,
+                month: 0,
+                second: 0,
+                year: 0
+              }}
   end
 end

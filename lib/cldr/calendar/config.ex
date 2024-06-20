@@ -5,53 +5,51 @@ defmodule Cldr.Calendar.Config do
   See `Cldr.Calendar.new/3` for usage details.
 
   """
-  defstruct [
-    calendar: nil,
+  defstruct calendar: nil,
 
-    # A default backend for this
-    # calendar
-    cldr_backend: nil,
+            # A default backend for this
+            # calendar
+            cldr_backend: nil,
 
-    # Each quarter has three
-    # 'months` each of 13 weeks
-    # in either of a 4,4,5; 4,5,4
-    # of 5,4,4 layout
-    weeks_in_month: [4, 4, 5],
+            # Each quarter has three
+            # 'months` each of 13 weeks
+            # in either of a 4,4,5; 4,5,4
+            # of 5,4,4 layout
+            weeks_in_month: [4, 4, 5],
 
-    # Indicates if the anchor
-    # represents the beginning
-    # of the year or the end
-    begins_or_ends: :begins,
+            # Indicates if the anchor
+            # represents the beginning
+            # of the year or the end
+            begins_or_ends: :begins,
 
-    # Calendar begins on the
-    # :first, :last or :nearest
-    first_or_last: :first,
+            # Calendar begins on the
+            # :first, :last or :nearest
+            first_or_last: :first,
 
-    # Year begins on this day
-    # Use :first to mean the day
-    # day of the week on which the
-    # first day of the year occurs
-    # The functions `Cldr.Calendar.monday()`
-    # etc can be used
-    day_of_week: 1,
+            # Year begins on this day
+            # Use :first to mean the day
+            # day of the week on which the
+            # first day of the year occurs
+            # The functions `Cldr.Calendar.monday()`
+            # etc can be used
+            day_of_week: 1,
 
-    # Year begins in this Gregorian month
-    month_of_year: 1,
+            # Year begins in this Gregorian month
+            month_of_year: 1,
 
-    # The year of the last_day or first_day
-    # is either the year with the :majority
-    # of months or the :beginning year
-    # or :ending year
-    year: :majority,
+            # The year of the last_day or first_day
+            # is either the year with the :majority
+            # of months or the :beginning year
+            # or :ending year
+            year: :majority,
 
-    # First week has at least
-    # this many days in current
-    # year
-    min_days_in_first_week: 1,
+            # First week has at least
+            # this many days in current
+            # year
+            min_days_in_first_week: 1,
 
-    # The CLDR calendar type
-    cldr_calendar_type: :gregorian
-  ]
+            # The CLDR calendar type
+            cldr_calendar_type: :gregorian
 
   @typedoc """
   Defines the struct type for a calendar configuration
@@ -139,8 +137,10 @@ defmodule Cldr.Calendar.Config do
          :ok <-
            assert(config.year in @valid_year, year_error(config.year)),
          :ok <-
-           assert(config.cldr_calendar_type in @valid_cldr_calendar_types,
-             calendar_type_error(config.cldr_calendar_type)),
+           assert(
+             config.cldr_calendar_type in @valid_cldr_calendar_types,
+             calendar_type_error(config.cldr_calendar_type)
+           ),
          :ok <-
            assert(
              config.min_days_in_first_week in 1..7,
@@ -198,9 +198,7 @@ defmodule Cldr.Calendar.Config do
 
       invalid_options ->
         raise ArgumentError,
-              "Invalid options #{inspect(invalid_options)} found.  Valid options are #{
-                inspect(valid_options())
-              }"
+              "Invalid options #{inspect(invalid_options)} found.  Valid options are #{inspect(valid_options())}"
     end
   end
 
@@ -236,7 +234,7 @@ defmodule Cldr.Calendar.Config do
   end
 
   defp calendar_type_error(type) do
-    ":cldr_calendar_type must be either :gregorian or :japanese. Found #{inspect type}."
+    ":cldr_calendar_type must be either :gregorian or :japanese. Found #{inspect(type)}."
   end
 
   defp min_days_for_locale_error(min_days) do
