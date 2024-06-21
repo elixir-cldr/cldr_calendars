@@ -50,28 +50,28 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
   end
 
   test "strftime with options" do
-    assert NimbleStrftime.format(
+    assert Calendar.strftime(
              ~D[2019-11-03],
              "%a, %B %d %Y",
              MyApp.Cldr.Calendar.strftime_options!()
            ) ==
              "Sun, November 03 2019"
 
-    assert NimbleStrftime.format(
+    assert Calendar.strftime(
              ~D[2019-11-03],
              "%A, %b %d %Y",
              MyApp.Cldr.Calendar.strftime_options!()
            ) ==
              "Sunday, Nov 03 2019"
 
-    assert NimbleStrftime.format(
+    assert Calendar.strftime(
              ~D[2019-11-03],
              "%A, %b %d %Y",
              MyApp.Cldr.Calendar.strftime_options!("fr")
            ) ==
              "dimanche, nov. 03 2019"
 
-    assert NimbleStrftime.format(
+    assert Calendar.strftime(
              ~D[2019-11-03],
              "%A, %B %d %Y",
              MyApp.Cldr.Calendar.strftime_options!("he")
@@ -80,14 +80,14 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
 
     {:ok, dt} = NaiveDateTime.new(2019, 8, 26, 13, 52, 06, 0)
 
-    assert NimbleStrftime.format(
+    assert Calendar.strftime(
              dt,
              "%y-%m-%d %I:%M:%S %p",
              MyApp.Cldr.Calendar.strftime_options!("fr")
            ) ==
              "19-08-26 01:52:06 PM"
 
-    assert NimbleStrftime.format(
+    assert Calendar.strftime(
              dt,
              "%y-%m-%d %I:%M:%S %p",
              MyApp.Cldr.Calendar.strftime_options!("he")
@@ -95,7 +95,7 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
              "19-08-26 01:52:06 אחה״צ"
 
     assert_raise Cldr.InvalidLanguageError, fn ->
-      NimbleStrftime.format(
+      Calendar.strftime(
         dt,
         "%y-%m-%d %I:%M:%S %p",
         MyApp.Cldr.Calendar.strftime_options!("zz")
