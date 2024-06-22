@@ -2,13 +2,21 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
-## Cldr.Calendars v1.24.1
+## Cldr.Calendars v1.24.2
 
-This is the changelog for Cldr Calendars v1.24.1 released on June 22nd, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+This is the changelog for Cldr Calendars v1.24.2 released on June 22nd, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Bug Fixes
 
 * Fix runtime warning about map.field notation without parens when calling a function on Elixir 1.17.
+
+## Cldr.Calendars v1.24.1
+
+This is the changelog for Cldr Calendars v1.24.1 released on June 21st, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Compile on Elixir releases < 1.17. Some code in `Cldr.Calendar` depends on the new `t:Duration.t/0` struct which is only available on Elixir 1.17 or later. Elixir 1.16 is now added to the CI test matrix to ensure no future regression. Thanks to @WernerBuchert for the report. Closes #21.
 
 ## Cldr.Calendars v1.24.0
 
