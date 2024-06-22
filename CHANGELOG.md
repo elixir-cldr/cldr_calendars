@@ -2,6 +2,14 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v1.24.1
+
+This is the changelog for Cldr Calendars v1.24.1 released on June 22nd, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix runtime warning about map.field notation without parens when calling a function on Elixir 1.17.
+
 ## Cldr.Calendars v1.24.0
 
 This is the changelog for Cldr Calendars v1.24.0 released on June 21st, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

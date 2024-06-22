@@ -2521,7 +2521,7 @@ defmodule Cldr.Calendar do
     calendar = Map.get(time, :calendar, @default_calendar)
 
     locale
-    |> backend.day_periods(calendar.cldr_calendar_type)
+    |> backend.day_periods(calendar.cldr_calendar_type())
     |> get_in([type, format, am_pm])
   end
 
@@ -2538,7 +2538,7 @@ defmodule Cldr.Calendar do
     backend = Module.concat(backend, Calendar)
 
     locale
-    |> backend.day_periods(calendar.cldr_calendar_type)
+    |> backend.day_periods(calendar.cldr_calendar_type())
     |> get_in([type, format, day_period])
   end
 
