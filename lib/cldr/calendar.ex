@@ -45,16 +45,48 @@ defmodule Cldr.Calendar do
 
   A calendar is a module that implements
   the `Calendar` and `Cldr.Calendar`
-  behaviours.
+  behaviours. Calendar functions will
+  default to `Cldr.Calendar.Gregorian`
+  in most cases.
 
   """
-  @type calendar :: module()
+  @type calendar :: module() | nil
 
   @typedoc """
   Specifies the type of a calendar
 
   """
   @type calendar_type :: :month | :week
+
+  @typedoc """
+  All fields are optional however many functions
+  will require the presence of one or more - and
+  often all - fields be present.
+  """
+  @type date :: %{
+    optional(year) => year,
+    optional(month) => month,
+    optional(day) => day,
+    optional(calendar) => calendar
+  }
+
+  @typedoc """
+  Specifies the year of a date as either
+  a positive integer or nil.
+  """
+  @type year :: year() | nil
+
+  @typedoc """
+  Specifies the month of a date as either
+  a positive integer or nil.
+  """
+  @type month :: month() | nil
+
+  @typedoc """
+  Specifies the day of a date as either
+  a positive integer or nil.
+  """
+  @type day :: day() | nil
 
   @typedoc """
   Specifies the quarter of year for a calendar date.
@@ -127,9 +159,9 @@ defmodule Cldr.Calendar do
 
   """
   @callback month_of_year(
-              year :: Calendar.year(),
-              month :: Calendar.month() | Cldr.Calendar.week(),
-              day :: Calendar.day()
+              year :: year(),
+              month :: month() | Cldr.Calendar.week(),
+              day :: day()
             ) ::
               Calendar.month() | {Calendar.month(), leap_month?()}
 
@@ -141,9 +173,9 @@ defmodule Cldr.Calendar do
 
   """
   @callback week_of_year(
-              year :: Calendar.year(),
-              month :: Calendar.month() | Cldr.Calendar.week(),
-              day :: Calendar.day()
+              year :: year(),
+              month :: month() | Cldr.Calendar.week(),
+              day :: day()
             ) ::
               {Calendar.year(), Calendar.week()} | {:error, :not_defined}
 
@@ -155,9 +187,9 @@ defmodule Cldr.Calendar do
 
   """
   @callback iso_week_of_year(
-              year :: Calendar.year(),
-              month :: Calendar.month(),
-              day :: Calendar.day()
+              year :: year(),
+              month :: month() | Cldr.Calendar.week(),
+              day :: day()
             ) ::
               {Calendar.year(), Calendar.week()} | {:error, :not_defined}
 
@@ -168,7 +200,7 @@ defmodule Cldr.Calendar do
   The `week_in_month` is calculated based upon the calendar configuration.
 
   """
-  @callback week_of_month(Calendar.year(), Cldr.Calendar.week(), Calendar.day()) ::
+  @callback week_of_month(year(), Cldr.Calendar.week(), day()) ::
               {Calendar.month(), Cldr.Calendar.week()} | {:error, :not_defined}
 
   @doc """
@@ -193,7 +225,7 @@ defmodule Cldr.Calendar do
   week calendar) in a year
 
   """
-  @callback periods_in_year(year :: Calendar.year()) :: week() | Calendar.month()
+  @callback periods_in_year(year :: year()) :: week() | Calendar.month()
 
   unless Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :year_of_era, 3) do
     @doc """
@@ -207,55 +239,55 @@ defmodule Cldr.Calendar do
     """
 
     @callback year_of_era(Calendar.year(), Calendar.month(), Calendar.day()) ::
-                {year :: Calendar.year(), era :: Calendar.era()}
+                {year :: year(), era :: Calendar.era()}
   end
 
   @doc """
   Returns the number of weeks in a year
 
   """
-  @callback weeks_in_year(year :: Calendar.year()) ::
+  @callback weeks_in_year(year :: year()) ::
               {Cldr.Calendar.week(), Calendar.day()} | {:error, :not_defined}
 
   @doc """
   Returns the number of days in a year
 
   """
-  @callback days_in_year(year :: Calendar.year()) :: Calendar.day()
+  @callback days_in_year(year :: year()) :: Calendar.day()
 
   @doc """
   Returns the number of days in a month (withoout a year)
 
   """
-  @callback days_in_month(month :: Calendar.month()) ::
+  @callback days_in_month(month :: month()) ::
               Calendar.day() | {:ambiguous, Range.t() | [pos_integer()]} | {:error, :undefined}
 
   @doc """
   Returns a the year in a calendar year.
 
   """
-  @callback calendar_year(Calendar.year(), Cldr.Calendar.week(), Calendar.day()) ::
+  @callback calendar_year(year :: year(), month :: month(), day :: day()) ::
               Calendar.year()
 
   @doc """
   Returns a the extended year in a calendar year.
 
   """
-  @callback extended_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+  @callback extended_year(year :: year(), month :: month(), day :: day()) ::
               Calendar.year()
 
   @doc """
   Returns a the related year in a calendar year.
 
   """
-  @callback related_gregorian_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+  @callback related_gregorian_year(year :: year(), month :: month(), day :: day()) ::
               Calendar.year()
 
   @doc """
   Returns a the cyclic year in a calendar year.
 
   """
-  @callback cyclic_year(Calendar.year(), Calendar.month(), Calendar.day()) ::
+  @callback cyclic_year(year :: year(), month :: month(), day :: day()) ::
               Calendar.year()
 
   @doc """
@@ -263,7 +295,7 @@ defmodule Cldr.Calendar do
   calendar year.
 
   """
-  @callback year(year :: Calendar.year()) ::
+  @callback year(year :: year()) ::
               Date.Range.t() | {:error, :not_defined}
 
   @doc """
@@ -271,7 +303,7 @@ defmodule Cldr.Calendar do
   given quarter for a calendar year.
 
   """
-  @callback quarter(year :: Calendar.year(), quarter :: Cldr.Calendar.quarter()) ::
+  @callback quarter(year :: year(), quarter :: Cldr.Cldr.Calendar.quarter()) ::
               Date.Range.t() | {:error, :not_defined}
 
   @doc """
@@ -279,7 +311,7 @@ defmodule Cldr.Calendar do
   given month for a calendar year.
 
   """
-  @callback month(year :: Calendar.year(), month :: Calendar.month()) ::
+  @callback month(year :: year(), month :: month()) ::
               Date.Range.t() | {:error, :not_defined}
 
   @doc """
@@ -287,7 +319,7 @@ defmodule Cldr.Calendar do
   given week for a calendar year.
 
   """
-  @callback week(year :: Calendar.year(), week :: week()) ::
+  @callback week(year :: year(), week :: week()) ::
               Date.Range.t() | {:error, :not_defined}
 
   @doc """
@@ -300,9 +332,9 @@ defmodule Cldr.Calendar do
 
   """
   @callback plus(
-              year :: Calendar.year(),
-              month :: Calendar.month() | week(),
-              day :: Calendar.day(),
+              year :: year(),
+              month :: month() | week(),
+              day :: day(),
               months_or_quarters :: :months | :quarters,
               increment :: integer,
               options :: Keyword.t()
@@ -722,11 +754,11 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `year` is any year
+  * `year` is any year.
 
   * `calendar` is any module that implements
     the `Calendar` and `Cldr.Calendar`
-    behaviours
+    behaviours.
 
   ### Returns
 
@@ -743,7 +775,7 @@ defmodule Cldr.Calendar do
       %Date{calendar: Cldr.Calendar.NRF, day: 1, month: 1, year: 2019}
 
   """
-  @spec first_day_of_year(year :: Calendar.year(), calendar :: calendar()) :: Date.t()
+  @spec first_day_of_year(year :: year(), calendar :: calendar()) :: Date.t()
 
   def first_day_of_year(year, calendar) do
     with {:ok, date} <- Date.new(year, 1, 1, calendar) do
@@ -771,9 +803,14 @@ defmodule Cldr.Calendar do
       ~D[2019-01-01]
 
   """
-  @spec first_day_of_year(date :: Date.t()) :: Date.t()
+  @spec first_day_of_year(date :: date()) :: Date.t()
 
-  def first_day_of_year(%{year: year, calendar: calendar}) do
+  def first_day_of_year(%Date{year: year, calendar: calendar}) do
+    first_day_of_year(year, calendar)
+  end
+
+  def first_day_of_year(%{} = date) do
+    {year, _month, _day, calendar} = extract_date(date)
     first_day_of_year(year, calendar)
   end
 
@@ -804,7 +841,7 @@ defmodule Cldr.Calendar do
       %Date{calendar: Cldr.Calendar.NRF, day: 7, month: 52, year: 2019}
 
   """
-  @spec last_day_of_year(year :: Calendar.year(), calendar :: calendar()) :: Date.t()
+  @spec last_day_of_year(year :: year(), calendar :: calendar()) :: Date.t()
 
   def last_day_of_year(year, Calendar.ISO) do
     last_month = Calendar.ISO.months_in_year(year)
@@ -844,9 +881,14 @@ defmodule Cldr.Calendar do
       ~D[2019-12-31]
 
   """
-  @spec last_day_of_year(date :: Date.t()) :: Date.t()
+  @spec last_day_of_year(date :: date()) :: Date.t()
 
-  def last_day_of_year(%{year: year, calendar: calendar}) do
+  def last_day_of_year(%Date{year: year, calendar: calendar}) do
+    last_day_of_year(year, calendar)
+  end
+
+  def last_day_of_year(%{} = date) do
+    {year, _month, _day, calendar} = extract_date(date)
     last_day_of_year(year, calendar)
   end
 
@@ -873,27 +915,29 @@ defmodule Cldr.Calendar do
       ~D[2019-01-01]
 
   """
-  @spec first_gregorian_day_of_year(Calendar.year(), calendar()) ::
+  @spec first_gregorian_day_of_year(year() | date(), calendar()) ::
           Date.t() | {:error, :invalid_date}
 
-  def first_gregorian_day_of_year(year, Calendar.ISO) do
-    day = first_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
-    %{day | calendar: Calendar.ISO}
+  def first_gregorian_day_of_year(%Date{year: year, calendar: Calendar.ISO}) do
+    year
+    |> first_gregorian_day_of_year(Cldr.Calendar.Gregorian)
+    |> Map.put(:calendar, Calendar.ISO)
+  end
+
+  def first_gregorian_day_of_year(%{} = date) do
+    {year, _month, _day, calendar} = extract_date(date)
+    first_gregorian_day_of_year(year, calendar)
   end
 
   def first_gregorian_day_of_year(year, calendar) do
     {year, month, day} =
       year
-      |> calendar.first_gregorian_day_of_year
+      |> calendar.first_gregorian_day_of_year()
       |> Cldr.Calendar.Gregorian.date_from_iso_days()
 
     with {:ok, date} <- Date.new(year, month, day, Cldr.Calendar.Gregorian) do
       date
     end
-  end
-
-  def first_gregorian_day_of_year(%{year: year, calendar: calendar}) do
-    first_gregorian_day_of_year(year, calendar)
   end
 
   @doc """
@@ -902,7 +946,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `year` is any integer year number.
+  * `year` is any integer year number or a `t:date/0`.
 
   * `calendar` is any module that implements the `Calendar` and
     `Cldr.Calendar` behaviours or `Calendar.ISO`.
@@ -919,27 +963,29 @@ defmodule Cldr.Calendar do
       ~D[2019-12-31]
 
   """
-  @spec last_gregorian_day_of_year(Calendar.year(), calendar()) ::
+  @spec last_gregorian_day_of_year(date() | year(), calendar()) ::
           Date.t() | {:error, :invalid_date}
 
-  def last_gregorian_day_of_year(year, Calendar.ISO) do
-    day = last_gregorian_day_of_year(year, Cldr.Calendar.Gregorian)
-    %{day | calendar: Calendar.ISO}
+  def last_gregorian_day_of_year(%Date{year: year, calendar: Calendar.ISO}) do
+    year
+    |> last_gregorian_day_of_year(Cldr.Calendar.Gregorian)
+    |> Map.put(:calendar, Calendar.ISO)
   end
 
-  def last_gregorian_day_of_year(year, calendar) do
+  def last_gregorian_day_of_year(%{} = date) do
+    {year, _month, _day, calendar} = extract_date(date)
+    last_gregorian_day_of_year(year, calendar)
+  end
+
+  def last_gregorian_day_of_year(year, calendar) when is_integer(year) do
     {year, month, day} =
       year
-      |> calendar.last_gregorian_day_of_year
+      |> calendar.last_gregorian_day_of_year()
       |> Cldr.Calendar.Gregorian.date_from_iso_days()
 
     with {:ok, date} <- Date.new(year, month, day, Cldr.Calendar.Gregorian) do
       date
     end
-  end
-
-  def last_gregorian_day_of_year(%{year: year, calendar: calendar}) do
-    last_gregorian_day_of_year(year, calendar)
   end
 
   @doc """
@@ -990,7 +1036,7 @@ defmodule Cldr.Calendar do
       {2019, 1}
 
   """
-  @spec year_of_era(Date.t()) :: {Calendar.day(), Calendar.era()}
+  @spec year_of_era(date()) :: {Calendar.day(), Calendar.era()}
 
   def year_of_era(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1024,7 +1070,7 @@ defmodule Cldr.Calendar do
       {737456, 1}
 
   """
-  @spec day_of_era(Date.t()) :: {Calendar.day(), Calendar.era()}
+  @spec day_of_era(date()) :: {Calendar.day(), Calendar.era()}
 
   def day_of_era(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1164,7 +1210,7 @@ defmodule Cldr.Calendar do
       2019
 
   """
-  @spec calendar_year(Date.t()) :: Calendar.year()
+  @spec calendar_year(date()) :: Calendar.year()
 
   def calendar_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1198,7 +1244,7 @@ defmodule Cldr.Calendar do
       2019
 
   """
-  @spec extended_year(Date.t()) :: Calendar.year()
+  @spec extended_year(date()) :: Calendar.year()
 
   def extended_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1236,7 +1282,7 @@ defmodule Cldr.Calendar do
       2019
 
   """
-  @spec related_gregorian_year(Date.t()) :: Calendar.year()
+  @spec related_gregorian_year(date()) :: Calendar.year()
 
   def related_gregorian_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1273,7 +1319,7 @@ defmodule Cldr.Calendar do
       2019
 
   """
-  @spec cyclic_year(Date.t()) :: Calendar.year()
+  @spec cyclic_year(date()) :: Calendar.year()
 
   def cyclic_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1307,7 +1353,7 @@ defmodule Cldr.Calendar do
       4
 
   """
-  @spec quarter_of_year(Date.t()) :: Cldr.Calendar.quarter()
+  @spec quarter_of_year(date()) :: Cldr.Calendar.quarter()
 
   def quarter_of_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1341,7 +1387,7 @@ defmodule Cldr.Calendar do
       6
 
   """
-  @spec month_of_year(Date.t()) ::
+  @spec month_of_year(date()) ::
           Calendar.month() | {Calendar.month(), leap_month :: :leap}
 
   def month_of_year(%{} = date) do
@@ -1381,7 +1427,7 @@ defmodule Cldr.Calendar do
       {:error, :not_defined}
 
   """
-  @spec week_of_year(Date.t()) :: {Calendar.year(), week()}
+  @spec week_of_year(date()) :: {Calendar.year(), week()}
 
   def week_of_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1420,7 +1466,7 @@ defmodule Cldr.Calendar do
       {:error, :not_defined}
 
   """
-  @spec iso_week_of_year(Date.t()) :: {Calendar.year(), week()}
+  @spec iso_week_of_year(date()) :: {Calendar.year(), week()}
 
   def iso_week_of_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1465,7 +1511,7 @@ defmodule Cldr.Calendar do
       {:error, :not_defined}
 
   """
-  @spec week_of_month(Date.t()) :: {Calendar.month(), week()}
+  @spec week_of_month(date()) :: {Calendar.month(), week()}
 
   def week_of_month(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1505,7 +1551,7 @@ defmodule Cldr.Calendar do
       372
 
   """
-  @spec day_of_year(Date.t()) :: Calendar.day()
+  @spec day_of_year(date()) :: Calendar.day()
 
   def day_of_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1561,13 +1607,13 @@ defmodule Cldr.Calendar do
       {53, 2}
 
   """
-  @spec weeks_in_year(Date.t()) :: {Cldr.Calendar.week(), Calendar.day_of_week()}
+  @spec weeks_in_year(date()) :: {Cldr.Calendar.week(), Calendar.day_of_week()}
   def weeks_in_year(%{} = date) do
     {year, _month, _day, calendar} = extract_date(date)
     calendar.weeks_in_year(year)
   end
 
-  @spec weeks_in_year(Calendar.year(), calendar) :: {Cldr.Calendar.week(), Calendar.day_of_week()}
+  @spec weeks_in_year(year(), calendar) :: {Cldr.Calendar.week(), Calendar.day_of_week()}
   def weeks_in_year(year, Calendar.ISO) do
     Cldr.Calendar.Gregorian.weeks_in_year(year)
   end
@@ -1648,7 +1694,7 @@ defmodule Cldr.Calendar do
       false
 
   """
-  @spec weekend?(Date.t(), Keyword.t()) :: boolean | {:error, {module(), String.t()}}
+  @spec weekend?(date(), Keyword.t()) :: boolean | {:error, {module(), String.t()}}
 
   def weekend?(date, options \\ []) do
     backend = Keyword.get_lazy(options, :backend, &default_backend/0)
@@ -1726,7 +1772,7 @@ defmodule Cldr.Calendar do
       false
 
   """
-  @spec weekday?(Date.t(), Keyword.t()) :: boolean | {:error, {module(), String.t()}}
+  @spec weekday?(date(), Keyword.t()) :: boolean | {:error, {module(), String.t()}}
 
   def weekday?(date, options \\ []) do
     backend = Keyword.get_lazy(options, :backend, &default_backend/0)
