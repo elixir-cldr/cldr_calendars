@@ -6,6 +6,9 @@ defmodule Cldr.Calendar.Base.Month do
   alias Calendar.ISO
   alias Cldr.Math
 
+  import Cldr.Calendar,
+    only: [missing_date_error: 4, missing_year_month_error: 3, missing_month_error: 2]
+
   @days_in_week 7
   @quarters_in_year 4
   @months_in_quarter 3
@@ -27,6 +30,9 @@ defmodule Cldr.Calendar.Base.Month do
     end
   end
 
+  defguard is_date(year, month, day)
+    when is_integer(year) and is_integer(month) and is_integer(day)
+
   def valid_date?(year, month, day, %Config{month_of_year: 1}) do
     Calendar.ISO.valid_date?(year, month, day)
   end
@@ -41,17 +47,17 @@ defmodule Cldr.Calendar.Base.Month do
   # calendars this is not necessarily true. So we have to decide whether
   # the beginning or ending Gregorian year is the year we consider.
 
-  def year_of_era(year, %{year: :ending} = config) do
+  def year_of_era(year, %{year: :ending} = config) when is_integer(year) do
     {_, year} = Cldr.Calendar.start_end_gregorian_years(year, config)
     Calendar.ISO.year_of_era(year)
   end
 
-  def year_of_era(year, %{year: :beginning} = config) do
+  def year_of_era(year, %{year: :beginning} = config) when is_integer(year) do
     {year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)
     Calendar.ISO.year_of_era(year)
   end
 
-  def year_of_era(year, %{year: :majority, month_of_year: starts} = config) when starts <= 6 do
+  def year_of_era(year, %{year: :majority, month_of_year: starts} = config) when is_integer(year) and starts <= 6 do
     {year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)
     Calendar.ISO.year_of_era(year)
   end
@@ -61,22 +67,30 @@ defmodule Cldr.Calendar.Base.Month do
     Calendar.ISO.year_of_era(year)
   end
 
-  def quarter_of_year(year, month, _day, config) do
+  def quarter_of_year(year, month, _day, config) when is_integer(year) and is_integer(month) do
     ceil(month / (months_in_year(year, config) / @quarters_in_year))
   end
 
-  def month_of_year(_year, month, _day, _config) do
+  def quarter_of_year(year, month, _day, _config) do
+    {:error, missing_year_month_error("quarter_of_year", year, month)}
+  end
+
+  def month_of_year(_year, month, _day, _config) when is_integer(month) do
     month
   end
 
-  def week_of_year(year, month, day, %Config{day_of_week: :first} = config) do
+  def month_of_year(_year, month, _day, _config) do
+    {:error, missing_month_error("month_of_year", month)}
+  end
+
+  def week_of_year(year, month, day, %Config{day_of_week: :first} = config) when is_date(year, month, day) do
     this_day = date_to_iso_days(year, month, day, config)
     first_day = date_to_iso_days(year, 1, 1, config)
     week = div(this_day - first_day, @days_in_week) + 1
     {year, week}
   end
 
-  def week_of_year(year, month, day, config) do
+  def week_of_year(year, month, day, config) when is_date(year, month, day) do
     iso_days = date_to_iso_days(year, month, day, config)
     first_gregorian_day_of_year = Base.Week.first_gregorian_day_of_year(year, config)
     last_gregorian_day_of_year = Base.Week.last_gregorian_day_of_year(year, config)
@@ -94,7 +108,11 @@ defmodule Cldr.Calendar.Base.Month do
     end
   end
 
-  def iso_week_of_year(year, month, day) do
+  def week_of_year(year, month, day, _config) do
+    {:error, missing_date_error("week_of_year", year, month, day)}
+  end
+
+  def iso_week_of_year(year, month, day) when is_date(year, month, day) do
     week_of_year(year, month, day, %Config{
       day_of_week: @iso_week_first_day,
       min_days_in_first_week: @iso_week_min_days,
@@ -102,14 +120,18 @@ defmodule Cldr.Calendar.Base.Month do
     })
   end
 
-  def week_of_month(year, month, day, %Config{day_of_week: :first} = config) do
+  def iso_week_of_year(year, month, day) do
+    {:error, missing_date_error("iso_week_of_year", year, month, day)}
+  end
+
+  def week_of_month(year, month, day, %Config{day_of_week: :first} = config) when is_date(year, month, day) do
     this_day = date_to_iso_days(year, month, day, config)
     first_day = date_to_iso_days(year, month, 1, config)
     week = div(this_day - first_day, @days_in_week) + 1
     {month, week}
   end
 
-  def week_of_month(year, month, day, config) do
+  def week_of_month(year, month, day, config) when is_date(year, month, day) do
     {_year, week} = week_of_year(year, month, day, config)
     {quarters, weeks_remaining_in_quarter} = Math.div_amod(week, @weeks_in_quarter)
     month_in_quarter = Base.Week.month_from_weeks(weeks_remaining_in_quarter, config)
@@ -120,24 +142,40 @@ defmodule Cldr.Calendar.Base.Month do
     {month, week}
   end
 
-  def day_of_era(year, month, day, config) do
+  def week_of_month(year, month, day, _config) do
+    {:error, missing_date_error("week_of_month", year, month, day)}
+  end
+
+  def day_of_era(year, month, day, config) when is_date(year, month, day) do
     {year, month, day} = date_to_iso_date(year, month, day, config)
     Calendar.ISO.day_of_era(year, month, day)
   end
 
-  def day_of_year(year, month, day, config) do
+  def day_of_era(year, month, day, _config) do
+    {:error, missing_date_error("day_of_era", year, month, day)}
+  end
+
+  def day_of_year(year, month, day, config) when is_date(year, month, day) do
     {iso_year, iso_month, iso_day} = date_to_iso_date(year, month, day, config)
     iso_days = Calendar.ISO.date_to_iso_days(iso_year, iso_month, iso_day)
     iso_days - first_gregorian_day_of_year(year, config) + 1
   end
 
-  def day_of_week(year, month, day, config) do
+  def day_of_year(year, month, day, _config) do
+    {:error, missing_date_error("day_of_year", year, month, day)}
+  end
+
+  def day_of_week(year, month, day, config) when is_date(year, month, day) do
     {year, month, day} = date_to_iso_date(year, month, day, config)
     {day, _first, _last} = ISO.day_of_week(year, month, day, :default)
     day
   end
 
-  def months_in_year(year, _config) do
+  def day_of_week(year, month, day, _config) do
+    {:error, missing_date_error("day_of_week", year, month, day)}
+  end
+
+  def months_in_year(year, _config) when is_integer(year) do
     Calendar.ISO.months_in_year(year)
   end
 
@@ -145,7 +183,7 @@ defmodule Cldr.Calendar.Base.Month do
   # (which is unusual) then we will have a fractional last week
   # of the year of either 1 or 2 days (depending on leap year)
 
-  def weeks_in_year(year, %Config{day_of_week: :first} = config) do
+  def weeks_in_year(year, %Config{day_of_week: :first} = config) when is_integer(year) do
     first_day = first_gregorian_day_of_year(year, config)
     last_day = last_gregorian_day_of_year(year, config)
 
@@ -163,7 +201,7 @@ defmodule Cldr.Calendar.Base.Month do
   # weeks of a year do not align to the calendar year start
   # and end dates.
 
-  def weeks_in_year(year, config) do
+  def weeks_in_year(year, config) when is_integer(year) do
     if Base.Week.long_year?(year, config) do
       Base.Week.weeks_in_long_year()
     else
@@ -171,16 +209,16 @@ defmodule Cldr.Calendar.Base.Month do
     end
   end
 
-  def days_in_year(year, config) do
+  def days_in_year(year, config) when is_integer(year) do
     if leap_year?(year, config), do: 366, else: 365
   end
 
-  def days_in_month(year, month, config) do
+  def days_in_month(year, month, config) when is_integer(year) and is_integer(month) do
     {iso_year, iso_month, _day} = date_to_iso_date(year, month, 1, config)
     ISO.days_in_month(iso_year, iso_month)
   end
 
-  def days_in_month(month, %{month_of_year: 1}) do
+  def days_in_month(month, %{month_of_year: 1}) when is_integer(month) do
     case month do
       2 -> {:ambiguous, 28..29}
       month when month in [9, 4, 6, 11] -> 30
@@ -188,7 +226,7 @@ defmodule Cldr.Calendar.Base.Month do
     end
   end
 
-  def days_in_month(month, %{month_of_year: calendar_start_month}) do
+  def days_in_month(month, %{month_of_year: calendar_start_month}) when is_integer(month) do
     gregorian_month = calendar_month_to_gregorian_month(month, calendar_start_month)
     days_in_month(gregorian_month, %{month_of_year: 1})
   end

@@ -64,29 +64,35 @@ defmodule Cldr.Calendar do
   often all - fields be present.
   """
   @type date :: %{
-    optional(year) => year,
-    optional(month) => month,
-    optional(day) => day,
-    optional(calendar) => calendar
+    optional(year) => year(),
+    optional(month) => month(),
+    optional(day) => day(),
+    optional(calendar) => calendar()
   }
 
   @typedoc """
   Specifies the year of a date as either
   a positive integer or nil.
   """
-  @type year :: year() | nil
+  @type era :: non_neg_integer() | nil
+
+  @typedoc """
+  Specifies the year of a date as either
+  a positive integer or nil.
+  """
+  @type year :: Calendar.year() | nil
 
   @typedoc """
   Specifies the month of a date as either
   a positive integer or nil.
   """
-  @type month :: month() | nil
+  @type month :: Calendar.month() | nil
 
   @typedoc """
   Specifies the day of a date as either
   a positive integer or nil.
   """
-  @type day :: day() | nil
+  @type day :: Calendar.day() | nil
 
   @typedoc """
   Specifies the quarter of year for a calendar date.
@@ -3636,6 +3642,30 @@ defmodule Cldr.Calendar do
   @calendars Cldr.Config.calendars()
   def calendars do
     @calendars
+  end
+
+  @doc false
+  def missing_date_error(function, year, month, day) do
+    {Cldr.MissingFields,
+      "#{function} requires at least year, month and day. Found year: #{inspect year}, month: #{inspect month} and day: #{inspect day}"}
+  end
+
+  @doc false
+  def missing_year_month_error(function, year, month) do
+    {Cldr.MissingFields,
+      "#{function} requires at least year and month. Found year: #{inspect year} and month: #{inspect month}"}
+  end
+
+  @doc false
+  def missing_year_error(function, year) do
+    {Cldr.MissingFields,
+      "#{function} requires at least year. Found year: #{inspect year}"}
+  end
+
+  @doc false
+  def missing_month_error(function, month) do
+    {Cldr.MissingFields,
+      "#{function} requires at least month. Found month: #{inspect month}"}
   end
 
   defdelegate day_of_week(date), to: Date

@@ -15,11 +15,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       @behaviour Calendar
       @behaviour Cldr.Calendar
 
-      @type year :: -9999..9999
-      @type month :: 1..12
-      @type day :: 1..31
-
       import Cldr.Macros
+
+      import Cldr.Calendar,
+        only: [missing_date_error: 4, missing_year_month_error: 3, missing_month_error: 2, missing_year_error: 2]
+
       alias Cldr.Calendar.Base.Month
 
       @doc false
@@ -65,7 +65,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       era "0".
 
       """
-      @spec year_of_era(year) :: {year, era :: non_neg_integer}
+      @spec year_of_era(Cldr.Calendar.year()) ::
+        {year :: Calendar.year(), era :: Cldr.Calendar.era()}
+
       unless Code.ensure_loaded?(Calendar.ISO) &&
                function_exported?(Calendar.ISO, :year_of_era, 3) do
         @impl true
@@ -85,7 +87,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       era "0".
 
       """
-      @spec year_of_era(year, month, day) :: {year, era :: non_neg_integer}
+      @spec year_of_era(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        {year :: Calendar.year(), era :: Cldr.Calendar.era()} | {:error, {module(), String.t()}}
+
       @impl true
 
       def year_of_era(year, _month, _day) do
@@ -97,10 +101,16 @@ defmodule Cldr.Calendar.Compiler.Month do
       on rendered calendars.
 
       """
-      @spec calendar_year(year, month, day) :: Calendar.year()
+      @spec calendar_year(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        year :: Calendar.year() | {:error, {module(), String.t()}}
+
       @impl true
-      def calendar_year(year, month, day) do
+      def calendar_year(year, _month, _day) when is_integer(year) do
         year
+      end
+
+      def calendar_year(year, _month, _day) do
+        {:error, missing_year_error("calendar_year", year)}
       end
 
       @doc """
@@ -108,10 +118,16 @@ defmodule Cldr.Calendar.Compiler.Month do
       on rendered calendars.
 
       """
-      @spec related_gregorian_year(year, month, day) :: Calendar.year()
+      @spec related_gregorian_year(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        year :: Calendar.year() | {:error, {module(), String.t()}}
+
       @impl true
-      def related_gregorian_year(year, month, day) do
+      def related_gregorian_year(year, _month, _day) when is_integer(year) do
         year
+      end
+
+      def related_gregorian_year(year, _month, _day) do
+        {:error, missing_year_error("calendar_year", year)}
       end
 
       @doc """
@@ -119,10 +135,16 @@ defmodule Cldr.Calendar.Compiler.Month do
       on rendered calendars.
 
       """
-      @spec extended_year(year, month, day) :: Calendar.year()
+      @spec extended_year(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        year :: Calendar.year() | {:error, {module(), String.t()}}
+
       @impl true
-      def extended_year(year, month, day) do
+      def extended_year(year, _month, _day) when is_integer(year) do
         year
+      end
+
+      def extended_year(year, _month, _day) do
+        {:error, missing_year_error("extended_year", year)}
       end
 
       @doc """
@@ -130,10 +152,16 @@ defmodule Cldr.Calendar.Compiler.Month do
       on rendered calendars.
 
       """
-      @spec cyclic_year(year, month, day) :: Calendar.year()
+      @spec cyclic_year(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        year :: Calendar.year() | {:error, {module(), String.t()}}
+
       @impl true
-      def cyclic_year(year, month, day) do
+      def cyclic_year(year, _month, _day) when is_integer(year) do
         year
+      end
+
+      def cyclic_year(year, _month, _day) do
+        {:error, missing_year_error("cyclic_year", year)}
       end
 
       @doc """
@@ -141,7 +169,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 4.
 
       """
-      @spec quarter_of_year(year, month, day) :: 1..4
+      @spec quarter_of_year(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        quarter :: Cldr.Calendar.quarter() | {:error, {module(), String.t()}}
+
       @impl true
       def quarter_of_year(year, month, day) do
         Month.quarter_of_year(year, month, day, __config__())
@@ -152,7 +182,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 12.
 
       """
-      @spec month_of_year(year, month, day) :: month
+      @spec month_of_year(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        month :: Calendar.month() | {:error, {module(), String.t()}}
+
       @impl true
       def month_of_year(year, month, day) do
         Month.month_of_year(year, month, day, __config__())
@@ -163,7 +195,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 53.
 
       """
-      @spec week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
+      @spec week_of_year(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        {year :: Calendar.year(), week :: Cldr.Calendar.week()} | {:error, {module(), String.t()}}
+
       @impl true
       def week_of_year(year, month, day) do
         Month.week_of_year(year, month, day, __config__())
@@ -174,7 +208,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 53.
 
       """
-      @spec iso_week_of_year(year, month, day) :: {year, Cldr.Calendar.week()}
+      @spec iso_week_of_year(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        {year :: Calendar.year(), week :: Cldr.Calendar.week()} | {:error, {module(), String.t()}}
+
       @impl true
       def iso_week_of_year(year, month, day) do
         Month.iso_week_of_year(year, month, day)
@@ -185,7 +221,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 5.
 
       """
-      @spec week_of_month(year, Cldr.Calendar.week(), day) :: {month, Cldr.Calendar.week()}
+      @spec week_of_month(Cldr.Calendar.year(), Cldr.Calendar.week(), Calendr.day()) ::
+        {month :: Calendar.month(), week :: Cldr.Calendar.week()} | {:error, {module(), String.t()}}
+
       @impl true
       def week_of_month(year, week, day) do
         Month.week_of_month(year, week, day, __config__())
@@ -195,7 +233,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       Calculates the day and era from the given `year`, `month`, and `day`.
 
       """
-      @spec day_of_era(year, month, day) :: {day :: non_neg_integer(), era :: non_neg_integer}
+      @spec day_of_era(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        {day :: Cldr.Calendar.day(), era :: CLdr.Calendar.ers()} | {:error, {module(), String.t()}}
+
       @impl true
       def day_of_era(year, month, day) do
         Month.day_of_era(year, month, day, __config__())
@@ -205,7 +245,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       Calculates the day of the year from the given `year`, `month`, and `day`.
 
       """
-      @spec day_of_year(year, month, day) :: 1..366
+      @spec day_of_year(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
+        day :: Calendar.day() | {:error, {module(), String.t()}}
+
       @impl true
       def day_of_year(year, month, day) do
         Month.day_of_year(year, month, day, __config__())
@@ -217,17 +259,20 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @dialyzer {:nowarn_function, {:day_of_week, 4}}
-      @spec day_of_week(year, month, day, :default | atom()) ::
-              {Calendar.day_of_week(),
+      @spec day_of_week(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day(), :default | atom()) ::
+              {day_of_week :: Calendar.day_of_week(),
                first_day_of_week ::
-                 non_neg_integer(), last_day_of_week :: non_neg_integer()}
+                Calendar.day_of_week(), last_day_of_week :: Calendar.day_of_week()} | {:error, {module(), String.t()}}
 
       @impl true
       def day_of_week(year, month, day, :default) do
         %{day_of_week: first_day} = __config__()
         last_day = Cldr.Math.amod(first_day + days_in_week() - 1, days_in_week())
-        day = Month.day_of_week(year, month, day, __config__())
-        {day, first_day, last_day}
+
+        case Month.day_of_week(year, month, day, __config__()) do
+          {:error, reason} -> {:error, reason}
+          day -> {day, first_day, last_day}
+        end
       end
 
       @doc """
@@ -245,7 +290,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       Returns the number days in a given year.
 
       """
-      @spec days_in_year(year) :: Calendar.day()
+      @spec days_in_year(Cldr.Calendar.year()) ::
+        days :: Calendar.day() | {:error, {module(), String.t()}}
+
       @impl true
       def days_in_year(year) do
         Month.days_in_year(year, __config__())
@@ -277,7 +324,9 @@ defmodule Cldr.Calendar.Compiler.Month do
           {53, 2}
 
       """
-      @spec weeks_in_year(year) :: {Calendar.week(), Calendar.day()}
+      @spec weeks_in_year(Cldr.Calendar.year()) ::
+        {weeks :: Calendar.week(), days_in_last_week :: Calendar.day()} | {:error, {module(), String.t()}}
+
       @impl true
       def weeks_in_year(year) do
         Month.weeks_in_year(year, __config__())
@@ -287,7 +336,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       Returns how many days there are in the given year-month.
 
       """
-      @spec days_in_month(year, month) :: Calendar.day()
+      @spec days_in_month(Cldr.Calendar.year(), Cldr.Calendar.month()) ::
+        days :: Calendar.day() | {:error, {module(), String.t()}}
+
       @impl true
       def days_in_month(year, month) do
         Month.days_in_month(year, month, __config__())
@@ -300,7 +351,9 @@ defmodule Cldr.Calendar.Compiler.Month do
       knowning the year and error tuple is returned.
 
       """
-      @spec days_in_month(month) :: Calendar.day()
+      @spec days_in_month(Cldr.Calendar.month()) ::
+        days :: Calendar.day() | {:error, {module(), String.t()}}
+
       @impl true
       def days_in_month(month) do
         Month.days_in_month(month, __config__())
@@ -410,7 +463,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       Returns if the given year is a leap year.
 
       """
-      @spec leap_year?(year) :: boolean()
+      @spec leap_year?(Cldr.Calendar.year()) :: boolean()
       @impl true
       def leap_year?(year) do
         Month.leap_year?(year, __config__())
