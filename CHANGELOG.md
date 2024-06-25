@@ -2,6 +2,14 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v1.25.0
+
+This is the changelog for Cldr Calendars v1.25.0 released on _____, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* This release provides initial support for partial dates.  Partial dates are those that do not have all of the fields `:year`, `:month`, `:day` and `:calendar`.  Not all functions require all parts of a date. And in some cases, like formatting just the year and the month, it shouldn't be necessary to provide data that has no meaning in the context of app requirement.  Of course many functions do require all fields be present - like adding a number of days to a date. In these cases, missing fields will cause an error to be returned. `ex_cldr_dates_times` version 2.19.0 and later take advantage of partial dates when formatting.
+
 ## Cldr.Calendars v1.24.2
 
 This is the changelog for Cldr Calendars v1.24.2 released on June 22nd, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
