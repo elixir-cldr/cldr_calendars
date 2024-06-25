@@ -952,7 +952,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`.
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -990,13 +992,8 @@ defmodule Cldr.Calendar do
   """
   @spec year_of_era(Date.t()) :: {Calendar.day(), Calendar.era()}
 
-  def year_of_era(%{calendar: Calendar.ISO} = date) do
-    %{year: year, month: month, day: day} = date
-    Cldr.Calendar.Gregorian.year_of_era(year, month, day)
-  end
-
-  def year_of_era(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def year_of_era(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.year_of_era(year, month, day)
   end
 
@@ -1006,7 +1003,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`.
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -1027,8 +1026,8 @@ defmodule Cldr.Calendar do
   """
   @spec day_of_era(Date.t()) :: {Calendar.day(), Calendar.era()}
 
-  def day_of_era(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def day_of_era(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.day_of_era(year, month, day)
   end
 
@@ -1144,7 +1143,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`.
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -1165,17 +1166,9 @@ defmodule Cldr.Calendar do
   """
   @spec calendar_year(Date.t()) :: Calendar.year()
 
-  def calendar_year(%{calendar: Calendar.ISO} = date) do
-    %{date | calendar: Cldr.Calendar.Gregorian}
-    |> calendar_year()
-  end
-
-  def calendar_year(%{year: year, month: month, day: day, calendar: calendar}) do
+  def calendar_year(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.calendar_year(year, month, day)
-  end
-
-  def calendar_year(%{year: year, calendar: calendar}) do
-    calendar.calendar_year(year, 1, 1)
   end
 
   @doc """
@@ -1184,7 +1177,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`.
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -1205,17 +1200,9 @@ defmodule Cldr.Calendar do
   """
   @spec extended_year(Date.t()) :: Calendar.year()
 
-  def extended_year(%{calendar: Calendar.ISO} = date) do
-    %{date | calendar: Cldr.Calendar.Gregorian}
-    |> extended_year()
-  end
-
-  def extended_year(%{year: year, month: month, day: day, calendar: calendar}) do
+  def extended_year(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.extended_year(year, month, day)
-  end
-
-  def extended_year(%{year: year, calendar: calendar}) do
-    calendar.extended_year(year, 1, 1)
   end
 
   @doc """
@@ -1228,7 +1215,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -1249,17 +1238,9 @@ defmodule Cldr.Calendar do
   """
   @spec related_gregorian_year(Date.t()) :: Calendar.year()
 
-  def related_gregorian_year(%{calendar: Calendar.ISO} = date) do
-    %{date | calendar: Cldr.Calendar.Gregorian}
-    |> related_gregorian_year()
-  end
-
-  def related_gregorian_year(%{year: year, month: month, day: day, calendar: calendar}) do
+  def related_gregorian_year(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.related_gregorian_year(year, month, day)
-  end
-
-  def related_gregorian_year(%{year: year, calendar: calendar}) do
-    calendar.related_gregorian_year(year, 1, 1)
   end
 
   @doc """
@@ -1272,7 +1253,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`.
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -1292,17 +1275,9 @@ defmodule Cldr.Calendar do
   """
   @spec cyclic_year(Date.t()) :: Calendar.year()
 
-  def cyclic_year(%{calendar: Calendar.ISO} = date) do
-    %{date | calendar: Cldr.Calendar.Gregorian}
-    |> cyclic_year()
-  end
-
-  def cyclic_year(%{year: year, month: month, day: day, calendar: calendar}) do
+  def cyclic_year(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.cyclic_year(year, month, day)
-  end
-
-  def cyclic_year(%{year: year, calendar: calendar}) do
-    calendar.cyclic_year(year, 1, 1)
   end
 
   @doc """
@@ -1311,7 +1286,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`.
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -1332,8 +1309,8 @@ defmodule Cldr.Calendar do
   """
   @spec quarter_of_year(Date.t()) :: Cldr.Calendar.quarter()
 
-  def quarter_of_year(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def quarter_of_year(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.quarter_of_year(year, month, day)
   end
 
@@ -1343,11 +1320,13 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
-  * a the month of the year as an
+  * the month of the year as an
     integer
 
   ### Examples
@@ -1365,13 +1344,8 @@ defmodule Cldr.Calendar do
   @spec month_of_year(Date.t()) ::
           Calendar.month() | {Calendar.month(), leap_month :: :leap}
 
-  def month_of_year(%{calendar: Calendar.ISO} = date) do
-    %{date | calendar: Cldr.Calendar.Gregorian}
-    |> month_of_year
-  end
-
-  def month_of_year(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def month_of_year(%{} = date) do
+   {year, month, day, calendar} = extract_date(date)
     calendar.month_of_year(year, month, day)
   end
 
@@ -1381,7 +1355,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`.
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -1407,13 +1383,8 @@ defmodule Cldr.Calendar do
   """
   @spec week_of_year(Date.t()) :: {Calendar.year(), week()}
 
-  def week_of_year(%{calendar: Calendar.ISO} = date) do
-    %{date | calendar: Cldr.Calendar.Gregorian}
-    |> week_of_year
-  end
-
-  def week_of_year(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def week_of_year(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.week_of_year(year, month, day)
   end
 
@@ -1423,7 +1394,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`.
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -1449,13 +1422,8 @@ defmodule Cldr.Calendar do
   """
   @spec iso_week_of_year(Date.t()) :: {Calendar.year(), week()}
 
-  def iso_week_of_year(%{calendar: Calendar.ISO} = date) do
-    %{date | calendar: Cldr.Calendar.Gregorian}
-    |> iso_week_of_year
-  end
-
-  def iso_week_of_year(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def iso_week_of_year(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.iso_week_of_year(year, month, day)
   end
 
@@ -1472,7 +1440,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`.
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -1497,13 +1467,8 @@ defmodule Cldr.Calendar do
   """
   @spec week_of_month(Date.t()) :: {Calendar.month(), week()}
 
-  def week_of_month(%{calendar: Calendar.ISO} = date) do
-    %{date | calendar: Cldr.Calendar.Gregorian}
-    |> week_of_month
-  end
-
-  def week_of_month(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def week_of_month(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.week_of_month(year, month, day)
   end
 
@@ -1513,7 +1478,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `date` is any `t:Date.t/0`.
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
 
   ### Returns
 
@@ -1540,8 +1507,8 @@ defmodule Cldr.Calendar do
   """
   @spec day_of_year(Date.t()) :: Calendar.day()
 
-  def day_of_year(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def day_of_year(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.day_of_year(year, month, day)
   end
 
@@ -1550,8 +1517,9 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * Either a `t:Date.t/0` or
-    an integer year a calendar name.
+  * `date` is any `t:Date.t/0` or an integer year
+    or a map with one or more of the fields `:year`,
+    `:month`, `:day` and optionally `:calendar`.
 
   ### Returns
 
@@ -1594,12 +1562,9 @@ defmodule Cldr.Calendar do
 
   """
   @spec weeks_in_year(Date.t()) :: {Cldr.Calendar.week(), Calendar.day_of_week()}
-  def weeks_in_year(%{year: year, calendar: Calendar.ISO}) do
-    weeks_in_year(year, Cldr.Calendar.Gregorian)
-  end
-
-  def weeks_in_year(%{year: year, calendar: calendar}) do
-    weeks_in_year(year, calendar)
+  def weeks_in_year(%{} = date) do
+    {year, _month, _day, calendar} = extract_date(date)
+    calendar.weeks_in_year(year)
   end
 
   @spec weeks_in_year(Calendar.year(), calendar) :: {Cldr.Calendar.week(), Calendar.day_of_week()}
@@ -1972,8 +1937,8 @@ defmodule Cldr.Calendar do
 
   """
   @spec date_to_string(Date.t()) :: String.t()
-  def date_to_string(date) do
-    %{year: year, month: month, day: day, calendar: calendar} = date
+  def date_to_string(%{} = date) do
+    {year, month, day, calendar} = extract_date(date)
     calendar.date_to_string(year, month, day)
   end
 
@@ -3475,6 +3440,20 @@ defmodule Cldr.Calendar do
   #
   # Helpers
   #
+
+  defp extract_date(%{} = date) do
+    {year, month, day, calendar} =
+      {Map.get(date, :year), Map.get(date, :month), Map.get(date, :day), Map.get(date, :calendar)}
+
+    calendar =
+      case calendar do
+        nil -> Cldr.Calendar.Gregorian
+        Calendar.ISO -> Cldr.Calendar.Gregorian
+        calendar -> calendar
+      end
+
+    {year, month, day, calendar}
+  end
 
   @doc false
   def invalid_calendar_error(calendar_module) do

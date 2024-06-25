@@ -380,7 +380,7 @@ defmodule Cldr.Calendar.Julian do
   Returns how many days there are in the given month.
 
   If the days in month cannot be determined without
-  knowning the year and error tuple is returned.
+  knowning the year an error tuple is returned.
 
   """
   @spec days_in_month(month) :: Calendar.day()
