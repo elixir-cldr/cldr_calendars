@@ -2341,6 +2341,10 @@ defmodule Cldr.Calendar do
   * `:format` is one of `:wide`, `:abbreviated` or `:narrow`. The
     default is `:abbreviated`.
 
+  * `:era` will, if set to `:variant` will localize the era using
+    the variant data. In the `:en` locale, this will produce `CE` and
+    `BCE` rather than the default `AD` and `BC`.
+
   ### Returns
 
   * A string representing the localized date part, or
@@ -2355,6 +2359,9 @@ defmodule Cldr.Calendar do
 
       iex> Cldr.Calendar.localize ~D[2019-01-01], :era
       "AD"
+
+      iex> Cldr.Calendar.localize ~D[2019-01-01], :era, era: :variant
+      "CE"
 
       iex> Cldr.Calendar.localize ~D[2019-01-01], :day_of_week
       "Tue"
@@ -2412,7 +2419,7 @@ defmodule Cldr.Calendar do
          {:ok, part} <- validate_part(part),
          {:ok, type} <- validate_type(type),
          {:ok, format} <- validate_format(format) do
-      localize(date, part, type, format, backend, locale)
+      localize(date, part, type, format, backend, locale, options)
     end
   end
 
@@ -2425,18 +2432,23 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def localize(date, :era, _type, format, backend, locale) do
+  def localize(date, part, type, format, backend, locale, options \\ [])
+
+  def localize(date, :era, _type, format, backend, locale, options) do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(date, :calendar, @default_calendar)
+    variant? = options[:era] == :variant
 
     with {_, era} <- day_of_era(date) do
+      era_key = if variant?, do: -era - 1, else: era
+
       locale
       |> backend.eras(calendar.cldr_calendar_type())
-      |> get_in([format, era])
+      |> get_in([format, era_key])
     end
   end
 
-  def localize(date, :cyclic_year, type, format, backend, locale) do
+  def localize(date, :cyclic_year, type, format, backend, locale, _options) do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(date, :calendar, @default_calendar)
 
@@ -2455,7 +2467,7 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def localize(date, :quarter, type, format, backend, locale) do
+  def localize(date, :quarter, type, format, backend, locale, _options) do
     backend = Module.concat(backend, Calendar)
 
     case quarter_of_year(date) do
@@ -2470,7 +2482,7 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def localize(date, :month, :numeric, _format, backend, locale) do
+  def localize(date, :month, :numeric, _format, backend, locale, _options) do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(date, :calendar, @default_calendar)
 
@@ -2495,7 +2507,7 @@ defmodule Cldr.Calendar do
     end
   end
 
-  def localize(date, :month, type, format, backend, locale) do
+  def localize(date, :month, type, format, backend, locale, _options) do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(date, :calendar, @default_calendar)
 
@@ -2529,7 +2541,7 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def localize(date, :day_of_week, type, format, backend, locale) do
+  def localize(date, :day_of_week, type, format, backend, locale, _options) do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(date, :calendar, @default_calendar)
 
@@ -2545,7 +2557,7 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def localize(date, :days_of_week, type, format, backend, locale) do
+  def localize(date, :days_of_week, type, format, backend, locale, _options) do
     backend = Module.concat(backend, Calendar)
 
     for date <- Interval.week(date) do
@@ -2561,7 +2573,7 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def localize(%{hour: hour} = time, :am_pm, type, format, backend, locale) do
+  def localize(%{hour: hour} = time, :am_pm, type, format, backend, locale, _options) do
     backend = Module.concat(backend, Calendar)
     am_pm = if hour < 12 or rem(hour, 24) < 12, do: :am, else: :pm
     calendar = Map.get(time, :calendar, @default_calendar)
@@ -2572,16 +2584,9 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def localize(
-        day_period,
-        :day_periods,
-        type,
-        format,
-        backend,
-        locale,
-        calendar \\ @default_calendar
-      ) do
+  def localize(day_period, :day_periods, type, format, backend, locale, options) do
     backend = Module.concat(backend, Calendar)
+    calendar = Keyword.get(options, :calendar, @default_calendar)
 
     locale
     |> backend.day_periods(calendar.cldr_calendar_type())
