@@ -64,11 +64,11 @@ defmodule Cldr.Calendar do
   often all - fields be present.
   """
   @type date :: %{
-    optional(year) => year(),
-    optional(month) => month(),
-    optional(day) => day(),
-    optional(calendar) => calendar()
-  }
+          optional(year) => year(),
+          optional(month) => month(),
+          optional(day) => day(),
+          optional(calendar) => calendar()
+        }
 
   @typedoc """
   Specifies the year of a date as either
@@ -1397,7 +1397,7 @@ defmodule Cldr.Calendar do
           Calendar.month() | {Calendar.month(), leap_month :: :leap}
 
   def month_of_year(%{} = date) do
-   {year, month, day, calendar} = extract_date(date)
+    {year, month, day, calendar} = extract_date(date)
     calendar.month_of_year(year, month, day)
   end
 
@@ -2457,6 +2457,7 @@ defmodule Cldr.Calendar do
   @doc false
   def localize(date, :quarter, type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
+
     case quarter_of_year(date) do
       {:error, reason} ->
         {:error, reason}
@@ -3675,25 +3676,23 @@ defmodule Cldr.Calendar do
   @doc false
   def missing_date_error(function, year, month, day) do
     {Cldr.MissingFields,
-      "#{function} requires at least year, month and day. Found year: #{inspect year}, month: #{inspect month} and day: #{inspect day}"}
+     "#{function} requires at least year, month and day. Found year: #{inspect(year)}, month: #{inspect(month)} and day: #{inspect(day)}"}
   end
 
   @doc false
   def missing_year_month_error(function, year, month) do
     {Cldr.MissingFields,
-      "#{function} requires at least year and month. Found year: #{inspect year} and month: #{inspect month}"}
+     "#{function} requires at least year and month. Found year: #{inspect(year)} and month: #{inspect(month)}"}
   end
 
   @doc false
   def missing_year_error(function, year) do
-    {Cldr.MissingFields,
-      "#{function} requires at least year. Found year: #{inspect year}"}
+    {Cldr.MissingFields, "#{function} requires at least year. Found year: #{inspect(year)}"}
   end
 
   @doc false
   def missing_month_error(function, month) do
-    {Cldr.MissingFields,
-      "#{function} requires at least month. Found month: #{inspect month}"}
+    {Cldr.MissingFields, "#{function} requires at least month. Found month: #{inspect(month)}"}
   end
 
   defdelegate day_of_week(date), to: Date

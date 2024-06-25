@@ -31,7 +31,10 @@ defmodule Cldr.Calendar.Base.Month do
   end
 
   defguard is_date(year, month, day)
-    when is_integer(year) and is_integer(month) and is_integer(day)
+           when is_integer(year) and is_integer(month) and is_integer(day)
+
+  defguard is_date(date)
+           when is_map_key(date, :year) and is_map_key(date, :month) and is_map_key(date, :day)
 
   def valid_date?(year, month, day, %Config{month_of_year: 1}) do
     Calendar.ISO.valid_date?(year, month, day)
@@ -57,7 +60,8 @@ defmodule Cldr.Calendar.Base.Month do
     Calendar.ISO.year_of_era(year)
   end
 
-  def year_of_era(year, %{year: :majority, month_of_year: starts} = config) when is_integer(year) and starts <= 6 do
+  def year_of_era(year, %{year: :majority, month_of_year: starts} = config)
+      when is_integer(year) and starts <= 6 do
     {year, _} = Cldr.Calendar.start_end_gregorian_years(year, config)
     Calendar.ISO.year_of_era(year)
   end
@@ -83,7 +87,8 @@ defmodule Cldr.Calendar.Base.Month do
     {:error, missing_month_error("month_of_year", month)}
   end
 
-  def week_of_year(year, month, day, %Config{day_of_week: :first} = config) when is_date(year, month, day) do
+  def week_of_year(year, month, day, %Config{day_of_week: :first} = config)
+      when is_date(year, month, day) do
     this_day = date_to_iso_days(year, month, day, config)
     first_day = date_to_iso_days(year, 1, 1, config)
     week = div(this_day - first_day, @days_in_week) + 1
@@ -124,7 +129,8 @@ defmodule Cldr.Calendar.Base.Month do
     {:error, missing_date_error("iso_week_of_year", year, month, day)}
   end
 
-  def week_of_month(year, month, day, %Config{day_of_week: :first} = config) when is_date(year, month, day) do
+  def week_of_month(year, month, day, %Config{day_of_week: :first} = config)
+      when is_date(year, month, day) do
     this_day = date_to_iso_days(year, month, day, config)
     first_day = date_to_iso_days(year, month, 1, config)
     week = div(this_day - first_day, @days_in_week) + 1

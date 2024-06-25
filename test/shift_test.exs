@@ -1,5 +1,4 @@
 if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :shift_date, 4) do
-
   defmodule Cldr.Calendar.ShiftTest do
     use ExUnit.Case, async: true
 
@@ -7,9 +6,16 @@ if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :shift_
 
     test "shift_date/2" do
       assert Cldr.Calendar.Gregorian.shift_date(2024, 3, 2, Duration.new!([])) == {2024, 3, 2}
-      assert Cldr.Calendar.Gregorian.shift_date(2024, 3, 2, Duration.new!(year: 1)) == {2025, 3, 2}
-      assert Cldr.Calendar.Gregorian.shift_date(2024, 3, 2, Duration.new!(month: 2)) == {2024, 5, 2}
-      assert Cldr.Calendar.Gregorian.shift_date(2024, 3, 2, Duration.new!(week: 3)) == {2024, 3, 23}
+
+      assert Cldr.Calendar.Gregorian.shift_date(2024, 3, 2, Duration.new!(year: 1)) ==
+               {2025, 3, 2}
+
+      assert Cldr.Calendar.Gregorian.shift_date(2024, 3, 2, Duration.new!(month: 2)) ==
+               {2024, 5, 2}
+
+      assert Cldr.Calendar.Gregorian.shift_date(2024, 3, 2, Duration.new!(week: 3)) ==
+               {2024, 3, 23}
+
       assert Cldr.Calendar.Gregorian.shift_date(2024, 3, 2, Duration.new!(day: 5)) == {2024, 3, 7}
 
       assert Cldr.Calendar.Gregorian.shift_date(0, 1, 1, Duration.new!(month: 1)) == {0, 2, 1}
@@ -36,7 +42,8 @@ if Code.ensure_loaded?(Calendar.ISO) && function_exported?(Calendar.ISO, :shift_
              ) ==
                {2022, 12, 12}
 
-      assert Cldr.Calendar.Gregorian.shift_date(2020, 2, 28, Duration.new!(day: 1)) == {2020, 2, 29}
+      assert Cldr.Calendar.Gregorian.shift_date(2020, 2, 28, Duration.new!(day: 1)) ==
+               {2020, 2, 29}
 
       assert Cldr.Calendar.Gregorian.shift_date(2020, 2, 29, Duration.new!(year: 1)) ==
                {2021, 2, 28}
