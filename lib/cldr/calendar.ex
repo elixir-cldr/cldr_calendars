@@ -2396,9 +2396,11 @@ defmodule Cldr.Calendar do
   end
 
   def localize(date, part, options) do
+    calendar = Map.get(date, :calendar, @default_calendar)
+
     backend =
       Keyword.get_lazy(options, :backend, fn ->
-        backend_from_calendar(date.calendar) || default_backend()
+        backend_from_calendar(calendar) || default_backend()
       end)
 
     locale = Keyword.get(options, :locale, backend.get_locale())
@@ -2425,45 +2427,58 @@ defmodule Cldr.Calendar do
   @doc false
   def localize(date, :era, _type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
-    {_, era} = day_of_era(date)
+    calendar = Map.get(date, :calendar, @default_calendar)
 
-    locale
-    |> backend.eras(date.calendar.cldr_calendar_type())
-    |> get_in([format, era])
+    with {_, era} <- day_of_era(date) do
+      locale
+      |> backend.eras(calendar.cldr_calendar_type())
+      |> get_in([format, era])
+    end
   end
 
   def localize(date, :cyclic_year, type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
-    cyclic_year = cyclic_year(date)
+    calendar = Map.get(date, :calendar, @default_calendar)
 
-    localized_cyclic_year =
-      locale
-      |> backend.cyclic_years(date.calendar.cldr_calendar_type())
-      |> get_in([:years, type, format, cyclic_year])
+    case cyclic_year(date) do
+      {:error, reason} ->
+        {:error, reason}
 
-    localized_cyclic_year || to_string(cyclic_year)
+      cyclic_year ->
+        localized_cyclic_year =
+          locale
+          |> backend.cyclic_years(calendar.cldr_calendar_type())
+          |> get_in([:years, type, format, cyclic_year])
+
+        localized_cyclic_year || to_string(cyclic_year)
+    end
   end
 
   @doc false
   def localize(date, :quarter, type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
-    quarter = quarter_of_year(date)
+    case quarter_of_year(date) do
+      {:error, reason} ->
+        {:error, reason}
 
-    locale
-    |> backend.quarters(date.calendar.cldr_calendar_type())
-    |> get_in([type, format, quarter])
+      quarter ->
+        locale
+        |> backend.quarters(date.calendar.cldr_calendar_type())
+        |> get_in([type, format, quarter])
+    end
   end
 
   @doc false
   def localize(date, :month, :numeric, _format, backend, locale) do
     backend = Module.concat(backend, Calendar)
+    calendar = Map.get(date, :calendar, @default_calendar)
 
     case month_of_year(date) do
       month when is_number(month) ->
         month
 
-      {month, :leap} ->
-        month_patterns = backend.month_patterns(locale, date.calendar.cldr_calendar_type())
+      {month, :leap} when is_number(month) ->
+        month_patterns = backend.month_patterns(locale, calendar.cldr_calendar_type())
 
         if month_patterns do
           leap_pattern = get_in(month_patterns, [:numeric, :all, :leap])
@@ -2473,25 +2488,29 @@ defmodule Cldr.Calendar do
         else
           to_string(month)
         end
+
+      error ->
+        error
     end
   end
 
   def localize(date, :month, type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
+    calendar = Map.get(date, :calendar, @default_calendar)
 
     case month_of_year(date) do
       month when is_number(month) ->
         locale
-        |> backend.months(date.calendar.cldr_calendar_type())
+        |> backend.months(calendar.cldr_calendar_type())
         |> get_in([type, format, month])
 
-      {month, :leap} ->
+      {month, :leap} when is_number(month) ->
         month_patterns =
-          backend.month_patterns(locale, date.calendar.cldr_calendar_type())
+          backend.month_patterns(locale, calendar.cldr_calendar_type())
 
         month =
           locale
-          |> backend.months(date.calendar.cldr_calendar_type())
+          |> backend.months(calendar.cldr_calendar_type())
           |> get_in([type, format, month])
 
         if month_patterns do
@@ -2502,17 +2521,26 @@ defmodule Cldr.Calendar do
         else
           month
         end
+
+      error ->
+        error
     end
   end
 
   @doc false
   def localize(date, :day_of_week, type, format, backend, locale) do
     backend = Module.concat(backend, Calendar)
-    day = day_of_week(date)
+    calendar = Map.get(date, :calendar, @default_calendar)
 
-    locale
-    |> backend.days(date.calendar.cldr_calendar_type())
-    |> get_in([type, format, day])
+    case day_of_week(date) do
+      {:error, reason} ->
+        {:error, reason}
+
+      day ->
+        locale
+        |> backend.days(calendar.cldr_calendar_type())
+        |> get_in([type, format, day])
+    end
   end
 
   @doc false
