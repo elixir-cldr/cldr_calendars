@@ -2573,9 +2573,9 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def localize(%{hour: hour} = time, :am_pm, type, format, backend, locale, _options) do
+  def localize(%{hour: hour} = time, :am_pm, type, format, backend, locale, options) do
     backend = Module.concat(backend, Calendar)
-    am_pm = if hour < 12 or rem(hour, 24) < 12, do: :am, else: :pm
+    am_pm = am_pm(hour, options[:period])
     calendar = Map.get(time, :calendar, @default_calendar)
 
     locale
@@ -2593,7 +2593,23 @@ defmodule Cldr.Calendar do
     |> get_in([type, format, day_period])
   end
 
-  @valid_parts [:era, :quarter, :month, :day_of_week, :days_of_week]
+  defp am_pm(hour, :variant) when hour < 12 or rem(hour, 24) < 12 do
+    :am_alt_variant
+  end
+
+  defp am_pm(hour, nil) when hour < 12 or rem(hour, 24) < 12 do
+    :am
+  end
+
+  defp am_pm(_hour, :variant) do
+    :pm_alt_variant
+  end
+
+  defp am_pm(_hour, nil) do
+    :pm
+  end
+
+  @valid_parts [:era, :quarter, :month, :day_of_week, :days_of_week, :am_pm, :day_periods]
   defp validate_part(part) do
     if part in @valid_parts do
       {:ok, part}
