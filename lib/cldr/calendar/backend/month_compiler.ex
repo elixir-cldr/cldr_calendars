@@ -233,7 +233,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 5.
 
       """
-      @spec week_of_month(Cldr.Calendar.year(), Cldr.Calendar.week(), Calendr.day()) ::
+      @spec week_of_month(Cldr.Calendar.year(), Cldr.Calendar.week(), Calendar.day()) ::
               {month :: Calendar.month(), week :: Cldr.Calendar.week()}
               | {:error, {module(), String.t()}}
 
@@ -247,7 +247,7 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @spec day_of_era(Cldr.Calendar.year(), Cldr.Calendar.month(), Cldr.Calendar.day()) ::
-              {day :: Cldr.Calendar.day(), era :: CLdr.Calendar.ers()}
+              {day :: Cldr.Calendar.day(), era :: Cldr.Calendar.era()}
               | {:error, {module(), String.t()}}
 
       @impl true

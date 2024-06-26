@@ -309,7 +309,7 @@ defmodule Cldr.Calendar do
   given quarter for a calendar year.
 
   """
-  @callback quarter(year :: year(), quarter :: Cldr.Cldr.Calendar.quarter()) ::
+  @callback quarter(year :: year(), quarter :: Cldr.Calendar.quarter()) ::
               Date.Range.t() | {:error, :not_defined}
 
   @doc """
@@ -354,6 +354,9 @@ defmodule Cldr.Calendar do
 
   alias Cldr.LanguageTag
   alias Cldr.Calendar.Config
+
+  defguard is_full_date(date)
+           when is_map_key(date, :year) and is_map_key(date, :month) and is_map_key(date, :day)
 
   @doc false
   def cldr_backend_provider(config) do
@@ -1325,7 +1328,7 @@ defmodule Cldr.Calendar do
       2019
 
   """
-  @spec cyclic_year(date()) :: Calendar.year()
+  @spec cyclic_year(date()) :: Calendar.year() | {:error, {module(), String.t()}}
 
   def cyclic_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1359,7 +1362,7 @@ defmodule Cldr.Calendar do
       4
 
   """
-  @spec quarter_of_year(date()) :: Cldr.Calendar.quarter()
+  @spec quarter_of_year(date()) :: Cldr.Calendar.quarter() | {:error, {module(), String.t()}}
 
   def quarter_of_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1394,7 +1397,7 @@ defmodule Cldr.Calendar do
 
   """
   @spec month_of_year(date()) ::
-          Calendar.month() | {Calendar.month(), leap_month :: :leap}
+          Calendar.month() | {Calendar.month(), leap_month :: :leap} | {:error, {module(), String.t()}}
 
   def month_of_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -2541,19 +2544,19 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def localize(date, :day_of_week, type, format, backend, locale, _options) do
+  def localize(date, :day_of_week, type, format, backend, locale, _options) when is_full_date(date) do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(date, :calendar, @default_calendar)
 
-    case day_of_week(date) do
-      {:error, reason} ->
-        {:error, reason}
+    day = day_of_week(date)
 
-      day ->
-        locale
-        |> backend.days(calendar.cldr_calendar_type())
-        |> get_in([type, format, day])
-    end
+    locale
+    |> backend.days(calendar.cldr_calendar_type())
+    |> get_in([type, format, day])
+  end
+
+  def localize(date, :day_of_week, _type, _format, _backend, _locale, _options) do
+    missing_date_error("localize", date[:year], date[:month], date[:day])
   end
 
   @doc false
