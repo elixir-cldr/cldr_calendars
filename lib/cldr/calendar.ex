@@ -1397,7 +1397,9 @@ defmodule Cldr.Calendar do
 
   """
   @spec month_of_year(date()) ::
-          Calendar.month() | {Calendar.month(), leap_month :: :leap} | {:error, {module(), String.t()}}
+          Calendar.month()
+          | {Calendar.month(), leap_month :: :leap}
+          | {:error, {module(), String.t()}}
 
   def month_of_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -2544,7 +2546,8 @@ defmodule Cldr.Calendar do
   end
 
   @doc false
-  def localize(date, :day_of_week, type, format, backend, locale, _options) when is_full_date(date) do
+  def localize(date, :day_of_week, type, format, backend, locale, _options)
+      when is_full_date(date) do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(date, :calendar, @default_calendar)
 
