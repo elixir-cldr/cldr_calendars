@@ -1045,7 +1045,7 @@ defmodule Cldr.Calendar do
       {2019, 1}
 
   """
-  @spec year_of_era(date()) :: {Calendar.day(), Calendar.era()}
+  @spec year_of_era(date()) :: {Calendar.day(), Calendar.era()} | {:error, {module(), String.t()}}
 
   def year_of_era(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1079,7 +1079,7 @@ defmodule Cldr.Calendar do
       {737456, 1}
 
   """
-  @spec day_of_era(date()) :: {Calendar.day(), Calendar.era()}
+  @spec day_of_era(date()) :: {Calendar.day(), Calendar.era()} | {:error, {module(), String.t()}}
 
   def day_of_era(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1219,7 +1219,7 @@ defmodule Cldr.Calendar do
       2019
 
   """
-  @spec calendar_year(date()) :: Calendar.year()
+  @spec calendar_year(date()) :: Calendar.year() | {:error, {module(), String.t()}}
 
   def calendar_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1253,7 +1253,7 @@ defmodule Cldr.Calendar do
       2019
 
   """
-  @spec extended_year(date()) :: Calendar.year()
+  @spec extended_year(date()) :: Calendar.year() | {:error, {module(), String.t()}}
 
   def extended_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1291,7 +1291,7 @@ defmodule Cldr.Calendar do
       2019
 
   """
-  @spec related_gregorian_year(date()) :: Calendar.year()
+  @spec related_gregorian_year(date()) :: Calendar.year() | {:error, {module(), String.t()}}
 
   def related_gregorian_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1438,7 +1438,7 @@ defmodule Cldr.Calendar do
       {:error, :not_defined}
 
   """
-  @spec week_of_year(date()) :: {Calendar.year(), week()}
+  @spec week_of_year(date()) :: {Calendar.year(), week()} | {:error, {module(), String.t()}}
 
   def week_of_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1477,7 +1477,7 @@ defmodule Cldr.Calendar do
       {:error, :not_defined}
 
   """
-  @spec iso_week_of_year(date()) :: {Calendar.year(), week()}
+  @spec iso_week_of_year(date()) :: {Calendar.year(), week()} | {:error, {module(), String.t()}}
 
   def iso_week_of_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1522,7 +1522,7 @@ defmodule Cldr.Calendar do
       {:error, :not_defined}
 
   """
-  @spec week_of_month(date()) :: {Calendar.month(), week()}
+  @spec week_of_month(date()) :: {Calendar.month(), week()} | {:error, {module(), String.t()}}
 
   def week_of_month(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1562,7 +1562,7 @@ defmodule Cldr.Calendar do
       372
 
   """
-  @spec day_of_year(date()) :: Calendar.day()
+  @spec day_of_year(date()) :: Calendar.day() | {:error, {module(), String.t()}}
 
   def day_of_year(%{} = date) do
     {year, month, day, calendar} = extract_date(date)
@@ -1618,13 +1618,15 @@ defmodule Cldr.Calendar do
       {53, 2}
 
   """
-  @spec weeks_in_year(date()) :: {Cldr.Calendar.week(), Calendar.day_of_week()}
+  @spec weeks_in_year(date()) ::
+          {Cldr.Calendar.week(), Calendar.day_of_week()} | {:error, {module(), String.t()}}
   def weeks_in_year(%{} = date) do
     {year, _month, _day, calendar} = extract_date(date)
     calendar.weeks_in_year(year)
   end
 
-  @spec weeks_in_year(year(), calendar) :: {Cldr.Calendar.week(), Calendar.day_of_week()}
+  @spec weeks_in_year(year(), calendar) ::
+          {Cldr.Calendar.week(), Calendar.day_of_week()} | {:error, {module(), String.t()}}
   def weeks_in_year(year, Calendar.ISO) do
     Cldr.Calendar.Gregorian.weeks_in_year(year)
   end
