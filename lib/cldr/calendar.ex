@@ -59,15 +59,64 @@ defmodule Cldr.Calendar do
   @type calendar_type :: :month | :week
 
   @typedoc """
-  All fields are optional however many functions
+  All date fields are optional however many functions
   will require the presence of one or more - and
   often all - fields be present.
   """
   @type date :: %{
-          optional(year) => year(),
-          optional(month) => month(),
-          optional(day) => day(),
-          optional(calendar) => calendar()
+          optional(:year) => year(),
+          optional(:month) => month(),
+          optional(:day) => day(),
+          optional(:calendar) => calendar()
+        }
+
+  @typedoc """
+  All time fields are optional however many functions
+  will require the presence of one or more - and
+  often all - fields be present.
+  """
+  @type time :: %{
+          optional(:calendar) => Calendar.calendar(),
+          optional(:hour) => Calendar.hour(),
+          optional(:microsecond) => Calendar.microsecond(),
+          optional(:minute) => Calendar.minute(),
+          optional(:second) => Calendar.second()
+        }
+
+  @typedoc """
+  All naive date time fields are optional however many functions
+  will require the presence of one or more - and
+  often all - fields be present.
+  """
+  @type naive_date_time :: %{
+          optional(:calendar) => calendar(),
+          optional(:day) => day(),
+          optional(:hour) => Calendar.hour(),
+          optional(:microsecond) => Calendar.microsecond(),
+          optional(:minute) => Calendar.minute(),
+          optional(:month) => month(),
+          optional(:second) => Calendar.second(),
+          optional(:year) => year()
+        }
+
+  @typedoc """
+  All date time fields are optional however many functions
+  will require the presence of one or more - and
+  often all - fields be present.
+  """
+  @type date_time :: %{
+          optional(:calendar) => calendar(),
+          optional(:day) => day(),
+          optional(:hour) => Calendar.hour(),
+          optional(:microsecond) => Calendar.microsecond(),
+          optional(:minute) => Calendar.minute(),
+          optional(:month) => month(),
+          optional(:second) => Calendar.second(),
+          optional(:std_offset) => Calendar.std_offset(),
+          optional(:time_zone) => Calendar.time_zone(),
+          optional(:utc_offset) => Calendar.utc_offset(),
+          optional(:year) => year(),
+          optional(:zone_abbr) => Calendar.zone_abbr()
         }
 
   @typedoc """
