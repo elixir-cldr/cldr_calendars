@@ -120,6 +120,12 @@ defmodule Cldr.Calendar do
         }
 
   @typedoc """
+  Super type of any date or time
+
+  """
+  @type any_date_time :: date() | time() | naive_date_time() | date_time()
+
+  @typedoc """
   Specifies the year of a date as either
   a positive integer or nil.
   """
