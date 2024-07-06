@@ -7,7 +7,8 @@ defmodule Cldr.Calendar.Base.Month do
   alias Cldr.Math
 
   import Cldr.Calendar,
-    only: [missing_date_error: 4, missing_year_month_error: 3, missing_month_error: 2]
+    only: [missing_date_error: 4, missing_year_month_error: 3, missing_month_error: 2,
+    missing_year_error: 2]
 
   @days_in_week 7
   @quarters_in_year 4
@@ -185,6 +186,10 @@ defmodule Cldr.Calendar.Base.Month do
     Calendar.ISO.months_in_year(year)
   end
 
+  def months_in_year(year, _config) do
+    {:error, missing_year_error("months_in_year", year)}
+  end
+
   # If the weeks start on the first day of the calendar year
   # (which is unusual) then we will have a fractional last week
   # of the year of either 1 or 2 days (depending on leap year)
@@ -215,8 +220,16 @@ defmodule Cldr.Calendar.Base.Month do
     end
   end
 
+  def weeks_in_year(year, _config) do
+    {:error, missing_year_error("weeks_in_year", year)}
+  end
+
   def days_in_year(year, config) when is_integer(year) do
     if leap_year?(year, config), do: 366, else: 365
+  end
+
+  def days_in_year(year, _config) do
+    {:error, missing_year_error("days_in_year", year)}
   end
 
   def days_in_month(year, month, config) when is_integer(year) and is_integer(month) do
@@ -235,6 +248,10 @@ defmodule Cldr.Calendar.Base.Month do
   def days_in_month(month, %{month_of_year: calendar_start_month}) when is_integer(month) do
     gregorian_month = calendar_month_to_gregorian_month(month, calendar_start_month)
     days_in_month(gregorian_month, %{month_of_year: 1})
+  end
+
+  def days_in_month(month, _config) do
+    {:error, missing_year_error("days_in_month", month)}
   end
 
   def calendar_month_to_gregorian_month(month, calendar_start_month) do

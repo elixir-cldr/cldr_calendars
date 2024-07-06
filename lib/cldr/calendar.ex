@@ -3783,6 +3783,11 @@ defmodule Cldr.Calendar do
     {Cldr.MissingFields, "#{function} requires at least month. Found month: #{inspect(month)}"}
   end
 
+  @doc false
+  def missing_day_error(function, day) do
+    {Cldr.MissingFields, "#{function} requires at least day. Found day: #{inspect(day)}"}
+  end
+
   defdelegate day_of_week(date), to: Date
   defdelegate days_in_month(date), to: Date
   defdelegate months_in_year(date), to: Date
