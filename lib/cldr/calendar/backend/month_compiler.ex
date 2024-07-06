@@ -92,7 +92,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       era "0".
 
       """
-      @spec year_of_era(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month(), day :: Cldr.Calendar.day()) ::
+      @spec year_of_era(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.month(),
+              day :: Cldr.Calendar.day()
+            ) ::
               {year :: Calendar.year(), era :: Cldr.Calendar.era()}
               | {:error, {module(), String.t()}}
 
@@ -107,7 +111,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       on rendered calendars.
 
       """
-      @spec calendar_year(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month(), day :: Cldr.Calendar.day()) ::
+      @spec calendar_year(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.month(),
+              day :: Cldr.Calendar.day()
+            ) ::
               year :: Calendar.year() | {:error, {module(), String.t()}}
 
       @impl true
@@ -145,7 +153,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       on rendered calendars.
 
       """
-      @spec extended_year(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month(), day :: Cldr.Calendar.day()) ::
+      @spec extended_year(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.month(),
+              day :: Cldr.Calendar.day()
+            ) ::
               year :: Calendar.year() | {:error, {module(), String.t()}}
 
       @impl true
@@ -162,7 +174,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       on rendered calendars.
 
       """
-      @spec cyclic_year(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month(), day :: Cldr.Calendar.day()) ::
+      @spec cyclic_year(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.month(),
+              day :: Cldr.Calendar.day()
+            ) ::
               year :: Calendar.year() | {:error, {module(), String.t()}}
 
       @impl true
@@ -179,7 +195,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 4.
 
       """
-      @spec quarter_of_year(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month(), day :: Cldr.Calendar.day()) ::
+      @spec quarter_of_year(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.month(),
+              day :: Cldr.Calendar.day()
+            ) ::
               quarter :: Cldr.Calendar.quarter() | {:error, {module(), String.t()}}
 
       @impl true
@@ -192,7 +212,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 12.
 
       """
-      @spec month_of_year(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month(), day :: Cldr.Calendar.day()) ::
+      @spec month_of_year(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.month(),
+              day :: Cldr.Calendar.day()
+            ) ::
               month :: Calendar.month() | {:error, {module(), String.t()}}
 
       @impl true
@@ -205,7 +229,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 53.
 
       """
-      @spec week_of_year(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month(), day :: Cldr.Calendar.day()) ::
+      @spec week_of_year(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.month(),
+              day :: Cldr.Calendar.day()
+            ) ::
               {year :: Calendar.year(), week :: Cldr.Calendar.week()}
               | {:error, {module(), String.t()}}
 
@@ -219,7 +247,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 53.
 
       """
-      @spec iso_week_of_year(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month(), day :: Cldr.Calendar.day()) ::
+      @spec iso_week_of_year(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.month(),
+              day :: Cldr.Calendar.day()
+            ) ::
               {year :: Calendar.year(), week :: Cldr.Calendar.week()}
               | {:error, {module(), String.t()}}
 
@@ -233,7 +265,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 5.
 
       """
-      @spec week_of_month(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.week(), day :: Calendar.day()) ::
+      @spec week_of_month(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.week(),
+              day :: Calendar.day()
+            ) ::
               {month :: Calendar.month(), week :: Cldr.Calendar.week()}
               | {:error, {module(), String.t()}}
 
@@ -246,7 +282,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       Calculates the day and era from the given `year`, `month`, and `day`.
 
       """
-      @spec day_of_era(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month(), day :: Cldr.Calendar.day()) ::
+      @spec day_of_era(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.month(),
+              day :: Cldr.Calendar.day()
+            ) ::
               {day :: Cldr.Calendar.day(), era :: Cldr.Calendar.era()}
               | {:error, {module(), String.t()}}
 
@@ -259,7 +299,11 @@ defmodule Cldr.Calendar.Compiler.Month do
       Calculates the day of the year from the given `year`, `month`, and `day`.
 
       """
-      @spec day_of_year(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month(), day :: Cldr.Calendar.day()) ::
+      @spec day_of_year(
+              year :: Cldr.Calendar.year(),
+              month :: Cldr.Calendar.month(),
+              day :: Cldr.Calendar.day()
+            ) ::
               day :: Calendar.day() | {:error, {module(), String.t()}}
 
       @impl true

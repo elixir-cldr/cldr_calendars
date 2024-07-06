@@ -7,8 +7,12 @@ defmodule Cldr.Calendar.Base.Month do
   alias Cldr.Math
 
   import Cldr.Calendar,
-    only: [missing_date_error: 4, missing_year_month_error: 3, missing_month_error: 2,
-    missing_year_error: 2]
+    only: [
+      missing_date_error: 4,
+      missing_year_month_error: 3,
+      missing_month_error: 2,
+      missing_year_error: 2
+    ]
 
   @days_in_week 7
   @quarters_in_year 4
