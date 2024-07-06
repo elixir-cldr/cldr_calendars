@@ -16,7 +16,7 @@ defmodule Cldr.Calendar do
   There are two general types of calendars supported:
 
   * `month` calendars that mirror the monthly structure
-    of the proleptic Cldr.Calendar.Gregorian calendar but which are
+    of the proleptic `Cldr.Calendar.Gregorian` calendar but which are
     deemed to start the year in a month other than January.
 
   * `week` calendars that are defined to have a 52 week
