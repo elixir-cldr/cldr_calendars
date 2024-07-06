@@ -126,7 +126,7 @@ defmodule Cldr.Calendar.Preference do
   * `:locale` is any locale or locale name validated
     by `Cldr.validate_locale/2`.  The default is
     `Cldr.get_locale()` which returns the locale
-    set for the current process
+    set for the current process.
 
   ## Returns
 
@@ -136,20 +136,20 @@ defmodule Cldr.Calendar.Preference do
 
   ## Examples
 
-      iex> Cldr.Calendar.Preference.calendar_from_locale "en-GB"
+      iex> Cldr.Calendar.Preference.calendar_from_locale(:"en-GB")
       {:ok, Cldr.Calendar.GB}
 
-      iex> Cldr.Calendar.Preference.calendar_from_locale "en-GB-u-ca-gregory"
-      {:ok, Cldr.Calendar.GB}
+      iex> Cldr.Calendar.Preference.calendar_from_locale("en-GB-u-ca-gregory")
+      {:ok, Cldr.Calendar.Gregorian}
 
-      iex> Cldr.Calendar.Preference.calendar_from_locale "en"
+      iex> Cldr.Calendar.Preference.calendar_from_locale(:en)
       {:ok, Cldr.Calendar.US}
 
-      iex> Cldr.Calendar.Preference.calendar_from_locale "fa-IR"
+      iex> Cldr.Calendar.Preference.calendar_from_locale(:"fa-IR")
       {:ok, Cldr.Calendar.Persian}
 
-      iex> Cldr.Calendar.Preference.calendar_from_locale "fa-IR-u-ca-gregory"
-      {:ok, Cldr.Calendar.IR}
+      iex> Cldr.Calendar.Preference.calendar_from_locale("fa-IR-u-ca-gregory")
+      {:ok, Cldr.Calendar.Gregorian}
 
   """
   def calendar_from_locale(locale \\ Cldr.get_locale())
@@ -161,9 +161,15 @@ defmodule Cldr.Calendar.Preference do
   end
 
   def calendar_from_locale(%LanguageTag{locale: %{calendar: calendar}} = locale) do
-    locale
-    |> Cldr.Locale.territory_from_locale()
-    |> calendar_from_territory(calendar)
+    calendar_module = Map.get(calendar_modules(), calendar)
+
+    if calendar_module && Code.ensure_loaded?(calendar_module) do
+      {:ok, calendar_module}
+    else
+      locale
+      |> Cldr.Locale.territory_from_locale()
+      |> calendar_from_territory(calendar)
+    end
   end
 
   def calendar_from_locale(%LanguageTag{} = locale) do
@@ -172,7 +178,7 @@ defmodule Cldr.Calendar.Preference do
     |> calendar_from_territory
   end
 
-  def calendar_from_locale(locale) when is_binary(locale) do
+  def calendar_from_locale(locale) when is_binary(locale) or is_atom(locale) do
     calendar_from_locale(locale, Cldr.default_backend!())
   end
 
@@ -180,7 +186,7 @@ defmodule Cldr.Calendar.Preference do
     {:error, Cldr.Locale.locale_error(other)}
   end
 
-  def calendar_from_locale(locale, backend) when is_binary(locale) do
+  def calendar_from_locale(locale, backend) when is_binary(locale) or is_atom(locale) do
     with {:ok, locale} <- Cldr.validate_locale(locale, backend) do
       calendar_from_locale(locale)
     end

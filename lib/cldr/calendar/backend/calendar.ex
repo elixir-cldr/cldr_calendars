@@ -40,6 +40,122 @@ defmodule Cldr.Calendar.Backend do
         ]
 
         @doc """
+        Localize a date by converting it to calendar
+        introspected from the provided or default locale.
+
+        ### Arguments
+
+        * `date` is any `t:Date.t/0`.
+
+        * `options` is a `t:Keyword.t/0` list of options. The default is
+          `[]`.
+
+        ### Options
+
+        * `:locale` is any valid locale name in the list returned by
+          `Cldr.known_locale_names/1` or a `Cldr.LanguageTag` struct
+          returned by `Cldr.Locale.new!/2`. The default is `Cldr.get_locale()`.
+
+        ### Returns
+
+        * `{:ok, date}` where `date` is converted into the calendar
+          associated with the current or provided locale.
+
+        ### Examples
+
+            iex> #{inspect __MODULE__}.localize ~D[2022-06-09], locale: "fr"
+            {:ok, %Date{year: 2022, month: 6, day: 9, calendar: Cldr.Calendar.FR}}
+
+        """
+        @doc since: "1.25.0"
+
+        def localize(date, options) when is_list(options) do
+          options = Keyword.put(options, :backend, unquote(backend))
+          Cldr.Calendar.localize(date, options)
+        end
+
+        @doc """
+        Returns a localized string for a part of
+        a `t:Date.t/0`.
+
+        ### Arguments
+
+        * `date` is any `t:Date.t/0`.
+
+        * `part` is one of `:era`, `:quarter`, `:month`,
+          `:day_of_week` or `:days_of_week`.
+
+        * `options` is a `t:Keyword.t/0` list of options.
+
+        ### Options
+
+        * `:locale` is any valid locale name in the list returned by
+          `Cldr.known_locale_names/1` or a `Cldr.LanguageTag` struct
+          returned by `Cldr.Locale.new!/2`. The default is `Cldr.get_locale()`.
+
+        * `:format` is one of `:wide`, `:abbreviated` or `:narrow`. The
+          default is `:abbreviated`.
+
+        * `:era` will, if set to `:variant` will localize the era using
+          the variant data. In the `:en` locale, this will produce `CE` and
+          `BCE` rather than the default `AD` and `BC`.
+
+        ### Returns
+
+        * A string representing the localized date part, or
+
+        * A list of strings representing the days of the week for
+          when `part` is `:days_of_week`. The days are in week order for
+          the given date's calendar, or
+
+        * `{error, {exception, reason}}` if an error is detected
+
+        ### Examples
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-01-01], :era
+            "AD"
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-01-01], :era, era: :variant
+            "CE"
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-01-01], :day_of_week
+            "Tue"
+
+            iex> #{inspect __MODULE__}.localize ~D[0001-01-01], :day_of_week
+            "Mon"
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-01-01], :days_of_week
+            [{1, "Mon"}, {2, "Tue"}, {3, "Wed"}, {4, "Thu"}, {5, "Fri"}, {6, "Sat"}, {7, "Sun"}]
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :era
+            "AD"
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :quarter
+            "Q2"
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :month
+            "Jun"
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :day_of_week
+            "Sat"
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :day_of_week, format: :wide
+            "Saturday"
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :day_of_week, format: :narrow
+            "S"
+
+            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :day_of_week, locale: "ar"
+            "السبت"
+
+        """
+
+        def localize(date, part, options \\ []) do
+          options = Keyword.put(options, :backend, unquote(backend))
+          Cldr.Calendar.localize(date, part, options)
+        end
+
+        @doc """
         Returns the calendar module preferred for
         a territory.
 
@@ -56,8 +172,8 @@ defmodule Cldr.Calendar.Backend do
 
         ## Examples
 
-            iex> #{inspect(__MODULE__)}.calendar_from_territory :US
-            {:ok, Cldr.Calendar.Gregorian}
+            iex> #{inspect(__MODULE__)}.calendar_from_territory(:US)
+            {:ok, Cldr.Calendar.US}
 
             iex> #{inspect(__MODULE__)}.calendar_from_territory :XX
             {:error, {Cldr.UnknownTerritoryError, "The territory :XX is unknown"}}

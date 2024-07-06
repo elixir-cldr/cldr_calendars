@@ -510,13 +510,13 @@ defmodule Cldr.Calendar do
       {:ok, Cldr.Calendar.US}
 
       iex> Cldr.Calendar.calendar_from_locale "en-GB-u-ca-gregory"
-      {:ok, Cldr.Calendar.GB}
+      {:ok, Cldr.Calendar.Gregorian}
 
       iex> Cldr.Calendar.calendar_from_locale "fa-IR"
       {:ok, Cldr.Calendar.Persian}
 
       iex> Cldr.Calendar.calendar_from_locale "fa-IR-u-ca-gregory"
-      {:ok, Cldr.Calendar.IR}
+      {:ok, Cldr.Calendar.Gregorian}
 
   """
   def calendar_from_locale(%LanguageTag{} = locale) do
@@ -2340,7 +2340,7 @@ defmodule Cldr.Calendar do
     returned by `Cldr.Locale.new!/2`. The default is `Cldr.get_locale()`.
 
   * `:backend` is any module that includes `use Cldr` and therefore
-    is a `Cldr` backend module. The default is `default_backend/0`.
+    is a `Cldr` backend module. The default is `default_backend!/0`.
 
   ### Returns
 
@@ -2398,7 +2398,7 @@ defmodule Cldr.Calendar do
     returned by `Cldr.Locale.new!/2`. The default is `Cldr.get_locale()`.
 
   * `:backend` is any module that includes `use Cldr` and therefore
-    is a `Cldr` backend module. The default is `default_backend/0`.
+    is a `Cldr` backend module. The default is `default_backend!/0`.
 
   * `:format` is one of `:wide`, `:abbreviated` or `:narrow`. The
     default is `:abbreviated`.
@@ -2412,8 +2412,8 @@ defmodule Cldr.Calendar do
   * A string representing the localized date part, or
 
   * A list of strings representing the days of the week for
-  the part `:days_of_week`. The days are in week order for
-  the given date's calendar
+    when `part` is `:days_of_week`. The days are in week order for
+    the given date's calendar, or
 
   * `{error, {exception_module, message}}` if an error is detected
 
