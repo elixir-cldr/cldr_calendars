@@ -67,7 +67,8 @@ defmodule Cldr.Calendar do
           optional(:year) => year(),
           optional(:month) => month(),
           optional(:day) => day(),
-          optional(:calendar) => calendar()
+          optional(:calendar) => calendar(),
+          optional(any) => any()
         }
 
   @typedoc """
@@ -80,7 +81,8 @@ defmodule Cldr.Calendar do
           optional(:hour) => Calendar.hour(),
           optional(:microsecond) => Calendar.microsecond(),
           optional(:minute) => Calendar.minute(),
-          optional(:second) => Calendar.second()
+          optional(:second) => Calendar.second(),
+          optional(any) => any()
         }
 
   @typedoc """
@@ -96,7 +98,8 @@ defmodule Cldr.Calendar do
           optional(:minute) => Calendar.minute(),
           optional(:month) => month(),
           optional(:second) => Calendar.second(),
-          optional(:year) => year()
+          optional(:year) => year(),
+          optional(any) => any()
         }
 
   @typedoc """
@@ -116,7 +119,8 @@ defmodule Cldr.Calendar do
           optional(:time_zone) => Calendar.time_zone(),
           optional(:utc_offset) => Calendar.utc_offset(),
           optional(:year) => year(),
-          optional(:zone_abbr) => Calendar.zone_abbr()
+          optional(:zone_abbr) => Calendar.zone_abbr(),
+          optional(any) => any()
         }
 
   @typedoc """
