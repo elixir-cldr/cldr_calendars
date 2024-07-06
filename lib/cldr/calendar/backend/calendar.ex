@@ -63,7 +63,7 @@ defmodule Cldr.Calendar.Backend do
 
         ### Examples
 
-            iex> #{inspect __MODULE__}.localize ~D[2022-06-09], locale: "fr"
+            iex> #{inspect(__MODULE__)}.localize ~D[2022-06-09], locale: "fr"
             {:ok, %Date{year: 2022, month: 6, day: 9, calendar: Cldr.Calendar.FR}}
 
         """
@@ -112,40 +112,40 @@ defmodule Cldr.Calendar.Backend do
 
         ### Examples
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-01-01], :era
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-01-01], :era
             "AD"
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-01-01], :era, era: :variant
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-01-01], :era, era: :variant
             "CE"
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-01-01], :day_of_week
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-01-01], :day_of_week
             "Tue"
 
-            iex> #{inspect __MODULE__}.localize ~D[0001-01-01], :day_of_week
+            iex> #{inspect(__MODULE__)}.localize ~D[0001-01-01], :day_of_week
             "Mon"
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-01-01], :days_of_week
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-01-01], :days_of_week
             [{1, "Mon"}, {2, "Tue"}, {3, "Wed"}, {4, "Thu"}, {5, "Fri"}, {6, "Sat"}, {7, "Sun"}]
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :era
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-06-01], :era
             "AD"
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :quarter
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-06-01], :quarter
             "Q2"
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :month
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-06-01], :month
             "Jun"
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :day_of_week
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-06-01], :day_of_week
             "Sat"
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :day_of_week, format: :wide
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-06-01], :day_of_week, format: :wide
             "Saturday"
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :day_of_week, format: :narrow
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-06-01], :day_of_week, format: :narrow
             "S"
 
-            iex> #{inspect __MODULE__}.localize ~D[2019-06-01], :day_of_week, locale: "ar"
+            iex> #{inspect(__MODULE__)}.localize ~D[2019-06-01], :day_of_week, locale: "ar"
             "السبت"
 
         """
