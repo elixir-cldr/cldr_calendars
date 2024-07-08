@@ -2,6 +2,14 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v1.25.1
+
+This is the changelog for Cldr Calendars v1.25.1 released on July 7th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix spec for `Cldr.Calendar.localize/{1,2,3}`
+
 ## Cldr.Calendars v1.25.0
 
 This is the changelog for Cldr Calendars v1.25.0 released on July 7th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

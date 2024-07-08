@@ -69,9 +69,22 @@ defmodule Cldr.Calendar.Backend do
         """
         @doc since: "1.25.0"
 
-        def localize(date, options) when is_list(options) do
+        @spec localize(Cldr.Calendar.any_date_time()) ::
+                {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+
+        @spec localize(Cldr.Calendar.any_date_time(), Keyword.t() | Cldr.Calendar.part()) ::
+                {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+
+        @spec localize(Cldr.Calendar.any_date_time(), Cldr.Calendar.part(), Keyword.t()) ::
+                String.t() | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+
+        def localize(date) do
+          localize(date, [])
+        end
+                
+        def localize(datetime, options) when is_list(options) do
           options = Keyword.put(options, :backend, unquote(backend))
-          Cldr.Calendar.localize(date, options)
+          Cldr.Calendar.localize(datetime, options)
         end
 
         @doc """
@@ -149,10 +162,11 @@ defmodule Cldr.Calendar.Backend do
             "السبت"
 
         """
+        @doc since: "1.25.0"
 
-        def localize(date, part, options \\ []) do
+        def localize(datetime, part, options \\ []) do
           options = Keyword.put(options, :backend, unquote(backend))
-          Cldr.Calendar.localize(date, part, options)
+          Cldr.Calendar.localize(datetime, part, options)
         end
 
         @doc """
