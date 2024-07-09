@@ -25,7 +25,6 @@ defmodule Cldr.Calendar.Backend do
         end
 
         alias Cldr.Locale
-        alias Cldr.Calendar
         alias Cldr.LanguageTag
 
         @default_calendar :gregorian
@@ -70,10 +69,10 @@ defmodule Cldr.Calendar.Backend do
         @doc since: "1.25.0"
 
         @spec localize(Cldr.Calendar.any_date_time()) ::
-                {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+                {:ok, Elixir.Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
 
         @spec localize(Cldr.Calendar.any_date_time(), Keyword.t() | Cldr.Calendar.part()) ::
-                {:ok, Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+                {:ok, Elixir.Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
 
         @spec localize(Cldr.Calendar.any_date_time(), Cldr.Calendar.part(), Keyword.t()) ::
                 String.t() | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
@@ -81,7 +80,7 @@ defmodule Cldr.Calendar.Backend do
         def localize(date) do
           localize(date, [])
         end
-                
+
         def localize(datetime, options) when is_list(options) do
           options = Keyword.put(options, :backend, unquote(backend))
           Cldr.Calendar.localize(datetime, options)
@@ -284,7 +283,7 @@ defmodule Cldr.Calendar.Backend do
 
         ## Example
 
-            iex: MyApp.Cldr.Calendar.strftime_options!
+            iex: MyApp.Cldr.Calendar.strftime_options!()
             [
               am_pm_names: #Function<0.32021692/1 in MyApp.Cldr.Calendar.strftime_options/2>,
               month_names: #Function<1.32021692/1 in MyApp.Cldr.Calendar.strftime_options/2>,
@@ -295,7 +294,7 @@ defmodule Cldr.Calendar.Backend do
 
         ## Typical usage
 
-            iex: NimbleStrftime.format(Date.today(), MyApp.Cldr.Calendar.strftime_options!())
+            iex: NimbleStrftime.format(Date.utc_today(), MyApp.Cldr.Calendar.strftime_options!())
 
         """
 
@@ -461,25 +460,25 @@ defmodule Cldr.Calendar.Backend do
           end
 
           def eras(unquote(locale_name), calendar),
-            do: {:error, Calendar.calendar_error(calendar)}
+            do: {:error, Cldr.Calendar.calendar_error(calendar)}
 
           def quarters(unquote(locale_name), calendar),
-            do: {:error, Calendar.calendar_error(calendar)}
+            do: {:error, Cldr.Calendar.calendar_error(calendar)}
 
           def months(unquote(locale_name), calendar),
-            do: {:error, Calendar.calendar_error(calendar)}
+            do: {:error, Cldr.Calendar.calendar_error(calendar)}
 
           def days(unquote(locale_name), calendar),
-            do: {:error, Calendar.calendar_error(calendar)}
+            do: {:error, Cldr.Calendar.calendar_error(calendar)}
 
           def day_periods(unquote(locale_name), calendar),
-            do: {:error, Calendar.calendar_error(calendar)}
+            do: {:error, Cldr.Calendar.calendar_error(calendar)}
 
           def cyclic_years(unquote(locale_name), calendar),
-            do: {:error, Calendar.calendar_error(calendar)}
+            do: {:error, Cldr.Calendar.calendar_error(calendar)}
 
           def month_patterns(unquote(locale_name), calendar),
-            do: {:error, Calendar.calendar_error(calendar)}
+            do: {:error, Cldr.Calendar.calendar_error(calendar)}
         end
 
         def eras(locale, _calendar), do: {:error, Locale.locale_error(locale)}

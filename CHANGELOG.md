@@ -2,13 +2,21 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v1.25.2
+
+This is the changelog for Cldr Calendars v1.25.2 released on July 9th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix spec for `Cldr.Calendar.localize/{1,2,3}` again - the return type was being aliased and hence dialyzer was unhappy. Not always, just sometimes.
+
 ## Cldr.Calendars v1.25.1
 
 This is the changelog for Cldr Calendars v1.25.1 released on July 7th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Bug Fixes
 
-* Fix spec for `Cldr.Calendar.localize/{1,2,3}`
+* Fix spec for `Cldr.Calendar.localize/{1,2,3}` to use the more expansive date/time/datetime types from `Cldr.Calendar`.
 
 ## Cldr.Calendars v1.25.0
 
