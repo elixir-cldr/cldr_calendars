@@ -29,7 +29,7 @@ defmodule Cldr.Calendar.Duration do
 
   """
 
-  @struct_list [year: 0, month: 0, day: 0, hour: 0, minute: 0, second: 0, microsecond: {0, 1}]
+  @struct_list [year: 0, month: 0, day: 0, hour: 0, minute: 0, second: 0, microsecond: {0, 6}]
   @keys Keyword.keys(@struct_list)
   defstruct @struct_list
 
@@ -108,7 +108,8 @@ defmodule Cldr.Calendar.Duration do
     def to_string(%__MODULE__{} = duration, options \\ []) do
       {except, options} = Keyword.pop(options, :except, [])
 
-      for key <- @keys, value = Map.get(duration, key), value != 0 && key not in except do
+      for key <- @keys, value = Map.get(duration, key), maybe_extract_microseconds(key, value) != 0 && key not in except do
+        value = maybe_extract_microseconds(key, value)
         Cldr.Unit.new!(key, value)
       end
       |> Cldr.Unit.to_string(options)
@@ -154,7 +155,8 @@ defmodule Cldr.Calendar.Duration do
       except = Keyword.get(options, :except, [])
 
       formatted =
-        for key <- @keys, value = Map.get(duration, key), value != 0 && key not in except do
+        for key <- @keys, value = Map.get(duration, key), maybe_extract_microseconds(key, value) != 0 && key not in except do
+          value = maybe_extract_microseconds(key, value)
           if value > 1, do: "#{value} #{key}s", else: "#{value} #{key}"
         end
         |> Enum.join(", ")
@@ -162,6 +164,9 @@ defmodule Cldr.Calendar.Duration do
       {:ok, formatted}
     end
   end
+
+  defp maybe_extract_microseconds(:microsecond, {microseconds, _precision}), do: microseconds
+  defp maybe_extract_microseconds(_any, value), do: value
 
   @doc """
   Formats a duration as a string or raises
@@ -233,7 +238,7 @@ defmodule Cldr.Calendar.Duration do
          month: 11,
          day: 30,
          hour: 0,
-         microsecond: 0,
+         microsecond: {0, 6},
          minute: 0,
          second: 0
        }}
@@ -272,7 +277,7 @@ defmodule Cldr.Calendar.Duration do
          hour: hours,
          minute: minutes,
          second: seconds,
-         microsecond: microseconds
+         microsecond: microsecond_precision(microseconds)
        )}
     end
   end
@@ -311,7 +316,7 @@ defmodule Cldr.Calendar.Duration do
          month: 11,
          day: 30,
          hour: 0,
-         microsecond: 0,
+         microsecond: {0, 6},
          minute: 0,
          second: 0
        }}
@@ -404,16 +409,29 @@ defmodule Cldr.Calendar.Duration do
     }
   end
 
-  defp microseconds_from_fraction(fraction) do
-    fraction = Cldr.Digits.fraction_as_integer(fraction)
+  defp microseconds_from_fraction(number) do
+    fraction = Cldr.Digits.fraction_as_integer(number)
 
     cond do
+      fraction == 0 -> {0, 6}
       fraction < 10 -> {fraction * 100_000, 1}
       fraction < 100 -> {fraction * 10_000, 2}
       fraction < 1_000 -> {fraction * 1_000, 3}
       fraction < 10_000 -> {fraction * 100, 4}
       fraction < 100_000 -> {fraction * 10, 5}
       fraction <= 1_000_000 -> {fraction, 6}
+    end
+  end
+
+  defp microsecond_precision(microseconds) do
+    cond do
+      microseconds == 0 -> {0, 6}
+      microseconds < 10 -> {microseconds, 1}
+      microseconds < 100 -> {microseconds, 2}
+      microseconds < 1_000 -> {microseconds, 3}
+      microseconds < 10_000 -> {microseconds, 4}
+      microseconds < 100_000 -> {microseconds, 5}
+      microseconds <= 1_000_000 -> {microseconds, 6}
     end
   end
 
@@ -505,7 +523,7 @@ defmodule Cldr.Calendar.Duration do
         month: 11,
         day: 30,
         hour: 0,
-        microsecond: 0,
+        microsecond: {0, 6},
         minute: 0,
         second: 0
       }
@@ -555,7 +573,7 @@ defmodule Cldr.Calendar.Duration do
         month: 11,
         day: 30,
         hour: 0,
-        microsecond: 0,
+        microsecond: {0, 6},
         minute: 0,
         second: 0
       }
@@ -655,6 +673,6 @@ defmodule Cldr.Calendar.Duration do
     |> Map.put(:hour, hours)
     |> Map.put(:minute, minutes)
     |> Map.put(:second, seconds)
-    |> Map.put(:microsecond, microseconds)
+    |> Map.put(:microsecond, microsecond_precision(microseconds))
   end
 end
