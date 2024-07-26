@@ -29,7 +29,7 @@ defmodule Cldr.Calendar.Duration do
 
   """
 
-  @struct_list [year: 0, month: 0, day: 0, hour: 0, minute: 0, second: 0, microsecond: 0]
+  @struct_list [year: 0, month: 0, day: 0, hour: 0, minute: 0, second: 0, microsecond: {0, 1}]
   @keys Keyword.keys(@struct_list)
   defstruct @struct_list
 
@@ -41,7 +41,7 @@ defmodule Cldr.Calendar.Duration do
           hour: non_neg_integer(),
           minute: non_neg_integer(),
           second: non_neg_integer(),
-          microsecond: non_neg_integer()
+          microsecond: {integer(), 1..6}
         }
 
   @typedoc "A date, time, naivedatetime or datetime"
@@ -317,10 +317,10 @@ defmodule Cldr.Calendar.Duration do
        }}
 
   """
-  @spec new(interval()) :: {:ok, t()} | {:error, {module(), String.t()}}
+  @spec new(interval :: interval()) :: {:ok, t()} | {:error, {module(), String.t()}}
 
   if Code.ensure_loaded?(CalendarInterval) do
-    def new(%CalendarInterval{first: first, last: last, precision: precision})
+    def new(%CalendarInterval{first: first, last: last, precision: precision} = _interval)
         when precision in [:year, :month, :day] do
       first = %{first | hour: 0, minute: 0, second: 0, microsecond: {0, 6}}
       last = %{last | hour: 0, minute: 0, second: 0, microsecond: {0, 6}}
@@ -352,6 +352,69 @@ defmodule Cldr.Calendar.Duration do
     {:error,
      {Cldr.IncompatibleCalendarError,
       "The two dates must be in the same calendar. Found #{inspect(from)} and #{inspect(to)}"}}
+  end
+
+  @doc """
+  Returns a duration calculated from a number of seconds.
+
+  The duration will be calculated in hours, minutes,
+  seconds and microseconds only.
+
+  ### Arguments
+
+  * `seconds` is a number of seconds as a float or
+    integer.
+
+  ### Returns
+
+  * a `t:Cldr.Calendar.Duration.t/0`
+
+  ### Example
+
+      iex> Cldr.Calendar.Duration.new_from_seconds(36092.1)
+      %Cldr.Calendar.Duration{
+        year: 0,
+        month: 0,
+        day: 0,
+        hour: 10,
+        minute: 1,
+        second: 32,
+        microsecond: {100000, 1}
+      }
+
+  """
+  @doc since: "1.26.0"
+  @spec new_from_seconds(seconds :: number()) :: t()
+  def new_from_seconds(seconds) when is_number(seconds) do
+    microseconds = microseconds_from_fraction(seconds)
+    seconds = trunc(seconds)
+    hours = div(seconds, 3600)
+    remainder = rem(seconds, 3600)
+    minutes = div(remainder, 60)
+    seconds = rem(remainder, 60)
+
+    %__MODULE__{
+      year: 0,
+      month: 0,
+      day: 0,
+      hour: hours,
+      minute: minutes,
+      second: seconds,
+      microsecond: microseconds
+    }
+  end
+
+  defp microseconds_from_fraction(fraction) do
+    fraction = Cldr.Digits.fraction_as_integer(fraction)
+
+    cond do
+      fraction < 10 -> {fraction * 100_000, 1}
+      fraction < 100 -> {fraction * 10_000, 2}
+      fraction < 1_000 -> {fraction * 1_000, 3}
+      fraction < 10_000 -> {fraction * 100, 4}
+      fraction < 100_000 -> {fraction * 10, 5}
+      fraction <= 1_000_000 -> {fraction, 6}
+    end
   end
 
   defp cast_date_time(unquote(Cldr.Calendar.datetime()) = datetime) do
@@ -430,7 +493,7 @@ defmodule Cldr.Calendar.Duration do
 
   ## Returns
 
-  * A `duration` struct or
+  * A `t:Cldr.Calendar.Duration.t/0` struct or
 
   * raises an exception
 
@@ -474,7 +537,7 @@ defmodule Cldr.Calendar.Duration do
 
   ## Returns
 
-  * A `duration` struct or
+  * A `t:Cldr.Calendar.Duration.t/0` struct or
 
   * raises an exception
 
