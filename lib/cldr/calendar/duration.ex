@@ -108,7 +108,9 @@ defmodule Cldr.Calendar.Duration do
     def to_string(%__MODULE__{} = duration, options \\ []) do
       {except, options} = Keyword.pop(options, :except, [])
 
-      for key <- @keys, value = Map.get(duration, key), maybe_extract_microseconds(key, value) != 0 && key not in except do
+      for key <- @keys,
+          value = Map.get(duration, key),
+          maybe_extract_microseconds(key, value) != 0 && key not in except do
         value = maybe_extract_microseconds(key, value)
         Cldr.Unit.new!(key, value)
       end
@@ -155,7 +157,9 @@ defmodule Cldr.Calendar.Duration do
       except = Keyword.get(options, :except, [])
 
       formatted =
-        for key <- @keys, value = Map.get(duration, key), maybe_extract_microseconds(key, value) != 0 && key not in except do
+        for key <- @keys,
+            value = Map.get(duration, key),
+            maybe_extract_microseconds(key, value) != 0 && key not in except do
           value = maybe_extract_microseconds(key, value)
           if value > 1, do: "#{value} #{key}s", else: "#{value} #{key}"
         end

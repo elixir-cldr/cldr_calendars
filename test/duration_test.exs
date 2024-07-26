@@ -106,19 +106,43 @@ defmodule Cldr.Calendar.Duration.Test do
   test "datetime duration one day crossing month boundary" do
     assert Duration.new(~D[2019-01-31], ~D[2019-02-01]) ==
              {:ok,
-              %Duration{year: 0, month: 0, day: 1, hour: 0, microsecond: {0, 6}, minute: 0, second: 0}}
+              %Duration{
+                year: 0,
+                month: 0,
+                day: 1,
+                hour: 0,
+                microsecond: {0, 6},
+                minute: 0,
+                second: 0
+              }}
   end
 
   test "datetime one day crossing year boundary" do
     assert Duration.new(~D[2019-12-31], ~D[2020-01-01]) ==
              {:ok,
-              %Duration{year: 0, month: 0, day: 1, hour: 0, microsecond: {0, 6}, minute: 0, second: 0}}
+              %Duration{
+                year: 0,
+                month: 0,
+                day: 1,
+                hour: 0,
+                microsecond: {0, 6},
+                minute: 0,
+                second: 0
+              }}
   end
 
   test "datetime duration month and day incremented" do
     assert Duration.new(~D[2019-05-27], ~D[2019-08-30]) ==
              {:ok,
-              %Duration{year: 0, month: 3, day: 3, hour: 0, microsecond: {0, 6}, minute: 0, second: 0}}
+              %Duration{
+                year: 0,
+                month: 3,
+                day: 3,
+                hour: 0,
+                microsecond: {0, 6},
+                minute: 0,
+                second: 0
+              }}
   end
 
   test "datetime duration month and day also incremented to last day of year" do
@@ -172,7 +196,15 @@ defmodule Cldr.Calendar.Duration.Test do
              date(2019, 01, 07, Cldr.Calendar.CSCO)
            ) ==
              {:ok,
-              %Duration{year: 18, month: 1, day: 6, hour: 0, microsecond: {0, 6}, minute: 0, second: 0}}
+              %Duration{
+                year: 18,
+                month: 1,
+                day: 6,
+                hour: 0,
+                microsecond: {0, 6},
+                minute: 0,
+                second: 0
+              }}
   end
 
   test "duration with the same month and day 2 later than day 1" do

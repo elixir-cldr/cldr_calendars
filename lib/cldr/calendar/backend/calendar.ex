@@ -69,10 +69,14 @@ defmodule Cldr.Calendar.Backend do
         @doc since: "1.25.0"
 
         @spec localize(Cldr.Calendar.any_date_time()) ::
-                {:ok, Elixir.Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+                {:ok, Elixir.Date.t()}
+                | {:error, :incompatible_calendars}
+                | {:error, {module(), String.t()}}
 
         @spec localize(Cldr.Calendar.any_date_time(), Keyword.t() | Cldr.Calendar.part()) ::
-                {:ok, Elixir.Date.t()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+                {:ok, Elixir.Date.t()}
+                | {:error, :incompatible_calendars}
+                | {:error, {module(), String.t()}}
 
         @spec localize(Cldr.Calendar.any_date_time(), Cldr.Calendar.part(), Keyword.t()) ::
                 String.t() | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
