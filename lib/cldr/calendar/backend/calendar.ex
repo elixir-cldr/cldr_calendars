@@ -163,6 +163,9 @@ defmodule Cldr.Calendar.Backend do
         """
         @doc since: "1.25.0"
 
+        @spec localize(datetime :: Cldr.Calendar.any_date_time(), part :: Cldr.Calendar.part(), options :: Keyword.t()) ::
+                String.t() | [Cldr.Calendar.day_of_week_to_binary()] | {:error, {module(), String.t()}}
+
         def localize(datetime, part, options \\ []) do
           options = Keyword.put(options, :backend, unquote(backend))
           Cldr.Calendar.localize(datetime, part, options)

@@ -188,6 +188,13 @@ defmodule Cldr.Calendar do
   @type day_of_week :: 1..7
 
   @typedoc """
+  A mapping of a day of the week ordinal to the
+  localized string of the name of that day.
+
+  """
+  @type day_of_week_to_binary :: {day_of_week, String.t()}
+
+  @typedoc """
   Boolean indicating is this is a leap month
 
   """
@@ -2471,7 +2478,7 @@ defmodule Cldr.Calendar do
 
   """
   @spec localize(datetime :: any_date_time(), part :: part(), options :: Keyword.t()) ::
-    String.t() | {:error, {module(), String.t()}}
+    String.t() | [day_of_week_to_binary()] | {:error, {module(), String.t()}}
 
   def localize(datetime, part, options \\ [])
 
