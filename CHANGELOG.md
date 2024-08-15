@@ -2,6 +2,18 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v1.26.0
+
+This is the changelog for Cldr Calendars v1.26.0 released on July 27th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Microseconds in `t:Cldr.Calendar.Duration.t/0` now follow the `t:Time.t/0` expectations.
+
+### Enhancements
+
+* Adds `Cldr.Calendar.Duration.new_from_seconds/1`
+
 ## Cldr.Calendars v1.25.2
 
 This is the changelog for Cldr Calendars v1.25.2 released on July 9th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

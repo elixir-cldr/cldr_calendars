@@ -2377,10 +2377,14 @@ defmodule Cldr.Calendar do
   @doc since: "1.19.0"
 
   @spec localize(any_date_time()) ::
-          {:ok, any_date_time()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+          {:ok, any_date_time()}
+          | {:error, :incompatible_calendars}
+          | {:error, {module(), String.t()}}
 
   @spec localize(any_date_time(), Keyword.t() | atom()) ::
-          {:ok, any_date_time()} | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
+          {:ok, any_date_time()}
+          | {:error, :incompatible_calendars}
+          | {:error, {module(), String.t()}}
 
   @spec localize(any_date_time(), atom(), Keyword.t()) ::
           String.t() | {:error, :incompatible_calendars} | {:error, {module(), String.t()}}
@@ -2478,7 +2482,7 @@ defmodule Cldr.Calendar do
 
   """
   @spec localize(datetime :: any_date_time(), part :: part(), options :: Keyword.t()) ::
-    String.t() | [day_of_week_to_binary()] | {:error, {module(), String.t()}}
+          String.t() | {:error, {module(), String.t()}}
 
   def localize(datetime, part, options \\ [])
 

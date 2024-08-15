@@ -8,7 +8,7 @@ defmodule Cldr.Calendar.Duration.Test do
              %Cldr.Calendar.Duration{
                day: 26,
                hour: 0,
-               microsecond: 0,
+               microsecond: {0, 6},
                minute: 0,
                month: 9,
                second: 0,
@@ -18,7 +18,7 @@ defmodule Cldr.Calendar.Duration.Test do
     assert Cldr.Calendar.plus(~D[1999-02-03], %Cldr.Calendar.Duration{
              day: 26,
              hour: 0,
-             microsecond: 0,
+             microsecond: {0, 6},
              minute: 0,
              month: 9,
              second: 0,
@@ -29,7 +29,7 @@ defmodule Cldr.Calendar.Duration.Test do
              %Cldr.Calendar.Duration{
                day: 6,
                hour: 0,
-               microsecond: 0,
+               microsecond: {0, 6},
                minute: 0,
                month: 6,
                second: 0,
@@ -39,7 +39,7 @@ defmodule Cldr.Calendar.Duration.Test do
     assert Cldr.Calendar.plus(~D"1984-02-14", %Cldr.Calendar.Duration{
              day: 6,
              hour: 0,
-             microsecond: 0,
+             microsecond: {0, 6},
              minute: 0,
              month: 6,
              second: 0,
@@ -50,7 +50,7 @@ defmodule Cldr.Calendar.Duration.Test do
              %Cldr.Calendar.Duration{
                day: 0,
                hour: 0,
-               microsecond: 0,
+               microsecond: {0, 6},
                minute: 0,
                month: 1,
                second: 0,
@@ -60,7 +60,7 @@ defmodule Cldr.Calendar.Duration.Test do
     assert Cldr.Calendar.plus(~D"1960-06-14", %Cldr.Calendar.Duration{
              day: 0,
              hour: 0,
-             microsecond: 0,
+             microsecond: {0, 6},
              minute: 0,
              month: 1,
              second: 0,
@@ -71,7 +71,7 @@ defmodule Cldr.Calendar.Duration.Test do
              %Cldr.Calendar.Duration{
                day: 8,
                hour: 0,
-               microsecond: 0,
+               microsecond: {0, 6},
                minute: 0,
                month: 2,
                second: 0,
@@ -81,7 +81,7 @@ defmodule Cldr.Calendar.Duration.Test do
     assert Cldr.Calendar.plus(~D"1960-05-05", %Cldr.Calendar.Duration{
              day: 8,
              hour: 0,
-             microsecond: 0,
+             microsecond: {0, 6},
              minute: 0,
              month: 2,
              second: 0,
@@ -97,7 +97,7 @@ defmodule Cldr.Calendar.Duration.Test do
                 month: 11,
                 day: 30,
                 hour: 0,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 second: 0
               }}
@@ -106,19 +106,43 @@ defmodule Cldr.Calendar.Duration.Test do
   test "datetime duration one day crossing month boundary" do
     assert Duration.new(~D[2019-01-31], ~D[2019-02-01]) ==
              {:ok,
-              %Duration{year: 0, month: 0, day: 1, hour: 0, microsecond: 0, minute: 0, second: 0}}
+              %Duration{
+                year: 0,
+                month: 0,
+                day: 1,
+                hour: 0,
+                microsecond: {0, 6},
+                minute: 0,
+                second: 0
+              }}
   end
 
   test "datetime one day crossing year boundary" do
     assert Duration.new(~D[2019-12-31], ~D[2020-01-01]) ==
              {:ok,
-              %Duration{year: 0, month: 0, day: 1, hour: 0, microsecond: 0, minute: 0, second: 0}}
+              %Duration{
+                year: 0,
+                month: 0,
+                day: 1,
+                hour: 0,
+                microsecond: {0, 6},
+                minute: 0,
+                second: 0
+              }}
   end
 
   test "datetime duration month and day incremented" do
     assert Duration.new(~D[2019-05-27], ~D[2019-08-30]) ==
              {:ok,
-              %Duration{year: 0, month: 3, day: 3, hour: 0, microsecond: 0, minute: 0, second: 0}}
+              %Duration{
+                year: 0,
+                month: 3,
+                day: 3,
+                hour: 0,
+                microsecond: {0, 6},
+                minute: 0,
+                second: 0
+              }}
   end
 
   test "datetime duration month and day also incremented to last day of year" do
@@ -129,7 +153,7 @@ defmodule Cldr.Calendar.Duration.Test do
                 month: 7,
                 day: 30,
                 hour: 0,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 second: 0
               }}
@@ -143,7 +167,7 @@ defmodule Cldr.Calendar.Duration.Test do
                 month: 1,
                 day: 30,
                 hour: 0,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 second: 0
               }}
@@ -160,7 +184,7 @@ defmodule Cldr.Calendar.Duration.Test do
                 month: 1,
                 day: 30,
                 hour: 0,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 second: 0
               }}
@@ -172,7 +196,15 @@ defmodule Cldr.Calendar.Duration.Test do
              date(2019, 01, 07, Cldr.Calendar.CSCO)
            ) ==
              {:ok,
-              %Duration{year: 18, month: 1, day: 6, hour: 0, microsecond: 0, minute: 0, second: 0}}
+              %Duration{
+                year: 18,
+                month: 1,
+                day: 6,
+                hour: 0,
+                microsecond: {0, 6},
+                minute: 0,
+                second: 0
+              }}
   end
 
   test "duration with the same month and day 2 later than day 1" do
@@ -186,7 +218,7 @@ defmodule Cldr.Calendar.Duration.Test do
                 month: 0,
                 day: 2,
                 hour: 0,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 second: 0
               }}
@@ -253,7 +285,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 0,
                 hour: 1,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 month: 0,
                 second: 0,
@@ -265,7 +297,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 0,
                 hour: 1,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 2,
                 month: 0,
                 second: 0,
@@ -277,7 +309,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 0,
                 hour: 1,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 2,
                 month: 0,
                 second: 3,
@@ -304,7 +336,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 0,
                 hour: 23,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 month: 0,
                 second: 0,
@@ -316,7 +348,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 0,
                 hour: 22,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 58,
                 month: 0,
                 second: 0,
@@ -328,7 +360,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 0,
                 hour: 22,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 57,
                 month: 0,
                 second: 58,
@@ -340,7 +372,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 0,
                 hour: 22,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 56,
                 month: 0,
                 second: 56,
@@ -354,7 +386,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 30,
                 hour: 0,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 month: 11,
                 second: 0,
@@ -370,7 +402,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 30,
                 hour: 0,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 month: 11,
                 second: 0,
@@ -384,7 +416,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 0,
                 hour: 0,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 month: 0,
                 second: 24,
@@ -398,7 +430,7 @@ defmodule Cldr.Calendar.Duration.Test do
               %Cldr.Calendar.Duration{
                 day: 0,
                 hour: -1,
-                microsecond: 0,
+                microsecond: {0, 6},
                 minute: 0,
                 month: 0,
                 second: 0,
