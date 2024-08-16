@@ -2,6 +2,14 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v1.26.1
+
+This is the changelog for Cldr Calendars v1.26.1 released on August 16th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix specs to suport dialyzer flags `:error_handling, :unknown, :underspecs, :extra_return, :missing_return`
+
 ## Cldr.Calendars v1.26.0
 
 This is the changelog for Cldr Calendars v1.26.0 released on July 27th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
