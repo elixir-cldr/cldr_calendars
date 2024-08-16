@@ -250,7 +250,10 @@ defmodule Cldr.Calendar.Duration do
   """
 
   @spec new(from :: date_or_time_or_datetime(), to :: date_or_time_or_datetime()) ::
-          {:ok, t()} | {:error, {module(), String.t()}}
+          {:ok, t()}
+          | {:error, {module(), String.t()}}
+          | {:ambiguous, DateTime.t(), DateTime.t()}
+          | {:gap, DateTime.t(), DateTime.t()}
 
   def new(unquote(Cldr.Calendar.datetime()) = from, unquote(Cldr.Calendar.datetime()) = to) do
     with :ok <- confirm_same_time_zone(from, to),
@@ -326,7 +329,11 @@ defmodule Cldr.Calendar.Duration do
        }}
 
   """
-  @spec new(interval :: interval()) :: {:ok, t()} | {:error, {module(), String.t()}}
+  @spec new(interval :: interval()) ::
+          {:ok, t()}
+          | {:error, {module(), String.t()}}
+          | {:ambiguous, DateTime.t(), DateTime.t()}
+          | {:gap, DateTime.t(), DateTime.t()}
 
   if Code.ensure_loaded?(CalendarInterval) do
     def new(%CalendarInterval{first: first, last: last, precision: precision} = _interval)

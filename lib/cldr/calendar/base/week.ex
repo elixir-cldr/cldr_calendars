@@ -140,7 +140,7 @@ defmodule Cldr.Calendar.Base.Week do
   def day_of_year(year, week, day, config) when is_date(year, week, day) do
     start_of_year = first_gregorian_day_of_year(year, config)
     this_day = first_gregorian_day_of_year(year, config) + week_to_days(week) + day
-    this_day - start_of_year + 1
+    trunc(this_day - start_of_year + 1)
   end
 
   def day_of_year(year, week, day, _config) do
@@ -210,13 +210,13 @@ defmodule Cldr.Calendar.Base.Week do
   def days_in_month(year, @months_in_year, config) do
     %Config{weeks_in_month: [_, _, weeks_in_last_month]} = config
     weeks = if long_year?(year, config), do: weeks_in_last_month + 1, else: weeks_in_last_month
-    weeks * days_in_week()
+    trunc(weeks * days_in_week())
   end
 
   def days_in_month(_year, month, config) do
     %Config{weeks_in_month: weeks_in_month} = config
     month_in_quarter = Math.amod(rem(month, @months_in_quarter), @months_in_quarter)
-    Enum.at(weeks_in_month, month_in_quarter - 1) * days_in_week()
+    (Enum.at(weeks_in_month, month_in_quarter - 1) * days_in_week()) |> trunc()
   end
 
   # If the month is the last month of the year then it will be different
@@ -225,8 +225,8 @@ defmodule Cldr.Calendar.Base.Week do
 
   def days_in_month(month, %Config{weeks_in_month: [_, _, weeks_in_last_month]} = config) do
     if month == @months_in_year do
-      long_year_days = (weeks_in_last_month + 1) * days_in_week()
-      short_year_days = weeks_in_last_month * days_in_week()
+      long_year_days = trunc((weeks_in_last_month + 1) * days_in_week())
+      short_year_days = trunc(weeks_in_last_month * days_in_week())
       {:ambiguous, [short_year_days, long_year_days]}
     else
       days_in_month(@any_year, month, config)

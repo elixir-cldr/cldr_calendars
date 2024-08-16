@@ -25,7 +25,13 @@ defmodule Cldr.Calendar.MixProject do
         ignore_warnings: ".dialyzer_ignore_warnings",
         plt_add_apps: ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists
              ex_cldr_numbers calendar_interval)a,
-        flags: [:underspecs]
+        flags: [
+          :error_handling,
+          :unknown,
+          :underspecs,
+          :extra_return,
+          :missing_return
+        ]
       ],
       compilers: Mix.compilers()
     ]

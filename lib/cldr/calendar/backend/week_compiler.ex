@@ -324,7 +324,7 @@ defmodule Cldr.Calendar.Compiler.Week do
       a week in week-based calendars..
 
       """
-      @spec periods_in_year(year :: Cldr.Calendar.year()) :: Calendar.week()
+      @spec periods_in_year(year :: Cldr.Calendar.year()) :: Calendar.week() | :error
       @impl true
       def periods_in_year(year) do
         {weeks_in_year, _} = weeks_in_year(year)
@@ -377,7 +377,11 @@ defmodule Cldr.Calendar.Compiler.Week do
 
       """
       @spec days_in_month(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month()) ::
-              days :: Calendar.day() | {:error, {module(), String.t()}}
+              days ::
+              Calendar.day()
+              | {:error, {module(), String.t()}}
+              | {:ambiguous, Range.t()}
+              | {:ambiguous, [integer(), ...]}
 
       @impl true
       def days_in_month(year, month) do
@@ -392,7 +396,11 @@ defmodule Cldr.Calendar.Compiler.Week do
 
       """
       @spec days_in_month(month :: Cldr.Calendar.month()) ::
-              days :: Calendar.day() | {:error, {module(), String.t()}}
+              days ::
+              Calendar.day()
+              | {:error, {module(), String.t()}}
+              | {:ambiguous, Range.t()}
+              | {:ambiguous, [integer(), ...]}
 
       @impl true
       def days_in_month(month) do

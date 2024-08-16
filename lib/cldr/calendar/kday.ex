@@ -44,7 +44,7 @@ defmodule Cldr.Calendar.Kday do
 
   """
   @spec kday_on_or_before(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
-          Calendar.day() | Date.t()
+          Calendar.day() | Date.t() | {:error, :incompatible_calendars | :invalid_date}
 
   def kday_on_or_before(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
@@ -90,7 +90,7 @@ defmodule Cldr.Calendar.Kday do
 
   """
   @spec kday_on_or_after(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
-          Calendar.day() | Date.t()
+          Calendar.day() | Date.t() | {:error, :incompatible_calendars | :invalid_date}
 
   def kday_on_or_after(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
@@ -133,7 +133,7 @@ defmodule Cldr.Calendar.Kday do
 
   """
   @spec kday_nearest(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
-          Calendar.day() | Date.t()
+          Calendar.day() | Date.t() | {:error, :incompatible_calendars | :invalid_date}
 
   def kday_nearest(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
@@ -180,7 +180,7 @@ defmodule Cldr.Calendar.Kday do
 
   """
   @spec kday_before(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
-          Calendar.day() | Date.t()
+          Calendar.day() | Date.t() | {:error, :incompatible_calendars | :invalid_date}
 
   def kday_before(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
@@ -226,7 +226,7 @@ defmodule Cldr.Calendar.Kday do
 
   """
   @spec kday_after(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
-          Calendar.day() | Date.t()
+          Calendar.day() | Date.t() | {:error, :incompatible_calendars | :invalid_date}
 
   def kday_after(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
@@ -275,7 +275,7 @@ defmodule Cldr.Calendar.Kday do
 
   """
   @spec nth_kday(Calendar.day() | Date.t(), integer(), Cldr.Calendar.day_of_week()) ::
-          Calendar.day() | Date.t()
+          Calendar.day() | Date.t() | {:error, :incompatible_calendars | :invalid_date}
 
   def nth_kday(%{year: _, month: _, day: _, calendar: calendar} = date, n, k)
       when k in 1..7 and is_integer(n) do
@@ -321,7 +321,7 @@ defmodule Cldr.Calendar.Kday do
 
   """
   @spec first_kday(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
-          Calendar.day() | Date.t()
+          Calendar.day() | Date.t() | {:error, :incompatible_calendars | :invalid_date}
 
   def first_kday(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do
@@ -359,7 +359,7 @@ defmodule Cldr.Calendar.Kday do
 
   """
   @spec last_kday(Calendar.day() | Date.t(), Cldr.Calendar.day_of_week()) ::
-          Calendar.day() | Date.t()
+          Calendar.day() | Date.t() | {:error, :incompatible_calendars | :invalid_date}
 
   def last_kday(%{year: _, month: _, day: _, calendar: calendar} = date, k)
       when k in 1..7 do

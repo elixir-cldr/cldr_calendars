@@ -673,7 +673,7 @@ defmodule Cldr.Calendar do
 
   """
   @spec new(module(), calendar_type(), Keyword.t()) ::
-          {:ok, calendar()} | {:module_already_exists, module()}
+          {:ok, calendar()} | {:module_already_exists, module()} | {:error, String.t()}
 
   def new(calendar_module, calendar_type, config)
       when is_atom(calendar_module) and calendar_type in [:week, :month] do
@@ -860,7 +860,8 @@ defmodule Cldr.Calendar do
       %Date{calendar: Cldr.Calendar.NRF, day: 1, month: 1, year: 2019}
 
   """
-  @spec first_day_of_year(year :: year(), calendar :: calendar()) :: Date.t()
+  @spec first_day_of_year(year :: year(), calendar :: calendar()) ::
+          Date.t() | {:error, :invalid_date}
 
   def first_day_of_year(year, calendar) do
     with {:ok, date} <- Date.new(year, 1, 1, calendar) do
@@ -888,7 +889,7 @@ defmodule Cldr.Calendar do
       ~D[2019-01-01]
 
   """
-  @spec first_day_of_year(date :: date()) :: Date.t()
+  @spec first_day_of_year(date :: date()) :: Date.t() | {:error, :invalid_date}
 
   def first_day_of_year(%Date{year: year, calendar: calendar}) do
     first_day_of_year(year, calendar)
@@ -2053,7 +2054,7 @@ defmodule Cldr.Calendar do
   """
   @spec weeks_to_days(integer) :: integer
   def weeks_to_days(n) do
-    n * @days_in_a_week
+    trunc(n * @days_in_a_week)
   end
 
   @doc """
@@ -2746,7 +2747,7 @@ defmodule Cldr.Calendar do
     {:ok, backend}
   end
 
-  @spec plus(integer, integer()) :: integer()
+  @spec plus(integer, integer()) :: integer() | {:error, :invalid_date}
   @doc false
 
   def plus(value, increment) when is_integer(value) and is_integer(increment) do
@@ -2870,7 +2871,7 @@ defmodule Cldr.Calendar do
   """
 
   @spec plus(Calendar.date() | Date.Range.t(), atom(), integer(), Keyword.t()) ::
-          Calendar.date()
+          Calendar.date() | {:error, :invalid_date}
 
   def plus(date, period, increment, options \\ [])
 
@@ -3429,7 +3430,8 @@ defmodule Cldr.Calendar do
       ~D[0000-01-01]
 
   """
-  @spec date_from_iso_days(Calendar.iso_days() | iso_day_number, calendar()) :: Date.t()
+  @spec date_from_iso_days(Calendar.iso_days() | iso_day_number, calendar()) ::
+          Date.t() | {:error, :incompatible_calendars | :invalid_date}
 
   def date_from_iso_days({days, _}, calendar) do
     date_from_iso_days(days, calendar)

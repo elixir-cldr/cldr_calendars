@@ -403,7 +403,7 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @spec days_in_month(year :: Cldr.Calendar.year(), month :: Cldr.Calendar.month()) ::
-              days :: Calendar.day() | {:error, {module(), String.t()}}
+              days :: Calendar.day() | {:error, {module(), String.t()}} | {:ambiguous, Range.t()}
 
       @impl true
       def days_in_month(year, month) do
@@ -418,7 +418,7 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       """
       @spec days_in_month(month :: Cldr.Calendar.month()) ::
-              days :: Calendar.day() | {:error, {module(), String.t()}}
+              days :: Calendar.day() | {:error, {module(), String.t()}} | {:ambiguous, Range.t()}
 
       @impl true
       def days_in_month(month) do

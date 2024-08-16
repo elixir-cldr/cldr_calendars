@@ -227,8 +227,8 @@ defmodule Cldr.Calendar.Julian do
   @spec day_of_year(year, month, day) :: 1..366
   @impl Calendar
   def day_of_year(year, month, day) do
-    first_day = date_to_iso_days(year, 1, 1)
-    this_day = date_to_iso_days(year, month, day)
+    first_day = date_to_iso_days(year, 1, 1) |> floor()
+    this_day = date_to_iso_days(year, month, day) |> floor()
     this_day - first_day + 1
   end
 
@@ -383,7 +383,7 @@ defmodule Cldr.Calendar.Julian do
   knowning the year an error tuple is returned.
 
   """
-  @spec days_in_month(month) :: Calendar.day()
+  @spec days_in_month(month) :: Calendar.day() | {:error, :unresolved}
   @impl true
   def days_in_month(month) do
     case month do

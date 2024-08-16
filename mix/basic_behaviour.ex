@@ -28,7 +28,7 @@ defmodule Cldr.Calendar.Behaviour.Basic do
 
   """
   def date_to_iso_days(year, month, day) do
-    epoch() + 365 * (year - 1) + floor(year / 4) + 30 * (month - 1) + day - 1
+    floor(epoch() + 365 * (year - 1) + floor(year / 4) + 30 * (month - 1) + day - 1)
   end
 
   @doc """

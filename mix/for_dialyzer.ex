@@ -11,5 +11,4 @@ defmodule Cldr.Calendar.ForDialyzer do
 
     MyApp.Cldr.Calendar.localize(%{month: 3}, :month, format: :wide, locale: :da)
   end
-
 end

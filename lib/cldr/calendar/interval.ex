@@ -256,13 +256,14 @@ defmodule Cldr.Calendar.Interval do
       Date.range(~D[2019-W02-1 Cldr.Calendar.ISOWeek], ~D[2019-W02-1 Cldr.Calendar.ISOWeek])
 
   """
-  @spec day(Calendar.year(), Calendar.day(), Cldr.Calendar.calendar()) :: Date.Range.t()
+  @spec day(Calendar.year(), Calendar.day(), Cldr.Calendar.calendar()) ::
+          Date.Range.t() | {:error, :invalid_date}
   @spec day(Date.t()) :: Date.Range.t()
 
   def day(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
-    |> day
-    |> coerce_iso_calendar
+    |> day()
+    |> coerce_iso_calendar()
   end
 
   def day(date) do
