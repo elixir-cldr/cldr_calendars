@@ -72,4 +72,17 @@ defmodule Cldr.Calendar.Range.Relationship.Test do
     r2 = Date.range(~D[2019-01-01], ~D[2019-01-05])
     assert Cldr.Calendar.Interval.compare(r1, r2) == :preceded_by
   end
+
+  test "that a range is overlapped by too" do
+    r1 = Date.range(~D[2024-09-11], ~D[2300-01-01])
+    r2 = Date.range(~D[2024-09-09], ~D[2024-09-11])
+    assert Cldr.Calendar.Interval.compare(r1, r2) == :overlapped_by
+  end
+
+  test "that a range overlaps too" do
+    r1 = Date.range(~D[2024-09-09], ~D[2024-09-11])
+    r2 = Date.range(~D[2024-09-11], ~D[2300-01-01])
+    assert Cldr.Calendar.Interval.compare(r1, r2) == :overlaps
+  end
+
 end

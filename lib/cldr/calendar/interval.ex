@@ -356,9 +356,6 @@ defmodule Cldr.Calendar.Interval do
       r1.last_in_iso_days == r2.last_in_iso_days && r1.first_in_iso_days < r2.first_in_iso_days ->
         :finished_by
 
-      r1.first_in_iso_days < r2.first_in_iso_days && r1.last_in_iso_days > r2.first_in_iso_days ->
-        :overlaps
-
       r1.first_in_iso_days == r2.first_in_iso_days && r1.last_in_iso_days < r2.last_in_iso_days ->
         :starts
 
@@ -377,7 +374,10 @@ defmodule Cldr.Calendar.Interval do
       r2.first_in_iso_days == r1.first_in_iso_days && r1.last_in_iso_days > r2.last_in_iso_days ->
         :started_by
 
-      r2.last_in_iso_days > r1.first_in_iso_days && r2.last_in_iso_days < r1.last_in_iso_days ->
+      r1.first_in_iso_days < r2.first_in_iso_days && r1.last_in_iso_days >= r2.first_in_iso_days ->
+        :overlaps
+
+      r2.last_in_iso_days >= r1.first_in_iso_days && r2.last_in_iso_days < r1.last_in_iso_days ->
         :overlapped_by
     end
   end

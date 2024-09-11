@@ -368,7 +368,7 @@ Intervals can be created for a year, quarter, month, week and day.  For example:
 
 Intervals can also be compared to each other and using the taxonomy of [Allen's Interval Algebra](https://en.wikipedia.org/wiki/Allen%27s_interval_algebra) a comparison will return one of 13 different relationship types between two calendar intervals:
 
-  Relation	     | Converse
+  Relation	     | Inverse
   ----------     | --------------
   :precedes	     | :preceded_by
   :meets         | :met_by
