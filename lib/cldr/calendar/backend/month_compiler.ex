@@ -316,7 +316,7 @@ defmodule Cldr.Calendar.Compiler.Month do
       It is an integer from 1 to 7, where 1 is Monday and 7 is Sunday.
 
       """
-      @dialyzer {:nowarn_function, {:day_of_week, 4}}
+      # @dialyzer {:nowarn_function, {:day_of_week, 4}}
       @spec day_of_week(
               year :: Cldr.Calendar.year(),
               month :: Cldr.Calendar.month(),
@@ -330,7 +330,9 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       @impl true
       def day_of_week(year, month, day, :default) do
-        %{day_of_week: first_day} = __config__()
+        IO.inspect __config__(), label: "Config"
+        # %{day_of_week: first_day} = __config__()
+        first_day = __config__().day_of_week
         last_day = Cldr.Math.amod(first_day + days_in_week() - 1, days_in_week())
 
         case Month.day_of_week(year, month, day, __config__()) do

@@ -22,7 +22,6 @@ defmodule Cldr.Calendar.MixProject do
       aliases: aliases(),
       elixirc_paths: elixirc_paths(Mix.env()),
       dialyzer: [
-        ignore_warnings: ".dialyzer_ignore_warnings",
         plt_add_apps: ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists
              ex_cldr_numbers calendar_interval)a,
         flags: [
