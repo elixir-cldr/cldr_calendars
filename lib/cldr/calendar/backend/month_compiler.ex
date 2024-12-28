@@ -329,13 +329,23 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       @impl true
       def day_of_week(year, month, day, :default) do
-        %{day_of_week: first_day} = __config__()
+        first_day = day_of_week_of_first_day(year, __config__())
         last_day = Cldr.Math.amod(first_day + days_in_week() - 1, days_in_week())
 
         case Month.day_of_week(year, month, day, __config__()) do
           {:error, reason} -> {:error, reason}
           day -> {day, first_day, last_day}
         end
+      end
+
+      @doc false
+      def day_of_week_of_first_day(year, %{day_of_week: :first}) do
+        {day_of_week, 1, 7} = Cldr.Calendar.Gregorian.day_of_week(year, 1, 1, :default)
+        day_of_week
+      end
+
+      def day_of_week_of_first_day(_year, %{day_of_week: first_day}) when is_integer(first_day) do
+        first_day
       end
 
       @doc """

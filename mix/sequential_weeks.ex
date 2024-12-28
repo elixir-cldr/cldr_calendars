@@ -8,5 +8,5 @@ defmodule Cldr.Calendar.SequentialWeeks do
 
   use Cldr.Calendar.Base.Month,
     month_of_year: 1,
-    day_of_week: Cldr.Calendar.monday()
+    day_of_week: :first
 end

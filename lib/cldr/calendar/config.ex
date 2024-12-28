@@ -61,7 +61,7 @@ defmodule Cldr.Calendar.Config do
           weeks_in_month: list(pos_integer()),
           begins_or_ends: :begins | :ends,
           first_or_last: :first | :last,
-          day_of_week: Cldr.Calendar.day_of_week(),
+          day_of_week: Cldr.Calendar.day_of_week() | :first,
           month_of_year: pos_integer(),
           year: :majority | :starts | :ends,
           min_days_in_first_week: 1..7
