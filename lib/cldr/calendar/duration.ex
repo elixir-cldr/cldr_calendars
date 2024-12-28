@@ -69,7 +69,7 @@ defmodule Cldr.Calendar.Duration do
 
     ## Arguments
 
-    * `duration` is a duration of type `t()` returned
+    * `duration` is a duration of type `t:Cldr.Calendar.Duration.t/0` returned
       by `Cldr.Calendar.Duration.new/2`
 
     * `options` is a Keyword list of options
@@ -134,7 +134,7 @@ defmodule Cldr.Calendar.Duration do
 
     ## Arguments
 
-    * `duration` is a duration of type `t()` returned
+    * `duration` is a duration of type `t:Cldr.Calendar.Duration.t/0` returned
       by `Cldr.Calendar.Duration.new/2`
 
     * `options` is a Keyword list of options
@@ -178,7 +178,7 @@ defmodule Cldr.Calendar.Duration do
 
   ## Arguments
 
-  * `duration` is a duration of type `t()` returned
+  * `duration` is a duration of type `t:Cldr.Calendar.Duration.t/0` returned
     by `Cldr.Calendar.Duration.new/2`
 
   * `options` is a Keyword list of options
@@ -195,11 +195,15 @@ defmodule Cldr.Calendar.Duration do
 
   """
 
+  # For now there are no exception returns for `to_string/2`
+  # so the code here is a reminder that perhaps that should
+  # change.
+
   @spec to_string!(t(), Keyword.t()) :: String.t() | no_return
   def to_string!(%__MODULE__{} = duration, options \\ []) do
     case to_string(duration, options) do
       {:ok, string} -> string
-      {:error, {exception, reason}} -> raise exception, reason
+      # {:error, {exception, reason}} -> raise exception, reason
     end
   end
 
@@ -299,7 +303,7 @@ defmodule Cldr.Calendar.Duration do
 
   ## Arguments
 
-  * `interval` is either ` Date.Range.t()` or a
+  * `interval` is either `t:Date.Range.t/0` or a
     `CalendarInterval.t()`
 
   ## Returns

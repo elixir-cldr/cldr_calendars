@@ -1,5 +1,5 @@
 defmodule Cldr.Calendar.ForDialyzer do
-  def test do
+  def localize do
     Cldr.Calendar.localize(%{year: 2024}, :year)
     MyApp.Cldr.Calendar.localize(%{month: 2}, :month)
 
@@ -10,5 +10,8 @@ defmodule Cldr.Calendar.ForDialyzer do
     Cldr.Calendar.localize(%{month: 3}, :month, format: :wide, locale: :da)
 
     MyApp.Cldr.Calendar.localize(%{month: 3}, :month, format: :wide, locale: :da)
+
+    {:ok, duration} = Cldr.Calendar.Duration.new(~D[2019-01-01], ~D[2019-12-31])
+    Cldr.Calendar.Duration.to_string!(duration)
   end
 end
