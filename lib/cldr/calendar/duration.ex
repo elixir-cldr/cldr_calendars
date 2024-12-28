@@ -116,6 +116,37 @@ defmodule Cldr.Calendar.Duration do
       end
       |> Cldr.Unit.to_string(options)
     end
+
+    @doc """
+    Formats a duration as a string or raises
+    an exception on error.
+
+    ## Arguments
+
+    * `duration` is a duration of type `t:Cldr.Calendar.Duration.t/0` returned
+      by `Cldr.Calendar.Duration.new/2`.
+
+    * `options` is a Keyword list of options.
+
+    ## Options
+
+    See `Cldr.Calendar.Duration.to_string/2`.
+
+    ## Returns
+
+    * A formatted string or
+
+    * raises an exception.
+
+    """
+
+    @spec to_string!(t(), Keyword.t()) :: String.t() | no_return
+    def to_string!(%__MODULE__{} = duration, options \\ []) do
+      case to_string(duration, options) do
+        {:ok, string} -> string
+        {:error, {exception, reason}} -> raise exception, reason
+      end
+    end
   else
     @doc """
     Returns a string formatted representation of
@@ -167,45 +198,39 @@ defmodule Cldr.Calendar.Duration do
 
       {:ok, formatted}
     end
+
+    @doc """
+    Formats a duration as a string or raises
+    an exception on error.
+
+    ## Arguments
+
+    * `duration` is a duration of type `t:Cldr.Calendar.Duration.t/0` returned
+      by `Cldr.Calendar.Duration.new/2`.
+
+    * `options` is a Keyword list of options.
+
+    ## Options
+
+    See `Cldr.Calendar.Duration.to_string/2`.
+
+    ## Returns
+
+    * A formatted string or
+
+    * raises an exception.
+
+    """
+
+    @spec to_string!(t(), Keyword.t()) :: String.t() | no_return
+    def to_string!(%__MODULE__{} = duration, options \\ []) do
+      {:ok, string} = to_string(duration, options)
+      string
+    end
   end
 
   defp maybe_extract_microseconds(:microsecond, {microseconds, _precision}), do: microseconds
   defp maybe_extract_microseconds(_any, value), do: value
-
-  @doc """
-  Formats a duration as a string or raises
-  an exception on error.
-
-  ## Arguments
-
-  * `duration` is a duration of type `t:Cldr.Calendar.Duration.t/0` returned
-    by `Cldr.Calendar.Duration.new/2`
-
-  * `options` is a Keyword list of options
-
-  ## Options
-
-  See `Cldr.Calendar.Duration.to_string/2`
-
-  ## Returns
-
-  * A formatted string or
-
-  * raises an exception
-
-  """
-
-  # For now there are no exception returns for `to_string/2`
-  # so the code here is a reminder that perhaps that should
-  # change.
-
-  @spec to_string!(t(), Keyword.t()) :: String.t() | no_return
-  def to_string!(%__MODULE__{} = duration, options \\ []) do
-    case to_string(duration, options) do
-      {:ok, string} -> string
-      # {:error, {exception, reason}} -> raise exception, reason
-    end
-  end
 
   @doc """
   Calculates the calendar difference between two dates

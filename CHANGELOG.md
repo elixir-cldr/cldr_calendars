@@ -4,11 +4,13 @@
 
 ## Cldr.Calendars v1.26.4
 
-This is the changelog for Cldr Calendars v1.26.4 released on _______.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+This is the changelog for Cldr Calendars v1.26.4 released on December 29th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Bug Fixes
 
 * Fix day of week calculations when the config `%{day_of_week: :first}` is set.
+
+* Improve the implementation of the fix for #23 to respect the conditional compilation based upon whether `ex_cldr_units` is configured or not.
 
 ## Cldr.Calendars v1.26.3
 
