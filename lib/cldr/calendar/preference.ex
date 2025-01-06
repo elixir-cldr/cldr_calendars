@@ -36,7 +36,7 @@ defmodule Cldr.Calendar.Preference do
   ## Arguments
 
   * `territory` is any valid ISO3166-2 code as
-    an `t:String.t/0` or upcased `t.atom/0`
+    an `t:String.t/0` or upcased `t.atom/0`.
 
   ## Returns
 
@@ -62,7 +62,7 @@ defmodule Cldr.Calendar.Preference do
   Returning any other calendar module would require:
 
   1. That another calendar is preferred over `:gregorian`
-     for a territory
+     for a territory.
 
   2. That a calendar module is available to support
      that calendar.
