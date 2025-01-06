@@ -28,6 +28,12 @@ defmodule Cldr.Calendar.Backend do
         alias Cldr.LanguageTag
 
         @default_calendar :gregorian
+
+        # These are calendars for which there is CLDR
+        # localization data, era definitions and so on. So
+        # while :iso8601 is a valid calendar, its not acceptable
+        # in this context.
+
         @acceptable_calendars [
           :gregorian,
           :persian,

@@ -1,7 +1,12 @@
 defmodule Cldr.Calendar.Preference do
   alias Cldr.LanguageTag
 
+  @base_calendar Cldr.Calendar
   @territory_preferences Cldr.Config.calendar_preferences()
+
+  @days [1, 2, 3, 4, 5, 6, 7]
+  @day_codes [:mon, :tue, :wed, :thu, :fri, :sat, :sun]
+  @first_day Enum.zip([@day_codes, @days]) |> Map.new()
 
   @doc false
   def territory_preferences do
@@ -31,7 +36,7 @@ defmodule Cldr.Calendar.Preference do
   ## Arguments
 
   * `territory` is any valid ISO3166-2 code as
-    an `String.t` or upcased `atom()`
+    an `t:String.t/0` or upcased `t.atom/0`
 
   ## Returns
 
@@ -169,6 +174,15 @@ defmodule Cldr.Calendar.Preference do
     {:ok, Cldr.Calendar.Gregorian}
   end
 
+  def calendar_from_locale(%LanguageTag{locale: %{calendar: nil, fw: first_day}})
+      when first_day in @day_codes do
+
+    {:ok, day} = Map.fetch(@first_day, first_day)
+    module = first_day |> Atom.to_string() |> String.capitalize() |> String.to_atom()
+    calendar_module = Module.concat([@base_calendar, Gregorian, module])
+    Cldr.Calendar.new(calendar_module, :month, day_of_week: day)
+  end
+
   def calendar_from_locale(%LanguageTag{locale: %{calendar: nil}} = locale) do
     locale
     |> Cldr.Locale.territory_from_locale()
@@ -210,7 +224,6 @@ defmodule Cldr.Calendar.Preference do
   @deprecated "Use calendar_from_locale/1"
   defdelegate calendar_for_locale(locale), to: __MODULE__, as: :calendar_from_locale
 
-  @base_calendar Cldr.Calendar
   @known_calendars Cldr.known_calendars()
 
   @calendar_modules @known_calendars

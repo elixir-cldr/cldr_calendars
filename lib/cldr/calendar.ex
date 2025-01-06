@@ -478,10 +478,10 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.calendar_from_territory :US
+      iex> Cldr.Calendar.calendar_from_territory(:US)
       {:ok, Cldr.Calendar.US}
 
-      iex> Cldr.Calendar.calendar_from_territory :YY
+      iex> Cldr.Calendar.calendar_from_territory(:YY)
       {:error, {Cldr.UnknownTerritoryError, "The territory :YY is unknown"}}
 
   ### Notes
@@ -531,16 +531,16 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.calendar_from_locale "en-US"
+      iex> Cldr.Calendar.calendar_from_locale("en-US")
       {:ok, Cldr.Calendar.US}
 
-      iex> Cldr.Calendar.calendar_from_locale "en-GB-u-ca-gregory"
+      iex> Cldr.Calendar.calendar_from_locale("en-GB-u-ca-gregory")
       {:ok, Cldr.Calendar.Gregorian}
 
-      iex> Cldr.Calendar.calendar_from_locale "fa-IR"
+      iex> Cldr.Calendar.calendar_from_locale("fa-IR")
       {:ok, Cldr.Calendar.Persian}
 
-      iex> Cldr.Calendar.calendar_from_locale "fa-IR-u-ca-gregory"
+      iex> Cldr.Calendar.calendar_from_locale("fa-IR-u-ca-gregory")
       {:ok, Cldr.Calendar.Gregorian}
 
   """
@@ -548,7 +548,8 @@ defmodule Cldr.Calendar do
     Cldr.Calendar.Preference.calendar_from_locale(locale)
   end
 
-  def calendar_from_locale(locale, backend \\ Cldr.default_backend!()) when is_locale_reference(locale) do
+  def calendar_from_locale(locale, backend \\ Cldr.default_backend!())
+      when is_locale_reference(locale) do
     Cldr.Calendar.Preference.calendar_from_locale(locale, backend)
   end
 
@@ -694,7 +695,6 @@ defmodule Cldr.Calendar do
   the preferences defined for a locale.
 
   """
-  @base_calendar_name Cldr.Calendar
   def calendar_for_locale(locale, options \\ [])
 
   def calendar_for_locale(%LanguageTag{} = locale, config) do
@@ -719,7 +719,7 @@ defmodule Cldr.Calendar do
   """
   def calendar_for_territory(territory, config \\ []) do
     with {:ok, territory} <- Cldr.validate_territory(territory) do
-      calendar_name = Module.concat(@base_calendar_name, territory)
+      calendar_name = Module.concat(__MODULE__, territory)
 
       config =
         config
@@ -858,10 +858,10 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.first_day_of_year 2019, Cldr.Calendar.Gregorian
+      iex> Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.Gregorian)
       %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 1, year: 2019}
 
-      iex> Cldr.Calendar.first_day_of_year 2019, Cldr.Calendar.NRF
+      iex> Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
       %Date{calendar: Cldr.Calendar.NRF, day: 1, month: 1, year: 2019}
 
   """
@@ -890,7 +890,7 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex>  Cldr.Calendar.first_day_of_year ~D[2019-12-01]
+      iex>  Cldr.Calendar.first_day_of_year(~D[2019-12-01])
       ~D[2019-01-01]
 
   """
@@ -968,7 +968,7 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex>  Cldr.Calendar.last_day_of_year ~D[2019-01-01]
+      iex>  Cldr.Calendar.last_day_of_year(~D[2019-01-01])
       ~D[2019-12-31]
 
   """
@@ -996,13 +996,13 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.first_gregorian_day_of_year 2019, Cldr.Calendar.Gregorian
+      iex> Cldr.Calendar.first_gregorian_day_of_year(2019, Cldr.Calendar.Gregorian)
       %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 1, year: 2019}
 
-      iex> Cldr.Calendar.first_gregorian_day_of_year 2019, Cldr.Calendar.NRF
+      iex> Cldr.Calendar.first_gregorian_day_of_year(2019, Cldr.Calendar.NRF)
       %Date{calendar: Cldr.Calendar.Gregorian, day: 3, month: 2, year: 2019}
 
-      iex> Cldr.Calendar.first_gregorian_day_of_year ~D[2019-12-01]
+      iex> Cldr.Calendar.first_gregorian_day_of_year(~D[2019-12-01])
       ~D[2019-01-01]
 
   """
@@ -1044,13 +1044,13 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.last_gregorian_day_of_year 2019, Cldr.Calendar.Gregorian
+      iex> Cldr.Calendar.last_gregorian_day_of_year(2019, Cldr.Calendar.Gregorian)
       %Date{calendar: Cldr.Calendar.Gregorian, day: 31, month: 12, year: 2019}
 
-      iex> Cldr.Calendar.last_gregorian_day_of_year 2019, Cldr.Calendar.NRF
+      iex> Cldr.Calendar.last_gregorian_day_of_year(2019, Cldr.Calendar.NRF)
       %Date{calendar: Cldr.Calendar.Gregorian, day: 1, month: 2, year: 2020}
 
-      iex> Cldr.Calendar.last_gregorian_day_of_year ~D[2019-12-01]
+      iex> Cldr.Calendar.last_gregorian_day_of_year(~D[2019-12-01])
       ~D[2019-12-31]
 
   """
@@ -1117,13 +1117,13 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.year_of_era ~D[2019-01-01]
+      iex> Cldr.Calendar.year_of_era(~D[2019-01-01])
       {2019, 1}
 
-      iex> Cldr.Calendar.year_of_era Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.year_of_era(Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF))
       {2019, 1}
 
-      iex> Cldr.Calendar.year_of_era Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.year_of_era(Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF))
       {2019, 1}
 
   """
@@ -1154,10 +1154,10 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.day_of_era ~D[2019-01-01]
       {737060, 1}
 
-      iex> Cldr.Calendar.day_of_era Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.day_of_era(Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF))
       {737093, 1}
 
-      iex> Cldr.Calendar.day_of_era Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.day_of_era(Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF))
       {737456, 1}
 
   """
@@ -1192,10 +1192,10 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.modified_julian_day ~D[2019-01-01]
+      iex> Cldr.Calendar.modified_julian_day(~D[2019-01-01])
       58484.0
 
-      iex> Cldr.Calendar.modified_julian_day ~U[2019-01-01 12:00:00Z]
+      iex> Cldr.Calendar.modified_julian_day(~U[2019-01-01 12:00:00Z])
       58484.5
 
       iex> Cldr.Calendar.modified_julian_day(~U[2022-09-26 18:00:00.000Z])
@@ -1291,13 +1291,13 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.calendar_year ~D[2019-01-01]
+      iex> Cldr.Calendar.calendar_year(~D[2019-01-01])
       2019
 
-      iex> Cldr.Calendar.calendar_year Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.calendar_year(Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF))
       2019
 
-      iex> Cldr.Calendar.calendar_year Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.calendar_year(Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF))
       2019
 
   """
@@ -1325,13 +1325,13 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.extended_year ~D[2019-01-01]
+      iex> Cldr.Calendar.extended_year(~D[2019-01-01])
       2019
 
-      iex> Cldr.Calendar.extended_year Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.extended_year(Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF))
       2019
 
-      iex> Cldr.Calendar.extended_year Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.extended_year(Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF))
       2019
 
   """
@@ -1366,10 +1366,10 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.related_gregorian_year ~D[2019-01-01]
       2019
 
-      iex> Cldr.Calendar.related_gregorian_year Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.related_gregorian_year(Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF))
       2019
 
-      iex> Cldr.Calendar.related_gregorian_year Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.related_gregorian_year(Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF))
       2019
 
   """
@@ -1400,13 +1400,13 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.cyclic_year ~D[2019-01-01]
+      iex> Cldr.Calendar.cyclic_year(~D[2019-01-01])
       2019
 
-      iex> Cldr.Calendar.cyclic_year Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.cyclic_year(Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF))
       2019
 
-      iex> Cldr.Calendar.cyclic_year Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.cyclic_year(Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF))
       2019
 
   """
@@ -1434,13 +1434,13 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.quarter_of_year ~D[2019-01-01]
+      iex> Cldr.Calendar.quarter_of_year(~D[2019-01-01])
       1
 
-      iex> Cldr.Calendar.quarter_of_year Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.quarter_of_year(Cldr.Calendar.first_day_of_year(2019, Cldr.Calendar.NRF))
       1
 
-      iex> Cldr.Calendar.quarter_of_year Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF)
+      iex> Cldr.Calendar.quarter_of_year(Cldr.Calendar.last_day_of_year(2019, Cldr.Calendar.NRF))
       4
 
   """
@@ -1468,13 +1468,13 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.month_of_year ~D[2019-01-01]
+      iex> Cldr.Calendar.month_of_year(~D[2019-01-01])
       1
-      iex> Cldr.Calendar.month_of_year ~D[2019-12-01]
+      iex> Cldr.Calendar.month_of_year(~D[2019-12-01])
       12
-      iex> Cldr.Calendar.month_of_year ~D[2019-52-01 Cldr.Calendar.NRF]
+      iex> Cldr.Calendar.month_of_year(~D[2019-52-01 Cldr.Calendar.NRF])
       12
-      iex> Cldr.Calendar.month_of_year ~D[2019-26-01 Cldr.Calendar.NRF]
+      iex> Cldr.Calendar.month_of_year(~D[2019-26-01 Cldr.Calendar.NRF])
       6
 
   """
@@ -1508,15 +1508,15 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.week_of_year ~D[2019-01-01]
+      iex> Cldr.Calendar.week_of_year(~D[2019-01-01])
       {2019, 1}
-      iex> Cldr.Calendar.week_of_year ~D[2019-12-01]
+      iex> Cldr.Calendar.week_of_year(~D[2019-12-01])
       {2019, 48}
-      iex> Cldr.Calendar.week_of_year ~D[2019-52-01 Cldr.Calendar.NRF]
+      iex> Cldr.Calendar.week_of_year(~D[2019-52-01 Cldr.Calendar.NRF])
       {2019, 52}
-      iex> Cldr.Calendar.week_of_year ~D[2019-26-01 Cldr.Calendar.NRF]
+      iex> Cldr.Calendar.week_of_year(~D[2019-26-01 Cldr.Calendar.NRF])
       {2019, 26}
-      iex> Cldr.Calendar.week_of_year ~D[2019-12-01 Cldr.Calendar.Julian]
+      iex> Cldr.Calendar.week_of_year(~D[2019-12-01 Cldr.Calendar.Julian])
       {:error, :not_defined}
 
   """
@@ -1547,15 +1547,15 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.iso_week_of_year ~D[2019-01-01]
+      iex> Cldr.Calendar.iso_week_of_year(~D[2019-01-01])
       {2019, 1}
-      iex> Cldr.Calendar.iso_week_of_year ~D[2019-02-01]
+      iex> Cldr.Calendar.iso_week_of_year(~D[2019-02-01])
       {2019, 5}
-      iex> Cldr.Calendar.iso_week_of_year ~D[2019-52-01 Cldr.Calendar.NRF]
+      iex> Cldr.Calendar.iso_week_of_year(~D[2019-52-01 Cldr.Calendar.NRF])
       {2020, 4}
-      iex> Cldr.Calendar.iso_week_of_year ~D[2019-26-01 Cldr.Calendar.NRF]
+      iex> Cldr.Calendar.iso_week_of_year(~D[2019-26-01 Cldr.Calendar.NRF])
       {2019, 30}
-      iex> Cldr.Calendar.iso_week_of_year ~D[2019-12-01 Cldr.Calendar.Julian]
+      iex> Cldr.Calendar.iso_week_of_year(~D[2019-12-01 Cldr.Calendar.Julian])
       {:error, :not_defined}
 
   """
@@ -1628,19 +1628,19 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.day_of_year ~D[2019-01-01]
+      iex> Cldr.Calendar.day_of_year(~D[2019-01-01])
       1
 
-      iex> Cldr.Calendar.day_of_year ~D[2016-12-31]
+      iex> Cldr.Calendar.day_of_year(~D[2016-12-31])
       366
 
-      iex> Cldr.Calendar.day_of_year ~D[2019-12-31]
+      iex> Cldr.Calendar.day_of_year(~D[2019-12-31])
       365
 
-      iex> Cldr.Calendar.day_of_year ~D[2019-52-07 Cldr.Calendar.NRF]
+      iex> Cldr.Calendar.day_of_year(~D[2019-52-07 Cldr.Calendar.NRF])
       365
 
-      iex> Cldr.Calendar.day_of_year ~D[2012-53-07 Cldr.Calendar.NRF]
+      iex> Cldr.Calendar.day_of_year(~D[2012-53-07 Cldr.Calendar.NRF])
       372
 
   """
@@ -1671,32 +1671,32 @@ defmodule Cldr.Calendar do
       # being 7 days. The first week may start in the Gregorian
       # year prior and end in the following Gregorian year.
 
-      iex> Cldr.Calendar.weeks_in_year ~D[2022-01-01]
+      iex> Cldr.Calendar.weeks_in_year(~D[2022-01-01])
       {52, 7}
 
-      iex> Cldr.Calendar.weeks_in_year ~D[2023-01-01]
+      iex> Cldr.Calendar.weeks_in_year(~D[2023-01-01])
       {53, 7}
 
       # For week calculations, the Cldr.Calendar.ISO and Cldr.Calendar.ISOWeek
       # have the same definition.
 
-      iex> Cldr.Calendar.weeks_in_year 2023, Cldr.Calendar.ISO
+      iex> Cldr.Calendar.weeks_in_year(2023, Cldr.Calendar.ISO)
       {52, 7}
 
-      iex> Cldr.Calendar.weeks_in_year 2020, Cldr.Calendar.ISOWeek
+      iex> Cldr.Calendar.weeks_in_year(2020, Cldr.Calendar.ISOWeek)
       {53, 7}
 
-      iex> Cldr.Calendar.weeks_in_year ~D[2026-W01-1 Cldr.Calendar.ISOWeek]
+      iex> Cldr.Calendar.weeks_in_year(~D[2026-W01-1 Cldr.Calendar.ISOWeek])
       {53, 7}
 
       # For calendars that are configured to have the first week
       # start on the first day of the year there will be a final
       # week 53 with either 1 or 2 days.
 
-      iex> Cldr.Calendar.SequentialWeeks.weeks_in_year 2023
+      iex> Cldr.Calendar.SequentialWeeks.weeks_in_year(2023)
       {53, 1}
 
-      iex> Cldr.Calendar.SequentialWeeks.weeks_in_year 2020
+      iex> Cldr.Calendar.SequentialWeeks.weeks_in_year(2020)
       {53, 2}
 
   """
@@ -1766,26 +1766,26 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.weekend? ~D[2019-03-23]
       true
 
-      iex> Cldr.Calendar.weekend? ~D[2019-03-23], locale: :en
+      iex> Cldr.Calendar.weekend?(~D[2019-03-23], locale: :en)
       true
 
-      iex> Cldr.Calendar.weekend? ~D[2019-03-23], territory: "IS"
+      iex> Cldr.Calendar.weekend?(~D[2019-03-23], territory: "IS")
       true
 
       # In India the official weekend is only Sunday
-      iex> Cldr.Calendar.weekend? ~D[2019-03-23], locale: "en-IN", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekend?(~D[2019-03-23], locale: "en-IN", backend: MyApp.Cldr)
       false
 
       # In Israel the weekend starts on Friday
-      iex> Cldr.Calendar.weekend? ~D[2019-03-22], locale: :he, backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekend?(~D[2019-03-22], locale: :he, backend: MyApp.Cldr)
       true
 
       # As it also does in Saudia Arabia
-      iex> Cldr.Calendar.weekend? ~D[2019-03-22], locale: :"ar-SA", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekend?(~D[2019-03-22], locale: :"ar-SA", backend: MyApp.Cldr)
       true
 
       # Sunday is not a weekend day in Saudi Arabia
-      iex> Cldr.Calendar.weekend? ~D[2019-03-24], locale: :"ar-SA", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekend?(~D[2019-03-24], locale: :"ar-SA", backend: MyApp.Cldr)
       false
 
   """
@@ -1848,22 +1848,22 @@ defmodule Cldr.Calendar do
       # The default locale for `Cldr` is `en-001` for which
       # the territory is `001` (the world). The weekdays
       # for `001` are Monday to Friday
-      iex> Cldr.Calendar.weekday? ~D[2019-03-23], locale: :en
+      iex> Cldr.Calendar.weekday?(~D[2019-03-23], locale: :en)
       false
 
-      iex> Cldr.Calendar.weekday? ~D[2019-03-23], territory: "IS"
+      iex> Cldr.Calendar.weekday?(~D[2019-03-23], territory: "IS")
       false
 
       # Saturday is a weekday in India
-      iex> Cldr.Calendar.weekday? ~D[2019-03-23], locale: :"en-IN", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekday?(~D[2019-03-23], locale: :"en-IN", backend: MyApp.Cldr)
       true
 
       # Friday is not a weekday in Saudi Arabia
-      iex> Cldr.Calendar.weekday? ~D[2019-03-22], locale: :"ar-SA", backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekday?(~D[2019-03-22], locale: :"ar-SA", backend: MyApp.Cldr)
       false
 
       # Friday is not a weekday in Israel
-      iex> Cldr.Calendar.weekday? ~D[2019-03-22], locale: :he, backend: MyApp.Cldr
+      iex> Cldr.Calendar.weekday?(~D[2019-03-22], locale: :he, backend: MyApp.Cldr)
       false
 
   """
@@ -1891,7 +1891,7 @@ defmodule Cldr.Calendar do
   def first_day_for_locale(%LanguageTag{} = locale) do
     locale
     |> Cldr.Locale.territory_from_locale()
-    |> first_day_for_territory
+    |> first_day_for_territory()
   end
 
   def first_day_for_locale(locale, options \\ []) when is_locale_reference(locale) do
@@ -2070,10 +2070,10 @@ defmodule Cldr.Calendar do
 
   ## Example
 
-      iex> Cldr.Calendar.date_to_string ~D[2019-12-04]
+      iex> Cldr.Calendar.date_to_string(~D[2019-12-04])
       "2019-12-04"
 
-      iex> Cldr.Calendar.date_to_string ~D[2019-23-04 Cldr.Calendar.NRF]
+      iex> Cldr.Calendar.date_to_string(~D[2019-23-04 Cldr.Calendar.NRF])
       "2019-W23-4"
 
   """
@@ -2136,7 +2136,7 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.current ~D[2019-01-01], :day
+      iex> Cldr.Calendar.current(~D[2019-01-01], :day)
       ~D[2019-01-01]
 
   """
@@ -2206,16 +2206,16 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.next ~D[2019-01-01], :day
+      iex> Cldr.Calendar.next(~D[2019-01-01], :day)
       ~D[2019-01-02]
 
-      iex> Cldr.Calendar.next ~D[2019-01-01], :month
+      iex> Cldr.Calendar.next(~D[2019-01-01], :month)
       ~D[2019-02-01]
 
-      iex> Cldr.Calendar.next ~D[2019-01-01], :quarter
+      iex> Cldr.Calendar.next(~D[2019-01-01], :quarter)
       ~D[2019-04-01]
 
-      iex> Cldr.Calendar.next ~D[2019-01-01], :year
+      iex> Cldr.Calendar.next(~D[2019-01-01], :year)
       ~D[2020-01-01]
 
   """
@@ -2290,16 +2290,16 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.previous ~D[2019-01-01], :day
+      iex> Cldr.Calendar.previous(~D[2019-01-01], :day)
       ~D[2018-12-31]
 
-      iex> Cldr.Calendar.previous ~D[2019-01-01], :quarter
+      iex> Cldr.Calendar.previous(~D[2019-01-01], :quarter)
       ~D[2018-10-01]
 
-      iex> Cldr.Calendar.previous ~D[2019-01-01], :month
+      iex> Cldr.Calendar.previous(~D[2019-01-01], :month)
       ~D[2018-12-01]
 
-      iex> Cldr.Calendar.previous ~D[2019-01-01], :year
+      iex> Cldr.Calendar.previous(~D[2019-01-01], :year)
       ~D[2018-01-01]
 
   """
@@ -2376,7 +2376,7 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.localize ~D[2022-06-09], locale: "fr"
+      iex> Cldr.Calendar.localize(~D[2022-06-09], locale: "fr")
       {:ok, %Date{year: 2022, month: 6, day: 9, calendar: Cldr.Calendar.FR}}
 
   """
@@ -2450,40 +2450,40 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.localize ~D[2019-01-01], :era
+      iex> Cldr.Calendar.localize(~D[2019-01-01], :era)
       "AD"
 
-      iex> Cldr.Calendar.localize ~D[2019-01-01], :era, era: :variant
+      iex> Cldr.Calendar.localize(~D[2019-01-01], :era, era: :variant)
       "CE"
 
-      iex> Cldr.Calendar.localize ~D[2019-01-01], :day_of_week
+      iex> Cldr.Calendar.localize(~D[2019-01-01], :day_of_week)
       "Tue"
 
-      iex> Cldr.Calendar.localize ~D[0001-01-01], :day_of_week
+      iex> Cldr.Calendar.localize(~D[0001-01-01], :day_of_week)
       "Mon"
 
-      iex> Cldr.Calendar.localize ~D[2019-01-01], :days_of_week
+      iex> Cldr.Calendar.localize(~D[2019-01-01], :days_of_week)
       [{1, "Mon"}, {2, "Tue"}, {3, "Wed"}, {4, "Thu"}, {5, "Fri"}, {6, "Sat"}, {7, "Sun"}]
 
-      iex> Cldr.Calendar.localize ~D[2019-06-01], :era
+      iex> Cldr.Calendar.localize(~D[2019-06-01], :era)
       "AD"
 
-      iex> Cldr.Calendar.localize ~D[2019-06-01], :quarter
+      iex> Cldr.Calendar.localize(~D[2019-06-01], :quarter)
       "Q2"
 
-      iex> Cldr.Calendar.localize ~D[2019-06-01], :month
+      iex> Cldr.Calendar.localize(~D[2019-06-01], :month)
       "Jun"
 
-      iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week
+      iex> Cldr.Calendar.localize(~D[2019-06-01], :day_of_week)
       "Sat"
 
-      iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week, format: :wide
+      iex> Cldr.Calendar.localize(~D[2019-06-01], :day_of_week, format: :wide)
       "Saturday"
 
-      iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week, format: :narrow
+      iex> Cldr.Calendar.localize(~D[2019-06-01], :day_of_week, format: :narrow)
       "S"
 
-      iex> Cldr.Calendar.localize ~D[2019-06-01], :day_of_week, locale: "ar"
+      iex> Cldr.Calendar.localize(~D[2019-06-01], :day_of_week, locale: "ar")
       "السبت"
 
   """
@@ -2784,20 +2784,20 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.plus ~D[2020-01-01],
-      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2020-02-01])
+      iex> Cldr.Calendar.plus(~D[2020-01-01],
+      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2020-02-01]))
       ~D[2020-02-01]
 
-      iex> Cldr.Calendar.plus ~D[2020-01-01],
-      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2020-01-02])
+      iex> Cldr.Calendar.plus(~D[2020-01-01],
+      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2020-01-02]))
       ~D[2020-01-02]
 
-      iex> Cldr.Calendar.plus ~D[2020-01-01],
-      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2020-02-01])
+      iex> Cldr.Calendar.plus(~D[2020-01-01],
+      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2020-02-01]))
       ~D[2020-02-01]
 
-      iex> Cldr.Calendar.plus ~D[2020-01-01],
-      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2021-02-01])
+      iex> Cldr.Calendar.plus(~D[2020-01-01],
+      ...> Cldr.Calendar.Duration.new!(~D[2020-01-01], ~D[2021-02-01]))
       ~D[2021-02-01]
 
   """
@@ -2852,25 +2852,25 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.plus ~D[2016-02-29], :days, 1
+      iex> Cldr.Calendar.plus(~D[2016-02-29], :days, 1)
       ~D[2016-03-01]
 
-      iex> Cldr.Calendar.plus ~D[2019-03-01], :months, 1
+      iex> Cldr.Calendar.plus(~D[2019-03-01], :months, 1)
       ~D[2019-04-01]
 
-      iex> Cldr.Calendar.plus ~D[2016-02-29], :days, 1
+      iex> Cldr.Calendar.plus(~D[2016-02-29], :days, 1)
       ~D[2016-03-01]
 
-      iex> Cldr.Calendar.plus ~D[2019-02-28], :days, 1
+      iex> Cldr.Calendar.plus(~D[2019-02-28], :days, 1)
       ~D[2019-03-01]
 
-      iex> Cldr.Calendar.plus ~D[2019-03-01], :months, 1
+      iex> Cldr.Calendar.plus(~D[2019-03-01], :months, 1)
       ~D[2019-04-01]
 
-      iex> Cldr.Calendar.plus ~D[2019-03-01], :quarters, 1
+      iex> Cldr.Calendar.plus(~D[2019-03-01], :quarters, 1)
       ~D[2019-06-01]
 
-      iex> Cldr.Calendar.plus ~D[2019-03-01], :years, 1
+      iex> Cldr.Calendar.plus(~D[2019-03-01], :years, 1)
       ~D[2020-03-01]
 
   """
@@ -3157,25 +3157,25 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.minus ~D[2016-03-01], :days, 1
+      iex> Cldr.Calendar.minus(~D[2016-03-01], :days, 1)
       ~D[2016-02-29]
 
-      iex> Cldr.Calendar.minus ~D[2019-03-01], :months, 1
+      iex> Cldr.Calendar.minus(~D[2019-03-01], :months, 1)
       ~D[2019-02-01]
 
-      iex> Cldr.Calendar.minus ~D[2016-03-01], :days, 1
+      iex> Cldr.Calendar.minus(~D[2016-03-01], :days, 1)
       ~D[2016-02-29]
 
-      iex> Cldr.Calendar.minus ~D[2019-03-01], :days, 1
+      iex> Cldr.Calendar.minus(~D[2019-03-01], :days, 1)
       ~D[2019-02-28]
 
-      iex> Cldr.Calendar.minus ~D[2019-03-01], :months, 1
+      iex> Cldr.Calendar.minus(~D[2019-03-01], :months, 1)
       ~D[2019-02-01]
 
-      iex> Cldr.Calendar.minus ~D[2019-03-01], :quarters, 1
+      iex> Cldr.Calendar.minus(~D[2019-03-01], :quarters, 1)
       ~D[2018-12-01]
 
-      iex> Cldr.Calendar.minus ~D[2019-03-01], :years, 1
+      iex> Cldr.Calendar.minus(~D[2019-03-01], :years, 1)
       ~D[2018-03-01]
 
   """
@@ -3218,9 +3218,9 @@ defmodule Cldr.Calendar do
       ~D[2019-01-31]
       iex> d2 = ~D[2019-05-31]
       ~D[2019-05-31]
-      iex> Cldr.Calendar.interval d, 3, :months
+      iex> Cldr.Calendar.interval(d, 3, :months)
       [~D[2019-01-31], ~D[2019-02-28], ~D[2019-03-31]]
-      iex> Cldr.Calendar.interval d, d2, :months
+      iex> Cldr.Calendar.interval(d, d2, :months)
       [~D[2019-01-31], ~D[2019-02-28], ~D[2019-03-31],
        ~D[2019-04-30], ~D[2019-05-31]]
 
@@ -3387,13 +3387,13 @@ defmodule Cldr.Calendar do
 
   ## Example
 
-      iex> Cldr.Calendar.date_to_iso_days ~D[2019-01-01]
+      iex> Cldr.Calendar.date_to_iso_days(~D[2019-01-01])
       737425
 
-      iex> Cldr.Calendar.date_to_iso_days ~D[0001-01-01]
+      iex> Cldr.Calendar.date_to_iso_days(~D[0001-01-01])
       366
 
-      iex> Cldr.Calendar.date_to_iso_days ~D[0000-01-01]
+      iex> Cldr.Calendar.date_to_iso_days(~D[0000-01-01])
       0
 
   """
@@ -3425,13 +3425,13 @@ defmodule Cldr.Calendar do
 
   ## Example
 
-      iex> Cldr.Calendar.date_from_iso_days 737425, Calendar.ISO
+      iex> Cldr.Calendar.date_from_iso_days(737425, Calendar.ISO)
       ~D[2019-01-01]
 
-      iex> Cldr.Calendar.date_from_iso_days 366, Calendar.ISO
+      iex> Cldr.Calendar.date_from_iso_days(366, Calendar.ISO)
       ~D[0001-01-01]
 
-      iex> Cldr.Calendar.date_from_iso_days 0, Calendar.ISO
+      iex> Cldr.Calendar.date_from_iso_days(0, Calendar.ISO)
       ~D[0000-01-01]
 
   """
@@ -3470,10 +3470,10 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.date_from_tuple {2019, 3, 25}, Cldr.Calendar.Gregorian
+      iex> Cldr.Calendar.date_from_tuple({2019, 3, 25}, Cldr.Calendar.Gregorian)
       %Date{calendar: Cldr.Calendar.Gregorian, day: 25, month: 3, year: 2019}
 
-      iex> Cldr.Calendar.date_from_tuple {2019, 2, 29}, Cldr.Calendar.Gregorian
+      iex> Cldr.Calendar.date_from_tuple({2019, 2, 29}, Cldr.Calendar.Gregorian)
       {:error, :invalid_date}
 
   """
@@ -3504,10 +3504,10 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.date_from_list [year: 2019, month: 3, day: 25], Cldr.Calendar.Gregorian
+      iex> Cldr.Calendar.date_from_list([year: 2019, month: 3, day: 25], Cldr.Calendar.Gregorian)
       %Date{calendar: Cldr.Calendar.Gregorian, day: 25, month: 3, year: 2019}
 
-      iex> Cldr.Calendar.date_from_list [year: 2019, month: 2, day: 29], Cldr.Calendar.Gregorian
+      iex> Cldr.Calendar.date_from_list([year: 2019, month: 2, day: 29], Cldr.Calendar.Gregorian)
       {:error, :invalid_date}
 
   """
@@ -3584,7 +3584,7 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> days = Cldr.Calendar.date_to_iso_days ~D[2019-01-01]
+      iex> days = Cldr.Calendar.date_to_iso_days(~D[2019-01-01])
       iex> Cldr.Calendar.iso_days_to_day_of_week(days) == Cldr.Calendar.tuesday()
       true
 
@@ -3618,7 +3618,7 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.validate_calendar Cldr.Calendar.Gregorian
       {:ok, Cldr.Calendar.Gregorian}
 
-      iex> Cldr.Calendar.validate_calendar :not_a_calendar
+      iex> Cldr.Calendar.validate_calendar(:not_a_calendar)
       {:error,
        {Cldr.InvalidCalendarModule, ":not_a_calendar is not a calendar module."}}
 
