@@ -204,6 +204,7 @@ defmodule Cldr.Calendar.Preference do
                        Module.concat(@base_calendar, c |> Atom.to_string() |> Macro.camelize())}
                     end)
                     |> Map.new()
+                    |> Map.put(:iso8601, Cldr.Calendar.ISOWeek)
 
   def calendar_modules do
     @calendar_modules
@@ -211,6 +212,10 @@ defmodule Cldr.Calendar.Preference do
 
   def calendar_module(calendar) when calendar in @known_calendars do
     Map.fetch!(calendar_modules(), calendar)
+  end
+
+  def calendar_module(:iso8601) do
+    Cldr.Calendar.ISOWeek
   end
 
   def calendar_module(other) do
