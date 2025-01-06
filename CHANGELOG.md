@@ -10,6 +10,8 @@ This is the changelog for Cldr Calendars v1.27.0 released on January 7th, 2025. 
 
 * Allow locale parameter to be a binary or atom for `calendar_from_locale/2`, `min_days_for_locale/2` and `first_day_for_locale/2`.
 
+* A locale with a `-u-fw-mon` (first day of week is a Monday) but no calendar specified will return `Cldr.Calendar.Gregorian`. This is spec compliant and is useful to override the "first day of week". For example, `en` defines a calendar that starts on Sunday. If it is desired to us a week that starts on a Monday, use `en-u-fw-mon`. 
+
 ## Cldr.Calendars v1.26.4
 
 This is the changelog for Cldr Calendars v1.26.4 released on December 29th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
