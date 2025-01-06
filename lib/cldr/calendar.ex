@@ -124,7 +124,7 @@ defmodule Cldr.Calendar do
         }
 
   @typedoc """
-  Super type of any date or time
+  Super type of any date or time.
 
   """
   @type any_date_time :: date() | time() | naive_date_time() | date_time()
@@ -179,7 +179,7 @@ defmodule Cldr.Calendar do
   Specifies the days of the week as integers.
 
   Days of the week are encoded as the integers `1` through
-  `7` with `1` representig Monday and 7 representing Sunday.
+  `7` with `1` representing Monday and 7 representing Sunday.
 
   Note that a calendar can be configured to start
   on any day of the week. `day_of_week` is only a
