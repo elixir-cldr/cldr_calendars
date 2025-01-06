@@ -431,8 +431,12 @@ defmodule Cldr.Calendar do
   alias Cldr.LanguageTag
   alias Cldr.Calendar.Config
 
+  @doc false
   defguard is_full_date(date)
            when is_map_key(date, :year) and is_map_key(date, :month) and is_map_key(date, :day)
+
+  @doc false
+  defguard is_locale_reference(locale) when is_binary(locale) or is_atom(locale)
 
   @doc false
   def cldr_backend_provider(config) do
@@ -544,12 +548,13 @@ defmodule Cldr.Calendar do
     Cldr.Calendar.Preference.calendar_from_locale(locale)
   end
 
-  def calendar_from_locale(locale, backend \\ Cldr.default_backend!()) when is_binary(locale) do
+  def calendar_from_locale(locale, backend \\ Cldr.default_backend!()) when is_locale_reference(locale) do
     Cldr.Calendar.Preference.calendar_from_locale(locale, backend)
   end
 
   @doc """
-  Creates a new calendar based upon the provided configuration.
+  Creates a new proleptic gregrian calendar based upon the
+  provided configuration.
 
   If a module exists with the `calendar_module` name then it
   is returned, not recreated.
@@ -613,18 +618,18 @@ defmodule Cldr.Calendar do
     week of the year may be less than 7 days
     in length. The default is `1`.
 
-  * `:month_of_year` determines the Cldr.Calendar.Gregorian
+  * `:month_of_year` determines the `Cldr.Calendar.Gregorian`
     month of year in which this calendar begins
     or ends. The default is `1`.
 
   * `:year` is used to determine which calendar
-    Greogian year is applicable for a given
+    Gregogian year is applicable for a given
     calendar date. The valid options are `:first`,
-    `:last` and `majority`.  The default is
+    `:last` and `:majority`.  The default is
     `:majority`.
 
   * `:min_days_in_first_week` is used to determine
-    how many days of the Cldr.Calendar.Gregorian year must be in
+    how many days of the `Cldr.Calendar.Gregorian` year must be in
     the first week of a calendar year. This is used
     when determining when the year starts for week-based
     years.  The default is `4` which is consistent with
@@ -1889,7 +1894,7 @@ defmodule Cldr.Calendar do
     |> first_day_for_territory
   end
 
-  def first_day_for_locale(locale, options \\ []) when is_binary(locale) do
+  def first_day_for_locale(locale, options \\ []) when is_locale_reference(locale) do
     backend = Keyword.get_lazy(options, :backend, &default_backend/0)
 
     with {:ok, locale} <- Cldr.validate_locale(locale, backend) do
@@ -1908,7 +1913,7 @@ defmodule Cldr.Calendar do
     |> min_days_for_territory
   end
 
-  def min_days_for_locale(locale, options \\ []) when is_binary(locale) do
+  def min_days_for_locale(locale, options \\ []) when is_locale_reference(locale) do
     backend = Keyword.get_lazy(options, :backend, &default_backend/0)
 
     with {:ok, locale} <- Cldr.validate_locale(locale, backend) do

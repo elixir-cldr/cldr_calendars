@@ -2,6 +2,14 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v1.27.0
+
+This is the changelog for Cldr Calendars v1.27.0 released on January 7th, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Allow locale parameter to be a binary or atom for `calendar_from_locale/2`, `min_days_for_locale/2` and `first_day_for_locale/2`.
+
 ## Cldr.Calendars v1.26.4
 
 This is the changelog for Cldr Calendars v1.26.4 released on December 29th, 2024.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
