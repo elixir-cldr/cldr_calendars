@@ -145,6 +145,12 @@ defmodule Cldr.Calendar.Preference do
       iex> Cldr.Calendar.Preference.calendar_from_locale(:en)
       {:ok, Cldr.Calendar.US}
 
+      iex> Cldr.Calendar.Preference.calendar_from_locale("en-u-ca-iso8601")
+      {:ok, Cldr.Calendar.ISOWeek}
+
+      iex> Cldr.Calendar.Preference.calendar_from_locale("en-u-fw-mon")
+      {:ok, Cldr.Calendar.Gregorian}
+
       iex> Cldr.Calendar.Preference.calendar_from_locale(:"fa-IR")
       {:ok, Cldr.Calendar.Persian}
 
@@ -153,6 +159,15 @@ defmodule Cldr.Calendar.Preference do
 
   """
   def calendar_from_locale(locale \\ Cldr.get_locale())
+
+  # If no calendar is specified but the first day of the week is Monday then
+  # the behaviour is the same as the gregorian calendar. This can be useful
+  # to override the behaviour of territories where the week is defined.
+  # to start on a Sunday.
+
+  def calendar_from_locale(%LanguageTag{locale: %{calendar: nil, fw: :mon}}) do
+    {:ok, Cldr.Calendar.Gregorian}
+  end
 
   def calendar_from_locale(%LanguageTag{locale: %{calendar: nil}} = locale) do
     locale
