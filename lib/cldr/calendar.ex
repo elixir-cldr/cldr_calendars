@@ -1733,7 +1733,7 @@ defmodule Cldr.Calendar do
 
   * `:locale` is any locale or locale name validated
     by `Cldr.validate_locale/2`.  The default is
-    `Cldr.get_locale()` which returns the locale
+    `Cldr.get_locale/0` which returns the locale
     set for the current process.
 
   * `:territory` is any valid ISO-3166-2 territory
@@ -1818,7 +1818,7 @@ defmodule Cldr.Calendar do
 
   * `:locale` is any locale or locale name validated
     by `Cldr.validate_locale/2`.  The default is
-    `Cldr.get_locale()` which returns the locale
+    `Cldr.get_locale/0` which returns the locale
     set for the current process.
 
   * `:territory` is any valid ISO-3166-2 territory
