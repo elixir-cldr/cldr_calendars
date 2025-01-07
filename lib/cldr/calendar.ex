@@ -690,29 +690,6 @@ defmodule Cldr.Calendar do
     end
   end
 
-  # @doc """
-  # Returns a calendar configured according to
-  # the preferences defined for a locale.
-  #
-  # """
-  # @base_calendar_name Cldr.Calendar
-  # def calendar_for_locale(locale, options \\ [])
-  #
-  # def calendar_for_locale(%LanguageTag{} = locale, config) do
-  #   locale
-  #   |> Cldr.Locale.territory_from_locale()
-  #   |> calendar_for_territory(config)
-  # end
-  #
-  # def calendar_for_locale(locale_name, config) when is_binary(locale_name) do
-  #   backend = Keyword.get_lazy(config, :backend, &default_backend/0)
-  #
-  #   with {:ok, backend} <- Cldr.validate_backend(backend),
-  #        {:ok, locale} <- Cldr.validate_locale(locale_name, backend) do
-  #     calendar_for_locale(locale, config)
-  #   end
-  # end
-
   @doc """
   Returns a calendar configured according to
   the preferences defined for a territory.
@@ -745,6 +722,7 @@ defmodule Cldr.Calendar do
       function_exported?(module, :cldr_calendar_type, 0)
   end
 
+  @doc false
   def same_as_default?(config) do
     config = Config.extract_options(config)
 
