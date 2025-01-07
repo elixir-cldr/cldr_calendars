@@ -84,5 +84,4 @@ defmodule Cldr.Calendar.Range.Relationship.Test do
     r2 = Date.range(~D[2024-09-11], ~D[2300-01-01])
     assert Cldr.Calendar.Interval.compare(r1, r2) == :overlaps
   end
-
 end
