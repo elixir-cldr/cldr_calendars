@@ -176,7 +176,6 @@ defmodule Cldr.Calendar.Preference do
 
   def calendar_from_locale(%LanguageTag{locale: %{calendar: nil, fw: first_day}})
       when first_day in @day_codes do
-
     {:ok, day} = Map.fetch(@first_day, first_day)
     module = first_day |> Atom.to_string() |> String.capitalize() |> String.to_atom()
     calendar_module = Module.concat([@base_calendar, Gregorian, module])
