@@ -1863,7 +1863,7 @@ defmodule Cldr.Calendar do
   Returns the first day of a week for a given
   locale.
 
-  Note that the first of the first week is commonly
+  Note that the first day of the first week is commonly
   not aligned with the first day of the year.
 
   """

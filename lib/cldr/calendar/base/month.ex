@@ -176,6 +176,7 @@ defmodule Cldr.Calendar.Base.Month do
     {:error, missing_date_error("day_of_year", year, month, day)}
   end
 
+  # Note this returns the cardinal day of week (1 = Monday, 7 = Sunday)
   def day_of_week(year, month, day, config) when is_date(year, month, day) do
     {year, month, day} = date_to_iso_date(year, month, day, config)
     {day, _first, _last} = ISO.day_of_week(year, month, day, :default)
@@ -185,6 +186,14 @@ defmodule Cldr.Calendar.Base.Month do
   def day_of_week(year, month, day, _config) do
     {:error, missing_date_error("day_of_week", year, month, day)}
   end
+
+  defp ordinal_day_to_atom_day(1), do: :monday
+  defp ordinal_day_to_atom_day(2), do: :tuesday
+  defp ordinal_day_to_atom_day(3), do: :wednesday
+  defp ordinal_day_to_atom_day(4), do: :thursday
+  defp ordinal_day_to_atom_day(5), do: :friday
+  defp ordinal_day_to_atom_day(6), do: :saturday
+  defp ordinal_day_to_atom_day(7), do: :sunday
 
   def months_in_year(year, _config) when is_integer(year) do
     Calendar.ISO.months_in_year(year)
