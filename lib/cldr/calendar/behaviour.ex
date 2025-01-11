@@ -3,9 +3,8 @@ defmodule Cldr.Calendar.Behaviour do
     epoch = Keyword.fetch!(opts, :epoch)
 
     {date, []} = Code.eval_quoted(epoch)
-    epoch = Cldr.Calendar.date_to_iso_days(date)
-
-    epoch_day_of_week = Date.day_of_week(date)
+    epoch_iso_days = Cldr.Calendar.date_to_iso_days(date)
+    epoch_day_of_week = date |> Date.convert!(Calendar.ISO) |> Date.day_of_week()
     days_in_week = Keyword.get(opts, :days_in_week, 7)
     first_day_of_week = Keyword.get(opts, :first_day_of_week, 1)
 
@@ -14,7 +13,7 @@ defmodule Cldr.Calendar.Behaviour do
     months_in_ordinary_year = Keyword.get(opts, :months_in_ordinary_year, 12)
     months_in_leap_year = Keyword.get(opts, :months_in_leap_year, months_in_ordinary_year)
 
-    quote location: :keep do
+    quote do
       import Cldr.Macros
 
       @behaviour Calendar
@@ -25,7 +24,7 @@ defmodule Cldr.Calendar.Behaviour do
       @days_in_week unquote(days_in_week)
       @quarters_in_year 4
 
-      @epoch unquote(epoch)
+      @epoch unquote(epoch_iso_days)
       @epoch_day_of_week unquote(epoch_day_of_week)
       @first_day_of_week unquote(first_day_of_week)
       @last_day_of_week Cldr.Math.amod(@first_day_of_week + @days_in_week - 1, @days_in_week)
@@ -290,10 +289,31 @@ defmodule Cldr.Calendar.Behaviour do
                  last_day_of_week :: non_neg_integer()}
 
         def day_of_week(year, month, day, :default = starting_on) do
-          days = date_to_iso_days(year, month, day)
-          day_of_week = Cldr.Math.amod(days - 1, @days_in_week)
+          iso_days = date_to_iso_days(year, month, day)
 
-          {day_of_week, @first_day_of_week, @last_day_of_week}
+          if @first_day_of_week == :first do
+            first_day_of_year = date_to_iso_days(year, 1, 1)
+            day_of_week = Integer.mod(iso_days - first_day_of_year, 7) + 1
+            {day_of_week, 1, 7}
+          else
+            day_of_week =
+              Integer.mod(iso_days + day_of_week_offset(starting_on, @first_day_of_week), 7) + 1
+
+            {day_of_week, 1, 7}
+          end
+        end
+
+        def day_of_week(_year, _month, _day, starting_on) do
+          raise ArgumentError,
+                "starting_on #{inspect(starting_on)} is not supported for #{inspect(__MODULE__)}"
+        end
+
+        # The offset here is based upon the epoch being
+        # 0000-01-01 which is a saturday=6. Therefore the offset
+        # is what we add to the iso_days to get to 6.
+
+        defp day_of_week_offset(:default, first_day_of_week) do
+          6 - first_day_of_week
         end
 
         defoverridable day_of_week: 4

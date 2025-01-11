@@ -6,7 +6,7 @@ defmodule Cldr.Calendar.PropertyTest do
   @max_runs 50_000
 
   property "next and previous weeks" do
-    check all(date <- Calendar.Date.generate_date(), max_runs: @max_runs) do
+    check all(date <- Cldr.Calendar.Date.generate_date_in_week_calendar(), max_runs: @max_runs) do
       this = Cldr.Calendar.Interval.week(date)
       previous = Cldr.Calendar.previous(this, :week, coerce: true)
       next = Cldr.Calendar.next(this, :week, coerce: true)
@@ -20,7 +20,7 @@ defmodule Cldr.Calendar.PropertyTest do
   end
 
   property "next and previous months" do
-    check all(date <- Calendar.Date.generate_date(), max_runs: @max_runs) do
+    check all(date <- Cldr.Calendar.Date.generate_date_in_week_calendar(), max_runs: @max_runs) do
       this = Cldr.Calendar.Interval.month(date)
       previous = Cldr.Calendar.previous(this, :month, coerce: true)
       next = Cldr.Calendar.next(this, :month, coerce: true)
@@ -34,7 +34,7 @@ defmodule Cldr.Calendar.PropertyTest do
   end
 
   property "next and previous quarters" do
-    check all(date <- Calendar.Date.generate_date(), max_runs: @max_runs) do
+    check all(date <- Cldr.Calendar.Date.generate_date_in_week_calendar(), max_runs: @max_runs) do
       this = Cldr.Calendar.Interval.quarter(date)
       previous = Cldr.Calendar.previous(this, :quarter, coerce: true)
       next = Cldr.Calendar.next(this, :quarter, coerce: true)

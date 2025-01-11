@@ -147,14 +147,8 @@ defmodule Cldr.Calendar.Base.Week do
     {:error, missing_date_error("day_of_year", year, week, day)}
   end
 
-  def day_of_week(_year, _week, day, %{first_or_last: :first} = config) when is_integer(day) do
-    first_day = config.day_of_week
-    Math.amod(first_day + day - 1, days_in_week())
-  end
-
-  def day_of_week(_year, _week, day, %{first_or_last: :last} = config) when is_integer(day) do
-    last_day = config.day_of_week
-    Math.amod(last_day + day, days_in_week())
+  def day_of_week(_year, _week, day, _config) when is_integer(day) do
+    day
   end
 
   def day_of_week(_year, _week, day, _config) do

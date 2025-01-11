@@ -14,42 +14,45 @@ defmodule Cldr.Calendar.Week.Test do
     assert Calendars.Sunday.days_in_month(2013, 12) == 35
   end
 
+  # Day of week is always the ordinal day. And therefore for
+  # week based calendars is just `day`.
+
   test "day of week for ISOWeek calendar is correct" do
     assert Cldr.Calendar.day_of_week(date(2019, 01, 01, Cldr.Calendar.ISOWeek)) == 1
   end
 
   test "day of week for NRF calendar is correct" do
-    assert Cldr.Calendar.day_of_week(date(2019, 01, 01, Cldr.Calendar.NRF)) == 7
+    assert Cldr.Calendar.day_of_week(date(2019, 01, 01, Cldr.Calendar.NRF)) == 1
   end
 
   test "day of week for Sunday calendar is correct" do
     {:ok, date} = Date.new(2019, 1, 1, Calendars.Sunday)
-    assert Cldr.Calendar.day_of_week(date) == 7
+    assert Cldr.Calendar.day_of_week(date) == 1
   end
 
   test "day of week for Saturday calendar is correct" do
     {:ok, date} = Date.new(2019, 1, 1, Calendars.Saturday)
-    assert Cldr.Calendar.day_of_week(date) == 6
+    assert Cldr.Calendar.day_of_week(date) == 1
   end
 
   test "day of week for Friday calendar is correct" do
     {:ok, date} = Date.new(2019, 1, 1, Calendars.Friday)
-    assert Cldr.Calendar.day_of_week(date) == 5
+    assert Cldr.Calendar.day_of_week(date) == 1
   end
 
   test "day of week for Thursday calendar is correct" do
     {:ok, date} = Date.new(2019, 1, 1, Calendars.Thursday)
-    assert Cldr.Calendar.day_of_week(date) == 4
+    assert Cldr.Calendar.day_of_week(date) == 1
   end
 
   test "day of week for Wednesday calendar is correct" do
     {:ok, date} = Date.new(2019, 1, 1, Calendars.Wednesday)
-    assert Cldr.Calendar.day_of_week(date) == 3
+    assert Cldr.Calendar.day_of_week(date) == 1
   end
 
   test "day of week for Tuesday calendar is correct" do
     {:ok, date} = Date.new(2019, 1, 1, Calendars.Tuesday)
-    assert Cldr.Calendar.day_of_week(date) == 2
+    assert Cldr.Calendar.day_of_week(date) == 1
   end
 
   test "day of week for Monday calendar is correct" do

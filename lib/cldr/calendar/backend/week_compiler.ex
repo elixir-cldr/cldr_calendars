@@ -296,7 +296,10 @@ defmodule Cldr.Calendar.Compiler.Week do
 
       @doc """
       Calculates the day of the week from the given `year`, `month`, and `day`.
-      It is an integer from 1 to 7, where 1 is Monday and 7 is Sunday.
+      It is an integer where 1 means the first day of the week and 7 means the
+      last day of the week.
+
+      Explicity, `1` does *not* mean `Monday`.
 
       """
       @spec day_of_week(
@@ -312,10 +315,7 @@ defmodule Cldr.Calendar.Compiler.Week do
 
       @impl true
       def day_of_week(year, month, day, :default) do
-        %{day_of_week: first_day} = __config__()
-        last_day = Cldr.Math.amod(first_day + days_in_week() - 1, days_in_week())
-        day = Week.day_of_week(year, month, day, __config__())
-        {day, first_day, last_day}
+        {day, 1, 7}
       end
 
       @doc """

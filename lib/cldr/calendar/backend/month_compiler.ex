@@ -313,14 +313,19 @@ defmodule Cldr.Calendar.Compiler.Month do
 
       @doc """
       Calculates the day of the week from the given `year`, `month`, and `day`.
-      It is an integer from 1 to 7, where 1 is Monday and 7 is Sunday.
+      It is an integer from 1 to 7, where 1 means "first day of the week"
+      and 7 means "last day of the week".
+
+      This means the value is an ordinal day of week and is relative to
+      the week as defined by a given calendar. It specifically does not
+      mean that a return value of `{1, 1, 7}` means that `1` is "Monday".
 
       """
       @spec day_of_week(
               year :: Cldr.Calendar.year(),
               month :: Cldr.Calendar.month(),
               day :: Cldr.Calendar.day(),
-              :default | atom()
+              starting_on :: :default | atom()
             ) ::
               {day_of_week :: Calendar.day_of_week(),
                first_day_of_week ::
@@ -328,13 +333,10 @@ defmodule Cldr.Calendar.Compiler.Month do
               | {:error, {module(), String.t()}}
 
       @impl true
-      def day_of_week(year, month, day, :default) do
-        first_day = day_of_week_of_first_day(year, __config__())
-        last_day = Cldr.Math.amod(first_day + days_in_week() - 1, days_in_week())
-
-        case Month.day_of_week(year, month, day, __config__()) do
+      def day_of_week(year, month, day, starting_on) do
+        case Month.day_of_week(year, month, day, starting_on, __config__()) do
           {:error, reason} -> {:error, reason}
-          day -> {day, first_day, last_day}
+          day -> {day, 1, 7}
         end
       end
 

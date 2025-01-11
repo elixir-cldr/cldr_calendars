@@ -54,4 +54,16 @@ defmodule Cldr.Test.Calendars do
       weeks_in_month: [5, 4, 4],
       min_days_in_first_week: 7
   end
+
+  defmodule Month.Sunday do
+    use Cldr.Calendar.Base.Month,
+      day_of_week: 7,
+      min_days_in_first_week: 1
+  end
+
+  defmodule Month.Friday do
+    use Cldr.Calendar.Base.Month,
+      day_of_week: 5,
+      min_days_in_first_week: 1
+  end
 end
