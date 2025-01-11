@@ -178,18 +178,17 @@ defmodule Cldr.Calendar.Base.Month do
 
   # Note this returns the ordinal day of week where `1` means
   # "first day of the week" and 7 means "last day of the week".
+  # The one exception is if `starting_on` is set to `:monday` in
+  # which case we can interpret `1` to mean "Monday".
 
   def day_of_week(year, month, day, _starting_on, %{day_of_week: :first} = config)
       when is_date(year, month, day) do
-    {iso_year, iso_month, iso_day} = date_to_iso_date(year, month, day, config)
-    iso_days = Calendar.ISO.date_to_iso_days(iso_year, iso_month, iso_day)
+    iso_days = date_to_iso_days(year, month, day, config)
     Integer.mod(iso_days - first_gregorian_day_of_year(year, config), 7) + 1
   end
 
   def day_of_week(year, month, day, starting_on, config) when is_date(year, month, day) do
-    {iso_year, iso_month, iso_day} = date_to_iso_date(year, month, day, config)
-    iso_days = Calendar.ISO.date_to_iso_days(iso_year, iso_month, iso_day)
-
+    iso_days = date_to_iso_days(year, month, day, config)
     iso_days_to_day_of_week(iso_days, starting_on, config)
   end
 
@@ -206,25 +205,19 @@ defmodule Cldr.Calendar.Base.Month do
   # 0000-01-01 which is a saturday=6. Therefore the offset
   # is what we add to the iso_days to get to 6.
 
-  defp day_of_week_offset(:default, config) do
-    6 - config.day_of_week
-  end
+  defp day_of_week_offset(:default, config), do: 6 - config.day_of_week
+  defp day_of_week_offset(:monday, _config), do: 5
+  defp day_of_week_offset(:tuesday, _config), do: 4
+  defp day_of_week_offset(:wednesday, _config), do: 3
+  defp day_of_week_offset(:thursday, _config), do: 2
+  defp day_of_week_offset(:friday, _config), do: 1
+  defp day_of_week_offset(:saturday, _config), do: 0
+  defp day_of_week_offset(:sunday, _config), do: 6
 
   defp day_of_week_offset(starting_on, config) do
     raise ArgumentError,
           "starting_on #{inspect(starting_on)} is not supported for #{inspect(config.calendar)}"
   end
-
-  # TODO Does the starting_on param even make sense
-  # for configured calendars?
-
-  # defp day_of_week_offset(:wednesday, config), do: 3
-  # defp day_of_week_offset(:thursday, config), do: 2
-  # defp day_of_week_offset(:friday, config), do: 1
-  # defp day_of_week_offset(:saturday, config), do: 0
-  # defp day_of_week_offset(:sunday, config), do: 6
-  # defp day_of_week_offset(:monday, config), do: 5
-  # defp day_of_week_offset(:tuesday, config), do: 4
 
   def months_in_year(year, _config) when is_integer(year) do
     Calendar.ISO.months_in_year(year)

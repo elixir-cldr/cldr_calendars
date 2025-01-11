@@ -1173,14 +1173,9 @@ defmodule Cldr.Calendar do
 
   """
   @spec iso_day_of_week(date()) :: Calendar.day_of_week()
-  def iso_day_of_week(%{calendar: Calendar.ISO} = date) do
-    Date.day_of_week(date, :default)
-  end
 
   def iso_day_of_week(date) do
-    date
-    |> Date.convert!(Calendar.ISO)
-    |> Date.day_of_week(:default)
+    Date.day_of_week(date, :monday)
   end
 
   @doc """

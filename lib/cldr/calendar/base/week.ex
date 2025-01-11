@@ -147,11 +147,16 @@ defmodule Cldr.Calendar.Base.Week do
     {:error, missing_date_error("day_of_year", year, week, day)}
   end
 
-  def day_of_week(_year, _week, day, _config) when is_integer(day) do
+  def day_of_week(_year, _week, day, :default, _config) when is_integer(day) do
     day
   end
 
-  def day_of_week(_year, _week, day, _config) do
+  def day_of_week(year, week, day, starting_on, config) when is_date(year, week, day) do
+    iso_days = date_to_iso_days(year, week, day, config)
+    Month.iso_days_to_day_of_week(iso_days, starting_on, config)
+  end
+
+  def day_of_week(_year, _week, day, _starting_on, _config) do
     {:error, missing_day_error("day_of_week", day)}
   end
 

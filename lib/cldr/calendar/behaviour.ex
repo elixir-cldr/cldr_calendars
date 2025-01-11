@@ -296,7 +296,7 @@ defmodule Cldr.Calendar.Behaviour do
             {day_of_week, 1, 7}
           end
         else
-          def day_of_week(year, month, day, :default = starting_on) do
+          def day_of_week(year, month, day, starting_on) do
             iso_days = date_to_iso_days(year, month, day)
             day_of_week =
               Integer.mod(iso_days + day_of_week_offset(starting_on, @first_day_of_week), 7) + 1
@@ -305,17 +305,23 @@ defmodule Cldr.Calendar.Behaviour do
           end
         end
 
-        def day_of_week(_year, _month, _day, starting_on) do
-          raise ArgumentError,
-                "starting_on #{inspect(starting_on)} is not supported for #{inspect(__MODULE__)}"
-        end
-
         # The offset here is based upon the epoch being
         # 0000-01-01 which is a saturday=6. Therefore the offset
         # is what we add to the iso_days to get to 6.
 
-        defp day_of_week_offset(:default, first_day_of_week) do
-          6 - first_day_of_week
+        @doc false
+        def day_of_week_offset(:default, first_day_of_week), do: 6 - first_day_of_week
+        def day_of_week_offset(:monday, _first_day_of_week), do: 5
+        def day_of_week_offset(:tuesday, _first_day_of_week), do: 4
+        def day_of_week_offset(:wednesday, _first_day_of_week), do: 3
+        def day_of_week_offset(:thursday, _first_day_of_week), do: 2
+        def day_of_week_offset(:friday, _first_day_of_week), do: 1
+        def day_of_week_offset(:saturday, _first_day_of_week), do: 0
+        def day_of_week_offset(:sunday, _first_day_of_week), do: 6
+
+        def day_of_week_offset(starting_on, _first_day_of_week) do
+          raise ArgumentError,
+                "starting_on #{inspect(starting_on)} is not supported for #{inspect(__MODULE__)}"
         end
 
         defoverridable day_of_week: 4
