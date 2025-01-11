@@ -1148,6 +1148,42 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Returns the ISO day of week for a `date`
+  where `1` means `Monday` and `7` means
+  `Sunday`.
+
+  ### Arguments
+
+  * `date` is any `t:Date.t/0` or a map with one or
+    more of the fields `:year`, `:month`, `:day` and
+    optionally `:calendar`.
+
+  ### Returns
+
+  * An integer ISO day of week in the range
+    `1..7` where `1` is Monday` and `7` is
+    `Sunday`.
+
+  ### Examples
+
+      iex> {:ok, us_calendar} = Cldr.Calendar.calendar_from_locale("en")
+      iex> {:ok, us_date} = Date.new(2025, 1, 1, us_calendar)
+      iex> Cldr.Calendar.iso_day_of_week(us_date)
+      3
+
+  """
+  @spec iso_day_of_week(date()) :: Calendar.day_of_week()
+  def iso_day_of_week(%{calendar: Calendar.ISO} = date) do
+    Date.day_of_week(date, :default)
+  end
+
+  def iso_day_of_week(date) do
+    date
+    |> Date.convert!(Calendar.ISO)
+    |> Date.day_of_week(:default)
+  end
+
+  @doc """
   Returns the Modified Julian Day of
   a `t:Date.t/0`.
 
