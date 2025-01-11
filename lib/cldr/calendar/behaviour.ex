@@ -288,14 +288,16 @@ defmodule Cldr.Calendar.Behaviour do
                 {Calendar.day_of_week(), first_day_of_week :: non_neg_integer(),
                  last_day_of_week :: non_neg_integer()}
 
-        def day_of_week(year, month, day, :default = starting_on) do
-          iso_days = date_to_iso_days(year, month, day)
-
-          if @first_day_of_week == :first do
+        if @first_day_of_week == :first do
+          def day_of_week(year, month, day, :default = starting_on) do
+            iso_days = date_to_iso_days(year, month, day)
             first_day_of_year = date_to_iso_days(year, 1, 1)
             day_of_week = Integer.mod(iso_days - first_day_of_year, 7) + 1
             {day_of_week, 1, 7}
-          else
+          end
+        else
+          def day_of_week(year, month, day, :default = starting_on) do
+            iso_days = date_to_iso_days(year, month, day)
             day_of_week =
               Integer.mod(iso_days + day_of_week_offset(starting_on, @first_day_of_week), 7) + 1
 
