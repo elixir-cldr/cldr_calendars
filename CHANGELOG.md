@@ -2,6 +2,22 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v2.0.0
+
+This is the changelog for Cldr Calendars v2.0.0 released on January _____, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Breaking Change
+
+* `Date.day_of_week/2` will now return an ordinal day of week for all `ex_cldr_calendar`-based calendars. Previously the result was a cardinal day of week which meant that the results from `Date.beginning_of_week/2` and `Date.end_of_week/2` were returning incorrect results. This outcome is the result of a [lengthy discussion](https://github.com/elixir-lang/elixir/pull/14162) about whether the result should be cardinal or ordinal.  The consequences are that the day of week is now `1` meaning "first day of the week". It specifically does *not* mean `1` denotes "Monday". 
+
+### Bug Fixes
+
+* Fixes `Date.beginning_of_week/2` and `Date.end_of_week/2` - related to the breaking change in results returned by `Date.day_of_week/2` for `ex_cldr_calendar`-based calendars.
+
+### Enhancements
+
+* Adds `Cldr.Calendar.iso_day_of_week/1` to return a day of week that is defined as `1` is "Monday" and `7` is "Sunday". Any application code which fails now due to the breaking change *should* be able to replace calls to `Date.day_of_week/1` with calls to `Cldr.Calendar.iso_day_of_week/1`.
+
 ## Cldr.Calendars v1.27.0
 
 This is the changelog for Cldr Calendars v1.27.0 released on January 7th, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
