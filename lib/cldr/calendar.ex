@@ -3612,6 +3612,9 @@ defmodule Cldr.Calendar do
   Validates if the argument is a Cldr.Calendar
   calendar module.
 
+  If the calendar is `Calendar.ISO` then the
+  validated calendar is returned as `Cldr.Calendar.Gregorian`.
+
   ### Arguments
 
   * `calendar_module` is a module that implements the
@@ -3625,7 +3628,10 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.validate_calendar Cldr.Calendar.Gregorian
+      iex> Cldr.Calendar.validate_calendar(Cldr.Calendar.Gregorian)
+      {:ok, Cldr.Calendar.Gregorian}
+
+      iex> Cldr.Calendar.validate_calendar(Calendar.ISO)
       {:ok, Cldr.Calendar.Gregorian}
 
       iex> Cldr.Calendar.validate_calendar(:not_a_calendar)
@@ -3633,6 +3639,10 @@ defmodule Cldr.Calendar do
        {Cldr.InvalidCalendarModule, ":not_a_calendar is not a calendar module."}}
 
   """
+  def validate_calendar(Calendar.ISO) do
+    {:ok, Cldr.Calendar.Gregorian}
+  end
+
   def validate_calendar(calendar_module) when is_atom(calendar_module) do
     if Code.ensure_loaded?(calendar_module) &&
          function_exported?(calendar_module, :cldr_calendar_type, 0) do

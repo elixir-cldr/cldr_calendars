@@ -8,11 +8,15 @@ This is the changelog for Cldr Calendars v2.0.0 released on January _____, 2025.
 
 ### Breaking Change
 
-* `Date.day_of_week/2` will now return an ordinal day of week for all `ex_cldr_calendar`-based calendars. Previously the result was a cardinal day of week which meant that the results from `Date.beginning_of_week/2` and `Date.end_of_week/2` were returning incorrect results. This outcome is the result of a [lengthy discussion](https://github.com/elixir-lang/elixir/pull/14162) about whether the result should be cardinal or ordinal.  The consequences are that the day of week is now `1` meaning "first day of the week". It specifically does *not* mean `1` denotes "Monday". 
+* `Date.day_of_week/2` will now return an ordinal day of week for all `ex_cldr_calendar`-based calendars. Previously the result was a cardinal day of week which meant that the results from `Date.beginning_of_week/2` and `Date.end_of_week/2` were returning incorrect results. This outcome is the result of a [lengthy discussion](https://github.com/elixir-lang/elixir/pull/14162) about whether the result should be cardinal or ordinal.  The consequences are that the day of week is now `1` meaning "first day of the week". It specifically does *not* mean `1` denotes "Monday".
+
+* `MyApp.Cldr.Calendar.strftime_options/1` now expects a keyword list of options only. Previously the first optional argument was a locale and the second optional argument was a keyword list. This simplifies specifying a calendar or a locale or both.
 
 ### Bug Fixes
 
 * Fixes `Date.beginning_of_week/2` and `Date.end_of_week/2` - related to the breaking change in results returned by `Date.day_of_week/2` for `ex_cldr_calendar`-based calendars.
+
+* Fix `Cldr.Calendar.strftime_options!/0` to return the correct values for day of the week in alignment with the breaking change above.
 
 ### Enhancements
 

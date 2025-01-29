@@ -27,7 +27,7 @@ defmodule Cldr.Calendar.Backend do
         alias Cldr.Locale
         alias Cldr.LanguageTag
 
-        @default_calendar :gregorian
+        @default_cldr_calendar :gregorian
 
         # These are calendars for which there is CLDR
         # localization data, era definitions and so on. So
@@ -279,26 +279,22 @@ defmodule Cldr.Calendar.Backend do
 
         @doc """
         Returns a keyword list of options than can be applied to
-        `NimbleStrftime.format/3`.
-
-        The hex package [nimble_strftime](https://hex.pm/packages/nimble_strftime)
-        provides a `format/3` function to format dates, times and datetimes.
-        It takes a set of options that can return day, month and am/pm names.
+        `Calendar.strftime/3`.
 
         `strftime_options!` returns a keyword list than can be used as these
         options to return localised names for days, months and am/pm.
 
         ## Arguments
 
-        * `locale` is any locale returned by `MyApp.Cldr.known_locale_names/0`. The
-          default is `MyApp.Cldr.get_locale/0`
-
-        * `options` is a set of keyword options. The default is `[]`
+        * `options` is a set of keyword options. The default is `[]`.
 
         ## Options
 
-        * `:calendar` is the name of any known CLDR calendar. The default
-          is `:gregorian`.
+        * `locale` is any locale returned by `MyApp.Cldr.known_locale_names/0`. The
+          default is `MyApp.Cldr.get_locale/0`
+
+        * `:calendar` is the name of any known calendar. The default
+          is `Cldr.Calendar.Gregorian`.
 
         ## Example
 
@@ -313,34 +309,55 @@ defmodule Cldr.Calendar.Backend do
 
         ## Typical usage
 
-            iex: NimbleStrftime.format(Date.utc_today(), MyApp.Cldr.Calendar.strftime_options!())
+            iex> {:ok, calendar} = Cldr.Calendar.calendar_from_locale("he")
+            iex> {:ok, date} = Date.new(2025, 1, 26, calendar)
+            iex> Calendar.strftime date, "%a",
+            ...>   MyApp.Cldr.Calendar.strftime_options!(calendar: calendar, locale: "en")
+            "Sun"
 
         """
 
-        def strftime_options!(locale \\ unquote(backend).get_locale(), options \\ []) do
-          calendar = Keyword.get(options, :calendar, @default_calendar)
+        def strftime_options!(options \\ []) do
+          locale = Keyword.get_lazy(options, :locale, &Cldr.get_locale/0)
+          calendar = Keyword.get(options, :calendar, Calendar.ISO)
+          calendar = if calendar == Calendar.ISO, do: Cldr.Calendar.Gregorian, else: calendar
+          backend = unquote(backend)
 
-          with {:ok, locale} <- Cldr.validate_locale(locale) do
+          with {:ok, locale} <- Cldr.validate_locale(locale),
+               {:ok, calendar} <- Cldr.Calendar.validate_calendar(calendar) do
+            cldr_calendar = calendar.cldr_calendar_type()
             [
               am_pm_names: fn am_pm ->
-                day_periods(locale, calendar)
+                day_periods(locale, cldr_calendar)
                 |> get_in([:format, :abbreviated, am_pm])
               end,
               month_names: fn month ->
-                months(locale, calendar)
-                |> get_in([:format, :wide, month])
+                months =
+                  months(locale, cldr_calendar)
+                  |> get_in([:format, :wide])
+                  |> rotate_months(calendar.__config__())
+                  |> Map.get(month)
               end,
               abbreviated_month_names: fn month ->
-                months(locale, calendar)
-                |> get_in([:format, :abbreviated, month])
+                months =
+                  months(locale, cldr_calendar)
+                  |> get_in([:format, :abbreviated])
+                  |> rotate_months(calendar.__config__())
+                  |> Map.get(month)
               end,
               day_of_week_names: fn day ->
-                days(locale, calendar)
-                |> get_in([:format, :wide, day])
+                days =
+                  days(locale, cldr_calendar)
+                  |> get_in([:format, :wide])
+                  |> rotate_days(calendar.__config__())
+                  |> Map.get(day)
               end,
               abbreviated_day_of_week_names: fn day ->
-                days(locale, calendar)
-                |> get_in([:format, :abbreviated, day])
+                days =
+                  days(locale, cldr_calendar)
+                  |> get_in([:format, :abbreviated])
+                  |> rotate_days(calendar.__config__())
+                  |> Map.get(day)
               end
             ]
           else
@@ -348,7 +365,36 @@ defmodule Cldr.Calendar.Backend do
           end
         end
 
-        def eras(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
+        # The data assumes day == 1 is Monday. Since days of the
+        # week are ordinal, and not all calendars start the week on
+        # Monday, we need to rotate the data appropriately.
+        defp rotate_days(days, %{day_of_week: 1}) do
+          days
+        end
+
+        defp rotate_days(days, %{day_of_week: first_day}) do
+          {move_to_end, new_start} = Enum.split(days, first_day - 1)
+          reindex(new_start ++ move_to_end)
+        end
+
+        # The data assumes month == 1 is January. Since months of the
+        # year are ordinal, and not all calendars start the year in
+        # January, we need to rotate the data appropriately.
+        defp rotate_months(months, %{month_of_year: 1}) do
+          months
+        end
+
+        defp rotate_months(months, %{month_of_year: first_month}) do
+          {move_to_end, new_start} = Enum.split(months, first_month - 1)
+          reindex(new_start ++ move_to_end)
+        end
+
+        defp reindex(list) do
+          Enum.with_index(list, fn {_, element}, index -> {index + 1, element} end)
+          |> Map.new()
+        end
+
+        def eras(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)
 
         def eras(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           eras(cldr_locale_name, calendar)
@@ -360,7 +406,7 @@ defmodule Cldr.Calendar.Backend do
           end
         end
 
-        def quarters(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
+        def quarters(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)
 
         def quarters(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           quarters(cldr_locale_name, calendar)
@@ -372,7 +418,7 @@ defmodule Cldr.Calendar.Backend do
           end
         end
 
-        def months(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
+        def months(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)
 
         def months(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           months(cldr_locale_name, calendar)
@@ -384,7 +430,7 @@ defmodule Cldr.Calendar.Backend do
           end
         end
 
-        def days(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
+        def days(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)
 
         def days(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           days(cldr_locale_name, calendar)
@@ -396,7 +442,7 @@ defmodule Cldr.Calendar.Backend do
           end
         end
 
-        def day_periods(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
+        def day_periods(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)
 
         def day_periods(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           day_periods(cldr_locale_name, calendar)
@@ -408,7 +454,7 @@ defmodule Cldr.Calendar.Backend do
           end
         end
 
-        def cyclic_years(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
+        def cyclic_years(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)
 
         def cyclic_years(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           cyclic_years(cldr_locale_name, calendar)
@@ -420,7 +466,7 @@ defmodule Cldr.Calendar.Backend do
           end
         end
 
-        def month_patterns(locale \\ unquote(backend).get_locale(), calendar \\ @default_calendar)
+        def month_patterns(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)
 
         def month_patterns(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           month_patterns(cldr_locale_name, calendar)
