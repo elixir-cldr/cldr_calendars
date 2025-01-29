@@ -326,6 +326,7 @@ defmodule Cldr.Calendar.Backend do
           with {:ok, locale} <- Cldr.validate_locale(locale),
                {:ok, calendar} <- Cldr.Calendar.validate_calendar(calendar) do
             cldr_calendar = calendar.cldr_calendar_type()
+
             [
               am_pm_names: fn am_pm ->
                 day_periods(locale, cldr_calendar)
@@ -442,7 +443,10 @@ defmodule Cldr.Calendar.Backend do
           end
         end
 
-        def day_periods(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)
+        def day_periods(
+              locale \\ unquote(backend).get_locale(),
+              calendar \\ @default_cldr_calendar
+            )
 
         def day_periods(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           day_periods(cldr_locale_name, calendar)
@@ -454,7 +458,10 @@ defmodule Cldr.Calendar.Backend do
           end
         end
 
-        def cyclic_years(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)
+        def cyclic_years(
+              locale \\ unquote(backend).get_locale(),
+              calendar \\ @default_cldr_calendar
+            )
 
         def cyclic_years(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           cyclic_years(cldr_locale_name, calendar)
@@ -466,7 +473,10 @@ defmodule Cldr.Calendar.Backend do
           end
         end
 
-        def month_patterns(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)
+        def month_patterns(
+              locale \\ unquote(backend).get_locale(),
+              calendar \\ @default_cldr_calendar
+            )
 
         def month_patterns(%LanguageTag{cldr_locale_name: cldr_locale_name}, calendar) do
           month_patterns(cldr_locale_name, calendar)

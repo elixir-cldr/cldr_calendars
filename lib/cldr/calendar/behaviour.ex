@@ -298,6 +298,7 @@ defmodule Cldr.Calendar.Behaviour do
         else
           def day_of_week(year, month, day, starting_on) do
             iso_days = date_to_iso_days(year, month, day)
+
             day_of_week =
               Integer.mod(iso_days + day_of_week_offset(starting_on, @first_day_of_week), 7) + 1
 

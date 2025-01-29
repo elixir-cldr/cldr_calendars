@@ -11,8 +11,12 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
   test "day names" do
     assert MyApp.Cldr.Calendar.strftime_options!(locale: "en")[:day_of_week_names].(1) == "Monday"
     assert MyApp.Cldr.Calendar.strftime_options!(locale: "en")[:day_of_week_names].(7) == "Sunday"
-    assert MyApp.Cldr.Calendar.strftime_options!(locale: "he")[:day_of_week_names].(1) == "יום שני"
-    assert MyApp.Cldr.Calendar.strftime_options!(locale: "he")[:day_of_week_names].(7) == "יום ראשון"
+
+    assert MyApp.Cldr.Calendar.strftime_options!(locale: "he")[:day_of_week_names].(1) ==
+             "יום שני"
+
+    assert MyApp.Cldr.Calendar.strftime_options!(locale: "he")[:day_of_week_names].(7) ==
+             "יום ראשון"
   end
 
   test "abbreviated day names" do
@@ -37,10 +41,17 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
   end
 
   test "abbreviated month names" do
-    assert MyApp.Cldr.Calendar.strftime_options!(locale: "en")[:abbreviated_month_names].(1) == "Jan"
-    assert MyApp.Cldr.Calendar.strftime_options!(locale: "en")[:abbreviated_month_names].(12) == "Dec"
-    assert MyApp.Cldr.Calendar.strftime_options!(locale: "he")[:abbreviated_month_names].(1) == "ינו׳"
-    assert MyApp.Cldr.Calendar.strftime_options!(locale: "he")[:abbreviated_month_names].(12) == "דצמ׳"
+    assert MyApp.Cldr.Calendar.strftime_options!(locale: "en")[:abbreviated_month_names].(1) ==
+             "Jan"
+
+    assert MyApp.Cldr.Calendar.strftime_options!(locale: "en")[:abbreviated_month_names].(12) ==
+             "Dec"
+
+    assert MyApp.Cldr.Calendar.strftime_options!(locale: "he")[:abbreviated_month_names].(1) ==
+             "ינו׳"
+
+    assert MyApp.Cldr.Calendar.strftime_options!(locale: "he")[:abbreviated_month_names].(12) ==
+             "דצמ׳"
   end
 
   test "invalid locale in options" do
