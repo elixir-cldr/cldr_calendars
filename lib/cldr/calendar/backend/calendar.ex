@@ -309,10 +309,8 @@ defmodule Cldr.Calendar.Backend do
 
         ## Typical usage
 
-            iex> {:ok, calendar} = Cldr.Calendar.calendar_from_locale("he")
-            iex> {:ok, date} = Date.new(2025, 1, 26, calendar)
-            iex> Calendar.strftime date, "%a",
-            ...>   MyApp.Cldr.Calendar.strftime_options!(calendar: calendar, locale: "en")
+            iex> Calendar.strftime ~D[2025-01-26 Cldr.Calendar.IL], "%a",
+            ...>   MyApp.Cldr.Calendar.strftime_options!(calendar: Cldr.Calendar.IL, locale: "en")
             "Sun"
 
         """

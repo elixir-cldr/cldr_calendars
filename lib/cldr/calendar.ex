@@ -772,9 +772,7 @@ defmodule Cldr.Calendar do
 
   Examples:
 
-      iex> {:ok, calendar} = Cldr.Calendar.calendar_from_locale("he")
-      iex> {:ok, date} = Date.new(2025, 1, 26, calendar)
-      iex> Cldr.Calendar.strftime(date, "%a", locale: :he)
+      iex> Cldr.Calendar.strftime(~D[2025-01-26 Cldr.Calendar.IL], "%a", locale: :he)
       "יום א׳"
 
   """
@@ -818,10 +816,8 @@ defmodule Cldr.Calendar do
 
   ## Typical usage
 
-      iex> {:ok, calendar} = Cldr.Calendar.calendar_from_locale("he")
-      iex> {:ok, date} = Date.new(2025, 1, 26, calendar)
-      iex> Calendar.strftime date, "%a",
-      ...>   Cldr.Calendar.strftime_options!(calendar: calendar, locale: "en")
+      iex> Calendar.strftime(~D[2025-01-26 Cldr.Calendar.IL], "%a",
+      ...>   Cldr.Calendar.strftime_options!(calendar: Cldr.Calendar.IL, locale: "en"))
       "Sun"
 
   """
