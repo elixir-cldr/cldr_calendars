@@ -22,7 +22,7 @@ defmodule Cldr.Calendar do
   * `week` calendars that are defined to have a 52 week
     structure (53 weeks in a long year). These calendars
     can be configured to start or end on the first, last or
-    nearest day to the beginning or end of a Cldr.Calendar.Gregorian
+    nearest day to the beginning or end of a `Cldr.Calendar.Gregorian`
     month.  The main intent behind this structure is to
     have each year start and end on the same day of the
     week with a consistent 13-week quarterly structure than
@@ -289,7 +289,7 @@ defmodule Cldr.Calendar do
   Returns the CLDR calendar type.
 
   Only algorithmic calendars are considered
-  in this implementation
+  in this implementation.
   """
   @callback cldr_calendar_type() ::
               :gregorian | :persian | :coptic | :ethiopic | :chinese | :japanese | :dangi
@@ -297,7 +297,7 @@ defmodule Cldr.Calendar do
   @doc """
   Returns the calendar basis.
 
-  Returns either :week or :month
+  Returns either `:week` or `:month`.
   """
   @callback calendar_base() :: :week | :month
 
@@ -325,20 +325,20 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns the number of weeks in a year
+  Returns the number of weeks in a year.
 
   """
   @callback weeks_in_year(year :: year()) ::
               {Cldr.Calendar.week(), Calendar.day()} | {:error, :not_defined}
 
   @doc """
-  Returns the number of days in a year
+  Returns the number of days in a year.
 
   """
   @callback days_in_year(year :: year()) :: Calendar.day()
 
   @doc """
-  Returns the number of days in a month (withoout a year)
+  Returns the number of days in a month (withoout a year).
 
   """
   @callback days_in_month(month :: month()) ::
@@ -518,7 +518,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `:locale` is any locale or locale name validated
+  * `locale` is any locale or locale name validated
     by `Cldr.validate_locale/2`.  The default is
     `Cldr.get_locale()` which returns the locale
     set for the current process.
@@ -548,6 +548,42 @@ defmodule Cldr.Calendar do
     Cldr.Calendar.Preference.calendar_from_locale(locale)
   end
 
+  @doc """
+  Return the calendar module for a locale.
+
+  ### Arguments
+
+  * `locale` is any locale or locale name validated
+    by `Cldr.validate_locale/2`.  The default is
+    `Cldr.get_locale()` which returns the locale
+    set for the current process.
+
+  * `backend` is any `Cldr` backend module. See the
+    [backend configuration](https://hexdocs.pm/ex_cldr/readme.html#configuration)
+    documentation for further information. The default
+    is `Cldr.default_backend!/0`.
+
+  ### Returns
+
+  * `{:ok, calendar_module}` or
+
+  * `{:error, {exception, reason}}`
+
+  ### Examples
+
+      iex> Cldr.Calendar.calendar_from_locale("en-US", MyApp.Cldr)
+      {:ok, Cldr.Calendar.US}
+
+      iex> Cldr.Calendar.calendar_from_locale("en-GB-u-ca-gregory", MyApp.Cldr)
+      {:ok, Cldr.Calendar.Gregorian}
+
+      iex> Cldr.Calendar.calendar_from_locale("fa-IR", MyApp.Cldr)
+      {:ok, Cldr.Calendar.Persian}
+
+      iex> Cldr.Calendar.calendar_from_locale("fa-IR-u-ca-gregory", MyApp.Cldr)
+      {:ok, Cldr.Calendar.Gregorian}
+
+  """
   def calendar_from_locale(locale, backend \\ Cldr.default_backend!())
       when is_locale_reference(locale) do
     Cldr.Calendar.Preference.calendar_from_locale(locale, backend)
@@ -651,7 +687,7 @@ defmodule Cldr.Calendar do
     use Cldr.Calendar.Base.Week,
       day_of_week: 1,              # Weeks begin or end on Monday
       month_of_year: 1,            # Years begin or end in January
-      min_days_in_first_week, 4,   # 4 Cldr.Calendar.Gregorian days of the year must be in the first week
+      min_days_in_first_week: 4,   # 4 Cldr.Calendar.Gregorian days of the year must be in the first week
       begins_or_ends: :begins,     # The year *begins* on the `day_of_week` and `month_of_year`
       first_or_last: :first,       # They year *begins* on the *first* `day_of_week` and `month_of_year`
       weeks_in_month: [4, 4, 5],   # The weeks are laid out as *months* in a `[4,4,5]` pattern
@@ -714,7 +750,7 @@ defmodule Cldr.Calendar do
 
   @doc """
   Returns a boolean indicating if a module
-  is a `Cldr.Calendar` module
+  is a `Cldr.Calendar` module.
 
   """
   def calendar_module?(module) when is_atom(module) do
@@ -789,7 +825,7 @@ defmodule Cldr.Calendar do
   Returns a keyword list of options than can be applied to
   `Calendar.strftime/3` or `Cldr.Calendar.strftime/3`.
 
-  `strftime_options!` returns a keyword list than can be used as these
+  `strftime_options!` returns a keyword list than can be used as
   options to return localised names for days, months and am/pm.
 
   ## Arguments
@@ -831,7 +867,7 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Returns the ordinal day number representing
+  Returns the cardinal day number representing
   Monday
 
   """
@@ -839,7 +875,7 @@ defmodule Cldr.Calendar do
   def monday, do: 1
 
   @doc """
-  Returns the ordinal day number representing
+  Returns the cardinal day number representing
   Tuesday.
 
   """
@@ -847,7 +883,7 @@ defmodule Cldr.Calendar do
   def tuesday, do: 2
 
   @doc """
-  Returns the ordinal day number representing
+  Returns the cardinal day number representing
   Wednesday.
 
   """
@@ -855,7 +891,7 @@ defmodule Cldr.Calendar do
   def wednesday, do: 3
 
   @doc """
-  Returns the ordinal day number representing
+  Returns the cardinal day number representing
   Thursday.
 
   """
@@ -863,7 +899,7 @@ defmodule Cldr.Calendar do
   def thursday, do: 4
 
   @doc """
-  Returns the ordinal day number representing
+  Returns the cardinal day number representing
   Friday.
 
   """
@@ -871,7 +907,7 @@ defmodule Cldr.Calendar do
   def friday, do: 5
 
   @doc """
-  Returns the ordinal day number representing
+  Returns the cardinal day number representing
   Saturday.
 
   """
@@ -879,7 +915,7 @@ defmodule Cldr.Calendar do
   def saturday, do: 6
 
   @doc """
-  Returns the ordinal day number representing
+  Returns the cardinal day number representing
   Sunday.
 
   """
@@ -1230,7 +1266,7 @@ defmodule Cldr.Calendar do
   ### Returns
 
   * An integer ISO day of week in the range
-    `1..7` where `1` is Monday` and `7` is
+    `1..7` where `1` is `Monday` and `7` is
     `Sunday`.
 
   ### Examples
@@ -1885,7 +1921,7 @@ defmodule Cldr.Calendar do
   Returns whether a given date is a weekday.
 
   Weekdays are locale-specific and depend on
-  the policies of a given territory (country).
+  the policies of a given territory (region, country).
 
   ### Arguments
 
@@ -2066,6 +2102,22 @@ defmodule Cldr.Calendar do
 
   """
   def weekdays(territory)
+
+  @doc """
+  Returns the first day of the week for a
+  given territory.
+
+  ### Arguments
+
+  * `territory` is any valid ISO3166-2 code.
+
+  ### Returns
+
+  * A list of integers representing the days of
+    the week that are week days.
+
+  """
+  def first_day_for_territory(territory)
 
   @week_info Cldr.Config.weeks()
 
