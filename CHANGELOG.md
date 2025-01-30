@@ -4,13 +4,15 @@
 
 ## Cldr.Calendars v2.0.0
 
-This is the changelog for Cldr Calendars v2.0.0 released on January _____, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+This is the changelog for Cldr Calendars v2.0.0 released on January 31st, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
-### Breaking Change
+### Breaking Changes
 
 * `Date.day_of_week/2` will now return an ordinal day of week for all `ex_cldr_calendar`-based calendars. Previously the result was a cardinal day of week which meant that the results from `Date.beginning_of_week/2` and `Date.end_of_week/2` were returning incorrect results. This outcome is the result of a [lengthy discussion](https://github.com/elixir-lang/elixir/pull/14162) about whether the result should be cardinal or ordinal.  The consequences are that the day of week is now `1` meaning "first day of the week". It specifically does *not* mean `1` denotes "Monday".
 
 * `MyApp.Cldr.Calendar.strftime_options/1` now expects a keyword list of options only. Previously the first optional argument was a locale and the second optional argument was a keyword list. This simplifies specifying a calendar or a locale or both.
+
+* `Cldr.Calendar.validate_calendar/1` will now return `{:ok, Cldr.Calendar.Gregorian}` rather than an error if the argument is `Calendar.ISO`. This makes it easier for calendar code to work with standard dates and times in a localized context.
 
 ### Bug Fixes
 
@@ -18,9 +20,13 @@ This is the changelog for Cldr Calendars v2.0.0 released on January _____, 2025.
 
 * Fix `Cldr.Calendar.strftime_options!/0` to return the correct values for day of the week in alignment with the breaking change above.
 
+* Fix `Cldr.Calendar.localize/3` for `:day_of_week`, `:days_of_week` and `:month` when the calendar doesn't start its week on Monday or doesn't start its year in January.
+
 ### Enhancements
 
 * Adds `Cldr.Calendar.iso_day_of_week/1` to return a day of week that is defined as `1` is "Monday" and `7` is "Sunday". Any application code which fails now due to the breaking change *should* be able to replace calls to `Date.day_of_week/1` with calls to `Cldr.Calendar.iso_day_of_week/1`.
+
+* Adds `Cldr.Calendar.strftime/3` that is a localized wrapper around `Calendar.strftime/3`.
 
 ## Cldr.Calendars v1.27.0
 

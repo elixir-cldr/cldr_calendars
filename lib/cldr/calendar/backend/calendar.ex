@@ -290,8 +290,8 @@ defmodule Cldr.Calendar.Backend do
 
         ## Options
 
-        * `locale` is any locale returned by `MyApp.Cldr.known_locale_names/0`. The
-          default is `MyApp.Cldr.get_locale/0`
+        * `:locale` is any locale returned by `MyApp.Cldr.known_locale_names/0`. The
+          default is `MyApp.Cldr.get_locale/0`.
 
         * `:calendar` is the name of any known calendar. The default
           is `Cldr.Calendar.Gregorian`.
@@ -326,6 +326,7 @@ defmodule Cldr.Calendar.Backend do
           with {:ok, locale} <- Cldr.validate_locale(locale),
                {:ok, calendar} <- Cldr.Calendar.validate_calendar(calendar) do
             cldr_calendar = calendar.cldr_calendar_type()
+            calendar_config = calendar.__config__()
 
             [
               am_pm_names: fn am_pm ->
@@ -333,66 +334,37 @@ defmodule Cldr.Calendar.Backend do
                 |> get_in([:format, :abbreviated, am_pm])
               end,
               month_names: fn month ->
-                months =
-                  months(locale, cldr_calendar)
-                  |> get_in([:format, :wide])
-                  |> rotate_months(calendar.__config__())
-                  |> Map.get(month)
+                cardinal_month =
+                  Cldr.Calendar.cardinal_month(month, calendar_config, 12)
+
+                months(locale, cldr_calendar)
+                |> get_in([:format, :wide, cardinal_month])
               end,
               abbreviated_month_names: fn month ->
-                months =
-                  months(locale, cldr_calendar)
-                  |> get_in([:format, :abbreviated])
-                  |> rotate_months(calendar.__config__())
-                  |> Map.get(month)
+                cardinal_month =
+                  Cldr.Calendar.cardinal_month(month, calendar_config, 12)
+
+                months(locale, cldr_calendar)
+                |> get_in([:format, :abbreviated, cardinal_month])
               end,
               day_of_week_names: fn day ->
-                days =
-                  days(locale, cldr_calendar)
-                  |> get_in([:format, :wide])
-                  |> rotate_days(calendar.__config__())
-                  |> Map.get(day)
+                cardinal_day_of_week =
+                  Cldr.Calendar.cardinal_day_of_week(day, calendar_config)
+
+                days(locale, cldr_calendar)
+                |> get_in([:format, :wide, cardinal_day_of_week])
               end,
               abbreviated_day_of_week_names: fn day ->
-                days =
-                  days(locale, cldr_calendar)
-                  |> get_in([:format, :abbreviated])
-                  |> rotate_days(calendar.__config__())
-                  |> Map.get(day)
+                cardinal_day_of_week =
+                  Cldr.Calendar.cardinal_day_of_week(day, calendar_config)
+
+                days(locale, cldr_calendar)
+                |> get_in([:format, :abbreviated, cardinal_day_of_week])
               end
             ]
           else
             {:error, {exception, message}} -> raise exception, message
           end
-        end
-
-        # The data assumes day == 1 is Monday. Since days of the
-        # week are ordinal, and not all calendars start the week on
-        # Monday, we need to rotate the data appropriately.
-        defp rotate_days(days, %{day_of_week: 1}) do
-          days
-        end
-
-        defp rotate_days(days, %{day_of_week: first_day}) do
-          {move_to_end, new_start} = Enum.split(days, first_day - 1)
-          reindex(new_start ++ move_to_end)
-        end
-
-        # The data assumes month == 1 is January. Since months of the
-        # year are ordinal, and not all calendars start the year in
-        # January, we need to rotate the data appropriately.
-        defp rotate_months(months, %{month_of_year: 1}) do
-          months
-        end
-
-        defp rotate_months(months, %{month_of_year: first_month}) do
-          {move_to_end, new_start} = Enum.split(months, first_month - 1)
-          reindex(new_start ++ move_to_end)
-        end
-
-        defp reindex(list) do
-          Enum.with_index(list, fn {_, element}, index -> {index + 1, element} end)
-          |> Map.new()
         end
 
         def eras(locale \\ unquote(backend).get_locale(), calendar \\ @default_cldr_calendar)

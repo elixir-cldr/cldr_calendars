@@ -762,6 +762,78 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Formats the given date, time, or datetime into a string.
+
+  This function is a thin wrapper around `Calendar.strftime/3` intended
+  to ease formatting for localized calendars.
+
+  See `Calendar.strftime/3` for details of formatting strings and
+  other options.
+
+  Examples:
+
+      iex> {:ok, calendar} = Cldr.Calendar.calendar_from_locale("he")
+      iex> {:ok, date} = Date.new(2025, 1, 26, calendar)
+      iex> Cldr.Calendar.strftime(date, "%a", locale: :he)
+      "יום א׳"
+
+  """
+  def strftime(date_or_time_or_datetime, format, options \\ []) do
+    calendar = Map.get(date_or_time_or_datetime, :calendar)
+    options = Keyword.merge(options, [calendar: calendar])
+    strftime_options = strftime_options!(options)
+
+    Calendar.strftime(date_or_time_or_datetime, format, strftime_options)
+  end
+
+  @doc """
+  Returns a keyword list of options than can be applied to
+  `Calendar.strftime/3` or `Cldr.Calendar.strftime/3`.
+
+  `strftime_options!` returns a keyword list than can be used as these
+  options to return localised names for days, months and am/pm.
+
+  ## Arguments
+
+  * `options` is a set of keyword options. The default is `[]`.
+
+  ## Options
+
+  * `:locale` is any locale returned by `Cldr.known_locale_names/1`. The
+    default is `Cldr.get_locale/0`.
+
+  * `:calendar` is the name of any known calendar. The default
+    is `Cldr.Calendar.Gregorian`.
+
+  ## Example
+
+      iex: Cldr.Calendar.strftime_options!()
+      [
+        am_pm_names: #Function<0.32021692/1 in MyApp.Cldr.Calendar.strftime_options/2>,
+        month_names: #Function<1.32021692/1 in MyApp.Cldr.Calendar.strftime_options/2>,
+        abbreviated_month_names: #Function<2.32021692/1 in MyApp.Cldr.Calendar.strftime_options/2>,
+        day_of_week_names: #Function<3.32021692/1 in MyApp.Cldr.Calendar.strftime_options/2>,
+        abbreviated_day_of_week_names: #Function<4.32021692/1 in MyApp.Cldr.Calendar.strftime_options/2>
+      ]
+
+  ## Typical usage
+
+      iex> {:ok, calendar} = Cldr.Calendar.calendar_from_locale("he")
+      iex> {:ok, date} = Date.new(2025, 1, 26, calendar)
+      iex> Calendar.strftime date, "%a",
+      ...>   Cldr.Calendar.strftime_options!(calendar: calendar, locale: "en")
+      "Sun"
+
+  """
+  def strftime_options!(options \\ []) do
+    locale = Keyword.get(options, :locale, Cldr.get_locale())
+    {backend, options} = Keyword.pop(options, :backend)
+    {_locale, backend} = Cldr.locale_and_backend_from(locale, backend)
+
+    Module.concat(backend, Calendar).strftime_options!(options)
+  end
+
+  @doc """
   Returns the ordinal day number representing
   Monday
 
@@ -2615,21 +2687,28 @@ defmodule Cldr.Calendar do
   def localize(datetime, :month, type, format, backend, locale, _options) do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(datetime, :calendar, @default_calendar)
+    months_in_year = months_in_year(datetime)
 
     case month_of_year(datetime) do
       month when is_number(month) ->
+        cardinal_month =
+          cardinal_month(month, calendar.__config__(), months_in_year)
+
         locale
         |> backend.months(calendar.cldr_calendar_type())
-        |> get_in([type, format, month])
+        |> get_in([type, format, cardinal_month])
 
       {month, :leap} when is_number(month) ->
+        cardinal_month =
+          cardinal_month(month, calendar.__config__(), months_in_year)
+
         month_patterns =
           backend.month_patterns(locale, calendar.cldr_calendar_type())
 
         month =
           locale
           |> backend.months(calendar.cldr_calendar_type())
-          |> get_in([type, format, month])
+          |> get_in([type, format, cardinal_month])
 
         if month_patterns do
           leap_pattern = get_in(month_patterns, [type, format, :leap])
@@ -2651,7 +2730,7 @@ defmodule Cldr.Calendar do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(datetime, :calendar, @default_calendar)
 
-    day = day_of_week(datetime)
+    day = day_of_week(datetime, :monday)
 
     locale
     |> backend.days(calendar.cldr_calendar_type())
@@ -2668,11 +2747,12 @@ defmodule Cldr.Calendar do
 
     for date <- Interval.week(datetime) do
       day_of_week = day_of_week(date)
+      cardinal_day_of_week = day_of_week(date, :monday)
 
       day_name =
         locale
         |> backend.days(date.calendar.cldr_calendar_type())
-        |> get_in([type, format, day_of_week])
+        |> get_in([type, format, cardinal_day_of_week])
 
       {day_of_week, day_name}
     end
@@ -2713,6 +2793,26 @@ defmodule Cldr.Calendar do
 
   defp am_pm(_hour, nil) do
     :pm
+  end
+
+  # Adjust the month back to the month number
+  # in Calendar.ISO
+  @doc false
+  def cardinal_month(month, %{month_of_year: 1}, _months_in_year) do
+    month
+  end
+
+  def cardinal_month(month, %{month_of_year: month_of_year}, months_in_year) do
+    Cldr.Math.amod(month + month_of_year - 1, months_in_year)
+  end
+
+  @doc false
+  def cardinal_day_of_week(day, %{day_of_week: 1}) do
+    day
+  end
+
+  def cardinal_day_of_week(day, %{day_of_week: day_of_week}) do
+    Cldr.Math.amod(day + day_of_week - 1, @days_in_a_week)
   end
 
   @valid_parts [:era, :quarter, :month, :day_of_week, :days_of_week, :am_pm, :day_periods]
@@ -3839,6 +3939,7 @@ defmodule Cldr.Calendar do
   end
 
   defdelegate day_of_week(date), to: Date
+  defdelegate day_of_week(date, starting_on), to: Date
   defdelegate days_in_month(date), to: Date
   defdelegate months_in_year(date), to: Date
 
