@@ -765,7 +765,8 @@ defmodule Cldr.Calendar do
   Formats the given date, time, or datetime into a string.
 
   This function is a thin wrapper around `Calendar.strftime/3` intended
-  to ease formatting for localized calendars.
+  to ease formatting for localized calendars. Localized strings will
+  be automatically injected as options to `Calendar.strftime/3`.
 
   See `Calendar.strftime/3` for details of formatting strings and
   other options.
