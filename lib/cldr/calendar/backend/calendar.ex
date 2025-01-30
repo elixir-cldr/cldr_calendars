@@ -132,7 +132,7 @@ defmodule Cldr.Calendar.Backend do
 
         * `{error, {exception, reason}}` if an error is detected
 
-        ### Examples
+        #### Examples
 
             iex> #{inspect(__MODULE__)}.localize ~D[2019-01-01], :era
             "AD"
@@ -191,18 +191,18 @@ defmodule Cldr.Calendar.Backend do
         Returns the calendar module preferred for
         a territory.
 
-        ## Arguments
+        ### Arguments
 
         * `territory` is any valid ISO3166-2 code as
           an `String.t` or upcased `atom()`
 
-        ## Returns
+        ### Returns
 
         * `{:ok, calendar_module}` or
 
         * `{:error, {exception, reason}}`
 
-        ## Examples
+        ### Examples
 
             iex> #{inspect(__MODULE__)}.calendar_from_territory(:US)
             {:ok, Cldr.Calendar.US}
@@ -241,20 +241,20 @@ defmodule Cldr.Calendar.Backend do
         @doc """
         Return the calendar module for a locale.
 
-        ## Arguments
+        ### Arguments
 
         * `:locale` is any locale or locale name validated
           by `Cldr.validate_locale/2`.  The default is
           `Cldr.get_locale()` which returns the locale
           set for the current process
 
-        ## Returns
+        ### Returns
 
         * `{:ok, calendar_module}` or
 
         * `{:error, {exception, reason}}`
 
-        ## Examples
+        ### Examples
 
             iex> #{inspect(__MODULE__)}.calendar_from_locale "en-GB"
             {:ok, Cldr.Calendar.GB}
@@ -284,11 +284,11 @@ defmodule Cldr.Calendar.Backend do
         `strftime_options!` returns a keyword list than can be used as these
         options to return localised names for days, months and am/pm.
 
-        ## Arguments
+        ### Arguments
 
         * `options` is a set of keyword options. The default is `[]`.
 
-        ## Options
+        ### Options
 
         * `:locale` is any locale returned by `MyApp.Cldr.known_locale_names/0`. The
           default is `MyApp.Cldr.get_locale/0`.
@@ -296,7 +296,13 @@ defmodule Cldr.Calendar.Backend do
         * `:calendar` is the name of any known calendar. The default
           is `Cldr.Calendar.Gregorian`.
 
-        ## Example
+        ### Notes
+
+        * Calendars are assumed to have a fixed 12 month cycle. This is because
+          the callback functions have no context from which to determine the
+          specific number of months in a given year.
+
+        ### Examples
 
             iex: MyApp.Cldr.Calendar.strftime_options!()
             [
@@ -307,7 +313,7 @@ defmodule Cldr.Calendar.Backend do
               abbreviated_day_of_week_names: #Function<4.32021692/1 in MyApp.Cldr.Calendar.strftime_options/2>
             ]
 
-        ## Typical usage
+        ### Typical usage
 
             iex> Calendar.strftime ~D[2025-01-26 Cldr.Calendar.IL], "%a",
             ...>   MyApp.Cldr.Calendar.strftime_options!(calendar: Cldr.Calendar.IL, locale: "en")
