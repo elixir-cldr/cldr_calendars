@@ -1895,6 +1895,9 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.weekend?(~D[2019-03-22], locale: :he, backend: MyApp.Cldr)
       true
 
+      iex> Cldr.Calendar.weekend?(~D[2019-03-22 Cldr.Calendar.IL], locale: :he, backend: MyApp.Cldr)
+      true
+
       # As it also does in Saudia Arabia
       iex> Cldr.Calendar.weekend?(~D[2019-03-22], locale: :"ar-SA", backend: MyApp.Cldr)
       true
@@ -1911,9 +1914,9 @@ defmodule Cldr.Calendar do
     locale = Keyword.get(options, :locale, backend.get_locale())
 
     with {:ok, locale} <- Cldr.validate_locale(locale, backend),
-         territory = Keyword.get(options, :territory, locale.territory),
+         territory = Keyword.get(options, :territory, Cldr.Locale.territory_from_locale(locale)),
          {:ok, territory} <- Cldr.validate_territory(territory) do
-      day_of_week(date) in weekend(territory)
+      iso_day_of_week(date) in weekend(territory)
     end
   end
 
@@ -1981,6 +1984,9 @@ defmodule Cldr.Calendar do
       iex> Cldr.Calendar.weekday?(~D[2019-03-22], locale: :he, backend: MyApp.Cldr)
       false
 
+      iex> Cldr.Calendar.weekday?(~D[2019-03-22 Cldr.Calendar.IL], locale: :he, backend: MyApp.Cldr)
+      false
+
   """
   @spec weekday?(date(), Keyword.t()) :: boolean | {:error, {module(), String.t()}}
 
@@ -1989,9 +1995,9 @@ defmodule Cldr.Calendar do
     locale = Keyword.get(options, :locale, backend.get_locale())
 
     with {:ok, locale} <- Cldr.validate_locale(locale, backend),
-         territory = Keyword.get(options, :territory, locale.territory),
+         territory = Keyword.get(options, :territory, Cldr.Locale.territory_from_locale(locale)),
          {:ok, territory} <- Cldr.validate_territory(territory) do
-      day_of_week(date) in weekdays(territory)
+      iso_day_of_week(date) in weekdays(territory)
     end
   end
 
@@ -2779,7 +2785,7 @@ defmodule Cldr.Calendar do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(datetime, :calendar, @default_calendar)
 
-    day = day_of_week(datetime, :monday)
+    day = iso_day_of_week(datetime)
 
     locale
     |> backend.days(calendar.cldr_calendar_type())
@@ -2796,7 +2802,7 @@ defmodule Cldr.Calendar do
 
     for date <- Interval.week(datetime) do
       day_of_week = day_of_week(date)
-      cardinal_day_of_week = day_of_week(date, :monday)
+      cardinal_day_of_week = iso_day_of_week(date)
 
       day_name =
         locale
@@ -2844,8 +2850,8 @@ defmodule Cldr.Calendar do
     :pm
   end
 
-  # Adjust the month back to the month number
-  # in Calendar.ISO
+  # Get the month of the calendar-specific year as the month
+  # in the gregorian calendar (starting in January)
   @doc false
   def cardinal_month(month, %{month_of_year: 1}, _months_in_year) do
     month
@@ -2855,6 +2861,8 @@ defmodule Cldr.Calendar do
     Cldr.Math.amod(month + month_of_year - 1, months_in_year)
   end
 
+  # Get the calendar-specific day of the week as the day
+  # of the week in Calendar.ISO which starts with 1 == Monday.
   @doc false
   def cardinal_day_of_week(day, %{day_of_week: 1}) do
     day
