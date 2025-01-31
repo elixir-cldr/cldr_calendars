@@ -2003,7 +2003,7 @@ defmodule Cldr.Calendar do
 
   @doc """
   Returns the first day of a week for a given
-  locale.
+  locale where `1` means `Monday` and `7` means `Sunday`.
 
   Note that the first day of the first week is commonly
   not aligned with the first day of the year.
@@ -2045,7 +2045,7 @@ defmodule Cldr.Calendar do
   @doc """
   Returns a list of the days of the week that
   are considered a weekend for a given
-  territory (country).
+  territory (region, country).
 
   ### Arguments
 
@@ -2054,7 +2054,8 @@ defmodule Cldr.Calendar do
   ### Returns
 
   * A list of integers representing the days of
-    the week that are weekend days.
+    the week that are weekend days. Here `1` means
+    `Monday` and `7` means `Sunday`.
 
   ### Examples
 
@@ -2085,11 +2086,12 @@ defmodule Cldr.Calendar do
   ### Returns
 
   * A list of integers representing the days of
-    the week that are week days.
+    the week that are week days. Here `1` means
+    `Monday` and `7` means `Sunday`.
 
   ### Notes
 
-  The list of days may not my monotonic. See
+  The list of days may not be monotonic. See
   the example for Saudi Arabia below.
 
   ### Examples
@@ -2119,8 +2121,8 @@ defmodule Cldr.Calendar do
 
   ### Returns
 
-  * A list of integers representing the days of
-    the week that are week days.
+  * The first day of the week for this territory.
+    Here `1` means `Monday` and `7` means `Sunday`.
 
   """
   def first_day_for_territory(territory)
