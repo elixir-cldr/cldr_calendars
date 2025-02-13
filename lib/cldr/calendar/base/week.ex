@@ -417,7 +417,7 @@ defmodule Cldr.Calendar.Base.Week do
 
   def add(naive_datetime, :year, step) do
     %{year: year, month: month, day: day} = Cldr.Calendar.plus(naive_datetime, :years, step)
-    %NaiveDateTime{naive_datetime | year: year, month: month, day: day}
+    %{naive_datetime | year: year, month: month, day: day}
   end
 
   def day_of_month(year, week, day, config) do

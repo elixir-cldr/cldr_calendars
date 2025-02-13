@@ -499,9 +499,9 @@ defmodule Cldr.Calendar.Julian do
   Returns if the given year is a leap year.
 
   """
-  @spec leap_year?(year) :: boolean()
+  @spec leap_year?(year :: Calendar.year()) :: boolean()
   @impl Calendar
-  def leap_year?(year) do
+  def leap_year?(year) when is_integer(year) do
     Cldr.Math.mod(year, 4) == if year > 0, do: 0, else: 3
   end
 
@@ -510,7 +510,6 @@ defmodule Cldr.Calendar.Julian do
   epoch for a given `year-month-day`
 
   """
-
   def date_to_iso_days(year, month, day) do
     adjustment = adjustment(year, month, day)
     year = if year < 0, do: year + 1, else: year
