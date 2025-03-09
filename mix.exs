@@ -68,7 +68,9 @@ defmodule Cldr.Calendar.MixProject do
 
   defp deps do
     [
-      {:ex_cldr_numbers, "~> 2.31"},
+      # {:ex_cldr_numbers, "~> 2.31"},
+      {:ex_cldr_numbers, path: "../cldr_numbers", override: true},
+
       {:ex_cldr_units, "~> 3.16", optional: true},
       {:ex_cldr_lists, "~> 2.10", optional: true},
       {:tz, "~> 0.9", optional: true, only: [:dev, :test]},

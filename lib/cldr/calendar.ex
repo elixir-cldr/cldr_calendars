@@ -2573,9 +2573,13 @@ defmodule Cldr.Calendar do
   * `:format` is one of `:wide`, `:abbreviated` or `:narrow`. The
     default is `:abbreviated`.
 
-  * `:era` will, if set to `:variant` will localize the era using
+  * `:era` will, if set to `:variant` localize the era using
     the variant data. In the `:en` locale, this will produce `CE` and
     `BCE` rather than the default `AD` and `BC`.
+
+  * `:am_pm` will, if set to `:variant` localize the "AM"/"PM"
+    time period indicator with the variant data. In the `:en` locale,
+    this will produce `am` and `pm` rather than the default `AM` and `PM`.
 
   ### Returns
 
@@ -2818,12 +2822,13 @@ defmodule Cldr.Calendar do
   @doc false
   def localize(%{hour: hour} = time, :am_pm, type, format, backend, locale, options) do
     backend = Module.concat(backend, Calendar)
-    am_pm = am_pm(hour, options[:period])
     calendar = Map.get(time, :calendar, @default_calendar)
 
-    locale
-    |> backend.day_periods(calendar.cldr_calendar_type())
-    |> get_in([type, format, am_pm])
+    am_pm = am_pm(hour)
+    default_or_variant = if options[:am_pm] == :variant, do: :variant, else: :default
+    day_periods = backend.day_periods(locale, calendar.cldr_calendar_type())
+    am_pm = get_in(day_periods, [type, format, am_pm])
+    Map.get(am_pm, default_or_variant) || Map.get(am_pm, :default)
   end
 
   @doc false
@@ -2836,19 +2841,11 @@ defmodule Cldr.Calendar do
     |> get_in([type, format, day_period])
   end
 
-  defp am_pm(hour, :variant) when hour < 12 or rem(hour, 24) < 12 do
-    :am_alt_variant
-  end
-
-  defp am_pm(hour, nil) when hour < 12 or rem(hour, 24) < 12 do
+  defp am_pm(hour) when hour < 12 or rem(hour, 24) < 12 do
     :am
   end
 
-  defp am_pm(_hour, :variant) do
-    :pm_alt_variant
-  end
-
-  defp am_pm(_hour, nil) do
+  defp am_pm(_hour) do
     :pm
   end
 

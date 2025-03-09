@@ -61,6 +61,17 @@ defmodule Cldr.Calendar.Backend do
           `Cldr.known_locale_names/1` or a `Cldr.LanguageTag` struct
           returned by `Cldr.Locale.new!/2`. The default is `Cldr.get_locale()`.
 
+        * `:format` is one of `:wide`, `:abbreviated` or `:narrow`. The
+          default is `:abbreviated`.
+
+        * `:era` will, if set to `:variant` localize the era using
+          the variant data. In the `:en` locale, this will produce `CE` and
+          `BCE` rather than the default `AD` and `BC`.
+
+        * `:am_pm` will, if set to `:variant` localize the "AM"/"PM"
+          time period indicator with the variant data. In the `:en` locale,
+          this will produce `am` and `pm` rather than the default `AM` and `PM`.
+
         ### Returns
 
         * `{:ok, date}` where `date` is converted into the calendar
@@ -331,11 +342,13 @@ defmodule Cldr.Calendar.Backend do
                {:ok, calendar} <- Cldr.Calendar.validate_calendar(calendar) do
             cldr_calendar = calendar.cldr_calendar_type()
             calendar_config = calendar.__config__()
+            am_pm_default_or_variant =
+              if options[:am_pm] == :variant, do: :variant, else: :default
 
             [
               am_pm_names: fn am_pm ->
                 day_periods(locale, cldr_calendar)
-                |> get_in([:format, :abbreviated, am_pm])
+                |> get_in([:format, :abbreviated, am_pm, am_pm_default_or_variant])
               end,
               month_names: fn month ->
                 cardinal_month =

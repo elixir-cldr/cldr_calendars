@@ -2,6 +2,16 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v2.1.0
+
+This is the changelog for Cldr Calendars v2.1.0 released on _______, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Enhancements
+
+* Update to [CLDR 47](https://cldr.unicode.org/downloads/cldr-47) data.
+
+* Documents the `:am_pm` option to `Cldr.Calendar.localize/2` and to `Cldr.Calendar.strftime_options!/2`. This option, when set to `:variant`, uses the variant data for "am" and "pm".
+
 ## Cldr.Calendars v2.0.0
 
 This is the changelog for Cldr Calendars v2.0.0 released on January 31st, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

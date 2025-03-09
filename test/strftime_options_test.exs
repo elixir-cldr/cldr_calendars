@@ -4,8 +4,8 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
   test "am_or_pm" do
     assert MyApp.Cldr.Calendar.strftime_options!(locale: "en")[:am_pm_names].(:am) == "AM"
     assert MyApp.Cldr.Calendar.strftime_options!(locale: "en")[:am_pm_names].(:pm) == "PM"
-    assert MyApp.Cldr.Calendar.strftime_options!(locale: "he")[:am_pm_names].(:am) == "לפנה״צ"
-    assert MyApp.Cldr.Calendar.strftime_options!(locale: "he")[:am_pm_names].(:pm) == "אחה״צ"
+    assert MyApp.Cldr.Calendar.strftime_options!(locale: "ar")[:am_pm_names].(:am) == "ص"
+    assert MyApp.Cldr.Calendar.strftime_options!(locale: "ar")[:am_pm_names].(:pm) == "م"
   end
 
   test "day names" do
@@ -101,9 +101,9 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
     assert Calendar.strftime(
              dt,
              "%y-%m-%d %I:%M:%S %p",
-             MyApp.Cldr.Calendar.strftime_options!(locale: "he")
+             MyApp.Cldr.Calendar.strftime_options!(locale: "ar")
            ) ==
-             "19-08-26 01:52:06 אחה״צ"
+            "19-08-26 01:52:06 م"
 
     assert_raise Cldr.InvalidLanguageError, fn ->
       Calendar.strftime(
