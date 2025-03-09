@@ -2825,7 +2825,8 @@ defmodule Cldr.Calendar do
     calendar = Map.get(time, :calendar, @default_calendar)
 
     am_pm = am_pm(hour)
-    default_or_variant = if options[:am_pm] == :variant, do: :variant, else: :default
+    preference = options[:am_pm] || options[:period]
+    default_or_variant = if preference == :variant, do: :variant, else: :default
     day_periods = backend.day_periods(locale, calendar.cldr_calendar_type())
     am_pm = get_in(day_periods, [type, format, am_pm])
     Map.get(am_pm, default_or_variant) || Map.get(am_pm, :default)
