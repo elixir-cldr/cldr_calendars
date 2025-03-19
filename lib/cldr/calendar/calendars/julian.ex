@@ -467,12 +467,27 @@ defmodule Cldr.Calendar.Julian do
   Adds an `increment` number of `date_part`s
   to a `year-month-day`.
 
-  `date_part` can be `:quarters`
+  `date_part` can be `:years`, `:quarters`
    or`:months`.
 
   """
   @impl Cldr.Calendar
   def plus(year, month, day, date_part, increment, options \\ [])
+
+  def plus(year, month, day, :years, years, options) do
+    new_year =
+      year + years
+
+    new_day =
+      if Keyword.get(options, :coerce, false) do
+        max_new_day = days_in_month(new_year, month)
+        min(day, max_new_day)
+      else
+        day
+      end
+
+    {year + years, month, new_day}
+  end
 
   def plus(year, month, day, :quarters, quarters, options) do
     months = quarters * @months_in_quarter

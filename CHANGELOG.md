@@ -10,6 +10,8 @@ This is the changelog for Cldr Calendars v2.1.1 released on March 19th, 2025.  F
 
 * Fix `Cldr.Calendar.localize/2` for calendars that aren't derived from `Cldr.Calendar.Gregorian`. For example `Cldr.Calendar.Ethiopian`, `Cldr.Calendar.Coptic`, `Cldr.Calendar.Julian` and the lunisolar calendars.
 
+* Add `Cldr.Calendar.Julian.plus/6` for `:year`.
+
 ## Cldr.Calendars v2.1.0
 
 This is the changelog for Cldr Calendars v2.1.0 released on March 18th, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
