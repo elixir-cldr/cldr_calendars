@@ -83,6 +83,7 @@ defmodule Cldr.Calendar.Era do
   @eras_in_julian_calendar [
     :coptic,
     :ethiopic,
+    :ethiopic_amete_alem,
     :islamic,
     :islamic_civil,
     :islamic_rgsa,

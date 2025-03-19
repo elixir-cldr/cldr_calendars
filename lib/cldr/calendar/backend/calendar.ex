@@ -15,8 +15,9 @@ defmodule Cldr.Calendar.Backend do
           `Cldr` defines formats for several calendars, the names of which
           are returned by `Cldr.known_calendars/0`.
 
-          Currently this implementation only supports the `:gregorian`,
-          `:persian`, `:coptic` and `ethiopic` calendars.
+          Currently this implementation supports the `:gregorian`,
+          `:persian`, `:coptic`, `:ethiopic`, `:ethiopic_amete_alem`, `:japanese`,
+          `:chinese`` and `:dangi` calendars.
 
           The `:gregorian` calendar aligns with the proleptic Gregorian calendar
           defined by Elixir, `Calendar.ISO`.
@@ -39,6 +40,7 @@ defmodule Cldr.Calendar.Backend do
           :persian,
           :coptic,
           :ethiopic,
+          :ethiopic_amete_alem,
           :chinese,
           :japanese,
           :dangi
@@ -352,28 +354,28 @@ defmodule Cldr.Calendar.Backend do
               end,
               month_names: fn month ->
                 cardinal_month =
-                  Cldr.Calendar.cardinal_month(month, calendar_config, 12)
+                  Cldr.Calendar.cardinal_month(month, calendar, 12)
 
                 months(locale, cldr_calendar)
                 |> get_in([:format, :wide, cardinal_month])
               end,
               abbreviated_month_names: fn month ->
                 cardinal_month =
-                  Cldr.Calendar.cardinal_month(month, calendar_config, 12)
+                  Cldr.Calendar.cardinal_month(month, calendar, 12)
 
                 months(locale, cldr_calendar)
                 |> get_in([:format, :abbreviated, cardinal_month])
               end,
               day_of_week_names: fn day ->
                 cardinal_day_of_week =
-                  Cldr.Calendar.cardinal_day_of_week(day, calendar_config)
+                  Cldr.Calendar.cardinal_day_of_week(day, calendar)
 
                 days(locale, cldr_calendar)
                 |> get_in([:format, :wide, cardinal_day_of_week])
               end,
               abbreviated_day_of_week_names: fn day ->
                 cardinal_day_of_week =
-                  Cldr.Calendar.cardinal_day_of_week(day, calendar_config)
+                  Cldr.Calendar.cardinal_day_of_week(day, calendar)
 
                 days(locale, cldr_calendar)
                 |> get_in([:format, :abbreviated, cardinal_day_of_week])

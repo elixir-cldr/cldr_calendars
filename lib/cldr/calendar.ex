@@ -292,7 +292,8 @@ defmodule Cldr.Calendar do
   in this implementation.
   """
   @callback cldr_calendar_type() ::
-              :gregorian | :persian | :coptic | :ethiopic | :chinese | :japanese | :dangi
+              :gregorian | :persian | :coptic | :ethiopic |
+              :ethiopic_amete_alem | :chinese | :japanese | :dangi
 
   @doc """
   Returns the calendar basis.
@@ -1280,7 +1281,9 @@ defmodule Cldr.Calendar do
   @spec iso_day_of_week(date()) :: Calendar.day_of_week()
 
   def iso_day_of_week(date) do
-    Date.day_of_week(date, :monday)
+    date
+    |> Date.convert!(Calendar.ISO)
+    |> Date.day_of_week(:monday)
   end
 
   @doc """
@@ -2679,10 +2682,9 @@ defmodule Cldr.Calendar do
 
     with {_, era} <- day_of_era(datetime) do
       era_key = if variant?, do: -era - 1, else: era
+      eras = backend.eras(locale, calendar.cldr_calendar_type())
 
-      locale
-      |> backend.eras(calendar.cldr_calendar_type())
-      |> get_in([format, era_key])
+      get_in(eras, [format, era_key])
     end
   end
 
@@ -2753,7 +2755,7 @@ defmodule Cldr.Calendar do
     case month_of_year(datetime) do
       month when is_number(month) ->
         cardinal_month =
-          cardinal_month(month, calendar.__config__(), months_in_year)
+          cardinal_month(month, calendar, months_in_year)
 
         locale
         |> backend.months(calendar.cldr_calendar_type())
@@ -2761,7 +2763,7 @@ defmodule Cldr.Calendar do
 
       {month, :leap} when is_number(month) ->
         cardinal_month =
-          cardinal_month(month, calendar.__config__(), months_in_year)
+          cardinal_month(month, calendar, months_in_year)
 
         month_patterns =
           backend.month_patterns(locale, calendar.cldr_calendar_type())
@@ -2853,22 +2855,38 @@ defmodule Cldr.Calendar do
   # Get the month of the calendar-specific year as the month
   # in the gregorian calendar (starting in January)
   @doc false
-  def cardinal_month(month, %{month_of_year: 1}, _months_in_year) do
+  def cardinal_month(month, calendar, months_in_year) do
+    if function_exported?(calendar, :__config__, 0) do
+      do_cardinal_month(month, calendar.__config__(), months_in_year)
+    else
+      month
+    end
+  end
+
+  defp do_cardinal_month(month, %{month_of_year: 1}, _months_in_year) do
     month
   end
 
-  def cardinal_month(month, %{month_of_year: month_of_year}, months_in_year) do
+  defp do_cardinal_month(month, %{month_of_year: month_of_year}, months_in_year) do
     Cldr.Math.amod(month + month_of_year - 1, months_in_year)
   end
 
   # Get the calendar-specific day of the week as the day
   # of the week in Calendar.ISO which starts with 1 == Monday.
   @doc false
-  def cardinal_day_of_week(day, %{day_of_week: 1}) do
+  def cardinal_day_of_week(day, calendar) do
+    if function_exported?(calendar, :__config__, 0) do
+      do_cardinal_day_of_week(day, calendar.__config__())
+    else
+      day
+    end
+  end
+
+  def do_cardinal_day_of_week(day, %{day_of_week: 1}) do
     day
   end
 
-  def cardinal_day_of_week(day, %{day_of_week: day_of_week}) do
+  def do_cardinal_day_of_week(day, %{day_of_week: day_of_week}) do
     Cldr.Math.amod(day + day_of_week - 1, @days_in_a_week)
   end
 
