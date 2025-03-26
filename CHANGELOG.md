@@ -2,6 +2,14 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v2.2.0
+
+This is the changelog for Cldr Calendars v2.2.0 released on March 26th, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Support Elixir 1.19 and OTP 28 without errors or warnings. Primarily this relates to changes to [OTP's new :re module](https://www.erlang.org/docs/28/upcoming_incompatibilities.html#the-re-module-will-use-a-different-regular-expression-engine) and Elixir's evolving type system.
+
 ## Cldr.Calendars v2.1.1
 
 This is the changelog for Cldr Calendars v2.1.1 released on March 19th, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

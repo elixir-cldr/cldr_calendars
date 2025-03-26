@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.MixProject do
   use Mix.Project
 
-  @version "2.1.1"
+  @version "2.2.0"
 
   def project do
     [
@@ -76,7 +76,7 @@ defmodule Cldr.Calendar.MixProject do
       {:calendar_interval, "~> 0.2", optional: true},
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.21", optional: true, runtime: false},
-      {:benchee, "~> 1.0", optional: true, only: [:dev, :test]},
+      # {:benchee, "~> 1.0", optional: true, only: [:dev, :test]},
       {:dialyxir, "~> 1.0", optional: true, only: [:dev, :test], runtime: false},
       {:stream_data, "~> 1.0", only: :test}
     ]

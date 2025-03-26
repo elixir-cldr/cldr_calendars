@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.Parse do
   @moduledoc false
 
-  @split_reg ~r/[\sT]/
+  @split_reg "[\\sT]"
 
   def parse_date(<<"-", year::bytes-4, "-", month::bytes-2, "-", day::bytes-2>>, calendar) do
     with {:ok, {year, month, day}} <- return_date(year, month, day, calendar) do
@@ -64,7 +64,7 @@ defmodule Cldr.Calendar.Parse do
 
   @doc false
   def parse_naive_datetime(string, calendar) do
-    case String.split(string, @split_reg) do
+    case String.split(string, ~r/#{@split_reg}/) do
       [date, time] ->
         with {:ok, {year, month, day}} <- calendar.parse_date(date),
              {:ok, {hour, minute, second, microsecond}} <- calendar.parse_time(time) do
@@ -78,7 +78,7 @@ defmodule Cldr.Calendar.Parse do
 
   @doc false
   def parse_utc_datetime(string, calendar) do
-    case String.split(string, @split_reg) do
+    case String.split(string, ~r/#{@split_reg}/) do
       [date, time_and_offset] ->
         with <<unquote(match_time), rest::binary>> when unquote(guard_time) <- time_and_offset,
              {microsecond, rest} <- parse_microsecond(rest),
