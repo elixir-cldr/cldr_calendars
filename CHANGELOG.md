@@ -4,7 +4,7 @@
 
 ## Cldr.Calendars v2.3.0
 
-This is the changelog for Cldr Calendars v2.3.0 released on May 29th, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+This is the changelog for Cldr Calendars v2.3.0 released on June 8th, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Bug Fixes
 
