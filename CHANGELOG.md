@@ -12,7 +12,7 @@ This is the changelog for Cldr Calendars v2.3.0 released on May 29th, 2025.  For
 
 ### Enhancements
 
-* Adds `Cldr.Calendar.month_names/2` to return the names of months for a given calendar. Note that the list of months may include month names that are only valid in some years. For example:
+* Adds `Cldr.Calendar.month_names/2` to return the names of months for a given calendar. Note that the list of months may include month names that are only valid in some years. Thanks to @Munksgaard for the issue. Closes #28. One example:
 ```elixir
 iex> Cldr.Calendar.month_names(Calendar.ISO, format: :wide)
 %{
