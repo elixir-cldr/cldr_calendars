@@ -12,24 +12,24 @@ This is the changelog for Cldr Calendars v2.3.0 released on May 29th, 2025.  For
 
 ### Enhancements
 
-* Adds `Cldr.Calendar.month_names/2` to return the names of months for a given calendar. The returned data is a list of tuples in sorted order. Note that the list of months may include month names that are only valid in leap years. For example:
+* Adds `Cldr.Calendar.month_names/2` to return the names of months for a given calendar. Note that the list of months may include month names that are only valid in some years. For example:
 ```elixir
 iex> Cldr.Calendar.month_names(Calendar.ISO, format: :wide)
-[
-  {1, "January"},
-  {2, "February"},
-  {3, "March"},
-  {4, "April"},
-  {5, "May"},
-  {6, "June"},
-  {7, "July"},
-  {8, "August"},
-  {9, "September"},
-  {10, "October"},
-  {11, "November"},
-  {12, "December"}
-]
-````
+%{
+  1 => "January",
+  2 => "February",
+  3 => "March",
+  4 => "April",
+  5 => "May",
+  6 => "June",
+  7 => "July",
+  8 => "August",
+  9 => "September",
+  10 => "October",
+  11 => "November",
+  12 => "December"
+}
+```
 
 ## Cldr.Calendars v2.2.0
 

@@ -2923,51 +2923,53 @@ defmodule Cldr.Calendar do
 
   ### Examples
 
-      iex> Cldr.Calendar.month_names(Calendar.ISO)
-      [
-        {1, "Jan"},
-        {2, "Feb"},
-        {3, "Mar"},
-        {4, "Apr"},
-        {5, "May"},
-        {6, "Jun"},
-        {7, "Jul"},
-        {8, "Aug"},
-        {9, "Sep"},
-        {10, "Oct"},
-        {11, "Nov"},
-        {12, "Dec"}
-      ]
-      iex> Cldr.Calendar.month_names(Calendar.ISO, locale: :de)
-      [
-        {1, "Jan."},
-        {2, "Feb."},
-        {3, "März"},
-        {4, "Apr."},
-        {5, "Mai"},
-        {6, "Juni"},
-        {7, "Juli"},
-        {8, "Aug."},
-        {9, "Sept."},
-        {10, "Okt."},
-        {11, "Nov."},
-        {12, "Dez."}
-      ]
       iex> Cldr.Calendar.month_names(Calendar.ISO, format: :wide)
-      [
-        {1, "January"},
-        {2, "February"},
-        {3, "March"},
-        {4, "April"},
-        {5, "May"},
-        {6, "June"},
-        {7, "July"},
-        {8, "August"},
-        {9, "September"},
-        {10, "October"},
-        {11, "November"},
-        {12, "December"}
-      ]
+      %{
+        1 => "January",
+        2 => "February",
+        3 => "March",
+        4 => "April",
+        5 => "May",
+        6 => "June",
+        7 => "July",
+        8 => "August",
+        9 => "September",
+        10 => "October",
+        11 => "November",
+        12 => "December"
+      }
+
+      iex> Cldr.Calendar.month_names(Calendar.ISO, locale: :de)
+      %{
+        1 => "Jan.",
+        2 => "Feb.",
+        3 => "März",
+        4 => "Apr.",
+        5 => "Mai",
+        6 => "Juni",
+        7 => "Juli",
+        8 => "Aug.",
+        9 => "Sept.",
+        10 => "Okt.",
+        11 => "Nov.",
+        12 => "Dez."
+      }
+
+      iex> Cldr.Calendar.month_names(Cldr.Calendar.Gregorian, locale: :fr, format: :narrow)
+      %{
+        1 => "J",
+        2 => "F",
+        3 => "M",
+        4 => "A",
+        5 => "M",
+        6 => "J",
+        7 => "J",
+        8 => "A",
+        9 => "S",
+        10 => "O",
+        11 => "N",
+        12 => "D"
+      }
 
   """
   @doc since: "2.3.0"
@@ -3000,7 +3002,6 @@ defmodule Cldr.Calendar do
 
       month_names
       |> get_in([type, format])
-      |> Enum.sort()
     end
   end
 
