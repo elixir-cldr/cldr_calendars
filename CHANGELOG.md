@@ -2,6 +2,43 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v2.3.0
+
+This is the changelog for Cldr Calendars v2.3.0 released on June 8th, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix `Cldr.Calendar.localize/3` for the type of `:month` when the provided date has only the month and not the year. In these cases the year will default to the current year. Thanks to @Munksgaard. Closes #28.
+
+### Enhancements
+
+* Adds `Cldr.Calendar.month_names/2` to return the names of months for a given calendar. Note that the list of months may include month names that are only valid in some years. Thanks to @Munksgaard for the issue. Closes #28. One example:
+```elixir
+iex> Cldr.Calendar.month_names(Calendar.ISO, format: :wide)
+%{
+  1 => "January",
+  2 => "February",
+  3 => "March",
+  4 => "April",
+  5 => "May",
+  6 => "June",
+  7 => "July",
+  8 => "August",
+  9 => "September",
+  10 => "October",
+  11 => "November",
+  12 => "December"
+}
+```
+
+## Cldr.Calendars v2.2.0
+
+This is the changelog for Cldr Calendars v2.2.0 released on March 26th, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Support Elixir 1.19 and OTP 28 without errors or warnings. Primarily this relates to changes to [OTP's new :re module](https://www.erlang.org/docs/28/upcoming_incompatibilities.html#the-re-module-will-use-a-different-regular-expression-engine) and Elixir's evolving type system.
+
 ## Cldr.Calendars v2.1.1
 
 This is the changelog for Cldr Calendars v2.1.1 released on March 19th, 2025.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

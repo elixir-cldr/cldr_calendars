@@ -2750,6 +2750,12 @@ defmodule Cldr.Calendar do
   def localize(datetime, :month, type, format, backend, locale, _options) do
     backend = Module.concat(backend, Calendar)
     calendar = Map.get(datetime, :calendar, @default_calendar)
+
+    datetime =
+      datetime
+      |> Map.put_new(:year, Date.utc_today().year)
+      |> Map.put_new(:calendar, calendar)
+
     months_in_year = months_in_year(datetime)
 
     case month_of_year(datetime) do
@@ -2888,6 +2894,115 @@ defmodule Cldr.Calendar do
 
   def do_cardinal_day_of_week(day, %{day_of_week: day_of_week}) do
     Cldr.Math.amod(day + day_of_week - 1, @days_in_a_week)
+  end
+
+  @doc """
+  Returns a sorted list of tuples containing ordinal months and
+  month names for a give calendar.
+
+  ### Arguments
+
+  * `calendar` is any calendar module
+
+  * `options` is a keyword list of options.
+
+  ### Options
+
+  * `:locale` is any locale returned by `Cldr.known_locale_names/1`. The
+    default is `Cldr.get_locale/0`.
+
+  * `:type` is one of `:standalone` or `:format`. The default
+    is `:format`.
+
+  * `:format` is one of `:abbreviated`, `Lwide` or `:narrow`.
+    The default is `:abbreviated`.
+
+  ### Returns
+
+  * A sorted list of tuples of the format `{ordinal month number, month name}`.
+
+  ### Examples
+
+      iex> Cldr.Calendar.month_names(Calendar.ISO, format: :wide)
+      %{
+        1 => "January",
+        2 => "February",
+        3 => "March",
+        4 => "April",
+        5 => "May",
+        6 => "June",
+        7 => "July",
+        8 => "August",
+        9 => "September",
+        10 => "October",
+        11 => "November",
+        12 => "December"
+      }
+
+      iex> Cldr.Calendar.month_names(Calendar.ISO, locale: :de)
+      %{
+        1 => "Jan.",
+        2 => "Feb.",
+        3 => "März",
+        4 => "Apr.",
+        5 => "Mai",
+        6 => "Juni",
+        7 => "Juli",
+        8 => "Aug.",
+        9 => "Sept.",
+        10 => "Okt.",
+        11 => "Nov.",
+        12 => "Dez."
+      }
+
+      iex> Cldr.Calendar.month_names(Cldr.Calendar.Gregorian, locale: :fr, format: :narrow)
+      %{
+        1 => "J",
+        2 => "F",
+        3 => "M",
+        4 => "A",
+        5 => "M",
+        6 => "J",
+        7 => "J",
+        8 => "A",
+        9 => "S",
+        10 => "O",
+        11 => "N",
+        12 => "D"
+      }
+
+  """
+  @doc since: "2.3.0"
+
+  @spec month_names(calendar :: calendar(), options :: Keyword.t()) ::
+    list({pos_integer, String.t()}) | {:error, {module(), String.t()}}
+
+  def month_names(calendar, options \\ [])
+
+  def month_names(Calendar.ISO, options) do
+    month_names(Cldr.Calendar.Gregorian, options)
+  end
+
+  def month_names(calendar, options) do
+    backend =
+      Keyword.get_lazy(options, :backend, fn ->
+        backend_from_calendar(calendar) || default_backend()
+      end)
+
+    locale = Keyword.get(options, :locale, backend.get_locale())
+    type = Keyword.get(options, :type, :format)
+    format = Keyword.get(options, :format, :abbreviated)
+
+    with {:ok, backend} <- validate_backend(backend),
+         {:ok, locale} <- backend.validate_locale(locale),
+         {:ok, type} <- validate_type(type),
+         {:ok, format} <- validate_format(format) do
+      backend = Module.concat(backend, Calendar)
+      month_names = backend.months(locale, calendar.cldr_calendar_type())
+
+      month_names
+      |> get_in([type, format])
+    end
   end
 
   @valid_parts [:era, :quarter, :month, :day_of_week, :days_of_week, :am_pm, :day_periods]
