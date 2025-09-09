@@ -17,7 +17,7 @@ defmodule Cldr.Calendar.Backend do
 
           Currently this implementation supports the `:gregorian`,
           `:persian`, `:coptic`, `:ethiopic`, `:ethiopic_amete_alem`, `:japanese`,
-          `:chinese`` and `:dangi` calendars.
+          `:chinese` and `:dangi` calendars.
 
           The `:gregorian` calendar aligns with the proleptic Gregorian calendar
           defined by Elixir, `Calendar.ISO`.
