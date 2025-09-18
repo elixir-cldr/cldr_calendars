@@ -11,6 +11,55 @@ defmodule Cldr.Calendar.Julian do
   @months_in_quarter 3
   @days_in_week 7
 
+  defmacro __using__(opts \\ []) do
+    quote bind_quoted: [opts: opts] do
+      {start_month, start_day} = Keyword.get(opts, :new_year_starting_month_and_day, {1, 1})
+
+      @new_year_starting_month start_month
+      @new_year_starting_day start_day
+
+      # Adjust the year to be a Jan 1st starting year and carry
+      # on
+      def date_to_iso_days(year, month, day) when month <= @new_year_starting_month and day < @new_year_starting_day do
+        Cldr.Calendar.Julian.date_to_iso_days(year + 1, month, day)
+      end
+
+      def date_to_iso_days(year, month, day) do
+        Cldr.Calendar.Julian.date_to_iso_days(year, month, day)
+      end
+
+      # Adjust the year to be this calendars starting year
+      def date_from_iso_days(iso_days) do
+        {year, month, day} = Cldr.Calendar.Julian.date_from_iso_days(iso_days)
+
+        if month <= @new_year_starting_month and day < @new_year_starting_day do
+          {year + 1, month, day}
+        else
+          {year, month, day}
+        end
+      end
+
+      defdelegate leap_year?(year), to: Cldr.Calendar.Julian
+      defdelegate plus(year, month, day, part, years, options), to: Cldr.Calendar.Julian
+      defdelegate week(year, week), to: Cldr.Calendar.Julian
+      defdelegate month(year, month), to: Cldr.Calendar.Julian
+      defdelegate weeks_in_year(year), to: Cldr.Calendar.Julian
+      defdelegate days_in_month(year, month), to: Cldr.Calendar.Julian
+      defdelegate day_of_week(year, month, day, starts_on), to: Cldr.Calendar.Julian
+      defdelegate day_of_year(year, month, day), to: Cldr.Calendar.Julian
+      defdelegate day_of_era(year, month, day), to: Cldr.Calendar.Julian
+      defdelegate iso_week_of_year(year, month, day), to: Cldr.Calendar.Julian
+      defdelegate week_of_year(year, month, day), to: Cldr.Calendar.Julian
+      defdelegate month_of_year(year, month, day), to: Cldr.Calendar.Julian
+      defdelegate quarter_of_year(year, month, day), to: Cldr.Calendar.Julian
+      defdelegate year_of_era(year), to: Cldr.Calendar.Julian
+
+      def unquote(:"$handle_undefined_function")(func, args) do
+        apply(Cldr.Calendar.Julian, func, args)
+      end
+    end
+  end
+
   @doc """
   Defines the CLDR calendar type for this calendar.
 
@@ -474,6 +523,10 @@ defmodule Cldr.Calendar.Julian do
   @impl Cldr.Calendar
   def plus(year, month, day, date_part, increment, options \\ [])
 
+  def plus(year, month, day, :years, years, _options) do
+    {year + years, month, day}
+  end
+
   def plus(year, month, day, :quarters, quarters, options) do
     months = quarters * @months_in_quarter
     plus(year, month, day, :months, months, options)
@@ -493,6 +546,11 @@ defmodule Cldr.Calendar.Julian do
       end
 
     {new_year, new_month, new_day}
+  end
+
+  def plus(year, month, day, :days, days, _options) do
+    iso_days = date_to_iso_days(year, month, day) + days
+    date_from_iso_days(iso_days)
   end
 
   @doc """
