@@ -799,6 +799,46 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
+  Converts a date or a date range to another calendar.
+
+  If the argument is a `t:Date.t/0`, `Date.convert/2` is used to
+  do the conversion.
+
+  If the argument is a `t:/Date.Range.t/0` then `Date.convert/2` is
+  applied to the start and end of the range and a new range returned.
+
+  ### Arguments
+
+  * `date_or_range` is any `t:Date.t/0` or ` t:Date.Range.t/0`.
+
+  * `calendar` is any valid calendar module.
+
+  ### Returns
+
+  * `{:ok, converted_date_or_range}` or
+
+  * `{:error, :incompatible_calendars}`
+
+  ### Example
+
+  """
+  @doc since: "2.4.0"
+  @spec convert(Date.t() | Date.Range.t(), Calendar.calendar()) ::
+    {:ok, Date.t() | Date.Range.t()} | {:error, :incompatible_calendars}
+
+  def convert(%Date{} = date, calendar) do
+    Date.convert(date, calendar)
+  end
+
+  def convert(%Date.Range{first: first, last: last, step: step}, calendar) do
+    with {:ok, new_first} <- Date.convert(first, calendar),
+         {:ok, new_last} <- Date.convert(last, calendar) do
+      {:ok, Date.range(new_first, new_last, step)}
+    end
+  end
+
+
+  @doc """
   Formats the given date, time, or datetime into a string.
 
   This function is a thin wrapper around `Calendar.strftime/3` intended
