@@ -39,6 +39,7 @@ defmodule Cldr.Calendar.Julian do
         end
       end
 
+      defdelegate valid_date?(year, month, day), to: Cldr.Calendar.Julian
       defdelegate leap_year?(year), to: Cldr.Calendar.Julian
       defdelegate plus(year, month, day, part, years, options), to: Cldr.Calendar.Julian
       defdelegate week(year, week), to: Cldr.Calendar.Julian
@@ -53,10 +54,7 @@ defmodule Cldr.Calendar.Julian do
       defdelegate month_of_year(year, month, day), to: Cldr.Calendar.Julian
       defdelegate quarter_of_year(year, month, day), to: Cldr.Calendar.Julian
       defdelegate year_of_era(year), to: Cldr.Calendar.Julian
-
-      def unquote(:"$handle_undefined_function")(func, args) do
-        apply(Cldr.Calendar.Julian, func, args)
-      end
+      defdelegate parse_date(date), to: Cldr.Calendar.Julian
     end
   end
 
