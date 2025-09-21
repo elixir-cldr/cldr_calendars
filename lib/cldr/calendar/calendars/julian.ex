@@ -18,6 +18,7 @@ defmodule Cldr.Calendar.Julian do
       @new_year_starting_month start_month
       @new_year_starting_day start_day
 
+      @quarters_in_year 4
       @months_in_year Cldr.Calendar.Julian.months_in_year(0)
       @last_month_of_year rem(start_month + (@months_in_year - 1), @months_in_year)
 
@@ -99,9 +100,29 @@ defmodule Cldr.Calendar.Julian do
         Date.range(first, last, 1)
       end
 
-      # Returns the ordinal month
-      def month_of_year(_year, ordinal_month, _day) do
-        Cldr.Math.amod(ordinal_month - @new_year_starting_month + 1, @months_in_year)
+      def quarter_of_year(year, month, day) do
+        month_of_year = month_of_year(year, month, day)
+
+        ceil(month_of_year / (@months_in_year / @quarters_in_year))
+      end
+
+      # Returns the ordinal month accounting for a long month 12
+      def month_of_year(_year, month, day)
+          when month == @new_year_starting_month and day < @new_year_starting_day do
+        @months_in_year
+      end
+
+      def month_of_year(_year, month, _day) do
+        Cldr.Math.amod(month - @new_year_starting_month + 1, @months_in_year)
+      end
+
+      def day_of_year(year, month, day) do
+        adjusted_year =
+          if month < @new_year_starting_month, do: year + 1, else: year
+
+        first_day = date_to_iso_days(year, @new_year_starting_month, @new_year_starting_day)
+        this_day = date_to_iso_days(adjusted_year, month, day)
+        this_day - first_day + 1
       end
 
       defdelegate valid_date?(year, month, day), to: Cldr.Calendar.Julian
@@ -110,11 +131,9 @@ defmodule Cldr.Calendar.Julian do
       defdelegate week(year, week), to: Cldr.Calendar.Julian
       defdelegate weeks_in_year(year), to: Cldr.Calendar.Julian
       defdelegate day_of_week(year, month, day, starts_on), to: Cldr.Calendar.Julian
-      defdelegate day_of_year(year, month, day), to: Cldr.Calendar.Julian
       defdelegate day_of_era(year, month, day), to: Cldr.Calendar.Julian
       defdelegate iso_week_of_year(year, month, day), to: Cldr.Calendar.Julian
       defdelegate week_of_year(year, month, day), to: Cldr.Calendar.Julian
-      defdelegate quarter_of_year(year, month, day), to: Cldr.Calendar.Julian
       defdelegate year_of_era(year), to: Cldr.Calendar.Julian
       defdelegate parse_date(date), to: Cldr.Calendar.Julian
       defdelegate date_to_string(year, month, day), to: Cldr.Calendar.Julian
