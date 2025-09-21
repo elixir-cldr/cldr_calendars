@@ -21,12 +21,6 @@ defmodule Cldr.Calendar.Julian.Compiler do
 
       defguard year_rollover(month, day) when month <= @new_year_starting_month and day < @new_year_starting_day
 
-      # Adjust the year to be a Jan 1st starting year and carry
-      # on
-      def date_to_iso_days(year, month, day) when year_rollover(month, day) do
-        Cldr.Calendar.Julian.date_to_iso_days(year + 1, month, day)
-      end
-
       def date_to_iso_days(year, month, day) do
         Cldr.Calendar.Julian.date_to_iso_days(year, month, day)
       end
