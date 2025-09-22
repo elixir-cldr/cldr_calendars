@@ -34,7 +34,7 @@ defmodule Cldr.Calendar.Julian.Compiler do
       end
 
       def naive_datetime_to_iso_days(year, month, day, 0, 0, 0, {0, 0}) do
-        {date_to_iso_days(year, month, day), {0, 0}}
+        {date_to_iso_days(year, month, day), {0, 6}}
       end
 
       # Adjust the year to be this calendars starting year
@@ -50,7 +50,7 @@ defmodule Cldr.Calendar.Julian.Compiler do
 
       def naive_datetime_from_iso_days({iso_days, _}) do
         {year, month, day} = date_from_iso_days(iso_days)
-        {year, month, day, 0, 0, 0, {0, 0}}
+        {year, month, day, 0, 0, 0, {0, 6}}
       end
 
       def days_in_year(year) do
@@ -64,7 +64,7 @@ defmodule Cldr.Calendar.Julian.Compiler do
       # days if month for month 1.
 
       def days_in_month(month) do
-        {:error, :unresolved}
+        {:error, :undefined}
       end
 
       def days_in_month(year, ordinal_month) do
@@ -107,7 +107,7 @@ defmodule Cldr.Calendar.Julian.Compiler do
       end
 
       def quarter(year, quarter) do
-
+        {:error, :not_defined}
       end
 
       def month(year, ordinal_month) do
