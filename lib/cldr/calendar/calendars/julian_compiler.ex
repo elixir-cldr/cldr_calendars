@@ -1,4 +1,5 @@
 defmodule Cldr.Calendar.Julian.Compiler do
+  # See https://stevemorse.org/jcal/julian.html
 
   defmacro __before_compile__(env) do
     opts =
@@ -21,6 +22,13 @@ defmodule Cldr.Calendar.Julian.Compiler do
 
       defguard year_rollover(month, day) when month <= @new_year_starting_month and day < @new_year_starting_day
 
+      # Adjust the year to be a Jan 1st starting year and carry
+      # on
+
+      def date_to_iso_days(year, month, day) when year_rollover(month, day) do
+        Cldr.Calendar.Julian.date_to_iso_days(year + 1, month, day)
+      end
+
       def date_to_iso_days(year, month, day) do
         Cldr.Calendar.Julian.date_to_iso_days(year, month, day)
       end
@@ -34,10 +42,15 @@ defmodule Cldr.Calendar.Julian.Compiler do
         {year, month, day} = Cldr.Calendar.Julian.date_from_iso_days(iso_days)
 
         if month <= @new_year_starting_month and day < @new_year_starting_day do
-          {year + 1, month, day}
+          {year - 1, month, day}
         else
           {year, month, day}
         end
+      end
+
+      def naive_datetime_from_iso_days({iso_days, _}) do
+        {year, month, day} = date_from_iso_days(iso_days)
+        {year, month, day, 0, 0, 0, {0, 0}}
       end
 
       def days_in_year(year) do
@@ -195,7 +208,6 @@ defmodule Cldr.Calendar.Julian.Compiler do
       defdelegate shift_naive_datetime(year, month, day, hour, minute, second, millisecond, duration), to: Cldr.Calendar.Julian
       defdelegate iso_days_to_end_of_day(iso_days), to: Cldr.Calendar.Julian
       defdelegate iso_days_to_beginning_of_day(iso_days), to: Cldr.Calendar.Julian
-      defdelegate naive_datetime_from_iso_days(iso_days), to: Cldr.Calendar.Julian
       defdelegate parse_utc_datetime(string), to: Cldr.Calendar.Julian
       defdelegate parse_time(string), to: Cldr.Calendar.Julian
       defdelegate parse_naive_datetime(string), to: Cldr.Calendar.Julian

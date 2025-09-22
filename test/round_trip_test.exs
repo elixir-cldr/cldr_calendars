@@ -87,6 +87,17 @@ defmodule Cldr.Calendar.RoundTrip.Test do
     end
   end
 
+  test "that Cldr.Calendar.Julian.March25 dates all round trip" do
+    for year <- 0001..1800,
+        month <- 1..12,
+        day <- 1..28 do
+      {:ok, julian} = Date.new(year, month, day, Cldr.Calendar.Julian.March25)
+      {:ok, iso} = Date.convert(julian, Calendar.ISO)
+      {:ok, converted} = Date.convert(iso, Cldr.Calendar.Julian.March25)
+      assert Date.compare(julian, converted) == :eq
+    end
+  end
+
   if function_exported?(Code, :fetch_docs, 1) do
     test "that no module docs are generated for a backend" do
       assert {:docs_v1, _, :elixir, _, :hidden, %{}, _} = Code.fetch_docs(NoDocs.Cldr.Calendar)
