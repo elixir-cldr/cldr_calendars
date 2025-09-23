@@ -17,10 +17,17 @@ defmodule Cldr.Calendar.Julian.Compiler do
       @new_year_starting_day start_day
 
       @quarters_in_year 4
+      @months_in_quarter 3
       @months_in_year Cldr.Calendar.Julian.months_in_year(0)
       @last_month_of_year rem(start_month + (@months_in_year - 1), @months_in_year)
 
-      defguard year_rollover(month, day) when month <= @new_year_starting_month and day < @new_year_starting_day
+      @doc """
+      These dates belong to the prior Julian year
+
+      """
+      defguard year_rollover(month, day)
+        when month < @new_year_starting_month
+          or (month == @new_year_starting_month and day < @new_year_starting_day)
 
       # Adjust the year to be a Jan 1st starting year and carry
       # on
@@ -33,24 +40,74 @@ defmodule Cldr.Calendar.Julian.Compiler do
         Cldr.Calendar.Julian.date_to_iso_days(year, month, day)
       end
 
-      def naive_datetime_to_iso_days(year, month, day, 0, 0, 0, {0, 0}) do
-        {date_to_iso_days(year, month, day), {0, 6}}
-      end
-
       # Adjust the year to be this calendars starting year
       def date_from_iso_days(iso_days) do
         {year, month, day} = Cldr.Calendar.Julian.date_from_iso_days(iso_days)
+        date_from_julian_date(year, month, day)
+      end
 
-        if month <= @new_year_starting_month and day < @new_year_starting_day do
-          {year - 1, month, day}
-        else
-          {year, month, day}
-        end
+      def date_from_julian_date(year, month, day) when year_rollover(month, day) do
+        {year - 1, month, day}
+      end
+
+      def date_from_julian_date(year, month, day) do
+        {year, month, day}
+      end
+
+      def naive_datetime_to_iso_days(year, month, day, 0, 0, 0, {0, 0}) do
+        {date_to_iso_days(year, month, day), {0, 6}}
       end
 
       def naive_datetime_from_iso_days({iso_days, _}) do
         {year, month, day} = date_from_iso_days(iso_days)
         {year, month, day, 0, 0, 0, {0, 6}}
+      end
+
+      def shift_date(year, month, day, duration) do
+        Cldr.Calendar.shift_date(year, month, day, __MODULE__, duration)
+      end
+
+      def plus(year, month, day, date_part, increment, options \\ [])
+
+      def plus(year, month, day, :years, years, options) do
+        new_year =
+          year + years
+
+        new_day =
+          if Keyword.get(options, :coerce, false) do
+            max_new_day = days_in_month(new_year, month)
+            min(day, max_new_day)
+          else
+            day
+          end
+
+        {year + years, month, new_day}
+      end
+
+      def plus(year, month, day, :quarters, quarters, options) do
+        months = quarters * @months_in_quarter
+        plus(year, month, day, :months, months, options)
+      end
+
+      def plus(year, month, day, :months, months, options) do
+        months_in_year = months_in_year(year)
+        {year_increment, new_month} = Cldr.Math.div_amod(month + months, months_in_year)
+        new_year = year + year_increment
+
+        new_day =
+          if Keyword.get(options, :coerce, false) do
+            max_new_day = days_in_month(new_year, new_month)
+            min(day, max_new_day)
+          else
+            day
+          end
+
+        {new_year, new_month, new_day}
+      end
+
+      def plus(year, month, day, :days, days, _options) do
+        iso_days = date_to_iso_days(year, month, day) + days
+        date_from_iso_days(iso_days)
       end
 
       def days_in_year(year) do
@@ -184,7 +241,6 @@ defmodule Cldr.Calendar.Julian.Compiler do
 
       defdelegate valid_date?(year, month, day), to: Cldr.Calendar.Julian
       defdelegate leap_year?(year), to: Cldr.Calendar.Julian
-      defdelegate plus(year, month, day, part, years, options), to: Cldr.Calendar.Julian
       defdelegate week(year, week), to: Cldr.Calendar.Julian
       defdelegate weeks_in_year(year), to: Cldr.Calendar.Julian
       defdelegate months_in_year(year), to: Cldr.Calendar.Julian
@@ -204,7 +260,6 @@ defmodule Cldr.Calendar.Julian.Compiler do
       defdelegate time_to_day_fraction(hour, minute, second, millisecond), to: Cldr.Calendar.Julian
       defdelegate time_from_day_fraction(fraction), to: Cldr.Calendar.Julian
       defdelegate shift_time(hour, minute, second, millisecond, duration), to: Cldr.Calendar.Julian
-      defdelegate shift_date(year, month, day, duration), to: Cldr.Calendar.Julian
       defdelegate shift_naive_datetime(year, month, day, hour, minute, second, millisecond, duration), to: Cldr.Calendar.Julian
       defdelegate iso_days_to_end_of_day(iso_days), to: Cldr.Calendar.Julian
       defdelegate iso_days_to_beginning_of_day(iso_days), to: Cldr.Calendar.Julian

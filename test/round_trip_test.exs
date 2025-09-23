@@ -88,13 +88,35 @@ defmodule Cldr.Calendar.RoundTrip.Test do
   end
 
   test "that Cldr.Calendar.Julian.March25 dates all round trip" do
-    for year <- 0001..1800,
+    for year <- 0001..2200,
         month <- 1..12,
         day <- 1..28 do
       {:ok, julian} = Date.new(year, month, day, Cldr.Calendar.Julian.March25)
       {:ok, iso} = Date.convert(julian, Calendar.ISO)
       {:ok, converted} = Date.convert(iso, Cldr.Calendar.Julian.March25)
       assert Date.compare(julian, converted) == :eq
+    end
+  end
+
+  test "that Cldr.Calendar.Julian.Jan1 dates all round trip" do
+    for year <- 0001..2200,
+        month <- 1..12,
+        day <- 1..Cldr.Calendar.Julian.days_in_month(year, month) do
+      {:ok, julian} = Date.new(year, month, day, Cldr.Calendar.Julian.Jan1)
+      {:ok, iso} = Date.convert(julian, Calendar.ISO)
+      {:ok, converted} = Date.convert(iso, Cldr.Calendar.Julian.Jan1)
+      assert Date.compare(julian, converted) == :eq
+    end
+  end
+
+  test "that Cldr.Calendar.Julian.Jan1 dates are the same as Cldr.Calendar.Julian dates" do
+    for year <- 0001..2200,
+        month <- 1..12,
+        day <- 1..Cldr.Calendar.Julian.days_in_month(year, month) do
+      {:ok, julian_jan1} = Date.new(year, month, day, Cldr.Calendar.Julian.Jan1)
+      {:ok, julian} = Date.convert(julian_jan1, Cldr.Calendar.Julian)
+      {:ok, converted} = Date.convert(julian, Cldr.Calendar.Julian.Jan1)
+      assert Date.compare(julian_jan1, converted) == :eq
     end
   end
 
