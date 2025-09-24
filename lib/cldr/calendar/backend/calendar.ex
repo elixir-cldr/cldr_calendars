@@ -344,6 +344,7 @@ defmodule Cldr.Calendar.Backend do
                {:ok, calendar} <- Cldr.Calendar.validate_calendar(calendar) do
             cldr_calendar = calendar.cldr_calendar_type()
             calendar_config = calendar.__config__()
+
             am_pm_default_or_variant =
               if options[:am_pm] == :variant, do: :variant, else: :default
 

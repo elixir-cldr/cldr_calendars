@@ -292,8 +292,14 @@ defmodule Cldr.Calendar do
   in this implementation.
   """
   @callback cldr_calendar_type() ::
-              :gregorian | :persian | :coptic | :ethiopic |
-              :ethiopic_amete_alem | :chinese | :japanese | :dangi
+              :gregorian
+              | :persian
+              | :coptic
+              | :ethiopic
+              | :ethiopic_amete_alem
+              | :chinese
+              | :japanese
+              | :dangi
 
   @doc """
   Returns the calendar basis.
@@ -824,7 +830,7 @@ defmodule Cldr.Calendar do
   """
   @doc since: "2.4.0"
   @spec convert(Date.t() | Date.Range.t(), Calendar.calendar()) ::
-    {:ok, Date.t() | Date.Range.t()} | {:error, :incompatible_calendars}
+          {:ok, Date.t() | Date.Range.t()} | {:error, :incompatible_calendars}
 
   def convert(%Date{} = date, calendar) do
     Date.convert(date, calendar)
@@ -836,7 +842,6 @@ defmodule Cldr.Calendar do
       {:ok, Date.range(new_first, new_last, step)}
     end
   end
-
 
   @doc """
   Formats the given date, time, or datetime into a string.
@@ -856,7 +861,7 @@ defmodule Cldr.Calendar do
   """
   def strftime(date_or_time_or_datetime, format, options \\ []) do
     calendar = Map.get(date_or_time_or_datetime, :calendar)
-    options = Keyword.merge(options, [calendar: calendar])
+    options = Keyword.merge(options, calendar: calendar)
     strftime_options = strftime_options!(options)
 
     Calendar.strftime(date_or_time_or_datetime, format, strftime_options)
@@ -3015,7 +3020,7 @@ defmodule Cldr.Calendar do
   @doc since: "2.3.0"
 
   @spec month_names(calendar :: calendar(), options :: Keyword.t()) ::
-    list({pos_integer, String.t()}) | {:error, {module(), String.t()}}
+          list({pos_integer, String.t()}) | {:error, {module(), String.t()}}
 
   def month_names(calendar, options \\ [])
 

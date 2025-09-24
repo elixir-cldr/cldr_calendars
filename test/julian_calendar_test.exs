@@ -12,21 +12,21 @@ defmodule Cldr.Calendar.Julian.Test do
 
   test "Calendar conversion from Julian starting March 25 for dates before new year" do
     assert {:ok, ~D[1751-01-12 Cldr.Calendar.Gregorian]} ==
-      Date.convert(~D[1750-01-01 Cldr.Calendar.Julian.March25], Cldr.Calendar.Gregorian)
+             Date.convert(~D[1750-01-01 Cldr.Calendar.Julian.March25], Cldr.Calendar.Gregorian)
   end
 
   test "Calendar conversion from Julian starting March 25 for dates after new year" do
     assert {:ok, ~D[1751-04-05 Cldr.Calendar.Gregorian]} ==
-      Date.convert(~D[1751-03-25 Cldr.Calendar.Julian.March25], Cldr.Calendar.Gregorian)
+             Date.convert(~D[1751-03-25 Cldr.Calendar.Julian.March25], Cldr.Calendar.Gregorian)
   end
 
   test "Calendar conversion to Julian starting March 25 for dates before new year" do
-    assert {:ok, ~D[1750-01-01 Cldr.Calendar.Julian.March25]}  ==
-      Date.convert(~D[1751-01-12 Cldr.Calendar.Gregorian], Cldr.Calendar.Julian.March25)
+    assert {:ok, ~D[1750-01-01 Cldr.Calendar.Julian.March25]} ==
+             Date.convert(~D[1751-01-12 Cldr.Calendar.Gregorian], Cldr.Calendar.Julian.March25)
   end
 
   test "Calendar conversion to Julian starting March 25 for dates after new year" do
     assert {:ok, ~D[1751-03-25 Cldr.Calendar.Julian.March25]} ==
-      Date.convert(~D[1751-04-05 Cldr.Calendar.Gregorian], Cldr.Calendar.Julian.March25)
+             Date.convert(~D[1751-04-05 Cldr.Calendar.Gregorian], Cldr.Calendar.Julian.March25)
   end
 end

@@ -103,7 +103,7 @@ defmodule Cldr.Calendar.StrftimeOptions.Test do
              "%y-%m-%d %I:%M:%S %p",
              MyApp.Cldr.Calendar.strftime_options!(locale: "ar")
            ) ==
-            "19-08-26 01:52:06 م"
+             "19-08-26 01:52:06 م"
 
     assert_raise Cldr.InvalidLanguageError, fn ->
       Calendar.strftime(

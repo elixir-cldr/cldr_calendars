@@ -33,13 +33,13 @@ defmodule Cldr.Calendar.LocalizeTest do
     {:ok, date} = Date.new(2025, 1, 26, he)
 
     assert [
-      {1, "Sun"},
-      {2, "Mon"},
-      {3, "Tue"},
-      {4, "Wed"},
-      {5, "Thu"},
-      {6, "Fri"},
-      {7, "Sat"}
-    ] == Cldr.Calendar.localize(date, :days_of_week)
+             {1, "Sun"},
+             {2, "Mon"},
+             {3, "Tue"},
+             {4, "Wed"},
+             {5, "Thu"},
+             {6, "Fri"},
+             {7, "Sat"}
+           ] == Cldr.Calendar.localize(date, :days_of_week)
   end
 end
