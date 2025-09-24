@@ -8,6 +8,8 @@ This is the changelog for Cldr Calendars v2.4.0 released on _____, 2025.  For ol
 
 ### Bug Fixes
 
+* Fix `year/1`, `month/2` and `days_in_month/2` for Julian calendars.
+
 ### Enhancements
 
 * Adds `use Cldr.Calendar.Julian, new_year_starting_month_and_day: {month_of_year, day_of_month}` to allow modelling Julian calendars that don't start on January 1st.
