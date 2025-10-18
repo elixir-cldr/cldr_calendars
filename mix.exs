@@ -68,7 +68,10 @@ defmodule Cldr.Calendar.MixProject do
 
   defp deps do
     [
-      {:ex_cldr_numbers, "~> 2.34"},
+      {:ex_cldr, github: "elixir-cldr/cldr48", override: true},
+      {:ex_cldr_numbers, github: "elixir-cldr/cldr_numbers", branch: "cldr48", override: true},
+
+      # {:ex_cldr_numbers, "~> 2.34"},
       {:ex_cldr_units, "~> 3.18", optional: true},
       {:ex_cldr_lists, "~> 2.10", optional: true},
       {:tz, "~> 0.9", optional: true, only: [:dev, :test]},

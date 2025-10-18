@@ -1,4 +1,5 @@
 require Cldr.Calendar
+require Cldr.Calendar.Backend
 require Cldr.Calendar.Backend.Compiler
 
 defmodule MyApp.Cldr do
