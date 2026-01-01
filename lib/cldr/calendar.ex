@@ -32,7 +32,9 @@ defmodule Cldr.Calendar do
   """
 
   alias Cldr.Calendar.Config
+  alias Cldr.Calendar.Compiler
   alias Cldr.Calendar.Interval
+
   import Kernel, except: [inspect: 1, inspect: 2]
 
   # Whether to coerce valid date with plus/3 for
@@ -729,7 +731,7 @@ defmodule Cldr.Calendar do
     if Code.ensure_loaded?(calendar_module) do
       {:module_already_exists, calendar_module}
     else
-      create_calendar(calendar_module, calendar_type, config)
+      Compiler.create_calendar(calendar_module, calendar_type, config)
     end
   end
 
@@ -750,7 +752,7 @@ defmodule Cldr.Calendar do
       cond do
         same_as_default?(config) -> {:ok, Cldr.Calendar.default_calendar()}
         calendar_module?(calendar_name) -> {:ok, calendar_name}
-        true -> create_calendar(calendar_name, :month, config)
+        true -> Compiler.create_calendar(calendar_name, :month, config)
       end
     end
   end
@@ -774,34 +776,6 @@ defmodule Cldr.Calendar do
       |> Map.put(:calendar, nil)
 
     config == default_calendar_config
-  end
-
-  defp create_calendar(calendar_module, calendar_type, config) do
-    config = Keyword.put(config, :calendar, calendar_module)
-    structured_config = Config.extract_options(config)
-
-    with {:ok, config} <- Config.validate_config(structured_config, calendar_type) do
-      calendar_type =
-        calendar_type
-        |> to_string
-        |> String.capitalize()
-
-      config =
-        config
-        |> Map.from_struct()
-        |> Map.to_list()
-
-      contents =
-        quote do
-          use unquote(Module.concat(Cldr.Calendar.Base, calendar_type)),
-              unquote(Macro.escape(config))
-        end
-
-      {:module, module, _, :ok} =
-        Module.create(calendar_module, contents, Macro.Env.location(__ENV__))
-
-      {:ok, module}
-    end
   end
 
   @doc """

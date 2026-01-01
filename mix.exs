@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.MixProject do
   use Mix.Project
 
-  @version "2.4.0"
+  @version "2.4.1"
 
   def project do
     [
@@ -45,6 +45,13 @@ defmodule Cldr.Calendar.MixProject do
 
   def application do
     [
+      mod: {
+        Cldr.Calendar.Application,
+        [
+          strategy: :one_for_one,
+          name: Cldr.Calendar.Supervisor
+        ]
+      },
       extra_applications: [:logger]
     ]
   end
