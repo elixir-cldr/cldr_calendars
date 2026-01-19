@@ -2,13 +2,21 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v2.4.2
+
+This is the changelog for Cldr Calendars v2.4.2 released on January 19th, 2026.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix compiler warnings on Elixir 1.20.
+
 ## Cldr.Calendars v2.4.1
 
 This is the changelog for Cldr Calendars v2.4.1 released on January 2nd, 2026.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
 
 ### Bug Fixes
 
-* Fixes `Cldr.Calendar.create_calendar/3` to be now serialised behind a GenServer. This fixes an issue where multiple processes could attempt to create the same new calendar (for example, via `Cldr.Calendar.calendar_from_locale("en")`) at the same time. Thanks to @tjchambers for the report. Closes #33.
+* Fixes `Cldr.Calendar.create_calendar/3` to now serialised behind a GenServer. This fixes an issue where multiple processes could attempt to create the same new calendar (for example, via `Cldr.Calendar.calendar_from_locale("en")`) at the same time. Thanks to @tjchambers for the report. Closes #33.
 
 ## Cldr.Calendars v2.4.0
 

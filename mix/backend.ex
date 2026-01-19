@@ -1,6 +1,6 @@
+{:module, _} = Code.ensure_compiled(Cldr.Calendar.Backend)
+{:module, _} = Code.ensure_compiled(Cldr.Calendar.Backend.Compiler)
 require Cldr.Calendar
-require Cldr.Calendar.Backend
-require Cldr.Calendar.Backend.Compiler
 
 defmodule MyApp.Cldr do
   use Cldr,
