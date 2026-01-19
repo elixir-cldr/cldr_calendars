@@ -29,7 +29,7 @@ jobs:
           - otp: "26.2"
             elixir: "1.17.2-otp-26"
           - otp: "26.2"
-            elixir: "1.18.1-otp-26"
+            elixir: "1.18.4-otp-26"
           - otp: "27.2"
             elixir: "1.17.2-otp-27"
           - otp: "27.2"
