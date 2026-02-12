@@ -86,6 +86,10 @@ defmodule Cldr.Calendar.Test do
     assert "January" = Cldr.Calendar.localize(%{month: 1}, :month, format: :wide)
   end
 
+  test "stand alone month names are resolved" do
+    assert %{1 => "Jan"} = Cldr.Calendar.month_names(Cldr.Calendar.Gregorian, type: :stand_alone)
+  end
+
   if function_exported?(Code, :fetch_docs, 1) do
     test "that no module docs are generated for a backend" do
       assert {:docs_v1, _, :elixir, _, :hidden, %{}, _} = Code.fetch_docs(NoDocs.Cldr.Calendar)

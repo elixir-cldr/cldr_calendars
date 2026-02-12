@@ -2,6 +2,14 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v2.4.3
+
+This is the changelog for Cldr Calendars v2.4.3 released on _______, 2026.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Fix documentation for `Cldr.Calendar.month_names/2` to correctly note that valid type is `:stand_alone` (not `:standalone`).
+
 ## Cldr.Calendars v2.4.2
 
 This is the changelog for Cldr Calendars v2.4.2 released on January 19th, 2026.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)

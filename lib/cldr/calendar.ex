@@ -2921,7 +2921,7 @@ defmodule Cldr.Calendar do
 
   ### Arguments
 
-  * `calendar` is any calendar module
+  * `calendar` is any calendar module.
 
   * `options` is a keyword list of options.
 
@@ -2930,7 +2930,7 @@ defmodule Cldr.Calendar do
   * `:locale` is any locale returned by `Cldr.known_locale_names/1`. The
     default is `Cldr.get_locale/0`.
 
-  * `:type` is one of `:standalone` or `:format`. The default
+  * `:type` is one of `:stand_alone` or `:format`. The default
     is `:format`.
 
   * `:format` is one of `:abbreviated`, `Lwide` or `:narrow`.
@@ -3019,8 +3019,7 @@ defmodule Cldr.Calendar do
       backend = Module.concat(backend, Calendar)
       month_names = backend.months(locale, calendar.cldr_calendar_type())
 
-      month_names
-      |> get_in([type, format])
+      get_in(month_names, [type, format])
     end
   end
 
@@ -3079,7 +3078,7 @@ defmodule Cldr.Calendar do
   end
 
   @doc """
-  Adds a duration to a date
+  Adds a duration to a date.
 
   ### Arguments
 
