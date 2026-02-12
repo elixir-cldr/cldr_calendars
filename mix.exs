@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.MixProject do
   use Mix.Project
 
-  @version "2.4.3"
+  @version "2.4.2"
 
   def project do
     [
