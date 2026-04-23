@@ -8,6 +8,6 @@ defmodule Cldr.Calendar.Application do
       Cldr.Calendar.Compiler
     ]
 
-    Supervisor.start_link(children, [strategy: :one_for_one, name: __MODULE__])
+    Supervisor.start_link(children, strategy: :one_for_one, name: __MODULE__)
   end
 end

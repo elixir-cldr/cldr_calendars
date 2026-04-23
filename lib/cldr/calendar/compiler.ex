@@ -2,7 +2,10 @@ defmodule Cldr.Calendar.Compiler do
   @moduledoc false
 
   use GenServer
+  require Logger
   alias Cldr.Calendar.Config
+
+  @default_compiler_timeout 7_000
 
   def start_link(state) do
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
@@ -29,9 +32,21 @@ defmodule Cldr.Calendar.Compiler do
               unquote(Macro.escape(config))
         end
 
-      GenServer.call(__MODULE__, {
-        :compile, calendar_module, contents, Macro.Env.location(__ENV__)
-      })
+      gen_server_timeout =
+        Application.get_env(:ex_cldr_calendars, :compiler_timeout, @default_compiler_timeout)
+
+      Logger.debug("Requesting compilation of calendar module #{inspect(calendar_module)}")
+
+      GenServer.call(
+        __MODULE__,
+        {
+          :compile,
+          calendar_module,
+          contents,
+          Macro.Env.location(__ENV__)
+        },
+        gen_server_timeout
+      )
     end
   end
 
@@ -46,11 +61,12 @@ defmodule Cldr.Calendar.Compiler do
   def handle_call({:compile, module, contents, env}, _from, state) do
     cond do
       Code.ensure_loaded?(module) ->
+        Logger.debug("Calendar module #{inspect(module)} already defined, returning it")
         {:reply, {:ok, module}, state}
 
       {:module, module, _, :ok} = Module.create(module, contents, env) ->
+        Logger.debug("Created calendar module #{inspect(module)}")
         {:reply, {:ok, module}, state}
     end
   end
-
 end
