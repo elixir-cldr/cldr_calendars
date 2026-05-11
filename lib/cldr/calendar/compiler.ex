@@ -12,6 +12,20 @@ defmodule Cldr.Calendar.Compiler do
   end
 
   def create_calendar(calendar_module, calendar_type, config) do
+    # Fast path: if the calendar module is already loaded there is nothing
+    # to compile. Short-circuit before touching the GenServer so concurrent
+    # callers don't serialise behind whichever compile happens to be in
+    # flight. The GenServer's own Code.ensure_loaded?/1 check in
+    # handle_call/3 still guards against a race when two callers request
+    # the same not-yet-loaded module at the same time.
+    if Code.ensure_loaded?(calendar_module) do
+      {:ok, calendar_module}
+    else
+      do_create_calendar(calendar_module, calendar_type, config)
+    end
+  end
+
+  defp do_create_calendar(calendar_module, calendar_type, config) do
     config = Keyword.put(config, :calendar, calendar_module)
     structured_config = Config.extract_options(config)
 

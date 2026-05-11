@@ -209,8 +209,8 @@ defmodule Cldr.Calendar.Interval do
 
   def week(%{calendar: Calendar.ISO} = date) do
     %{date | calendar: Cldr.Calendar.Gregorian}
-    |> week
-    |> coerce_iso_calendar
+    |> week()
+    |> coerce_iso_calendar()
   end
 
   def week(date) do
