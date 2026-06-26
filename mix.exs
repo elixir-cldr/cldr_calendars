@@ -76,6 +76,10 @@ defmodule Cldr.Calendar.MixProject do
   defp deps do
     [
       {:ex_cldr_numbers, "~> 2.36"},
+      # Pin digital_token to 1.x. 2.0 switched to the OTP 27+ built-in :json module and
+      # pulls in json_polyfill on OTP 26, whose rebar hook fails to compile under Mix on
+      # OTP 27+. 1.x uses Jason, so the lock stays portable across the OTP matrix.
+      {:digital_token, "~> 1.0"},
       {:ex_cldr_units, "~> 3.20", optional: true},
       {:ex_cldr_lists, "~> 2.10", optional: true},
       {:tz, "~> 0.9", optional: true, only: [:dev, :test]},
