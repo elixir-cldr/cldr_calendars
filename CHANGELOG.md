@@ -2,6 +2,14 @@
 
 **Note that `ex_cldr_calendars` version 1.24.0 and later are supported on Elixir 1.12 and later only.**
 
+## Cldr.Calendars v2.4.4
+
+This is the changelog for Cldr Calendars v2.4.4 released on June 26th, 2026.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
+
+### Bug Fixes
+
+* Make `:jason` an optional dependency and remove it from the Dialyzer PLT applications. This preserves compatibility for environments that still need a JSON library for `ex_cldr`, while allowing runtimes with built-in JSON support to avoid depending explicitly on Jason.
+
 ## Cldr.Calendars v2.4.3
 
 This is the changelog for Cldr Calendars v2.4.3 released on May 11th, 2026.  For older changelogs please consult the release tag on [GitHub](https://github.com/elixir-cldr/cldr_calendars/tags)
