@@ -1,7 +1,7 @@
 defmodule Cldr.Calendar.MixProject do
   use Mix.Project
 
-  @version "2.4.3"
+  @version "2.4.4"
 
   def project do
     [
@@ -22,7 +22,7 @@ defmodule Cldr.Calendar.MixProject do
       aliases: aliases(),
       elixirc_paths: elixirc_paths(Mix.env()),
       dialyzer: [
-        plt_add_apps: ~w(inets jason mix ex_cldr_currencies ex_cldr_units ex_cldr_lists
+        plt_add_apps: ~w(inets mix ex_cldr_currencies ex_cldr_units ex_cldr_lists
              ex_cldr_numbers calendar_interval)a,
         flags: [
           :error_handling,
@@ -80,7 +80,7 @@ defmodule Cldr.Calendar.MixProject do
       {:ex_cldr_lists, "~> 2.10", optional: true},
       {:tz, "~> 0.9", optional: true, only: [:dev, :test]},
       {:calendar_interval, "~> 0.2", optional: true},
-      {:jason, "~> 1.0"},
+      {:jason, "~> 1.0", optional: true},
       {:ex_doc, "~> 0.21", optional: true, runtime: false},
       # {:benchee, "~> 1.0", optional: true, only: [:dev, :test]},
       {:dialyxir, "~> 1.0", optional: true, only: [:dev, :test], runtime: false},
