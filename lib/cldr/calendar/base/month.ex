@@ -169,7 +169,7 @@ defmodule Cldr.Calendar.Base.Month do
   def day_of_year(year, month, day, config) when is_date(year, month, day) do
     {iso_year, iso_month, iso_day} = date_to_iso_date(year, month, day, config)
     iso_days = Calendar.ISO.date_to_iso_days(iso_year, iso_month, iso_day)
-    iso_days - first_gregorian_day_of_year(year, config) + 1
+    trunc(iso_days - first_gregorian_day_of_year(year, config) + 1)
   end
 
   def day_of_year(year, month, day, _config) do

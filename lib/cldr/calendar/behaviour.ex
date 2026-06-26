@@ -278,7 +278,7 @@ defmodule Cldr.Calendar.Behaviour do
       def day_of_year(year, month, day) do
         first_day = date_to_iso_days(year, 1, 1)
         this_day = date_to_iso_days(year, month, day)
-        this_day - first_day + 1
+        trunc(this_day - first_day + 1)
       end
 
       if Code.ensure_loaded?(Date) && function_exported?(Date, :day_of_week, 2) do
@@ -433,7 +433,7 @@ defmodule Cldr.Calendar.Behaviour do
             date_to_iso_days(year, month + 1, 1)
           end
 
-        start_of_next_month - start_of_this_month
+        trunc(start_of_next_month - start_of_this_month)
       end
 
       @doc """
